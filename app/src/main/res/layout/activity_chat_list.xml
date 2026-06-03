@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mis Chats"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:background="#DB0000"
+        android:padding="15dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarChats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerChats"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/btnRegresarChats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Regresar"
+        android:backgroundTint="#808080"
+        android:layout_margin="10dp"/>
+
+</LinearLayout>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Nuevo Producto"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="20dp"/>
+
+        <EditText
+                android:id="@+id/txtCodigoProducto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Código del Producto"
+                android:layout_marginBottom="10dp"/>
+
+        <EditText
+                android:id="@+id/txtNombreProducto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre"
+                android:layout_marginBottom="10dp"/>
+
+        <EditText
+                android:id="@+id/txtDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Descripción"
+                android:layout_marginBottom="10dp"/>
+
+        <EditText
+                android:id="@+id/txtPrecio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="10dp"/>
+
+        <EditText
+                android:id="@+id/txtCantidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cantidad"
+                android:inputType="number"
+                android:layout_marginBottom="10dp"/>
+                
+        <EditText
+                android:id="@+id/txtImagen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="URL de Imagen (Opcional)"
+                android:layout_marginBottom="10dp"/>
+
+        <Spinner
+                android:id="@+id/spinnerCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"/>
+
+        <Switch
+                android:id="@+id/switchActivoCatalogo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Visible en Catálogo"
+                android:checked="true"
+                android:layout_marginBottom="20dp"/>
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+            <Button
+                    android:id="@+id/btnBuscar"
+                    android:text="Buscar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#242424"/>
+                    
+            <Button
+                    android:id="@+id/btnGuardarProducto"
+                    android:text="Guardar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#ff0a0a"/>
+                    
+            <Button
+                    android:id="@+id/btnEditar"
+                    android:text="Editar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#242424"/>
+                    
+            <Button
+                    android:id="@+id/btnEliminar"
+                    android:text="Eliminar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#ff0a0a"/>
+                    
+            <Button
+                    android:id="@+id/btnIrAListar"
+                    android:text="Ver Lista de Productos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#242424"/>
+                    
+            <Button
+                    android:id="@+id/btnRegresar"
+                    android:text="Regresar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#808080"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

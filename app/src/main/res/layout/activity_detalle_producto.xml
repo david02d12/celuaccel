@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/txtDetalleNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre del Producto"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="#DB0000"
+            android:gravity="center"
+            android:padding="16dp"/>
+
+        <ImageView
+            android:id="@+id/imgDetalleProducto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:src="@android:drawable/ic_menu_gallery"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:stretchColumns="1">
+            
+            <TableRow>
+                <TextView android:text="Código:" android:textStyle="bold" android:padding="8dp"/>
+                <TextView android:id="@+id/txtDetalleCodigo" android:padding="8dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Categoría:" android:textStyle="bold" android:padding="8dp"/>
+                <TextView android:id="@+id/txtDetalleCategoria" android:padding="8dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Precio:" android:textStyle="bold" android:padding="8dp"/>
+                <TextView android:id="@+id/txtDetallePrecio" android:padding="8dp" android:textColor="#DB0000" android:textStyle="bold" android:textSize="18sp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Stock:" android:textStyle="bold" android:padding="8dp"/>
+                <TextView android:id="@+id/txtDetalleStock" android:padding="8dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Descripción:" android:textStyle="bold" android:padding="8dp"/>
+                <TextView android:id="@+id/txtDetalleDescripcion" android:padding="8dp"/>
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutPregunta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+            
+            <EditText
+                android:id="@+id/txtPregunta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Escribe tu duda técnica sobre este equipo..."
+                android:inputType="textMultiLine"
+                android:lines="3" />
+                
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                
+                <Button
+                    android:id="@+id/btnCancelarPregunta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cancelar"
+                    android:backgroundTint="#808080"
+                    android:layout_marginEnd="4dp"/>
+                    
+                <Button
+                    android:id="@+id/btnEnviarPregunta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Enviar Pregunta"
+                    android:backgroundTint="#DB0000"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnHacerPregunta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hacer una Pregunta"
+            android:backgroundTint="#DB0000"
+            android:layout_marginTop="24dp"/>
+
+        <Button
+            android:id="@+id/btnRegresarDetalle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Regresar"
+            android:backgroundTint="#808080"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:background="#FFFFFF"
+        tools:context=".ServicioActivity">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="28dp">
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ff0a0a"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp">
+
+            <TextView
+                    android:text="Gestión de Servicios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center" />
+        </FrameLayout>
+
+        <EditText
+                android:id="@+id/txtIdServicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="ID Servicio (Auto / Requerido para Edit/Del)"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtIdUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="ID Usuario Asociado (Obligatorio)"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:hint="Descripción del Servicio / Falla"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtPrecio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Precio ($)"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtMovilNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Nombre del Dispositivo (Ej: iPhone 13)"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtMovilEspecificacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Especificaciones (Ej: 128GB, Azul)"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtFecha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:hint="Fecha (YYYY-MM-DD)"
+                android:layout_marginBottom="10dp" />
+
+        <EditText
+                android:id="@+id/txtEtapa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Etapa (0: Recibido, 100: Entregado, -1: Canc)"
+                android:layout_marginBottom="24dp" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <Button
+                    android:id="@+id/btnAgregarServicio"
+                    android:text="Registrar Servicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#242424"
+                    android:layout_marginBottom="8dp" />
+
+            <Button
+                    android:id="@+id/btnBuscarMisServicios"
+                    android:text="Buscar Mis Servicios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#ff0a0a"
+                    android:layout_marginBottom="8dp" />
+
+            <Button
+                    android:id="@+id/btnActualizarServicio"
+                    android:text="Actualizar Completo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#242424"
+                    android:layout_marginBottom="8dp" />
+
+            <Button
+                    android:id="@+id/btnCancelarServicio"
+                    android:text="Cancelar Servicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#710A00"
+                    android:layout_marginBottom="8dp"/>
+
+            <Button
+                    android:id="@+id/btnEliminarServicio"
+                    android:text="Eliminar Definitivamente"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#ff0a0a" />
+            <Button
+                    android:id="@+id/btnIrAListarServicios"
+                    android:text="Listar Servicios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#252525"
+                    android:layout_marginTop="8dp"/>
+            <Button
+                    android:id="@+id/btnRegresar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Regresar"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="#FF0A0A"
+                    android:textColor="#FFFFFF"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

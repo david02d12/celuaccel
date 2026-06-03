@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="24dp"
+              android:gravity="center"
+              android:background="#FFFFFF"
+              tools:context=".LoginActivity">
+
+
+    <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inicia Sesión Para ver tus Datos Personales"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp" />
+
+
+    <EditText
+            android:id="@+id/id_Usuario"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Número de Documento"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp" />
+
+
+    <EditText
+            android:id="@+id/clave"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Digite la Contraseña"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="24dp" />
+
+
+    <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Enviar"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#ff0a0a"
+            android:textColor="#FFFFFF" />
+
+
+    <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="¿Olvidó su contraseña?"
+            android:textColor="#757575"
+            android:textSize="14sp"
+            android:textAlignment="center" />
+
+</LinearLayout>
