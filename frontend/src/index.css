@@ -1,0 +1,84 @@
+/* Importación de tipografía Premium tipo Startup (Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Regla maestra: Forzar la fuente en todos los elementos de Bootstrap */
+body, h1, h2, h3, h4, h5, h6, input, button, select, p, span, table, a, div {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+body {
+  background-color: #f4f6f8; /* Un gris sumamente claro para que las tarjetas blancas resalten */
+}
+
+/* =================================================================
+   EFECTO GLASSMORFISMO (CRISTAL) PARA LA CABECERA
+================================================================= */
+.navbar {
+  background-color: rgba(219, 0, 0, 0.92) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(219, 0, 0, 0.25) !important;
+  transition: all 0.3s ease;
+}
+
+/* =================================================================
+   MENÚ LATERAL (OFFCANVAS) PREMIUM
+================================================================= */
+.offcanvas {
+  background-color: rgba(18, 18, 18, 0.95) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.offcanvas .btn {
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+}
+
+.offcanvas .btn:hover {
+  transform: translateX(6px); /* Pequeño empuje a la derecha */
+  background-color: #e51a1a !important; /* Rojo un poco más vivo */
+  box-shadow: 0 4px 12px rgba(219, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* =================================================================
+   TARJETAS E INTERFACES FLOTANTES (ESTÁTICAS POR USABILIDAD)
+================================================================= */
+.card {
+  border-radius: 12px !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07) !important;
+}
+
+/* =================================================================
+   TABLAS MÁS SUBTILES Y DINÁMICAS
+================================================================= */
+.table {
+  vertical-align: middle;
+}
+
+.table-hover tbody tr {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(219, 0, 0, 0.04) !important; /* Destello rojizo */
+  cursor: pointer;
+}
+
+/* =================================================================
+   ANIMACIONES MICRO-INTERACTIVAS PARA LOS BOTONES GLOBALES
+================================================================= */
+.btn {
+  border-radius: 8px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.btn:active {
+  transform: scale(0.96) !important; /* Efecto de rebote al hacer click */
+}
