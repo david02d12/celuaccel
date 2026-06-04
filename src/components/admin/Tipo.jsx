@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { usePaginacion } from '../../hooks/usePaginacion';
@@ -19,15 +19,13 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   );
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(tiposFiltrados, 7);
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   useEffect(() => { listar(); }, []);
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/tipodocumento/listar', config());
+      const res = await api.get('/tipodocumento/listar');
       setDatos(res.data);
     } catch (err) {
       console.error('Error al listar', err);
@@ -38,7 +36,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
-      await axios[metodo](`http://localhost:3000/api/tipodocumento/${url}`, form, config());
+      await api[metodo](`/tipodocumento/${url}`, form);
       listar();
       limpiar();
     } catch (err) {
@@ -49,7 +47,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar este registro?')) {
       try {
-        await axios.delete(`http://localhost:3000/api/tipodocumento/eliminar/${id}`, config());
+        await api.delete(`/tipodocumento/eliminar/${id}`);
         listar();
       } catch (err) {
         alert('Error al eliminar tipo de documento');

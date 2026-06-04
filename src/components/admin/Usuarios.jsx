@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 
@@ -22,9 +22,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
     Codigo_Rol: 2
   });
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -35,7 +33,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/usuarios/listar', config());
+      const res = await api.get('/usuarios/listar');
       setUsuarios(res.data);
     } catch (err) {
       console.error("Error al listar usuarios:", err);
@@ -46,7 +44,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? 'usuarios/actualizar' : 'registro';
       const metodo = enEdicion ? 'put' : 'post';
-      await axios[metodo](`http://localhost:3000/api/${url}`, form, config());
+      await api[metodo](`/${url}`, form);
       mostrarToast(enEdicion ? 'Usuario actualizado correctamente.' : 'Usuario registrado en el sistema.');
       listar();
       limpiar();
@@ -58,7 +56,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm(`¿Está seguro de eliminar al usuario ${id}?`)) {
       try {
-        await axios.delete(`http://localhost:3000/api/usuarios/eliminar/${id}`, config());
+        await api.delete(`/usuarios/eliminar/${id}`);
         mostrarToast('Usuario eliminado del sistema.');
         listar();
       } catch (err) {

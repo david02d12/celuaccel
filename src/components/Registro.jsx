@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+﻿import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 const Registro = ({ setModoRegistro }) => {
   const [formReg, setFormReg] = useState({
@@ -47,7 +47,7 @@ const Registro = ({ setModoRegistro }) => {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/registro', {
+      await api.post('/registro', {
         ...formReg,
         ID_Usuario: formReg.ID_Usuario.trim(),
         Clave: formReg.Clave.trim()

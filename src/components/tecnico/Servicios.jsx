@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -38,9 +38,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     'Se requiere tu aprobación para proceder con la reparación.',
   ];
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -51,7 +49,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/servicios/listar', config());
+      const res = await api.get('/servicios/listar');
       setServicios(res.data);
     } catch (err) { mostrarToast('Error al cargar los servicios.', false); }
   };
@@ -61,7 +59,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
       const url = enEdicion ? "actualizar" : "agregar";
       const metodo = enEdicion ? 'put' : 'post';
       const data = enEdicion ? { ...formServicio, ID_Servicio: idServicioSel } : formServicio;
-      await axios[metodo](`http://localhost:3000/api/servicios/${url}`, data, config());
+      await api[metodo](`/servicios/${url}`, data);
       mostrarToast(enEdicion ? 'Servicio actualizado correctamente.' : 'Nuevo servicio registrado.');
       listar();
       limpiarServicio();
@@ -71,7 +69,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   const eliminarServicio = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar este registro?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/servicios/eliminar/${id}`, config());
+        await api.delete(`/servicios/eliminar/${id}`);
         mostrarToast('Servicio eliminado del sistema.');
         listar();
       } catch (err) { mostrarToast('Error al eliminar el servicio.', false); }
@@ -87,11 +85,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   // Actualizacion rápida de etapa directamente desde la tabla
   const actualizarEtapa = async (servicio, nuevaEtapa) => {
     try {
-      await axios.put('http://localhost:3000/api/servicios/actualizar', {
+      await api.put('/servicios/actualizar', {
         ...servicio,
         Etapa: nuevaEtapa,
         Fecha: servicio.Fecha ? servicio.Fecha.split('T')[0] : ''
-      }, config());
+      });
       mostrarToast(`Etapa actualizada a: ${etapaLabel(nuevaEtapa)}`);
       listar();
     } catch (err) {
@@ -103,11 +101,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     if (!mensajeNotif.trim() || !modalNotif) return;
     setEnviandoNotif(true);
     try {
-      await axios.post('http://localhost:3000/api/notificaciones/enviar', {
+      await api.post('/notificaciones/enviar', {
         ID_Usuario_Destino: modalNotif.ID_Usuario,
         ID_Servicio: modalNotif.ID_Servicio,
         Mensaje: mensajeNotif.trim()
-      }, config());
+      });
       mostrarToast('Notificación enviada al cliente correctamente.');
       setModalNotif(null);
       setMensajeNotif('');

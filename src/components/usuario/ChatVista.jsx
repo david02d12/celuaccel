@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -20,9 +20,7 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
   const usuario = localStorage.getItem('user') || 'Usuario';
   const role = Number(localStorage.getItem('role')) || 2;
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   useEffect(() => {
     cargarChats();
@@ -41,10 +39,10 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
     try {
       // Clientes: solo sus chats; Técnico/Admin: todos los chats
       const url = role === 2
-        ? 'http://localhost:3000/api/chats/listar-mios'
-        : 'http://localhost:3000/api/chats/listar';
+        ? '/chats/listar-mios'
+        : '/chats/listar';
 
-      const res = await axios.get(url, config());
+      const res = await api.get(url);
       let chatsCargados = res.data;
 
       // Enlace Automático desde Servicios o MiServicio
@@ -58,9 +56,9 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
         } else if (role === 2) {
           // Solo clientes auto-crean el chat
           const payload = { ID_Usuario: usuario, ID_Servicio: info.ID_Servicio };
-          await axios.post('http://localhost:3000/api/chats/agregar', payload, config());
+          await api.post('/chats/agregar', payload);
 
-          const resUpdated = await axios.get(url, config());
+          const resUpdated = await api.get(url);
           chatsCargados = resUpdated.data;
           chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(info.ID_Servicio));
           if (chatExistente) setChatSel(chatExistente);
@@ -72,7 +70,7 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
 
       // Si el cliente no tiene chats, ofrecer sus servicios como punto de partida
       if (chatsCargados.length === 0 && role === 2) {
-        const resSvc = await axios.get(`http://localhost:3000/api/servicios/mis-servicios/${usuario}`, config());
+        const resSvc = await api.get(`/servicios/mis-servicios/${usuario}`);
         const activos = resSvc.data.filter(s => Number(s.Etapa) !== -1);
         setServicios(activos);
       }
@@ -90,8 +88,8 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
       // Verificar si ya existe un chat para ese servicio
       let chatExistente = chats.find(c => String(c.ID_Servicio) === String(idServicio));
       if (!chatExistente) {
-        await axios.post('http://localhost:3000/api/chats/agregar', { ID_Usuario: usuario, ID_Servicio: idServicio }, config());
-        const res = await axios.get('http://localhost:3000/api/chats/listar-mios', config());
+        await api.post('/chats/agregar', { ID_Usuario: usuario, ID_Servicio: idServicio });
+        const res = await api.get('/chats/listar-mios');
         setChats(res.data);
         chatExistente = res.data.find(c => String(c.ID_Servicio) === String(idServicio));
         setServicios([]); // ocultar panel de servicios al tener chats
@@ -107,7 +105,7 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
   const cargarMensajes = async (codigoChat) => {
     try {
       setCargando(true);
-      const res = await axios.get(`http://localhost:3000/api/mensajes/por-chat/${codigoChat}`, config());
+      const res = await api.get(`/mensajes/por-chat/${codigoChat}`);
       setMensajes(res.data);
     } catch (err) {
       console.error('Error al cargar mensajes:', err);
@@ -127,7 +125,7 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
     };
 
     try {
-      await axios.post('http://localhost:3000/api/mensajes/agregar', payload, config());
+      await api.post('/mensajes/agregar', payload);
       setNuevoMensaje('');
       cargarMensajes(chatSel.Codigo_Chat);
     } catch (err) {
@@ -138,7 +136,7 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
   const eliminarMensaje = async (id) => {
     if (!window.confirm('¿Eliminar este mensaje?')) return;
     try {
-      await axios.delete(`http://localhost:3000/api/mensajes/eliminar/${id}`, config());
+      await api.delete(`/mensajes/eliminar/${id}`);
       cargarMensajes(chatSel.Codigo_Chat);
     } catch (err) {
       alert('Error al eliminar el mensaje.');

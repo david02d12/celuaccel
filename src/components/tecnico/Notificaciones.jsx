@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,9 +27,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
   });
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(notificacionesFiltradas, 7);
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   useEffect(() => {
     listar();
@@ -37,7 +35,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/notificaciones/listar', config());
+      const res = await api.get('/notificaciones/listar');
       const dataParsed = res.data.map(n => {
         try {
           return { ...n, parsed: JSON.parse(n.Tipo_Notificacion) };
@@ -57,12 +55,12 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
       if (enEdicion) {
          // Si está en edición (usamos actualizar endpoint con JSON stringificado manual)
          const payload = { para: form.ID_Usuario_Destino, texto: form.Mensaje, leida: false, fecha: new Date().toISOString().split('T')[0] };
-         await axios.put(`http://localhost:3000/api/notificaciones/actualizar`, {
+         await api.put(`/notificaciones/actualizar`, {
            Codigo_Notificaciones: form.Codigo_Notificaciones,
            Tipo_Notificacion: JSON.stringify(payload)
-         }, config());
+         });
       } else {
-         await axios.post(`http://localhost:3000/api/notificaciones/enviar`, form, config());
+         await api.post(`/notificaciones/enviar`, form);
       }
       listar();
       limpiar();
@@ -74,7 +72,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm('¿Eliminar esta notificación?')) {
       try {
-        await axios.delete(`http://localhost:3000/api/notificaciones/eliminar/${id}`, config());
+        await api.delete(`/notificaciones/eliminar/${id}`);
         listar();
       } catch (err) {
         alert('Error al eliminar la notificación');

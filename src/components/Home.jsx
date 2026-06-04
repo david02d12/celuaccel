@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import axios from 'axios';
+import api from '../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -13,23 +13,21 @@ const Home = ({ cerrarSesion, setVista }) => {
   const usuario = localStorage.getItem('user') || 'Usuario';
   const role = Number(localStorage.getItem('role')) || 2;
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         // Para clientes: sus propios servicios; para técnico/admin: todos
         const serviciosUrl = role === 2
-          ? `http://localhost:3000/api/servicios/mis-servicios/${usuario}`
-          : 'http://localhost:3000/api/servicios/listar';
+          ? `/servicios/mis-servicios/${usuario}`
+          : '/servicios/listar';
 
         const peticiones = [
-          axios.get(serviciosUrl, config()),
-          axios.get('http://localhost:3000/api/productos/listar', config()),
-          ...(role !== 2 ? [axios.get('http://localhost:3000/api/historial/listar', config())] : []),
-          ...(role === 3 ? [axios.get('http://localhost:3000/api/usuarios/listar', config())] : []),
+          api.get(serviciosUrl),
+          api.get('/productos/listar'),
+          ...(role !== 2 ? [api.get('/historial/listar')] : []),
+          ...(role === 3 ? [api.get('/usuarios/listar')] : []),
         ];
         const reqs = await Promise.allSettled(peticiones);
 

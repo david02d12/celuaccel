@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -14,9 +14,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
     ID_Historial: '', ID_Servicio: '', Fecha_Evento: '', Descripcion_Evento: '', Estado: '1'
   });
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -27,7 +25,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/historial/listar', config());
+      const res = await api.get('/historial/listar');
       setDatos(res.data);
     } catch (err) { mostrarToast('Error al cargar el historial.', false); }
   };
@@ -36,7 +34,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? "actualizar" : "agregar";
       const metodo = enEdicion ? 'put' : 'post';
-      await axios[metodo](`http://localhost:3000/api/historial/${url}`, form, config());
+      await api[metodo](`/historial/${url}`, form);
       mostrarToast(enEdicion ? 'Evento actualizado correctamente.' : 'Evento registrado en el historial.');
       listar();
       limpiar();
@@ -46,7 +44,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar este registro?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/historial/eliminar/${id}`, config());
+        await api.delete(`/historial/eliminar/${id}`);
         mostrarToast('Evento eliminado del historial.');
         listar();
       } catch (err) { mostrarToast('Error al eliminar el registro.', false); }

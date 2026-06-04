@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 
 const Productos = ({ cerrarSesion, setVista }) => {
   const [productos, setProductos] = useState([]);
@@ -14,9 +14,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
     Descripcion: '', Imagen: '', Activo_Catalogo: 1, ID_Categoria: ''
   });
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -25,14 +23,14 @@ const Productos = ({ cerrarSesion, setVista }) => {
 
   useEffect(() => {
     listar();
-    axios.get('http://localhost:3000/api/categorias/listar', config())
+    api.get('/categorias/listar')
       .then(res => setCategorias(res.data))
       .catch(() => {});
   }, []);
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/productos/listar', config());
+      const res = await api.get('/productos/listar');
       setProductos(res.data);
     } catch (err) { mostrarToast('Error al cargar productos.', false); }
   };
@@ -41,7 +39,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
-      await axios[metodo](`http://localhost:3000/api/productos/${url}`, form, config());
+      await api[metodo](`/productos/${url}`, form);
       mostrarToast(enEdicion ? 'Producto actualizado correctamente.' : 'Producto registrado en el inventario.');
       listar();
       limpiar();
@@ -51,7 +49,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm("¿Eliminar este producto del inventario?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/productos/eliminar/${id}`, config());
+        await api.delete(`/productos/eliminar/${id}`);
         mostrarToast('Producto eliminado del inventario.');
         listar();
       } catch (err) { mostrarToast('Error al eliminar el producto.', false); }

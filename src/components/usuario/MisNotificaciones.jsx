@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -10,16 +10,14 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
   const [cargando, setCargando] = useState(true);
   const usuario = localStorage.getItem('user') || '';
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   useEffect(() => { cargar(); }, []);
 
   const cargar = async () => {
     setCargando(true);
     try {
-      const res = await axios.get('http://localhost:3000/api/notificaciones/mis-notificaciones', config());
+      const res = await api.get('/notificaciones/mis-notificaciones');
       setNotificaciones(res.data);
     } catch (err) {
       console.error('Error al cargar notificaciones:', err);
@@ -30,7 +28,7 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
 
   const marcarLeida = async (id) => {
     try {
-      await axios.patch(`http://localhost:3000/api/notificaciones/marcar-leida/${id}`, {}, config());
+      await api.patch(`/notificaciones/marcar-leida/${id}`, {});
       cargar();
     } catch (err) {
       console.error('Error al marcar como leída:', err);

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,13 +21,13 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
   );
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(preguntasFiltradas, 7);
 
-  const config = () => ({ headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+  
 
   useEffect(() => { listar(); }, []);
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/preguntas/listar', config());
+      const res = await api.get('/preguntas/listar');
       setPreguntas(res.data);
     } catch (err) {
       console.error('Error al listar preguntas:', err);
@@ -38,7 +38,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
-      await axios[metodo](`http://localhost:3000/api/preguntas/${url}`, form, config());
+      await api[metodo](`/preguntas/${url}`, form);
       listar();
       limpiar();
     } catch (err) {
@@ -49,7 +49,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm('¿Eliminar pregunta?')) {
       try {
-        await axios.delete(`http://localhost:3000/api/preguntas/eliminar/${id}`, config());
+        await api.delete(`/preguntas/eliminar/${id}`);
         listar();
       } catch (err) {
         alert('Error al eliminar pregunta');

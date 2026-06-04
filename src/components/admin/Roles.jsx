@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 
-const Categorias = ({ cerrarSesion, setVista }) => {
-  const [categorias, setCategorias] = useState([]);
+const Roles = ({ cerrarSesion, setVista }) => {
+  const [datos, setDatos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
-  const [form, setForm] = useState({ ID_Categoria: '', Nombre_Categoria: '' });
+  const [form, setForm] = useState({ Codigo_Rol: '', Descripcion_Rol: '' });
 
-  const categoriasFiltradas = categorias.filter(c =>
-    String(c.ID_Categoria).includes(busqueda) ||
-    String(c.Nombre_Categoria || '').toLowerCase().includes(busqueda.toLowerCase())
+  const rolesFiltrados = datos.filter(d =>
+    String(d.Codigo_Rol).includes(busqueda) ||
+    String(d.Descripcion_Rol || '').toLowerCase().includes(busqueda.toLowerCase())
   );
-  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(categoriasFiltradas, 7);
+  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(rolesFiltrados, 7);
 
-  const config = () => ({ headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+  
 
   useEffect(() => { listar(); }, []);
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/categorias/listar', config());
-      setCategorias(res.data);
+      const res = await api.get('/roles/listar');
+      setDatos(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Error al listar', err);
     }
   };
 
@@ -36,48 +36,47 @@ const Categorias = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
-      await axios[metodo](`http://localhost:3000/api/categorias/${url}`, form, config());
+      await api[metodo](`/roles/${url}`, form);
       listar();
       limpiar();
     } catch (err) {
-      alert('Error al procesar la categoría');
+      alert('Error al procesar la solicitud.');
     }
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar categoría?')) {
+    if (window.confirm('¿Estás seguro de eliminar este registro?')) {
       try {
-        await axios.delete(`http://localhost:3000/api/categorias/eliminar/${id}`, config());
+        await api.delete(`/roles/eliminar/${id}`);
         listar();
       } catch (err) {
-        alert('Error al eliminar categoría');
+        alert('Error al eliminar rol');
       }
     }
   };
 
   const limpiar = () => {
-    setForm({ ID_Categoria: '', Nombre_Categoria: '' });
+    setForm({ Codigo_Rol: '', Descripcion_Rol: '' });
     setEnEdicion(false);
   };
 
   return (
     <div>
-      <Navbar titulo="CELUACCEL — Categorías de Sistema" cerrarSesion={cerrarSesion} />
+      <Navbar titulo="CELUACCEL — Privilegios y Roles" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
         <div className="row">
           {/* FORMULARIO */}
           <div className="col-md-4 mb-4">
             <div className="card p-3 shadow-sm border-0">
-              <h5>{enEdicion ? 'Editar Categoría' : 'Nueva Categoría'}</h5>
-              <input className="form-control mb-2" type="number" placeholder="ID Categoría"
-                value={form.ID_Categoria} disabled={enEdicion}
-                onChange={e => setForm({...form, ID_Categoria: e.target.value})} />
-              <input className="form-control mb-2" placeholder="Nombre Categoría"
-                value={form.Nombre_Categoria}
-                onChange={e => setForm({...form, Nombre_Categoria: e.target.value})} />
+              <h5 className="mb-3">{enEdicion ? 'Editar Rol' : 'Nuevo Rol'}</h5>
+              <input className="form-control mb-2" type="number" disabled={enEdicion}
+                value={form.Codigo_Rol} placeholder="Código Rol"
+                onChange={e => setForm({...form, Codigo_Rol: e.target.value})} />
+              <input className="form-control mb-3" value={form.Descripcion_Rol} placeholder="Descripción"
+                onChange={e => setForm({...form, Descripcion_Rol: e.target.value})} />
               <button className="btn w-100 text-white fw-bold" style={{ backgroundColor: '#DB0000' }} onClick={guardar}>
-                {enEdicion ? 'Actualizar' : 'Guardar'}
+                {enEdicion ? 'Actualizar' : 'Guardar Rol'}
               </button>
               {enEdicion && (
                 <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
@@ -90,24 +89,24 @@ const Categorias = ({ cerrarSesion, setVista }) => {
             <div className="card border-0 shadow-sm overflow-hidden">
               <div className="p-3 border-bottom">
                 <input type="text" className="form-control"
-                  placeholder=" Buscar por ID o nombre de categoría..."
+                  placeholder=" Buscar por código o descripción..."
                   value={busqueda} onChange={e => setBusqueda(e.target.value)} />
               </div>
               <div className="table-responsive">
-                <table className="table table-hover mb-0 bg-white">
+                <table className="table table-hover mb-0">
                   <thead className="table-dark">
-                    <tr><th>ID</th><th>Nombre</th><th>Acciones</th></tr>
+                    <tr><th>Código</th><th>Descripción</th><th>Acciones</th></tr>
                   </thead>
-                  <tbody>
-                    {datosPagina.map(c => (
-                      <tr key={c.ID_Categoria}>
-                        <td>{c.ID_Categoria}</td>
-                        <td>{c.Nombre_Categoria}</td>
+                  <tbody className="bg-white">
+                    {datosPagina.map(d => (
+                      <tr key={d.Codigo_Rol}>
+                        <td className="fw-bold">{d.Codigo_Rol}</td>
+                        <td>{d.Descripcion_Rol}</td>
                         <td>
-                          <button className="btn btn-sm me-1 text-white" style={{ backgroundColor: '#121212' }}
-                            onClick={() => { setForm(c); setEnEdicion(true); }}>Editar</button>
-                          <button className="btn btn-sm text-white" style={{ backgroundColor: '#DB0000' }}
-                            onClick={() => eliminar(c.ID_Categoria)}>Borrar</button>
+                          <button className="btn btn-sm me-1 text-white fw-bold" style={{ backgroundColor: '#121212' }}
+                            onClick={() => { setEnEdicion(true); setForm(d); }}>Editar</button>
+                          <button className="btn btn-sm text-white fw-bold" style={{ backgroundColor: '#DB0000' }}
+                            onClick={() => eliminar(d.Codigo_Rol)}>Borrar</button>
                         </td>
                       </tr>
                     ))}
@@ -133,4 +132,4 @@ const Categorias = ({ cerrarSesion, setVista }) => {
   );
 };
 
-export default Categorias;
+export default Roles;

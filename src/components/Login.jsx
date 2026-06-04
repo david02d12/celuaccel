@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const Login = ({ setLogueado, setModoRegistro }) => {
   const [loginUser, setLoginUser] = useState("");
@@ -19,7 +19,7 @@ const Login = ({ setLogueado, setModoRegistro }) => {
 
     setCargando(true);
     try {
-      const res = await axios.post("http://localhost:3000/api/login", { user: u, password: p });
+      const res = await api.post("/login", { user: u, password: p });
       if (res.data.auth) {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', res.data.user);

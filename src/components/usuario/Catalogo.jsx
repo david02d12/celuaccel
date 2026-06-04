@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -14,16 +14,14 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
   const [haciendoPregunta, setHaciendoPregunta] = useState(false);
   const [nuevaPregunta, setNuevaPregunta] = useState('');
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   useEffect(() => {
     const cargar = async () => {
       try {
         const [pRes, cRes] = await Promise.all([
-          axios.get('http://localhost:3000/api/productos/listar', config()),
-          axios.get('http://localhost:3000/api/categorias/listar', config()),
+          api.get('/productos/listar'),
+          api.get('/categorias/listar'),
         ]);
         // RNF002: Solo mostrar activos en catálogo Y con stock disponible
         setProductos(pRes.data.filter(p => Number(p.Activo_Catalogo) === 1 && Number(p.Cantidad) > 0));
@@ -42,13 +40,13 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
     if (!usuario) return alert("Error de sesión. Reconecta tu cuenta.");
 
     try {
-      await axios.post('http://localhost:3000/api/preguntas/agregar', {
+      await api.post('/preguntas/agregar', {
         ID_Consulta: null,
         ID_Usuario: usuario,
         Codigo_Producto: productoSel.Codigo_Producto,
         Pregunta: nuevaPregunta,
         Fecha: new Date().toISOString().split('T')[0]
-      }, config());
+      });
       
       alert('¡Pregunta enviada! Un técnico la responderá pronto.');
       setHaciendoPregunta(false);

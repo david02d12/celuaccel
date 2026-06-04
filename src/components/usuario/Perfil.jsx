@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,9 +24,7 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
     Nombre: '', Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: ''
   });
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -40,7 +38,7 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
   const cargarPerfil = async () => {
     setCargando(true);
     try {
-      const res = await axios.get(`http://localhost:3000/api/usuarios/perfil/${idAcargar}`, config());
+      const res = await api.get(`/usuarios/perfil/${idAcargar}`);
       setPerfil(res.data);
       setForm({
         Nombre: res.data.Nombre || '',
@@ -62,7 +60,7 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
       return mostrarToast('Nombre y correo son obligatorios.', false);
     }
     try {
-      await axios.put('http://localhost:3000/api/usuarios/mi-perfil', form, config());
+      await api.put('/usuarios/mi-perfil', form);
       mostrarToast('¡Perfil actualizado correctamente!');
       setModoEdicion(false);
       cargarPerfil();

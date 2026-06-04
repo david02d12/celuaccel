@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,9 +22,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
     Estrellas: 5
   });
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   useEffect(() => {
     listar();
@@ -32,7 +30,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
 
   const listar = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/comentarios/listar', config());
+      const res = await api.get('/comentarios/listar');
       if (miRol === 2) {
         setComentarios(res.data.filter(c => c.ID_Usuario === miUsuario));
       } else {
@@ -50,7 +48,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
       const metodo = enEdicion ? 'put' : 'post';
       // Forzar la fecha actual si no tiene
       const datosFinales = { ...form, Fecha_Comentario: form.Fecha_Comentario || new Date().toISOString().split('T')[0] };
-      await axios[metodo](`http://localhost:3000/api/comentarios/${url}`, datosFinales, config());
+      await api[metodo](`/comentarios/${url}`, datosFinales);
       
       listar();
       limpiar();
@@ -62,7 +60,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar este comentario?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/comentarios/eliminar/${id}`, config());
+        await api.delete(`/comentarios/eliminar/${id}`);
         listar();
       } catch (err) {
         alert("Error al eliminar comentario: " + err.response?.data?.error || "Desconocido");

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import api from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -16,9 +16,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   
   const usuario = localStorage.getItem('user') || '';
 
-  const config = () => ({
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-  });
+  
 
   const mostrarToast = (mensaje, tipo = 'success') => {
     setToast({ visible: true, mensaje, tipo });
@@ -69,7 +67,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
     if (!usuario) return;
     setCargando(true);
     try {
-      const res = await axios.get(`http://localhost:3000/api/servicios/mis-servicios/${usuario}`, config());
+      const res = await api.get(`/servicios/mis-servicios/${usuario}`);
       setServicios(res.data);
     } catch (err) {
       mostrarToast('Error al cargar tus servicios. Verifica tu conexión.', 'danger');
@@ -81,7 +79,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   const cancelarServicio = async (id) => {
     if (!window.confirm('¿Estás seguro de cancelar este servicio? Esta acción no se puede deshacer.')) return;
     try {
-      await axios.patch(`http://localhost:3000/api/servicios/cancelar/${id}`, {}, config());
+      await api.patch(`/servicios/cancelar/${id}`, {});
       mostrarToast('Servicio cancelado correctamente.', 'warning');
       cargar();
     } catch (err) {
@@ -103,7 +101,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
         Etapa: 0,
         Fecha: new Date().toISOString().split('T')[0]
       };
-      await axios.post('http://localhost:3000/api/servicios/agregar', datosNuevo, config());
+      await api.post('/servicios/agregar', datosNuevo);
       mostrarToast('¡Solicitud enviada con éxito! Un coordinador revisará.', 'success');
       setMostrarFormulario(false);
       setFormNuevo({ Descripcion: '', Movil_Nombre: '', Movil_Especificacion: '' });
