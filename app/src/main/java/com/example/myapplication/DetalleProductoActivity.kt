@@ -68,6 +68,15 @@ class DetalleProductoActivity : AppCompatActivity() {
             txtPregunta.text.clear()
         }
 
+        // Ver comentarios del producto
+        findViewById<Button>(R.id.btnVerComentariosDetalle).setOnClickListener {
+            val intent = android.content.Intent(this, ComentariosActivity::class.java)
+            // Pasamos -1 como ID de servicio (comentarios de producto no tienen servicio)
+            // En ComentariosActivity filtramos si idServicio == -1 mostramos todos
+            intent.putExtra("ID_SERVICIO", -1)
+            startActivity(intent)
+        }
+
         btnEnviarPregunta.setOnClickListener {
             val preguntaTexto = txtPregunta.text.toString().trim()
             if (preguntaTexto.isEmpty()) {

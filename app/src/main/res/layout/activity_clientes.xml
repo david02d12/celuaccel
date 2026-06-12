@@ -144,6 +144,14 @@
                     android:layout_marginTop="8dp"
                     android:textColor="#FFFFFF"/>
             <Button
+                    android:id="@+id/btnGestionarRoles"
+                    android:text="Gestionar Roles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#242424"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFFFFF"/>
+            <Button
                     android:id="@+id/btnRegresar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

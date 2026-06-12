@@ -17,12 +17,7 @@
             android:networkSecurityConfig="@xml/network_security_config"
             tools:targetApi="31">
 
-        <activity android:name=".ClienteActivity"
-                  android:exported="false"/>
-
-        <activity android:name=".ServicioActivity"
-                  android:exported="false"/>
-
+        <!-- ── ACTIVIDAD PRINCIPAL (Lanzador) ─────────────────────────────── -->
         <activity
                 android:name=".LoginActivity"
                 android:exported="true">
@@ -32,30 +27,42 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ListaClienteActivity"
-                  android:exported="false" />
+        <activity android:name=".MainActivity"   android:exported="false"/>
+        <activity android:name=".MenuActivity"   android:exported="true"/>
 
-        <activity android:name=".ListaServicioActivity"
-                  android:exported="false" />
+        <!-- ── AUTH ───────────────────────────────────────────────────────── -->
+        <!-- (Login ya está arriba) -->
 
-        <activity android:name=".ProductoActivity"
-                  android:exported="false"/>
+        <!-- ── USUARIOS / PERFIL ──────────────────────────────────────────── -->
+        <activity android:name=".ClienteActivity"       android:exported="false"/>
+        <activity android:name=".ListaClienteActivity"  android:exported="false"/>
+        <activity android:name=".RolesActivity"         android:exported="false"/>  <!-- NUEVO -->
+        <activity android:name=".PerfilActivity"        android:exported="false"/>  <!-- NUEVO -->
 
-        <activity android:name=".ListaProductoActivity"
-                  android:exported="false"/>
+        <!-- ── SERVICIOS ──────────────────────────────────────────────────── -->
+        <activity android:name=".ServicioActivity"          android:exported="false"/>
+        <activity android:name=".ListaServicioActivity"     android:exported="false"/>
+        <activity android:name=".SolicitarServicioActivity" android:exported="false"/>
 
-        <activity android:name=".CatalogoActivity"
-                  android:exported="false"/>
+        <!-- ── PRODUCTOS / CATÁLOGO ───────────────────────────────────────── -->
+        <activity android:name=".ProductoActivity"        android:exported="false"/>
+        <activity android:name=".ListaProductoActivity"   android:exported="false"/>
+        <activity android:name=".CatalogoActivity"        android:exported="false"/>
+        <activity android:name=".DetalleProductoActivity" android:exported="false"/>
 
-        <activity android:name=".DetalleProductoActivity"
-                  android:exported="false"/>
+        <!-- ── CHATS / MENSAJES ───────────────────────────────────────────── -->
+        <activity android:name=".ChatListActivity"   android:exported="false"/>
+        <activity android:name=".ChatDetailActivity" android:exported="false"/>
 
-        <activity android:name=".MenuActivity"
-                  android:exported="true"/>
+        <!-- ── NOTIFICACIONES ─────────────────────────────────────────────── -->
+        <activity android:name=".NotificacionActivity" android:exported="false"/>  <!-- NUEVO -->
 
-        <activity
-                android:name=".MainActivity"
-                android:exported="false"/>
+        <!-- ── PREGUNTAS ──────────────────────────────────────────────────── -->
+        <activity android:name=".PreguntasActivity" android:exported="false"/>     <!-- NUEVO -->
+
+        <!-- ── COMENTARIOS ────────────────────────────────────────────────── -->
+        <activity android:name=".ComentariosActivity" android:exported="false"/>   <!-- NUEVO -->
+
     </application>
 
 </manifest>

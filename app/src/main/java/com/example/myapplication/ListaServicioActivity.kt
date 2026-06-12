@@ -23,6 +23,8 @@ class ListaServicioActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var btnRegresar: Button
     private lateinit var token: String
+    private lateinit var userId: String
+    private var userRole: Int = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,8 @@ class ListaServicioActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("app", MODE_PRIVATE)
         val tokenGuardado = sharedPref.getString("token", "") ?: ""
         token = if (tokenGuardado.startsWith("Bearer ")) tokenGuardado else "Bearer $tokenGuardado"
+        userId = sharedPref.getString("user_id", "") ?: ""
+        userRole = sharedPref.getInt("user_role", 2)
 
 
         vistaServicios = findViewById(R.id.vistaServicios)
@@ -52,8 +56,13 @@ class ListaServicioActivity : AppCompatActivity() {
 
         val apiService = ApiClient.retrofit.create(ApiService::class.java)
 
+        val call = if (userRole == 2) {
+            apiService.getMisServicios(token)  // el backend identifica al usuario por token
+        } else {
+            apiService.getServicios(token)
+        }
 
-        apiService.getServicios(token).enqueue(object : Callback<List<Servicio>> {
+        call.enqueue(object : Callback<List<Servicio>> {
             override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
                 progressBar.visibility = View.GONE
 

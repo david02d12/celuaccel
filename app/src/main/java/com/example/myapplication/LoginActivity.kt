@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
+import com.example.myapplication.model.ForgotPasswordRequest
 import com.example.myapplication.model.LoginRequest
 import com.example.myapplication.model.LoginResponse
 import retrofit2.Call
@@ -25,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
         val etDocumento = findViewById<EditText>(R.id.id_Usuario)
         val etPassword = findViewById<EditText>(R.id.clave)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val tvForgot = findViewById<TextView>(R.id.textView)
         val tvMessage = findViewById<TextView>(R.id.textView)
 
         val sharedPref = getSharedPreferences("app", MODE_PRIVATE)
@@ -43,6 +47,37 @@ class LoginActivity : AppCompatActivity() {
                 tvMessage.text = "Validando credenciales..."
                 realizarLogin(documento, clave, tvMessage)
             }
+        }
+
+        tvForgot.setOnClickListener {
+            val input = EditText(this)
+            input.hint = "usuario@correo.com"
+            AlertDialog.Builder(this)
+                .setTitle("Recuperar Contraseña")
+                .setMessage("Ingrese su correo electrónico registrado:")
+                .setView(input)
+                .setPositiveButton("Enviar") { _, _ ->
+                    val email = input.text.toString().trim()
+                    if (email.isEmpty()) {
+                        Toast.makeText(this, "El correo no puede estar vacío", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+                    val api = ApiClient.retrofit.create(ApiService::class.java)
+                    api.forgotPassword(ForgotPasswordRequest(email)).enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@LoginActivity, "Correo de recuperación enviado", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(this@LoginActivity, "Error: ${response.code()}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Toast.makeText(this@LoginActivity, "Fallo de conexión", Toast.LENGTH_LONG).show()
+                        }
+                    })
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
     }
 

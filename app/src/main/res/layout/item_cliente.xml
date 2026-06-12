@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    android:background="#FFFFFF"
+    android:elevation="2dp"
+    android:padding="12dp"
+    android:gravity="center_vertical">
+
+    <!-- Avatar inicial -->
+    <TextView
+        android:id="@+id/tvClienteInicial"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="#D32F2F"
+        android:gravity="center"
+        android:text="?"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginEnd="12dp"/>
+
+    <!-- Info del cliente -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvClienteNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre del cliente"
+            android:textColor="#212121"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvClienteDocumento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ID: 12345"
+            android:textColor="#616161"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvClienteCorreo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="✉ correo@mail.com"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"/>
+
+            <TextView
+                android:id="@+id/tvClienteTelefono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📞 000-0000"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

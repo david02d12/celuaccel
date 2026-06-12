@@ -1,80 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.ClientesActivity" android:foregroundTint="#00FFFFFF">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <!-- Header -->
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#D32F2F"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textView2"
             android:layout_width="match_parent"
-            android:orientation="vertical"
             android:layout_height="wrap_content"
-            android:padding="28dp"
-            tools:ignore="MissingConstraints">
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" android:background="@color/red">
-
-            <TextView
-                    android:text="Gestion Roles"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="20dp"
-                    android:id="@+id/textView2" android:textColor="#FFFFFF"
-                    android:gravity="center"
-            />
-        </FrameLayout>
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Codigo del Rol"
-                android:id="@+id/txtCodigo_Rol"/>
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:layout_marginTop="10dp"
-                android:hint="Descripcion Rol"
-                android:ems="10"
-                android:id="@+id/txtDescripcion_Rol"/>
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            <Button
-                    android:text="Guardar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#242424"
-                    android:id="@+id/btnBuscar"
-            />
-            <Button
-                    android:text="Buscar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#ff0a0a"
-                    android:id="@+id/btnGuardar"
-            />
-            <Button
-                    android:text="Editar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#242424"
-                    android:id="@+id/btnEditar"
-            />
-
-            <Button
-                    android:text="Eliminar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#ff0a0a"
-                    android:id="@+id/btnEliminar"
-            />
-        </LinearLayout>
+            android:text="Gestión de Roles"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Formulario -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:layout_margin="12dp"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agregar / Editar Rol"
+            android:textColor="#D32F2F"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/txtCodigo_Rol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Código del Rol (ej: TEC, ADM)"
+            android:inputType="text"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/txtDescripcion_Rol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Descripción del Rol"
+            android:inputType="text"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Fila de botones acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnGuardar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Guardar"
+                android:backgroundTint="#D32F2F"
+                android:textColor="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/btnEditar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="Editar"
+                android:backgroundTint="#1565C0"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLimpiar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Limpiar campos"
+            android:backgroundTint="#757575"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
+    <!-- Estado / mensaje -->
+    <TextView
+        android:id="@+id/tvMensajeRol"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:text=""
+        android:textSize="13sp"
+        android:visibility="gone"/>
+
+    <!-- Lista de roles -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:text="Roles registrados"
+        android:textColor="#616161"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarRoles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerRoles"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/btnRegresarRoles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:text="Regresar"
+        android:backgroundTint="#424242"
+        android:textColor="#FFFFFF"/>
+
+</LinearLayout>

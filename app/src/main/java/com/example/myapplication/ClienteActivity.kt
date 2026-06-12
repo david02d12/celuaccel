@@ -234,6 +234,11 @@ class ClienteActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        findViewById<Button>(R.id.btnGestionarRoles).setOnClickListener {
+            val intent = Intent(this, RolesActivity::class.java)
+            startActivity(intent)
+        }
+
         btnRegresar.setOnClickListener {
             finish()
         }
