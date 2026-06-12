@@ -27,13 +27,20 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Interceptor de response: manejo global de 401 (token expirado)
+// Interceptor de response: manejo global de 401 (token expirado/inválido)
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.clear();
-            window.location.reload();
+            // Solo cerrar sesión si había un token guardado (usuario autenticado)
+            // Evita el bucle infinito cuando rutas públicas devuelven 401
+            const teniaToken = !!localStorage.getItem('token');
+            if (teniaToken) {
+                localStorage.clear();
+                // Despacha evento personalizado para que App.jsx maneje el logout
+                // sin hacer window.location.reload() (que causaba el bucle)
+                window.dispatchEvent(new CustomEvent('sessionExpired'));
+            }
         }
         return Promise.reject(error);
     }

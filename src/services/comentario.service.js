@@ -9,13 +9,15 @@ export const listar = async () => {
     return data;
 };
 
+/** @param {{ ID_Usuario, Comentario, Estrellas, Fecha_Comentario }} payload */
 export const crear = async (payload) => {
-    const { data } = await api.post('/comentarios/crear', payload);
+    const { data } = await api.post('/comentarios/agregar', payload);
     return data;
 };
 
-export const actualizar = async (id, payload) => {
-    const { data } = await api.put(`/comentarios/actualizar/${id}`, payload);
+/** @param {{ Codigo_Comentario, Comentario, Estrellas, Fecha_Comentario }} payload */
+export const actualizar = async (payload) => {
+    const { data } = await api.put('/comentarios/actualizar', payload);
     return data;
 };
 

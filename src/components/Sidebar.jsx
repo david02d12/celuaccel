@@ -2,55 +2,78 @@ import React from 'react';
 
 const Sidebar = ({ setVista }) => {
   const role = Number(localStorage.getItem('role')) || 2;
+  const currentVista = localStorage.getItem('ultimaVista') || 'home';
+
+  const Btn = ({ label, vista }) => {
+    const isActive = vista === currentVista;
+    return (
+      <button
+        className={`btn text-start sidebar-btn w-100 ${isActive ? 'active' : ''}`}
+        onClick={() => setVista(vista)}
+        data-bs-dismiss="offcanvas"
+      >
+        {label}
+      </button>
+    );
+  };
+
+  const SectionLabel = ({ children }) => (
+    <div className="sidebar-section-label mt-3 mb-1 px-1">{children}</div>
+  );
 
   return (
     <div className="offcanvas-body">
-      <div className="d-grid gap-3">
-        {/* Inicio — accesible para todos */}
-        <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('home')} data-bs-dismiss="offcanvas"> Inicio</button>
+      <div className="d-grid gap-1">
 
-        {/* MÓDULOS EXCLUSIVOS DEL CLIENTE (Rol 2) */}
+        {/* ── GENERAL ── */}
+        <SectionLabel>General</SectionLabel>
+        <Btn label="Inicio"      vista="home" />
+
+        {/* ══ CLIENTE (Rol 2) ══ */}
         {role === 2 && (
           <>
-            <hr className="border-secondary" />
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('miServicio')} data-bs-dismiss="offcanvas"> Mis Servicios</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('chatVista')} data-bs-dismiss="offcanvas"> Chat con Asesor</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('misNotificaciones')} data-bs-dismiss="offcanvas"> Mis Notificaciones</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('catalogo')} data-bs-dismiss="offcanvas"> Catálogo</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('comentarios')} data-bs-dismiss="offcanvas"> Comentarios</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('perfil')} data-bs-dismiss="offcanvas"> Mi Perfil</button>
+            <SectionLabel>Mis Servicios</SectionLabel>
+            <Btn label="Mis Servicios"       vista="miServicio" />
+            <Btn label="Chat con Asesor"     vista="chatVista" />
+            <Btn label="Mis Notificaciones"  vista="misNotificaciones" />
+
+            <SectionLabel>Tienda</SectionLabel>
+            <Btn label="Catálogo"            vista="catalogo" />
+            <Btn label="Comentarios"         vista="comentarios" />
+
+            <SectionLabel>Cuenta</SectionLabel>
+            <Btn label="Mi Perfil"           vista="perfil" />
           </>
         )}
 
-
-        {/* MÓDULOS DE TÉCNICO Y ADMINISTRADOR (Roles 1 y 3) */}
+        {/* ══ TÉCNICO / ADMIN (Roles 1 y 3) ══ */}
         {(role === 1 || role === 3) && (
           <>
-            <hr className="border-secondary" />
-            {/* Módulos de flujo principal */}
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('servicios')} data-bs-dismiss="offcanvas"> Gestión de Servicios</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('chatVista')} data-bs-dismiss="offcanvas"> Chat de Soporte</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('historial')} data-bs-dismiss="offcanvas"> Historial de Eventos</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('notificaciones')} data-bs-dismiss="offcanvas"> Notificaciones</button>
+            <SectionLabel>Operaciones</SectionLabel>
+            <Btn label="Gestión de Servicios"    vista="servicios" />
+            <Btn label="Chat de Soporte"         vista="chatVista" />
+            <Btn label="Historial de Eventos"    vista="historial" />
+            <Btn label="Notificaciones"          vista="notificaciones" />
 
-            <hr className="border-secondary" />
-            {/* Catálogo e inventario */}
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('productos')} data-bs-dismiss="offcanvas"> Gestión de Productos</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('categorias')} data-bs-dismiss="offcanvas"> Categorías</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('preguntas')} data-bs-dismiss="offcanvas"> Preguntas de Productos</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('catalogo')} data-bs-dismiss="offcanvas"> Catálogo</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('comentarios')} data-bs-dismiss="offcanvas"> Comentarios</button>
+            <SectionLabel>Catálogo e Inventario</SectionLabel>
+            <Btn label="Gestión de Productos"    vista="productos" />
+            <Btn label="Categorías"              vista="categorias" />
+            <Btn label="Preguntas de Productos"  vista="preguntas" />
+            <Btn label="Catálogo"                vista="catalogo" />
+            <Btn label="Comentarios"             vista="comentarios" />
           </>
         )}
 
-        {/* MÓDULOS EXCLUSIVOS DEL ADMINISTRADOR (Rol 3) */}
+        {/* ══ SOLO ADMIN (Rol 3) ══ */}
         {role === 3 && (
           <>
-            <hr className="border-secondary" />
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('usuarios')} data-bs-dismiss="offcanvas"> Gestión de Usuarios</button>
-            <button className="btn text-white fw-bold text-start" style={{ backgroundColor: '#DB0000' }} onClick={() => setVista('tipo')} data-bs-dismiss="offcanvas"> Tipos de Documento</button>
+            <SectionLabel>Administración</SectionLabel>
+            <Btn label="Gestión de Usuarios"    vista="usuarios" />
+            <Btn label="Tipos de Documento"     vista="tipo" />
+            <Btn label="Roles"                  vista="roles" />
           </>
         )}
+
       </div>
     </div>
   );

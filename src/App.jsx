@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Login from './components/Login';
@@ -21,6 +21,9 @@ import ChatVista from './components/usuario/ChatVista';
 import MiServicio from './components/usuario/MiServicio';
 import Perfil from './components/usuario/Perfil';
 import MisNotificaciones from './components/usuario/MisNotificaciones';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
+import CatalogoPublico from './components/publico/CatalogoPublico';
 
 // RNF007 — Tiempo de inactividad antes del cierre automático de sesión (15 min)
 const INACTIVIDAD_MS = 15 * 60 * 1000;
@@ -28,19 +31,29 @@ const INACTIVIDAD_MS = 15 * 60 * 1000;
 function App() {
   const [logueado, setLogueado] = useState(false);
   const [modoRegistro, setModoRegistro] = useState(false);
-  const [vista, setVista] = useState(localStorage.getItem('ultimaVista') || 'home');
+  // Si hay token guardado el usuario ya estaba autenticado → ir a su última vista o 'home'
+  // Si no hay token → mostrar el catálogo público como landing
+  const [vista, setVista] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('token')) return 'resetPassword';
+    const token = localStorage.getItem('token');
+    if (token) return localStorage.getItem('ultimaVista') || 'home';
+    return 'catalogoPublico';
+  });
   const [perfilTarget, setPerfilTarget] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) setLogueado(true);
+    // resetPassword se maneja en el inicializador de useState arriba
   }, []);
 
   // RNF007 — Cierre automático por inactividad de 15 minutos
   const cerrarSesion = useCallback(() => {
     localStorage.clear();
     setLogueado(false);
-    setVista('home');
+    setModoRegistro(false);
+    setVista('catalogoPublico'); // Al cerrar sesión vuelve al landing público
   }, []);
 
   useEffect(() => {
@@ -71,6 +84,9 @@ function App() {
   const cambiarVista = (nuevaVista, extra) => {
     setVista(nuevaVista);
     localStorage.setItem('ultimaVista', nuevaVista);
+    if (nuevaVista !== 'registro') {
+      setModoRegistro(false);
+    }
     // Si se navega a 'perfil' con un ID específico, guardarlo
     if (nuevaVista === 'perfil' && extra?.perfilId) {
       setPerfilTarget(extra.perfilId);
@@ -86,19 +102,45 @@ function App() {
     return () => window.removeEventListener('navigateHome', irAlInicio);
   }, []);
 
+  // Escucha el evento de sesión expirada disparado por el interceptor de api.js
+  useEffect(() => {
+    const manejarSesionExpirada = () => {
+      setLogueado(false);
+      setModoRegistro(false);
+      setVista('catalogoPublico');
+    };
+    window.addEventListener('sessionExpired', manejarSesionExpirada);
+    return () => window.removeEventListener('sessionExpired', manejarSesionExpirada);
+  }, []);
+
   if (!logueado) {
-    return modoRegistro
-      ? <Registro setModoRegistro={setModoRegistro} />
-      : <Login setLogueado={setLogueado} setModoRegistro={setModoRegistro} />;
+    if (vista === 'catalogoPublico') {
+      return <CatalogoPublico setVista={cambiarVista} />;
+    }
+    if (vista === 'registro' || modoRegistro) {
+      return <Registro setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
+    }
+    if (vista === 'forgotPassword') {
+      return <ForgotPassword setVista={cambiarVista} />;
+    }
+    if (vista === 'resetPassword') {
+      return <ResetPassword setVista={cambiarVista} />;
+    }
+    // 'login' o cualquier otra vista no reconocida
+    return <Login setLogueado={setLogueado} setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
   }
 
   // SWITCH PARA LAS VISTAS
   const role = Number(localStorage.getItem('role')) || 2;
 
   switch (vista) {
+    // Si por alguna razon llega una vista publica estando autenticado → home
+    case 'catalogoPublico':
+    case 'login':
+    case 'registro':
     case 'home':
       return <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-      
+
     // CLIENTE / USUARIO PUBLICO (Cualquier rol accede)
     case 'miServicio':
       return <MiServicio cerrarSesion={cerrarSesion} setVista={cambiarVista} />;

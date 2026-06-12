@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
@@ -16,12 +16,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   
   const usuario = localStorage.getItem('user') || '';
 
-  
-
   const mostrarToast = (mensaje, tipo = 'success') => {
     setToast({ visible: true, mensaje, tipo });
     setTimeout(() => setToast({ visible: false, mensaje: '', tipo: 'success' }), 3500);
   };
+
   const generarPDF = () => {
     if (servicios.length === 0) return mostrarToast('No tienes servicios para exportar.', 'danger');
     const doc = new jsPDF();
@@ -134,8 +133,8 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
       <Navbar titulo="CELUACCEL — Mis Servicios" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
-        {/* ENCABEZADO CON BOTÓN DESPLEGABLE REPARADO */}
-        <div className="mb-4 p-4 rounded-3 text-white d-flex justify-content-between align-items-center flex-wrap gap-3" style={{ background: 'linear-gradient(135deg, #DB0000, #8B0000)' }}>
+        {/* BANNER CABECERA */}
+        <div className="mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-3 module-banner">
           <div>
             <h4 className="fw-bold mb-1">Seguimiento de mis Servicios</h4>
             <p className="mb-0 opacity-75">Usuario: <strong>{usuario}</strong> — {servicios.length} servicio(s) registrado(s)</p>
@@ -144,31 +143,49 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
             <button className="btn btn-outline-light fw-bold px-3" onClick={generarPDF} title="Descargar historial en PDF">
               Descargar PDF
             </button>
-            <button className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)} style={{ transition: 'all 0.3s ease' }}>
+            <button className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
               {mostrarFormulario ? "Cancelar Solicitud" : "+ Nuevo Servicio"}
             </button>
           </div>
         </div>
 
-        {/* FORMULARIO INYECTADO (VISIBLE SOLO SI SE EXPANDE) */}
+        {/* FORMULARIO SOLICITUD */}
         {mostrarFormulario && (
-          <div className="card shadow-sm mb-4 p-4" style={{ backgroundColor: '#fff', animation: 'fadeIn 0.3s' }}>
-            <h5 className="fw-bold mb-3" style={{ color: '#121212' }}>Solicitar una Reparación Nueva</h5>
+          <div className="card shadow-sm mb-4 p-4 fade-in-up">
+            <h5 className="fw-bold mb-3">Solicitar una Reparación Nueva</h5>
             <div className="row g-3">
               <div className="col-md-4">
                 <label className="small fw-bold text-muted mb-1">Marca y Modelo</label>
-                <input className="form-control" placeholder="Ej: iPhone 13 Pro" value={formNuevo.Movil_Nombre} onChange={e => setFormNuevo({...formNuevo, Movil_Nombre: e.target.value})} />
+                <input 
+                  className="form-control" 
+                  placeholder="Ej: iPhone 13 Pro" 
+                  value={formNuevo.Movil_Nombre} 
+                  onChange={e => setFormNuevo({...formNuevo, Movil_Nombre: e.target.value})} 
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                />
               </div>
               <div className="col-md-4">
                 <label className="small fw-bold text-muted mb-1">Detalle Físico Principal</label>
-                <input className="form-control" placeholder="Ej: Pantalla rota / Batería inflamada" value={formNuevo.Movil_Especificacion} onChange={e => setFormNuevo({...formNuevo, Movil_Especificacion: e.target.value})} />
+                <input 
+                  className="form-control" 
+                  placeholder="Ej: Pantalla rota / Batería inflamada" 
+                  value={formNuevo.Movil_Especificacion} 
+                  onChange={e => setFormNuevo({...formNuevo, Movil_Especificacion: e.target.value})} 
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                />
               </div>
               <div className="col-md-4">
                 <label className="small fw-bold text-muted mb-1">Cuentanos la Falla Cortamente</label>
-                <input className="form-control" placeholder="Ej: El teléfono no carga bien desde ayer..." value={formNuevo.Descripcion} onChange={e => setFormNuevo({...formNuevo, Descripcion: e.target.value})} />
+                <input 
+                  className="form-control" 
+                  placeholder="Ej: El teléfono no carga bien desde ayer..." 
+                  value={formNuevo.Descripcion} 
+                  onChange={e => setFormNuevo({...formNuevo, Descripcion: e.target.value})} 
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                />
               </div>
               <div className="col-12 mt-3 text-end">
-                <button className="btn text-white fw-bold px-5" style={{ backgroundColor: '#DB0000' }} onClick={crearServicio}>
+                <button className="btn btn-primary fw-bold px-5" onClick={crearServicio}>
                   Crear e Ingresar Solicitud
                 </button>
               </div>
@@ -178,13 +195,13 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
 
         {cargando ? (
           <div className="text-center py-5">
-            <div className="spinner-border" style={{ color: '#DB0000' }} role="status" />
+            <div className="spinner-border" style={{ color: 'var(--color-primary)' }} role="status" />
             <p className="mt-3 text-muted">Cargando tus servicios...</p>
           </div>
         ) : servicios.length === 0 && !mostrarFormulario ? (
           <div className="text-center py-5">
             <h5 className="text-muted mt-3">No tienes servicios registrados actualmente.</h5>
-            <button className="btn text-white fw-bold mt-3" style={{ backgroundColor: '#DB0000' }}
+            <button className="btn btn-primary fw-bold mt-3"
               onClick={() => setMostrarFormulario(true)}>
               ¡Solicita tu primera reparación aquí!
             </button>
@@ -195,10 +212,9 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
               const info = etapaInfo(s.Etapa);
               const cancelable = Number(s.Etapa) !== 100 && Number(s.Etapa) !== -1;
               return (
-                <div key={s.ID_Servicio} className="col-md-6">
+                <div key={s.ID_Servicio} className="col-md-6 stagger-item">
                   <div className="card border-0 shadow-sm h-100">
-                    <div className="card-header d-flex justify-content-between align-items-center"
-                      style={{ backgroundColor: '#f8f9fa' }}>
+                    <div className="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom" style={{ borderColor: 'var(--color-border)' }}>
                       <span className="fw-bold">Servicio #{s.ID_Servicio}</span>
                       <span className="badge" style={{ backgroundColor: info.color }}>{info.texto}</span>
                     </div>
@@ -215,12 +231,12 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                             <span className="fw-bold">Progreso Técnico</span>
                             <span className="fw-bold">{info.porcentaje}%</span>
                           </div>
-                          <div className="progress" style={{ height: '10px' }}>
+                          <div className="progress" style={{ height: '10px', backgroundColor: 'var(--color-border)' }}>
                             <div className="progress-bar" role="progressbar"
                               style={{ width: `${info.porcentaje}%`, backgroundColor: info.color }}
                               aria-valuenow={info.porcentaje} aria-valuemin="0" aria-valuemax="100" />
                           </div>
-                          <div className="d-flex justify-content-between mt-2" style={{ fontSize: '0.65rem', color: '#6c757d' }}>
+                          <div className="d-flex justify-content-between mt-2" style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>
                             <span>Recibido</span>
                             <span>Diagnóstico</span>
                             <span>Reparación</span>
@@ -231,8 +247,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                       )}
 
                       <div className="d-flex gap-2 mt-3">
-                        <button className="btn btn-sm text-white fw-bold"
-                          style={{ backgroundColor: '#121212' }}
+                        <button className="btn btn-sm btn-outline-secondary"
                           onClick={() => {
                             localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
                             setVista('chatVista');
@@ -240,8 +255,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                             Chat con Asesor
                         </button>
                         {cancelable && (
-                          <button className="btn btn-sm text-white fw-bold"
-                            style={{ backgroundColor: '#DB0000' }}
+                          <button className="btn btn-sm btn-outline-danger"
                             onClick={() => cancelarServicio(s.ID_Servicio)}>
                             Cancelar Solicitud
                           </button>
@@ -256,7 +270,8 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
         )}
       </div>
 
-      <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal" style={{ backgroundColor: '#121212' }}>
+      {/* MENÚ LATERAL */}
+      <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>

@@ -1,7 +1,7 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 
-const Registro = ({ setModoRegistro }) => {
+const Registro = ({ setModoRegistro, setVista }) => {
   const [formReg, setFormReg] = useState({
     ID_Usuario: '', Codigo_Documento: '', Nombre: '',
     Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: ''
@@ -10,9 +10,6 @@ const Registro = ({ setModoRegistro }) => {
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
 
   useEffect(() => {
-    // Cargar tipos de documento reales de la DB (endpoint público post-login no aplica aquí,
-    // pero el endpoint de tipodocumento requiere token. Usamos lista estática que coincide con
-    // los datos insertados en la DB mientras no haya un endpoint público.)
     setTiposDoc([
       { Codigo_Documento: 1, Nombre_Documento: 'Cédula' },
       { Codigo_Documento: 2, Nombre_Documento: 'Tarjeta de Identidad' },
@@ -52,16 +49,25 @@ const Registro = ({ setModoRegistro }) => {
         ID_Usuario: formReg.ID_Usuario.trim(),
         Clave: formReg.Clave.trim()
       });
-      mostrarToast('¡Registro exitoso! Ya puedes iniciar sesión.', true);
-      setTimeout(() => setModoRegistro(false), 2000);
+      mostrarToast('Registro exitoso. Ya puedes iniciar sesión.', true);
+      setTimeout(() => {
+        if (setModoRegistro) setModoRegistro(false);
+        if (setVista) setVista('login');
+      }, 2000);
     } catch (err) {
       const msg = err.response?.data?.error || 'Error al registrar el usuario.';
       mostrarToast(msg, false);
     }
   };
 
+  const inputStyle = {
+    backgroundColor: 'var(--color-bg)',
+    color: 'var(--color-text)',
+    borderColor: 'var(--color-border)'
+  };
+
   return (
-    <div className="container py-5">
+    <div className="container py-5 d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
       {/* TOAST */}
       {toast.visible && (
         <div className={`toast show position-fixed top-0 end-0 m-3 text-white ${toast.ok ? 'bg-success' : 'bg-danger'}`}
@@ -70,23 +76,22 @@ const Registro = ({ setModoRegistro }) => {
         </div>
       )}
 
-      <div className="card p-4 mx-auto shadow-sm border-0" style={{ maxWidth: '480px' }}>
+      <div className="card p-4 mx-auto shadow-lg border-0" style={{ maxWidth: '480px', width: '100%' }}>
         <div className="text-center mb-4">
-          <div style={{ fontSize: '2rem', color: '#DB0000' }}></div>
-          <h4 className="fw-bold" style={{ color: '#121212' }}>Registro en Celuaccel</h4>
+          <h4 className="fw-bold">Registro en Celuaccel</h4>
           <p className="text-muted small">Crea tu cuenta para acceder al sistema</p>
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold small">Número de Identificación *</label>
-          <input className="form-control" placeholder="Ej: 1001234567"
+          <label className="form-label fw-bold small text-muted">Número de Identificación *</label>
+          <input className="form-control" style={inputStyle} placeholder="Ej: 1001234567"
             value={formReg.ID_Usuario}
             onChange={e => setFormReg({ ...formReg, ID_Usuario: e.target.value })} />
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold small">Tipo de Documento *</label>
-          <select className="form-select" value={formReg.Codigo_Documento}
+          <label className="form-label fw-bold small text-muted">Tipo de Documento *</label>
+          <select className="form-select" style={inputStyle} value={formReg.Codigo_Documento}
             onChange={e => setFormReg({ ...formReg, Codigo_Documento: e.target.value })}>
             <option value="">Seleccione un tipo...</option>
             {tiposDoc.map(t => (
@@ -96,15 +101,15 @@ const Registro = ({ setModoRegistro }) => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold small">Nombre Completo *</label>
-          <input className="form-control" placeholder="Ej: Juan Pérez"
+          <label className="form-label fw-bold small text-muted">Nombre Completo *</label>
+          <input className="form-control" style={inputStyle} placeholder="Ej: Juan Pérez"
             value={formReg.Nombre}
             onChange={e => setFormReg({ ...formReg, Nombre: e.target.value })} />
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold small">Fecha de Nacimiento</label>
-          <input className="form-control" type="date"
+          <label className="form-label fw-bold small text-muted">Fecha de Nacimiento</label>
+          <input className="form-control" style={inputStyle} type="date"
             max={new Date(Date.now() - 86400000).toISOString().split('T')[0]}
             value={formReg.Fecha_Nacimiento}
             onChange={e => setFormReg({ ...formReg, Fecha_Nacimiento: e.target.value })} />
@@ -112,40 +117,42 @@ const Registro = ({ setModoRegistro }) => {
 
         <div className="row mb-3">
           <div className="col-6">
-            <label className="form-label fw-bold small">Dirección</label>
-            <input className="form-control" placeholder="Calle 45 #12-30"
+            <label className="form-label fw-bold small text-muted">Dirección</label>
+            <input className="form-control" style={inputStyle} placeholder="Calle 45 #12-30"
               value={formReg.Direccion}
               onChange={e => setFormReg({ ...formReg, Direccion: e.target.value })} />
           </div>
           <div className="col-6">
-            <label className="form-label fw-bold small">Teléfono</label>
-            <input className="form-control" placeholder="3001234567"
+            <label className="form-label fw-bold small text-muted">Teléfono</label>
+            <input className="form-control" style={inputStyle} placeholder="3001234567"
               value={formReg.Telefono}
               onChange={e => setFormReg({ ...formReg, Telefono: e.target.value })} />
           </div>
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold small">Correo Electrónico *</label>
-          <input className="form-control" type="email" placeholder="correo@ejemplo.com"
+          <label className="form-label fw-bold small text-muted">Correo Electrónico *</label>
+          <input className="form-control" style={inputStyle} type="email" placeholder="correo@ejemplo.com"
             value={formReg.Correo}
             onChange={e => setFormReg({ ...formReg, Correo: e.target.value })} />
         </div>
 
         <div className="mb-4">
-          <label className="form-label fw-bold small">Contraseña *</label>
-          <input className="form-control" type="password" placeholder="Mín. 6 caracteres"
+          <label className="form-label fw-bold small text-muted">Contraseña *</label>
+          <input className="form-control" style={inputStyle} type="password" placeholder="Mín. 6 caracteres"
             value={formReg.Clave}
             onChange={e => setFormReg({ ...formReg, Clave: e.target.value })} />
         </div>
 
-        <button className="btn w-100 text-white fw-bold py-2" style={{ backgroundColor: '#DB0000' }}
-          onClick={registrarUsuario}>
+        <button className="btn w-100 btn-primary py-2 mb-2" onClick={registrarUsuario}>
           Crear Cuenta
         </button>
-        <button className="btn btn-link w-100 mt-2 text-decoration-none" style={{ color: '#121212' }}
-          onClick={() => setModoRegistro(false)}>
-          ← Volver al inicio de sesión
+        <button className="btn btn-outline-secondary w-100"
+          onClick={() => {
+            if (setModoRegistro) setModoRegistro(false);
+            if (setVista) setVista('login');
+          }}>
+          Volver al inicio de sesión
         </button>
       </div>
     </div>

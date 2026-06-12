@@ -22,8 +22,7 @@ const Paginacion = ({ pagina, totalPaginas, setPagina }) => {
       {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(n => (
         <button
           key={n}
-          className={`btn btn-sm ${n === pagina ? 'text-white' : 'btn-outline-secondary'}`}
-          style={n === pagina ? { backgroundColor: '#DB0000', border: 'none' } : {}}
+          className={`btn btn-sm ${n === pagina ? 'btn-primary' : 'btn-outline-secondary'}`}
           onClick={() => setPagina(n)}
         >{n}</button>
       ))}
