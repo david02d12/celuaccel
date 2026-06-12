@@ -13,11 +13,18 @@ const getMios = (idUsuario) =>
         [idUsuario, idUsuario]
     );
 
-const findByServicio = (ID_Servicio) =>
-    query('SELECT Codigo_Chat FROM Chat WHERE ID_Servicio = ?', [ID_Servicio]);
+const findByServicio = (ID_Servicio) => {
+    if (ID_Servicio === null || ID_Servicio === undefined) return Promise.resolve([]);
+    return query('SELECT Codigo_Chat FROM Chat WHERE ID_Servicio = ?', [ID_Servicio]);
+};
 
-const create = (ID_Usuario, ID_Servicio) =>
-    query('INSERT INTO Chat (ID_Usuario, ID_Servicio) VALUES (?, ?)', [ID_Usuario, ID_Servicio]);
+const create = (ID_Usuario, ID_Servicio) => {
+    if (ID_Servicio !== null && ID_Servicio !== undefined) {
+        return query('INSERT INTO Chat (ID_Usuario, ID_Servicio) VALUES (?, ?)', [ID_Usuario, ID_Servicio]);
+    }
+    // Chat de consulta de catálogo: sin servicio asociado
+    return query('INSERT INTO Chat (ID_Usuario) VALUES (?)', [ID_Usuario]);
+};
 
 const update = ({ ID_Usuario, ID_Servicio, Codigo_Chat }) =>
     query(

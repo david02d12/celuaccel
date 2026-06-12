@@ -55,7 +55,14 @@ const updateMiPerfil = ({ Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo,
     );
 };
 
+const findByEmail = (email) =>
+    query('SELECT * FROM Usuario WHERE TRIM(Correo) = ?', [email]);
+
+const updatePassword = (id, hashedClave) =>
+    query('UPDATE Usuario SET Contraseña = ? WHERE ID_Usuario = ?', [hashedClave, id]);
+
 const remove = (id) =>
     query('DELETE FROM Usuario WHERE ID_Usuario = ?', [id]);
 
-module.exports = { getAll, findById, findByUsername, getRol, create, update, updateMiPerfil, remove };
+module.exports = { getAll, findById, findByUsername, getRol, create, update, updateMiPerfil, findByEmail, updatePassword, remove };
+

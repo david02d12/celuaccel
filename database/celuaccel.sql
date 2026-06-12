@@ -1,121 +1,123 @@
 /*Crear Base de Datos*/
 create database celuaccel;
+use celuaccel;
 
 /*Crear tabla producto*/
 create table Producto (
-	Codigo_Producto varchar(50) not null, 
-	Cantidad int(10) not null, 
-	Precio double not null, 
-	Nombre varchar(50) not null, 
-	Descripcion varchar(50) not null, 
-	Imagen varchar(50) not null, 
-	Activo_Catalogo int(10) not null, 
-	ID_Categoria int(10) not null, 
-	primary key (Codigo_Producto)
-	);
+    Codigo_Producto varchar(50) not null, 
+    Cantidad int(10) not null, 
+    Precio double not null, 
+    Nombre varchar(50) not null, 
+    Descripcion varchar(50) not null, 
+    Imagen varchar(50) not null, 
+    Activo_Catalogo int(10) not null, 
+    ID_Categoria int(10) not null, 
+    primary key (Codigo_Producto)
+    );
 
 /*Crear tabla servicio*/
 create table Servicio (
-	ID_Servicio int(10) not null auto_increment, 
-	Descripcion varchar(50) not null, 
-	ID_Usuario varchar(50) not null, 
-	Precio double not null, 
-	Movil_Nombre varchar(50) not null, 
-	Movil_Especificacion varchar(50) not null, 
-	Fecha date not null, 
-	Etapa int(20) not null, 
-	primary key (ID_Servicio)
-	);
+    ID_Servicio int(10) not null auto_increment, 
+    Descripcion varchar(50) not null, 
+    ID_Usuario varchar(50) not null, 
+    Precio double not null, 
+    Movil_Nombre varchar(50) not null, 
+    Movil_Especificacion varchar(50) not null, 
+    Fecha date not null, 
+    Etapa int(20) not null, 
+    primary key (ID_Servicio)
+    );
 
 /*Crear tabla chat*/
 create table Chat (
-	Codigo_Chat int(10) not null auto_increment, 
-	ID_Usuario varchar(50) not null, 
-	ID_Servicio int(10) not null, 
-	primary key (Codigo_Chat)
-	);
+    Codigo_Chat int(10) not null auto_increment, 
+    ID_Usuario varchar(50) not null, 
+    ID_Servicio int(10) null, 
+    primary key (Codigo_Chat)
+    );
 
 /*Crear tabla usuario*/
 create table Usuario (
-	ID_Usuario varchar(50) not null, 
-	Codigo_Documento int(10) not null, 
-	Nombre varchar(50) not null, 
-	Fecha_Nacimiento date not null, 
-	Direccion varchar(50) not null, 
-	Telefono varchar(50) not null, 
-	Correo varchar(50) not null, 
-	Contraseña varchar(200) not null, 
-	Codigo_Rol int(10) not null, 
-	primary key (ID_Usuario)
-	);
+    ID_Usuario varchar(50) not null, 
+    Codigo_Documento int(10) not null, 
+    Nombre varchar(50) not null, 
+    Fecha_Nacimiento date not null, 
+    Direccion varchar(50) not null, 
+    Telefono varchar(50) not null, 
+    Correo varchar(50) not null, 
+    Contraseña varchar(200) not null, 
+    Codigo_Rol int(10) not null, 
+    primary key (ID_Usuario)
+    );
 
 /*Crear tabla mensajes*/
 create table Mensajes (
-	Codigo_Mensaje int(10) not null auto_increment, 
-	Codigo_Chat int(10) not null, 
-	ID_Usuario varchar(50) not null, 
-	Fecha_Mensaje date not null, 
-	Mensaje varchar(50) not null, 
-	Estado int(10) not null, 
-	primary key (Codigo_Mensaje)
-	);
+    Codigo_Mensaje int(10) not null auto_increment, 
+    Codigo_Chat int(10) not null, 
+    ID_Usuario varchar(50) not null, 
+    Fecha_Mensaje date not null, 
+    Mensaje varchar(500) not null, 
+    Estado int(10) not null, 
+    primary key (Codigo_Mensaje)
+    );
 
 /*Crear tabla comentarios*/
 create table Comentarios (
-	Codigo_Comentario int(10) not null auto_increment, 
-	ID_Usuario varchar(50) not null, 
-	Comentario varchar(50) not null, 
-	Fecha_Comentario date not null, 
-	primary key (Codigo_Comentario)
-	);
+    Codigo_Comentario int(10) not null auto_increment, 
+    ID_Usuario varchar(50) not null, 
+    Comentario varchar(500) not null, 
+    Fecha_Comentario date not null, 
+    Estrellas int(1) not null default 5,
+    primary key (Codigo_Comentario)
+    );
 
 /*Crear tabla notificaciones*/
 create table Notificaciones (
-	Codigo_Notificaciones int(10) not null, 
-	Tipo_Notificacion varchar(50) not null, 
-	primary key (Codigo_Notificaciones)
-	);
+    Codigo_Notificaciones int(10) not null auto_increment, 
+    Tipo_Notificacion varchar(1000) not null, 
+    primary key (Codigo_Notificaciones)
+    );
 
 /*Crear tabla roles*/
 create table Roles (
-	Codigo_Rol int(10) not null, 
-	Descripcion_Rol varchar(50) not null, 
-	primary key (Codigo_Rol)
-	);
+    Codigo_Rol int(10) not null, 
+    Descripcion_Rol varchar(50) not null, 
+    primary key (Codigo_Rol)
+    );
 
 /*Crear tabla pregunta*/
 create table Pregunta (
-	ID_Consulta int(10) not null, 
-	ID_Usuario varchar(50) not null, 
-	Codigo_Producto varchar(50) not null, 
-	Pregunta varchar(50) not null, 
-	Fecha date not null, 
-	primary key (ID_Consulta)
-	);
+    ID_Consulta int(10) not null auto_increment, 
+    ID_Usuario varchar(50) not null, 
+    Codigo_Producto varchar(50) not null, 
+    Pregunta varchar(500) not null, 
+    Fecha date not null, 
+    primary key (ID_Consulta)
+    );
 
 /*Crear tabla categoria*/
 create table Categoria (
-	ID_Categoria int(10) not null, 
-	Nombre_Categoria varchar(50) not null, 
-	primary key (ID_Categoria)
-	);
+    ID_Categoria int(10) not null, 
+    Nombre_Categoria varchar(50) not null, 
+    primary key (ID_Categoria)
+    );
 
 /*Crear tabla historial de servicios*/
 create table Historial_Servicios (
-	ID_Historial varchar(50) not null, 
-	ID_Servicio int(10) not null, 
-	Fecha_Evento date not null, 
-	Descripcion_Evento varchar(50) not null, 
-	Estado varchar(50) not null, 
-	primary key (ID_Historial)
-	);
+    ID_Historial int(10) not null auto_increment, 
+    ID_Servicio int(10) not null, 
+    Fecha_Evento date not null, 
+    Descripcion_Evento varchar(50) not null, 
+    Estado varchar(50) not null, 
+    primary key (ID_Historial)
+    );
 
 /*Crear tabla de tipos de documento*/
 create table Tipo_Documento (
-	Codigo_Documento int(10) not null, 
-	Nombre_Documento varchar(50) not null, 
-	primary key (Codigo_Documento)
-	);
+    Codigo_Documento int(10) not null, 
+    Nombre_Documento varchar(50) not null, 
+    primary key (Codigo_Documento)
+    );
 
 /*Conexiones de llaves foraneas de las tablas*/
 alter table Chat add foreign key (ID_Usuario) references Usuario (ID_Usuario);
@@ -140,7 +142,6 @@ alter table Pregunta add foreign key (Codigo_Producto) references Producto (Codi
 
 alter table Pregunta add foreign key (ID_Usuario) references Usuario (ID_Usuario);
 
-alter table Chat add foreign key (ID_Servicio) references Servicio (ID_Servicio);
 
 
 /*Insertar datos roles*/
@@ -151,35 +152,25 @@ insert into roles(Codigo_Rol,Descripcion_Rol) values('2','El rol es cliente');
 insert into roles(Codigo_Rol,Descripcion_Rol) values('3','El rol es administrador');
 
 /*Insertar datos notificaciones*/
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('1','Su celular esta listo');
+insert into notificaciones(Tipo_Notificacion) values('Su celular esta listo');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('2','Su celular esta siendo reparado');
+insert into notificaciones(Tipo_Notificacion) values('Su celular esta siendo reparado');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('3','Su equipo esta listo');
+insert into notificaciones(Tipo_Notificacion) values('Su equipo esta listo');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('4','Su equipo esta siendo reparado');
+insert into notificaciones(Tipo_Notificacion) values('Su equipo esta siendo reparado');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('5','Nuevo Mensaje');
+insert into notificaciones(Tipo_Notificacion) values('Nuevo Mensaje');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('6','Actualizacion en Servicio');
+insert into notificaciones(Tipo_Notificacion) values('Actualizacion en Servicio');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('7','Servicio Cancelado');
+insert into notificaciones(Tipo_Notificacion) values('Servicio Cancelado');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('8','Servicio Aceptado');
+insert into notificaciones(Tipo_Notificacion) values('Servicio Aceptado');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('9','Nuevo Servicio');
+insert into notificaciones(Tipo_Notificacion) values('Nuevo Servicio');
 
-insert into notificaciones(Codigo_Notificaciones,Tipo_Notificacion) 
-values('10','Nuevos Productos en el Catalogo');
+insert into notificaciones(Tipo_Notificacion) values('Nuevos Productos en el Catalogo');
 
 /*Insertar datos tipo de documento*/
 insert into tipo_documento(Codigo_Documento,Nombre_Documento) 
@@ -230,34 +221,34 @@ values('10','Mouse');
 
 /*Insertar datos Usuario*/
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('10045612317','1','Carlos Andrés Ramírez Torres','2000/05/12','Calle 72 #15-34','3108457291','carlostorres@email.com','a9T3xL2q','2');
+values('10045612317','1','Carlos Andrés Ramírez Torres','2000/05/12','Calle 72 #15-34','3108457291','carlostorres@email.com','$2b$10$s0obWGI3K0zhBs46cBLCr.Dhcooly3HMt9jCriDpJzm2IqBvAdsai','2');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('10008547854','1','María Fernanda Gómez Ríos','2000/05/13','Carrera 11 #84-20','3120938475','mariagomez@email.com','M7b2Kp8Z','2');
+values('10008547854','1','María Fernanda Gómez Ríos','2000/05/13','Carrera 11 #84-20','3120938475','mariagomez@email.com','$2b$10$7voaTBUvzY5ObwDb0YQ/9uKgVXolNZZjbVqXsQ8MvAn8i5geDPAVS','2');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('91820473651','1','José Miguel Herrera Salazar','2000/05/14','Calle 134 #19-50','3358472019','joseherre@email.com','Y6p4nK3W','3'); 
+values('91820473651','1','José Miguel Herrera Salazar','2000/05/14','Calle 134 #19-50','3358472019','joseherre@email.com','$2b$10$ogkOja6pe1lxDDoayvc7/./w1E9iBAbDIzOi8RgnpN0LgotRQl6Dq','3'); 
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('67890123458','2','Valeria Carolina Torres Aguirre','2000/05/15','Transversal 6 #45-67','3258472930','carolinaaguirre@email.com','f9C3xV7n','1');
+values('67890123458','2','Valeria Carolina Torres Aguirre','2000/05/15','Transversal 6 #45-67','3258472930','carolinaaguirre@email.com','$2b$10$6QtE.fj//MuO58rd1vCgBOpyeXda1RSzP08ak.50ElvPjNXXzk7wS','1');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('12938475602','3','Tomás Alejandro García Montoya','2000/05/16','Carrera 13 #100-89','3273849201','tomasgarcia@email.com','R1k8zL5p','1');
+values('12938475602','3','Tomás Alejandro García Montoya','2000/05/16','Carrera 13 #100-89','3273849201','tomasgarcia@email.com','$2b$10$1L7uHPTBaiJyNdYF87WIo.qBmtVQ4TWlxRCX88WURglCh6DCfhAou','1');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('425124636','5','Pepito Angel Perez Sanches','2000/05/17','Calle 45 # 22-30','300 123 4567','Pepitopapi@gmail.com','a9T3xL2q','2');
+values('425124636','5','Pepito Angel Perez Sanches','2000/05/17','Calle 45 # 22-30','300 123 4567','Pepitopapi@gmail.com','$2b$10$s0obWGI3K0zhBs46cBLCr.Dhcooly3HMt9jCriDpJzm2IqBvAdsai','2');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('25863675','4','Balatro Balatrez Castillo','2000/05/18','Carrera 16 # 78-45','314 987 6543','Balatroestajugando@gmail.com','M7b2Kp8Z','2');
+values('25863675','4','Balatro Balatrez Castillo','2000/05/18','Carrera 16 # 78-45','314 987 6543','Balatroestajugando@gmail.com','$2b$10$7voaTBUvzY5ObwDb0YQ/9uKgVXolNZZjbVqXsQ8MvAn8i5geDPAVS','2');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('B5465312','2','Olga Miriam De la Rosa Torres','2000/05/19','Avenida 19 # 50-21','311 555 7890','MiriamRosa@gmail.com','Y6p4nK3W','2');
+values('B5465312','2','Olga Miriam De la Rosa Torres','2000/05/19','Avenida 19 # 50-21','311 555 7890','MiriamRosa@gmail.com','$2b$10$ogkOja6pe1lxDDoayvc7/./w1E9iBAbDIzOi8RgnpN0LgotRQl6Dq','2');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('68943521','3','Yenifer Vivina Goonzalez Gonzalez ','2000/05/20','Calle 100 # 12-90','318 432 8765','Yenifervivi@gmail.com','f9C3xV7n','2');
+values('68943521','3','Yenifer Vivina Goonzalez Gonzalez ','2000/05/20','Calle 100 # 12-90','318 432 8765','Yenifervivi@gmail.com','$2b$10$6QtE.fj//MuO58rd1vCgBOpyeXda1RSzP08ak.50ElvPjNXXzk7wS','2');
 
 insert into usuario(ID_Usuario,Codigo_Documento,Nombre,Fecha_Nacimiento,Direccion,Telefono,Correo,Contraseña,Codigo_Rol) 
-values('55461352789','2','Anderson Alejandro Paredes Arboleda','2000/05/21','Carrera 9 # 35-15','320 111 2233','lejandroparedes@gmail.com','R1k8zL5p','2');
+values('55461352789','2','Anderson Alejandro Paredes Arboleda','2000/05/21','Carrera 9 # 35-15','320 111 2233','lejandroparedes@gmail.com','$2b$10$1L7uHPTBaiJyNdYF87WIo.qBmtVQ4TWlxRCX88WURglCh6DCfhAou','2');
 
 /*Insertar datos producto*/
 insert into producto(Codigo_Producto,Cantidad,Precio,Nombre,Descripcion,Imagen,Activo_Catalogo,ID_Categoria) 
@@ -354,65 +345,65 @@ values('10','B5465312','10');
 
 /*Insertar datos mensajes*/
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('1','1','425124636','2025/07/13','TEXTO','1');
+values('1','1','425124636','2025/07/13','Buenos días, ¿cuándo estará listo mi equipo?','1');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('2','2','12938475602','2025/07/14','TEXTO','0');
+values('2','2','12938475602','2025/07/14','¿Me pueden dar un presupuesto estimado?','0');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('3','3','67890123458','2025/07/15','TEXTO','1');
+values('3','3','67890123458','2025/07/15','Hola, ¿hay alguna novedad con mi teléfono?','1');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('4','4','55461352789','2025/07/16','TEXTO','0');
+values('4','4','55461352789','2025/07/16','Buen día, ¿en qué estado va la reparación?','0');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('5','5','68943521','2025/07/17','TEXTO','1');
+values('5','5','68943521','2025/07/17','Gracias por atenderme, espero su respuesta.','1');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('6','6','25863675','2025/07/15','TEXTO','1');
+values('6','6','25863675','2025/07/15','¿Ya diagnosticaron el problema de los altavoces?','1');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('7','7','10008547854','2025/07/13','TEXTO','0');
+values('7','7','10008547854','2025/07/13','Confirmen cuando puedan reemplazar la entrada USB.','0');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('8','8','10045612317','2025/07/22','TEXTO','1');
+values('8','8','10045612317','2025/07/22','Avísenme si el costo cambia, por favor.','1');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('9','9','25863675','2025/07/23','TEXTO','0');
+values('9','9','25863675','2025/07/23','¿Cuánto tardarán en reparar el botón de volumen?','0');
 
 insert into mensajes(Codigo_Mensaje,Codigo_Chat,ID_Usuario,Fecha_Mensaje,Mensaje,Estado) 
-values('10','10','B5465312','2025/07/14','TEXTO','0');
+values('10','10','B5465312','2025/07/14','Espero que la cámara tenga solución, gracias.','0');
 
 /*Insertar datos comentarios*/
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('1','425124636','TEXTO','2025/07/13');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('1','425124636','Excelente servicio, cambiaron el protector de mi iPhone en menos de 20 minutos. Muy recomendados!','2025/07/13','5');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('2','12938475602','TEXTO','2025/07/14');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('2','12938475602','Buen trabajo en general, aunque el tiempo de espera fue un poco largo. El resultado final fue muy bueno.','2025/07/14','4');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('3','67890123458','TEXTO','2025/07/15');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('3','67890123458','Repararon el display de mi Pixel 9 como nuevo. Personal amable y precios justos.','2025/07/15','5');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('4','55461352789','TEXTO','2025/07/16');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('4','55461352789','Muy buena atención, solucionaron el problema del display rápidamente. Volvería sin dudarlo.','2025/07/16','5');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('5','68943521','TEXTO','2025/07/17');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('5','68943521','Cambiaron la batería de mi Motorola y quedó como nuevo. Excelente relación calidad-precio.','2025/07/17','4');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('6','25863675','TEXTO','2025/07/22');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('6','25863675','El técnico fue muy profesional. Me explicó todo el proceso antes de comenzar la reparación.','2025/07/22','5');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('7','10008547854','TEXTO','2025/07/23');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('7','10008547854','Repararon la entrada USB de mi Oppo en el día. Muy satisfecha con el servicio.','2025/07/23','4');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('8','10045612317','TEXTO','2025/07/24');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('8','10045612317','Buen servicio aunque el precio me pareció un poco elevado. La reparación quedó perfecta.','2025/07/24','3');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('9','25863675','TEXTO','2025/07/24');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('9','25863675','Segunda vez que los visito y siempre cumplen. Muy recomendados para reparaciones de celulares.','2025/07/24','5');
 
-insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario) 
-values('10','B5465312','TEXTO','2025/07/22');
+insert into comentarios(Codigo_Comentario,ID_Usuario,Comentario,Fecha_Comentario,Estrellas) 
+values('10','B5465312','Arreglaron la cámara de mi iPhone 6 perfectamente. Pensé que no tenía solución y la encontraron.','2025/07/22','5');
 
 /*Insertar datos pregunta*/
 insert into pregunta(ID_Consulta,ID_Usuario,Codigo_Producto,Pregunta,Fecha) 
@@ -437,7 +428,7 @@ insert into pregunta(ID_Consulta,ID_Usuario,Codigo_Producto,Pregunta,Fecha)
 values('7','10008547854','PRO007','Hola,Los Audifonos tienen botones?','2025/08/06');
 
 insert into pregunta(ID_Consulta,ID_Usuario,Codigo_Producto,Pregunta,Fecha) 
-values('8','10045612317','PRO008','Hola, cuantas espacio para baterias?','20/08/25');
+values('8','10045612317','PRO008','Hola, cuantas espacio para baterias?','2025/08/25');
 
 insert into pregunta(ID_Consulta,ID_Usuario,Codigo_Producto,Pregunta,Fecha) 
 values('9','25863675','PRO009','Disculpe,El teclado tiene garantia?','2025/08/22');

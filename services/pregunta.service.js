@@ -15,7 +15,10 @@ const agregar = async (data, userId) => {
     if (String(ID_Usuario).trim() !== String(userId).trim() && miRol === 2) {
         throw new AppError('Acceso denegado: no puedes preguntar en nombre de otro usuario.', 403);
     }
-    return preguntaDao.create({ ...data, ID_Usuario: userId });
+    // C4 FIX: Técnicos/admins pueden registrar preguntas con el ID_Usuario enviado.
+    // Clientes solo pueden registrar para sí mismos (ya validado arriba).
+    const idFinal = (miRol === 1 || miRol === 3) ? String(ID_Usuario).trim() : userId;
+    return preguntaDao.create({ ...data, ID_Usuario: idFinal });
 };
 
 const actualizar = async (data) => {

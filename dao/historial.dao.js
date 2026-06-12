@@ -1,13 +1,13 @@
-﻿const { queryPromise: query } = require('../config/db');
+const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
     query('SELECT * FROM Historial_Servicios');
 
-const create = ({ ID_Historial, ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado }) =>
+const create = ({ ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado }) =>
     query(
-        `INSERT INTO Historial_Servicios (ID_Historial, ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado)
-         VALUES (?, ?, ?, ?, ?)`,
-        [ID_Historial, ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado]
+        `INSERT INTO Historial_Servicios (ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado)
+         VALUES (?, ?, ?, ?)`,
+        [ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado]
     );
 
 const update = ({ ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado, ID_Historial }) =>

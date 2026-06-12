@@ -72,4 +72,71 @@ const actualizarMiPerfil = async (idSolicitante, { Nombre, Fecha_Nacimiento, Dir
     if (result.affectedRows === 0) throw new AppError('Usuario no encontrado.', 404);
 };
 
-module.exports = { registro, login, listar, actualizar, eliminar, perfilPublico, actualizarMiPerfil };
+const sendEmail = require('./email.service');
+
+const forgotPassword = async (email) => {
+    if (!email) throw new AppError('El correo electrónico es obligatorio.', 400);
+    const users = await usuarioDao.findByEmail(email.trim());
+    if (users.length === 0) {
+        throw new AppError('No existe ningún usuario registrado con ese correo electrónico.', 404);
+    }
+
+    const user = users[0];
+    // Generar un token JWT firmado con la combinación del SECRET_KEY y el hash de la contraseña actual del usuario
+    const token = jwt.sign(
+        { id: user.ID_Usuario, email: user.Correo },
+        SECRET_KEY + user.Contraseña,
+        { expiresIn: '15m' }
+    );
+
+    const resetUrl = `http://localhost:5173/?token=${token}`;
+    const text = `Hola ${user.Nombre},\n\nHemos recibido una solicitud para restablecer la contraseña de tu cuenta en CeluAccel.\n\nPara continuar, haz clic en el siguiente enlace:\n\n${resetUrl}\n\nEste enlace es de un solo uso y expirará en 15 minutos.\n\nSi no solicitaste este cambio, puedes ignorar este correo de forma segura.`;
+
+    await sendEmail(user.Correo, 'Recuperación de contraseña — CeluAccel', text);
+};
+
+const resetPassword = async (token, newPassword) => {
+    if (!token || !newPassword) throw new AppError('El token y la nueva contraseña son obligatorios.', 400);
+
+    let decoded;
+    try {
+        decoded = jwt.decode(token);
+    } catch (err) {
+        throw new AppError('Token inválido.', 400);
+    }
+
+    if (!decoded || !decoded.id) throw new AppError('Token inválido.', 400);
+
+    const users = await usuarioDao.findByUsername(decoded.id);
+    if (users.length === 0) throw new AppError('Usuario no encontrado.', 404);
+
+    const user = users[0];
+    
+    try {
+        jwt.verify(token, SECRET_KEY + user.Contraseña);
+    } catch (err) {
+        throw new AppError('El enlace de recuperación es inválido o ha expirado.', 400);
+    }
+
+    const hashedClave = await bcrypt.hash(newPassword.trim(), SALT_ROUNDS);
+    await usuarioDao.updatePassword(user.ID_Usuario, hashedClave);
+};
+
+const changePassword = async (userId, oldPassword, newPassword) => {
+    if (!userId || !oldPassword || !newPassword) {
+        throw new AppError('Todos los campos son obligatorios.', 400);
+    }
+
+    const users = await usuarioDao.findByUsername(userId);
+    if (users.length === 0) throw new AppError('Usuario no encontrado.', 404);
+
+    const user = users[0];
+    const match = await bcrypt.compare(oldPassword.trim(), user.Contraseña);
+    if (!match) throw new AppError('La contraseña actual es incorrecta.', 400);
+
+    const hashedClave = await bcrypt.hash(newPassword.trim(), SALT_ROUNDS);
+    await usuarioDao.updatePassword(userId, hashedClave);
+};
+
+module.exports = { registro, login, listar, actualizar, eliminar, perfilPublico, actualizarMiPerfil, forgotPassword, resetPassword, changePassword };
+

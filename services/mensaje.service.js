@@ -7,8 +7,14 @@ const agregar = async ({ Codigo_Chat, ID_Usuario, Fecha_Mensaje, Mensaje, Estado
     if (!Codigo_Chat || !ID_Usuario || !Mensaje) {
         throw new AppError('Los campos Codigo_Chat, ID_Usuario y Mensaje son obligatorios.', 400);
     }
-    const fecha = Fecha_Mensaje || new Date().toISOString().split('T')[0];
-    const result = await mensajeDao.create({ Codigo_Chat, ID_Usuario, Fecha_Mensaje: fecha, Mensaje, Estado });
+    // C2 FIX: Estado: 0 = no leído (recién enviado), 1 = leído — BD usa TINYINT(1)
+    // Los mensajes nuevos siempre se crean con Estado=0 (sin leer)
+    const estadoInt = (Estado === 1 || Estado === true || String(Estado).toLowerCase().includes('le') && !String(Estado).toLowerCase().includes('env'))
+        ? 1
+        : 0;
+    // Fecha_Mensaje: guardar como DATETIME completo para la nueva BD
+    const fecha = Fecha_Mensaje || new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const result = await mensajeDao.create({ Codigo_Chat, ID_Usuario, Fecha_Mensaje: fecha, Mensaje, Estado: estadoInt });
     return { message: 'Mensaje enviado correctamente.', id: result.insertId };
 };
 

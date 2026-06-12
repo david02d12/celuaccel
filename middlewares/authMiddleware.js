@@ -1,5 +1,5 @@
-﻿const jwt = require('jsonwebtoken');
-const db = require('../config/db');
+const jwt = require('jsonwebtoken');
+const { queryPromise } = require('../config/db');
 const SECRET_KEY = process.env.JWT_SECRET || 'CeluAccel_S3cr3t_K3y_2026!#Secure';
 // 401 → Sin token | 403 → Token inválido o rol insuficiente
 
@@ -17,17 +17,19 @@ const validarToken = (req, res, next) => {
     });
 };
 
-// Verifica que el usuario tenga uno de los roles permitidos
-// Uso: validarRol(1, 3)  → solo técnicos y admins
-// Uso: validarRol(3)     → solo administradores
+// C3 FIX: validarRol ahora usa async/await con queryPromise en lugar de callback
+// Evita requests colgados por timeout de callback y es consistente con el resto de la app
 const validarRol = (...rolesPermitidos) => {
-    return (req, res, next) => {
+    return async (req, res, next) => {
         if (!req.userId) return res.status(401).json({ error: 'Usuario no autenticado.' });
-
-        db.query('SELECT Codigo_Rol FROM Usuario WHERE ID_Usuario = ?', [req.userId], (err, results) => {
-            if (err) return res.status(500).json({ error: 'Error al verificar el rol del usuario.' });
-            if (results.length === 0) return res.status(403).json({ error: 'Usuario no encontrado.' });
-
+        try {
+            const results = await queryPromise(
+                'SELECT Codigo_Rol FROM Usuario WHERE ID_Usuario = ?',
+                [req.userId]
+            );
+            if (results.length === 0) {
+                return res.status(403).json({ error: 'Usuario no encontrado.' });
+            }
             const rol = results[0].Codigo_Rol;
             if (!rolesPermitidos.includes(rol)) {
                 return res.status(403).json({
@@ -36,8 +38,12 @@ const validarRol = (...rolesPermitidos) => {
             }
             req.userRol = rol;
             next();
-        });
+        } catch (err) {
+            console.error('Error en validarRol:', err.message);
+            res.status(500).json({ error: 'Error al verificar el rol del usuario.' });
+        }
     };
 };
 
-module.exports = { validarToken, validarRol, SECRET_KEY };
+// B2 FIX: SECRET_KEY ya no se exporta (era innecesario y un riesgo de seguridad)
+module.exports = { validarToken, validarRol };

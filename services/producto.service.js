@@ -1,7 +1,11 @@
-﻿const AppError = require('../config/AppError');
+const AppError = require('../config/AppError');
 const productoDao = require('../dao/producto.dao');
 
+/** Todos los productos (admin/técnico) */
 const listar = () => productoDao.getAll();
+
+/** B5 FIX: Solo activos con stock > 0 (catálogo público) */
+const listarPublicos = () => productoDao.getPublicos();
 
 const agregar = async (data) => {
     if (!data.Codigo_Producto || !data.Nombre || !data.Precio) {
@@ -27,4 +31,4 @@ const eliminar = async (id) => {
     if (result.affectedRows === 0) throw new AppError('Producto no encontrado.', 404);
 };
 
-module.exports = { listar, agregar, actualizar, eliminar };
+module.exports = { listar, listarPublicos, agregar, actualizar, eliminar };

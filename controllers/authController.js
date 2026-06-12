@@ -1,4 +1,4 @@
-﻿const authService = require('../services/auth.service');
+const authService = require('../services/auth.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
@@ -53,3 +53,24 @@ exports.actualizarMiPerfil = async (req, res) => {
         res.status(200).json({ message: 'Perfil actualizado correctamente.' });
     } catch (err) { handleError(res, err); }
 };
+
+exports.forgotPassword = async (req, res) => {
+    try {
+        await authService.forgotPassword(req.body.email);
+        res.status(200).json({ message: 'Correo enviado para recuperar contraseña.' });
+    } catch (err) { handleError(res, err); }
+};
+
+exports.resetPassword = async (req, res) => {
+    try {
+        await authService.resetPassword(req.params.token, req.body.newPassword);
+        res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
+    } catch (err) { handleError(res, err); }
+};
+
+exports.changePassword = async (req, res) => {
+    try {
+        await authService.changePassword(req.userId, req.body.oldPassword, req.body.newPassword);
+        res.status(200).json({ message: 'Contraseña cambiada correctamente.' });
+    } catch (err) { handleError(res, err); }
+};

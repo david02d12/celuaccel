@@ -15,15 +15,21 @@ const listarMios = async (idUsuario) => {
 };
 
 const agregar = async ({ ID_Usuario, ID_Servicio }) => {
-    if (!ID_Usuario || !ID_Servicio) {
-        throw new AppError('Los campos ID_Usuario e ID_Servicio son obligatorios.', 400);
+    if (!ID_Usuario) {
+        throw new AppError('El campo ID_Usuario es obligatorio.', 400);
     }
+    // Chats de catálogo (sin servicio asociado): siempre crear uno nuevo
+    if (ID_Servicio === null || ID_Servicio === undefined) {
+        const result = await chatDao.create(ID_Usuario, null);
+        return { message: 'Chat de consulta creado correctamente.', id: result.insertId, existente: false };
+    }
+    // Chats de servicio: evitar duplicados
     const existing = await chatDao.findByServicio(ID_Servicio);
     if (existing.length > 0) {
         return { message: 'Ya existe un chat para este servicio.', id: existing[0].Codigo_Chat, existente: true };
     }
     const result = await chatDao.create(ID_Usuario, ID_Servicio);
-    return { message: 'Chat creado correctamente.', id: result.insertId };
+    return { message: 'Chat creado correctamente.', id: result.insertId, existente: false };
 };
 
 const actualizar = async (data) => {
