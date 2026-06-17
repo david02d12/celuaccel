@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_comentario.xml — CeluAccel
+  Card de comentario con avatar, estrellas y texto
+  igual que Comentarios.jsx de la web
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card_elevated"
+    android:elevation="3dp"
+    android:layout_marginLeft="4dp" android:layout_marginRight="4dp"
+    android:layout_marginBottom="10dp"
+    android:padding="16dp">
+
+    <!-- Fila: Avatar + Nombre + Fecha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+
+        <!-- Avatar circular con inicial -->
+        <TextView
+            android:id="@+id/tvAvatarComentario"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_avatar_circle"
+            android:gravity="center"
+            android:text="C"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="12dp"/>
+
+        <!-- Nombre + Fecha -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombreComentario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cliente Ejemplo"
+                android:textColor="@color/celuaccel_text"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvFechaComentario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/01/2025"
+                android:textColor="@color/celuaccel_text_light"
+                android:textSize="11sp"/>
+        </LinearLayout>
+
+        <!-- Estrellas de calificación -->
+        <TextView
+            android:id="@+id/tvEstrellas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⭐⭐⭐⭐⭐"
+            android:textSize="13sp"/>
+    </LinearLayout>
+
+    <!-- Separador -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/celuaccel_border"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Texto del comentario -->
+    <TextView
+        android:id="@+id/tvTextoComentario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Excelente servicio, muy rápido y profesional."
+        android:textColor="@color/celuaccel_text"
+        android:textSize="13sp"
+        android:lineSpacingExtra="3dp"/>
+
+</LinearLayout>

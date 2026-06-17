@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_cliente.xml — CeluAccel
+  Fila de usuario/cliente con avatar circular y datos
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@color/celuaccel_surface"
+    android:paddingLeft="16dp" android:paddingRight="16dp"
+    android:paddingTop="14dp" android:paddingBottom="14dp"
+    android:layout_marginBottom="1dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Avatar con inicial -->
+    <TextView
+        android:id="@+id/tvAvatarCliente"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_avatar_circle"
+        android:gravity="center"
+        android:text="C"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginEnd="14dp"/>
+
+    <!-- Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombreCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Juan Pérez"
+            android:textColor="@color/celuaccel_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:id="@+id/tvDocumentoCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doc: 1001234567"
+            android:textColor="@color/celuaccel_text_muted"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <!-- Badge de rol -->
+    <TextView
+        android:id="@+id/tvRolCliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cliente"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:paddingLeft="10dp" android:paddingRight="10dp"
+        android:paddingTop="4dp" android:paddingBottom="4dp"
+        android:background="@drawable/bg_badge_diagnostico"
+        android:textColor="@color/etapa_diagnostico_text"/>
+
+</LinearLayout>
