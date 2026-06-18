@@ -24,6 +24,7 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_menu)
 
+        // ── Preferencias compartidas y Token ──────────────────────────────────
         val prefs    = getSharedPreferences("app", MODE_PRIVATE)
         val raw      = prefs.getString("token", "") ?: ""
         token        = if (raw.startsWith("Bearer ")) raw else "Bearer $raw"
@@ -33,34 +34,29 @@ class MenuActivity : AppCompatActivity() {
         // Header: saludo con nombre
         val tvTitulo = findViewById<TextView>(R.id.textViewTitulo)
         tvTitulo.text = "Bienvenido, $userName"
+        tvBadge       = findViewById(R.id.tvBadgeMenu)
 
-        // ── Referencias a botones ──────────────────────────────────────────────
-        val btnCliente      = findViewById<ImageButton>(R.id.btnCliente)
-        val btnServicio     = findViewById<ImageButton>(R.id.btnServicio)
-        val btnCompras      = findViewById<ImageButton>(R.id.btnCompras)
-        val btnGear         = findViewById<ImageButton>(R.id.btnGear)         // Notificaciones
-        val btnChat         = findViewById<ImageButton>(R.id.btnChat)
-        val btnPerfil       = findViewById<ImageButton>(R.id.btnPerfil)
-        val btnHistorial    = findViewById<ImageButton>(R.id.btnHistorial)
-        val btnPreguntas    = findViewById<ImageButton>(R.id.btnPreguntas)
-        val btnComentarios  = findViewById<ImageButton>(R.id.btnComentarios)
-        val btnCategorias   = findViewById<ImageButton>(R.id.btnCategorias)
-        val btnTipoDoc      = findViewById<ImageButton>(R.id.btnTipoDoc)
-        val btnRoles        = findViewById<ImageButton>(R.id.btnRoles)
-        val btnCerrarSesion = findViewById<Button>(R.id.btnCerrarSesion)
-        tvBadge             = findViewById(R.id.tvBadgeMenu)
+        // ── Referencias a las Cards (LinearLayouts) ──────────────────────────
+        val cardCompras         = findViewById<LinearLayout>(R.id.cardCompras)
+        val cardServicio        = findViewById<LinearLayout>(R.id.cardServicio)
+        val cardChat            = findViewById<LinearLayout>(R.id.cardChat)
+        val cardGear            = findViewById<LinearLayout>(R.id.cardGear) // Notificaciones
+        val cardPreguntas       = findViewById<LinearLayout>(R.id.cardPreguntas)
+        val cardPerfil          = findViewById<LinearLayout>(R.id.cardPerfil)
+        val cardHistorial       = findViewById<LinearLayout>(R.id.cardHistorial)
+        val cardComentarios     = findViewById<LinearLayout>(R.id.cardComentarios)
+        val cardCategorias      = findViewById<LinearLayout>(R.id.cardCategorias)
+        val cardCliente         = findViewById<LinearLayout>(R.id.cardCliente) // Usuarios
+        val cardRoles           = findViewById<LinearLayout>(R.id.cardRoles)
+        val cardTipoDoc         = findViewById<LinearLayout>(R.id.cardTipoDoc)
 
-        // ── Cards (para control de visibilidad) ──────────────────────────────
-        val cardCliente          = findViewById<LinearLayout>(R.id.cardCliente)
-        val cardHistorial        = findViewById<LinearLayout>(R.id.cardHistorial)
-        val cardComentarios      = findViewById<LinearLayout>(R.id.cardComentarios)
-        val cardCategorias       = findViewById<LinearLayout>(R.id.cardCategorias)
-        val cardTipoDoc          = findViewById<LinearLayout>(R.id.cardTipoDoc)
-        val cardRoles            = findViewById<LinearLayout>(R.id.cardRoles)
-        val labelSeccionTecnico  = findViewById<TextView>(R.id.labelSeccionTecnico)
-        val labelSeccionAdmin    = findViewById<TextView>(R.id.labelSeccionAdmin)
+        val btnCerrarSesion     = findViewById<Button>(R.id.btnCerrarSesion)
 
-        // ── Visibilidad según rol (igual que la web) ──────────────────────────
+        // ── Referencias a Etiquetas de Sección ───────────────────────────────
+        val labelSeccionTecnico = findViewById<TextView>(R.id.labelSeccionTecnico)
+        val labelSeccionAdmin   = findViewById<TextView>(R.id.labelSeccionAdmin)
+
+        // ── Visibilidad según rol (igual que la versión web) ──────────────────
         when (userRole) {
             2 -> { // Cliente — solo accede a funciones de usuario
                 cardCliente.visibility          = View.GONE
@@ -72,7 +68,7 @@ class MenuActivity : AppCompatActivity() {
                 labelSeccionTecnico.visibility  = View.GONE
                 labelSeccionAdmin.visibility    = View.GONE
             }
-            1 -> { // Técnico — gestión de servicios, sin admin
+            1 -> { // Técnico — gestión de servicios, sin administración total
                 cardCliente.visibility          = View.GONE
                 cardHistorial.visibility        = View.VISIBLE
                 cardComentarios.visibility      = View.VISIBLE
@@ -82,7 +78,7 @@ class MenuActivity : AppCompatActivity() {
                 labelSeccionTecnico.visibility  = View.VISIBLE
                 labelSeccionAdmin.visibility    = View.GONE
             }
-            3 -> { // Admin — acceso total
+            3 -> { // Admin — acceso total del sistema
                 cardCliente.visibility          = View.VISIBLE
                 cardHistorial.visibility        = View.VISIBLE
                 cardComentarios.visibility      = View.VISIBLE
@@ -92,7 +88,7 @@ class MenuActivity : AppCompatActivity() {
                 labelSeccionTecnico.visibility  = View.VISIBLE
                 labelSeccionAdmin.visibility    = View.VISIBLE
             }
-            else -> {
+            else -> { // Por seguridad, si el rol no coincide, se ocultan
                 cardCliente.visibility          = View.GONE
                 cardHistorial.visibility        = View.GONE
                 cardComentarios.visibility      = View.GONE
@@ -104,25 +100,10 @@ class MenuActivity : AppCompatActivity() {
             }
         }
 
-        // ── Acciones ──────────────────────────────────────────────────────────
-
-        // Usuarios (solo admin)
-        btnCliente.setOnClickListener {
-            startActivity(Intent(this, ClienteActivity::class.java))
-        }
-
-        // Servicios: cliente → solicitar, técnico/admin → gestionar
-        btnServicio.setOnClickListener {
-            val intent = if (userRole == 2) {
-                Intent(this, SolicitarServicioActivity::class.java)
-            } else {
-                Intent(this, ServicioActivity::class.java)
-            }
-            startActivity(intent)
-        }
+        // ── Acciones de Clic en las Cards ─────────────────────────────────────
 
         // Productos/Catálogo: cliente → catálogo, técnico/admin → gestionar productos
-        btnCompras.setOnClickListener {
+        cardCompras.setOnClickListener {
             val intent = if (userRole == 2) {
                 Intent(this, CatalogoActivity::class.java)
             } else {
@@ -131,52 +112,67 @@ class MenuActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Servicios: cliente → solicitar, técnico/admin → gestionar
+        cardServicio.setOnClickListener {
+            val intent = if (userRole == 2) {
+                Intent(this, SolicitarServicioActivity::class.java)
+            } else {
+                Intent(this, ServicioActivity::class.java)
+            }
+            startActivity(intent)
+        }
+
+        // Chats
+        cardChat.setOnClickListener {
+            startActivity(Intent(this, ChatListActivity::class.java))
+        }
+
         // Notificaciones
-        btnGear.setOnClickListener {
+        cardGear.setOnClickListener {
             startActivity(Intent(this, NotificacionActivity::class.java))
         }
 
-        // Historial (técnico y admin)
-        btnHistorial.setOnClickListener {
-            startActivity(Intent(this, HistorialActivity::class.java))
-        }
-
         // Preguntas y consultas (todos los roles)
-        btnPreguntas.setOnClickListener {
+        cardPreguntas.setOnClickListener {
             startActivity(Intent(this, PreguntasActivity::class.java))
         }
 
-        // Comentarios
-        btnComentarios.setOnClickListener {
+        // Perfil
+        cardPerfil.setOnClickListener {
+            startActivity(Intent(this, PerfilActivity::class.java))
+        }
+
+        // Historial (técnico y admin)
+        cardHistorial.setOnClickListener {
+            startActivity(Intent(this, HistorialActivity::class.java))
+        }
+
+        // Comentarios (técnico y admin)
+        cardComentarios.setOnClickListener {
             startActivity(Intent(this, ComentariosActivity::class.java))
         }
 
         // Categorías (técnico y admin)
-        btnCategorias.setOnClickListener {
+        cardCategorias.setOnClickListener {
             startActivity(Intent(this, CategoriaActivity::class.java))
         }
 
-        // Tipo de Documento (solo admin)
-        btnTipoDoc.setOnClickListener {
-            startActivity(Intent(this, TipoDocumentoActivity::class.java))
+        // Usuarios / Clientes (solo admin)
+        cardCliente.setOnClickListener {
+            startActivity(Intent(this, ClienteActivity::class.java))
         }
 
         // Roles (solo admin)
-        btnRoles.setOnClickListener {
+        cardRoles.setOnClickListener {
             startActivity(Intent(this, RolesActivity::class.java))
         }
 
-        // Chats
-        btnChat.setOnClickListener {
-            startActivity(Intent(this, ChatListActivity::class.java))
+        // Tipo de Documento (solo admin)
+        cardTipoDoc.setOnClickListener {
+            startActivity(Intent(this, TipoDocumentoActivity::class.java))
         }
 
-        // Perfil
-        btnPerfil.setOnClickListener {
-            startActivity(Intent(this, PerfilActivity::class.java))
-        }
-
-        // Cerrar sesión
+        // ── Cerrar sesión ─────────────────────────────────────────────────────
         btnCerrarSesion.setOnClickListener {
             prefs.edit().clear().apply()
             val intent = Intent(this, LoginActivity::class.java)
@@ -205,7 +201,7 @@ class MenuActivity : AppCompatActivity() {
                 }
             }
             override fun onFailure(call: Call<Map<String, Int>>, t: Throwable) {
-                // Silencioso
+                // Manejo silencioso de errores de red o token expirado
             }
         })
     }
