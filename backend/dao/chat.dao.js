@@ -1,15 +1,34 @@
 const { queryPromise: query } = require('../config/db');
 
+// Query base con JOIN para traer nombre del usuario y último mensaje
+const CHAT_SELECT = `
+    SELECT
+        c.Codigo_Chat,
+        c.ID_Usuario,
+        c.ID_Servicio,
+        u.Nombre            AS Nombre_Usuario,
+        m.Mensaje           AS Ultimo_Mensaje,
+        m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje
+    FROM Chat c
+    LEFT JOIN Usuario u  ON TRIM(u.ID_Usuario) = TRIM(c.ID_Usuario)
+    LEFT JOIN Mensajes m ON m.Codigo_Mensaje = (
+        SELECT Codigo_Mensaje FROM Mensajes
+        WHERE Codigo_Chat = c.Codigo_Chat
+        ORDER BY Codigo_Mensaje DESC LIMIT 1
+    )
+`;
+
 const getAll = () =>
-    query('SELECT * FROM Chat');
+    query(`${CHAT_SELECT} ORDER BY c.Codigo_Chat DESC`);
 
 const getMios = (idUsuario) =>
     query(
-        `SELECT c.* FROM Chat c
-         LEFT JOIN Servicio s ON c.ID_Servicio = s.ID_Servicio
-         WHERE TRIM(s.ID_Usuario) = TRIM(?)
-         UNION
-         SELECT * FROM Chat WHERE TRIM(ID_Usuario) = TRIM(?)`,
+        `${CHAT_SELECT}
+         WHERE TRIM(c.ID_Usuario) = TRIM(?)
+            OR c.ID_Servicio IN (
+                SELECT ID_Servicio FROM Servicio WHERE TRIM(ID_Usuario) = TRIM(?)
+            )
+         ORDER BY c.Codigo_Chat DESC`,
         [idUsuario, idUsuario]
     );
 

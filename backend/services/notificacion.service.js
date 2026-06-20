@@ -7,11 +7,17 @@ const usuarioDao = require('../dao/usuario.dao');
 /** Formatea una fila de BD al shape que espera el frontend */
 const formatear = (n) => ({
     Codigo_Notificaciones: n.Codigo_Notificaciones,
-    texto:      n.Tipo_Notificacion,
-    servicio:   n.ID_Servicio      ?? null,
-    de:         n.ID_Usuario_Origen ?? null,
-    leida:      Boolean(n.Leida),
-    fecha:      n.Fecha_Notificacion
+    ID_Usuario:            n.ID_Usuario_Destino    ?? null,
+    ID_Usuario_Destino:    n.ID_Usuario_Destino    ?? null,
+    ID_Servicio:           n.ID_Servicio            ?? null,
+    Tipo_Notificacion:     n.Tipo_Notificacion      ?? null,
+    Titulo:                n.Titulo                 ?? n.Tipo_Notificacion ?? null,
+    Mensaje:               n.Mensaje                ?? n.Tipo_Notificacion ?? null,
+    Leida:                 n.Leida ?? 0,
+    Fecha_Notificacion:    n.Fecha_Notificacion
+        ? new Date(n.Fecha_Notificacion).toISOString()
+        : null,
+    Fecha:                 n.Fecha_Notificacion
         ? new Date(n.Fecha_Notificacion).toISOString()
         : null,
 });
@@ -68,7 +74,9 @@ const misNotificaciones = async (idUsuario, soloNoLeidas = false) => {
 const contarNoLeidas = async (idUsuario) => {
     if (!idUsuario) throw new AppError('Usuario no autenticado.', 401);
     const rows = await notificacionDao.contarNoLeidas(idUsuario);
-    return { total: Number(rows[0]?.total ?? 0) };
+    const count = Number(rows[0]?.total ?? 0);
+    // Devolver ambas claves para compatibilidad frontend web y móvil
+    return { count, total: count };
 };
 
 /**
