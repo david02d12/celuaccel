@@ -76,9 +76,8 @@ class NotificacionActivity : AppCompatActivity() {
                     val adapter = NotificacionAdapter(
                         lista.toMutableList(),
                         onMarcarLeida = { notificacion ->
-                            if (userRole == 2) {
-                                notificacion.codigoNotificaciones?.let { id -> marcarLeida(id) }
-                            }
+                            // Todos los roles pueden marcar sus notificaciones como leídas
+                            notificacion.codigoNotificaciones?.let { id -> marcarLeida(id) }
                         },
                         onLongClick = { notificacion ->
                             if (userRole != 2) {

@@ -104,7 +104,8 @@ class ChatListActivity : AppCompatActivity() {
     private fun abrirDetalleChat(chat: Chat) {
         val intent = Intent(this, ChatDetailActivity::class.java)
         intent.putExtra("CODIGO_CHAT", chat.codigoChat)
-        intent.putExtra("ID_SERVICIO", chat.idServicio)
+        // idServicio puede ser null para chats de catálogo
+        chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }
         startActivity(intent)
         finish()
     }
@@ -113,7 +114,7 @@ class ChatListActivity : AppCompatActivity() {
         val adapter = ChatAdapter(chats) { chat ->
             val intent = Intent(this@ChatListActivity, ChatDetailActivity::class.java)
             intent.putExtra("CODIGO_CHAT", chat.codigoChat)
-            intent.putExtra("ID_SERVICIO", chat.idServicio)
+            chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }
             startActivity(intent)
         }
         recyclerChats.adapter = adapter

@@ -109,7 +109,13 @@ class ProductoActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<Producto>>, response: Response<List<Producto>>) {
                 if (response.isSuccessful && response.body() != null) {
                     val lista = response.body()!!
-                    recyclerView.adapter = ProductoAdapter(lista.toMutableList())
+                    recyclerView.adapter = ProductoAdapter(
+                        lista.toMutableList(),
+                        onEditar   = { producto -> editarProducto(producto) },
+                        onEliminar = { producto -> eliminarProducto(producto) }
+                    )
+                } else {
+                    Toast.makeText(this@ProductoActivity, "Error cargando productos (${response.code()})", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Producto>>, t: Throwable) {

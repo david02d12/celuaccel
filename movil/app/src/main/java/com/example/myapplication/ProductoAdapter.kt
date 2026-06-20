@@ -3,13 +3,14 @@ package com.example.myapplication
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Producto
 
 class ProductoAdapter(
     private val productos: MutableList<Producto>,
-    private val onEditar: ((Producto) -> Unit)? = null,
+    private val onEditar:   ((Producto) -> Unit)? = null,
     private val onEliminar: ((Producto) -> Unit)? = null
 ) : RecyclerView.Adapter<ProductoAdapter.VH>() {
 
@@ -31,14 +32,15 @@ class ProductoAdapter(
         holder.tvPrecio.text    = "$${"%.0f".format(prod.precio)}"
         holder.tvCategoria.text = "Stock: ${prod.cantidad}"
 
-        // Editar al hacer clic largo
-        holder.itemView.setOnLongClickListener {
-            onEditar?.invoke(prod)
-            true
-        }
-        // Eliminar al hacer doble tap (alternativa: context menu)
+        // Clic simple: editar (si hay callback)
         holder.itemView.setOnClickListener {
-            // solo informativo por defecto
+            onEditar?.invoke(prod)
+        }
+
+        // Long press: eliminar (si hay callback)
+        holder.itemView.setOnLongClickListener {
+            onEliminar?.invoke(prod)
+            true
         }
     }
 

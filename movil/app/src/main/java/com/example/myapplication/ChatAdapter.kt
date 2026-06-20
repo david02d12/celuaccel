@@ -34,9 +34,9 @@ class ChatAdapter(
 
         // Subtítulo: último mensaje o indicador de servicio
         val subtitulo = when {
-            !chat.ultimoMensaje.isNullOrBlank() -> chat.ultimoMensaje
-            chat.idServicio > 0                  -> "Servicio #${chat.idServicio}"
-            else                                 -> "Sin mensajes aún"
+            !chat.ultimoMensaje.isNullOrBlank()           -> chat.ultimoMensaje
+            (chat.idServicio ?: 0) > 0                    -> "Servicio #${chat.idServicio}"
+            else                                          -> "Sin mensajes aún"
         }
 
         // Hora del último mensaje (solo HH:mm si viene como ISO 8601)
