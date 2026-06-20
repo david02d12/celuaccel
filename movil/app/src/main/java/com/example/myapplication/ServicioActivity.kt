@@ -178,8 +178,13 @@ class ServicioActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val idServicio = idServicioStr.toIntOrNull() ?: run {
+                Toast.makeText(this, "El ID de servicio no es un número válido.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val servicioEditado = Servicio(
-                idServicio = idServicioStr.toInt(),
+                idServicio = idServicio,
                 descripcion = desc,
                 idUsuario = idUser,
                 precio = precioStr.toDoubleOrNull() ?: 0.0,
@@ -214,7 +219,11 @@ class ServicioActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            api.cancelarServicio(token, idServicioStr.toInt()).enqueue(object : Callback<Void> {
+            val idServicio = idServicioStr.toIntOrNull() ?: run {
+                Toast.makeText(this, "El ID de servicio no es un número válido.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            api.cancelarServicio(token, idServicio).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     when (response.code()) {
                         200 -> {
@@ -244,7 +253,11 @@ class ServicioActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            api.deleteServicio(token, idServicioStr.toInt()).enqueue(object : Callback<Void> {
+            val idServicio = idServicioStr.toIntOrNull() ?: run {
+                Toast.makeText(this, "El ID de servicio no es un número válido.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            api.deleteServicio(token, idServicio).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
                         Toast.makeText(this@ServicioActivity, "Servicio eliminado de la base de datos.", Toast.LENGTH_SHORT).show()

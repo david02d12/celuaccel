@@ -96,8 +96,10 @@
                         android:textStyle="bold"
                         android:textColor="#FFFFFF"
                         android:letterSpacing="0.06"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="3dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/bg_badge_nueva"/>
                 </LinearLayout>
