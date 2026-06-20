@@ -118,7 +118,7 @@
                 android:id="@+id/btnFiltroLeidas"
                 android:layout_width="wrap_content"
                 android:layout_height="34dp"
-                android:text="✓ Leídas"
+                android:text="Leídas"
                 android:textAllCaps="false"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -127,6 +127,46 @@
                 android:textColor="@color/celuaccel_primary"/>
         </LinearLayout>
     </HorizontalScrollView>
+
+    <!-- ── Estado vacío (invisible por defecto) ── -->
+    <LinearLayout
+        android:id="@+id/viewEstadoVacio"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ic_notif_bell"
+            android:alpha="0.18"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="Sin notificaciones"/>
+
+        <TextView
+            android:id="@+id/tvEstadoVacioTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todo al día"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/celuaccel_text"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvEstadoVacioDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No tienes notificaciones en este momento."
+            android:textSize="13sp"
+            android:textColor="@color/celuaccel_text_muted"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.4"/>
+    </LinearLayout>
 
     <!-- ── Lista ── -->
     <androidx.recyclerview.widget.RecyclerView
@@ -139,3 +179,4 @@
         android:clipToPadding="false"/>
 
 </LinearLayout>
+

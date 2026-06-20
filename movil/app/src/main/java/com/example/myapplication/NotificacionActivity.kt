@@ -1,13 +1,19 @@
 package com.example.myapplication
 
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
@@ -22,11 +28,14 @@ class NotificacionActivity : AppCompatActivity() {
     private lateinit var token: String
     private var userRole: Int = 2
 
-    private lateinit var recyclerView:   RecyclerView
-    private lateinit var tvConteo:       TextView
-    private lateinit var btnFiltroTodas: Button
-    private lateinit var btnFiltroNuevas:Button
-    private lateinit var btnFiltroLeidas:Button
+    private lateinit var recyclerView:       RecyclerView
+    private lateinit var tvConteo:           TextView
+    private lateinit var btnFiltroTodas:     Button
+    private lateinit var btnFiltroNuevas:    Button
+    private lateinit var btnFiltroLeidas:    Button
+    private lateinit var viewEstadoVacio:    LinearLayout
+    private lateinit var tvVacioTitulo:      TextView
+    private lateinit var tvVacioDesc:        TextView
 
     private val api by lazy { ApiClient.retrofit.create(ApiService::class.java) }
 
@@ -50,11 +59,14 @@ class NotificacionActivity : AppCompatActivity() {
         userRole  = prefs.getInt("user_role", 2)
 
         // ── Views ───────────────────────────────────────────────────────────
-        recyclerView    = findViewById(R.id.recyclerNotificaciones)
-        tvConteo        = findViewById(R.id.tvConteoNotif)
-        btnFiltroTodas  = findViewById(R.id.btnFiltroTodas)
-        btnFiltroNuevas = findViewById(R.id.btnFiltroNuevas)
-        btnFiltroLeidas = findViewById(R.id.btnFiltroLeidas)
+        recyclerView     = findViewById(R.id.recyclerNotificaciones)
+        tvConteo         = findViewById(R.id.tvConteoNotif)
+        btnFiltroTodas   = findViewById(R.id.btnFiltroTodas)
+        btnFiltroNuevas  = findViewById(R.id.btnFiltroNuevas)
+        btnFiltroLeidas  = findViewById(R.id.btnFiltroLeidas)
+        viewEstadoVacio  = findViewById(R.id.viewEstadoVacio)
+        tvVacioTitulo    = findViewById(R.id.tvEstadoVacioTitulo)
+        tvVacioDesc      = findViewById(R.id.tvEstadoVacioDesc)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -134,6 +146,22 @@ class NotificacionActivity : AppCompatActivity() {
             else      -> listaCompleta
         }.toMutableList()
 
+        // ── Estado vacío ──────────────────────────────────────────────────────
+        if (lista.isEmpty()) {
+            viewEstadoVacio.visibility  = View.VISIBLE
+            recyclerView.visibility     = View.GONE
+            val (titulo, desc) = when (filtroActual) {
+                "nuevas" -> Pair("Todo al día", "No tienes notificaciones sin leer.")
+                "leidas" -> Pair("Sin leídas",  "Ninguna notificación marcada como leída.")
+                else     -> Pair("Sin mensajes", "No tienes notificaciones en este momento.")
+            }
+            tvVacioTitulo.text = titulo
+            tvVacioDesc.text   = desc
+        } else {
+            viewEstadoVacio.visibility = View.GONE
+            recyclerView.visibility    = View.VISIBLE
+        }
+
         val adapter = NotificacionAdapter(
             lista,
             onMarcarLeida = { notif ->
@@ -146,7 +174,7 @@ class NotificacionActivity : AppCompatActivity() {
                     notif.codigoNotificaciones?.let { id ->
                         androidx.appcompat.app.AlertDialog.Builder(this)
                             .setTitle("Eliminar Notificación")
-                            .setMessage("¿Estás seguro de eliminar esta notificación?")
+                            .setMessage("¿Eliminar esta notificación?")
                             .setPositiveButton("Eliminar") { _, _ -> eliminarNotificacion(id) }
                             .setNegativeButton("Cancelar", null)
                             .show()
@@ -155,6 +183,85 @@ class NotificacionActivity : AppCompatActivity() {
             }
         )
         recyclerView.adapter = adapter
+
+        // ── Swipe gestures ────────────────────────────────────────────────────
+        val bgEliminar = ColorDrawable(Color.parseColor("#DB0000"))
+        val bgLeida    = ColorDrawable(Color.parseColor("#198754"))
+        val iconEliminar = ContextCompat.getDrawable(this, R.drawable.ic_delete_white)
+        val iconLeida    = ContextCompat.getDrawable(this, R.drawable.ic_notif_check)
+        val paintText = Paint().apply {
+            color = Color.WHITE
+            textSize = 36f
+            isAntiAlias = true
+        }
+
+        val swipeCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or (if (userRole == 2) ItemTouchHelper.RIGHT else 0)
+        ) {
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos   = viewHolder.adapterPosition
+                val notif = lista[pos]
+                val id    = notif.codigoNotificaciones ?: return
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    // Eliminar (admin/técnico) o marcar leída (cliente)
+                    if (userRole == 2) {
+                        marcarLeida(id)
+                    } else {
+                        androidx.appcompat.app.AlertDialog.Builder(this@NotificacionActivity)
+                            .setTitle("Eliminar Notificación")
+                            .setMessage("¿Seguro que deseas eliminar esta notificación?")
+                            .setPositiveButton("Eliminar") { _, _ -> eliminarNotificacion(id) }
+                            .setNegativeButton("Cancelar") { _, _ -> adapter.notifyItemChanged(pos) }
+                            .setOnCancelListener    { adapter.notifyItemChanged(pos) }
+                            .show()
+                    }
+                } else if (direction == ItemTouchHelper.RIGHT && userRole == 2) {
+                    marcarLeida(id)
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas, recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+                val iconMargin = (itemView.height - 64) / 2
+
+                if (dX < 0) { // Swipe izquierda — rojo (eliminar / marcar leída)
+                    bgEliminar.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    bgEliminar.draw(c)
+                    iconEliminar?.let {
+                        it.setBounds(
+                            itemView.right - iconMargin - 64,
+                            itemView.top + iconMargin,
+                            itemView.right - iconMargin,
+                            itemView.bottom - iconMargin
+                        )
+                        it.draw(c)
+                    }
+                } else if (dX > 0) { // Swipe derecha — verde (marcar leída)
+                    bgLeida.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+                    bgLeida.draw(c)
+                    iconLeida?.let {
+                        it.setBounds(
+                            itemView.left + iconMargin,
+                            itemView.top + iconMargin,
+                            itemView.left + iconMargin + 64,
+                            itemView.bottom - iconMargin
+                        )
+                        it.draw(c)
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+        }
+
+        ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView)
     }
 
     private fun actualizarPills() {
