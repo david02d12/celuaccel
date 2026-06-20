@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Notificacion
 
@@ -43,7 +43,6 @@ class NotificacionAdapter(
 ) : RecyclerView.Adapter<NotificacionAdapter.VH>() {
 
     inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val cardRoot:   CardView  = v.findViewById(R.id.cardNotif)
         val viewBorder: View      = v.findViewById(R.id.viewBorderLeft)
         val ivIcono:    ImageView = v.findViewById(R.id.ivIconoTipo)
         val tvTitulo:   TextView  = v.findViewById(R.id.tvTituloNotif)
@@ -70,16 +69,17 @@ class NotificacionAdapter(
         holder.tvMensaje.text = mensaje
         holder.tvFecha.text   = n.fechaNotificacion ?: n.fecha ?: ""
 
+        val ctx = holder.itemView.context
         if (esLeida) {
-            // ── Leída: todo en gris neutro ──
-            holder.viewBorder.setBackgroundColor(Color.parseColor("#DDDDDD"))
+            // ── Leída: gris neutro, compatible con dark mode ──
+            holder.viewBorder.setBackgroundColor(ContextCompat.getColor(ctx, R.color.celuaccel_border))
             holder.ivIcono.setImageResource(R.drawable.ic_notif_bell)
             holder.ivIcono.setBackgroundResource(R.drawable.bg_notif_icon_gray)
             holder.tvBadge.text = "LEÍDA"
             holder.tvBadge.setBackgroundResource(R.drawable.bg_badge_leida)
             holder.tvBadge.setTextColor(Color.WHITE)
-            holder.tvTitulo.setTextColor(Color.parseColor("#9E9E9E"))
-            holder.tvMensaje.setTextColor(Color.parseColor("#BBBBBB"))
+            holder.tvTitulo.setTextColor(ContextCompat.getColor(ctx, R.color.celuaccel_text_muted))
+            holder.tvMensaje.setTextColor(ContextCompat.getColor(ctx, R.color.celuaccel_text_light))
             holder.itemView.alpha = 0.62f
         } else {
             // ── Sin leer: color por tipo de mensaje ──
@@ -90,8 +90,8 @@ class NotificacionAdapter(
             holder.tvBadge.text = "NUEVA"
             holder.tvBadge.setBackgroundResource(R.drawable.bg_badge_nueva)
             holder.tvBadge.setTextColor(Color.WHITE)
-            holder.tvTitulo.setTextColor(Color.parseColor("#1A1A1A"))
-            holder.tvMensaje.setTextColor(Color.parseColor("#6C757D"))
+            holder.tvTitulo.setTextColor(ContextCompat.getColor(ctx, R.color.celuaccel_text))
+            holder.tvMensaje.setTextColor(ContextCompat.getColor(ctx, R.color.celuaccel_text_muted))
             holder.itemView.alpha = 1.0f
         }
 

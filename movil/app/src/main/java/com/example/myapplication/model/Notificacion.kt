@@ -24,5 +24,5 @@ data class Notificacion(
     @SerializedName("Fecha")                 val fecha: String? = null,
 
     // Campos para el envío de notificaciones dirigidas
-    @SerializedName("ID_Servicio")           val idServicio: String? = null
+    @SerializedName("ID_Servicio")           val idServicio: Int? = null
 )

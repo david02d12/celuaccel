@@ -160,7 +160,7 @@ class ProductoActivity : AppCompatActivity() {
         })
     }
 
-    fun editarProducto(producto: Producto) {
+    private fun editarProducto(producto: Producto) {
         productoEnEdicion = producto
         etNombre.setText(producto.nombre)
         etPrecio.setText(producto.precio.toString())
@@ -172,7 +172,7 @@ class ProductoActivity : AppCompatActivity() {
         etNombre.requestFocus()
     }
 
-    fun eliminarProducto(producto: Producto) {
+    private fun eliminarProducto(producto: Producto) {
         AlertDialog.Builder(this)
             .setTitle("Eliminar Producto")
             .setMessage("¿Eliminar '${producto.nombre}'?")

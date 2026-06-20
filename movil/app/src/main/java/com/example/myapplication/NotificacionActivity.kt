@@ -79,6 +79,9 @@ class NotificacionActivity : AppCompatActivity() {
     }
 
     private fun cargarNotificaciones() {
+        // Fix A2: deshabilitar pills mientras carga para evitar race condition
+        listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas).forEach { it.isEnabled = false }
+
         val call: Call<List<Notificacion>> = if (userRole == 2) {
             api.getMisNotificaciones(token)
         } else {
@@ -90,6 +93,9 @@ class NotificacionActivity : AppCompatActivity() {
                 call: Call<List<Notificacion>>,
                 response: Response<List<Notificacion>>
             ) {
+                // Re-habilitar pills al terminar
+                listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas).forEach { it.isEnabled = true }
+
                 if (response.isSuccessful && response.body() != null) {
                     listaCompleta = response.body()!!.toMutableList()
                     actualizarConteo()
@@ -104,6 +110,7 @@ class NotificacionActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<Notificacion>>, t: Throwable) {
+                listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas).forEach { it.isEnabled = true }
                 Toast.makeText(
                     this@NotificacionActivity,
                     "Error de red: ${t.message}",
@@ -151,13 +158,11 @@ class NotificacionActivity : AppCompatActivity() {
     }
 
     private fun actualizarPills() {
-        // Resetear todos a outline
         val inactive = listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas)
         inactive.forEach { btn ->
             btn.setBackgroundResource(R.drawable.bg_btn_outline)
-            btn.setTextColor(colorActivo)
+            btn.setTextColor(colorInactivo)   // gris — fix C2
         }
-        // Activar el seleccionado
         val active = when (filtroActual) {
             "nuevas"  -> btnFiltroNuevas
             "leidas"  -> btnFiltroLeidas
@@ -211,7 +216,7 @@ class NotificacionActivity : AppCompatActivity() {
         val etDestinatario = dialogView.findViewById<EditText>(R.id.etDestinatarioNotif)
         val btnEnviar      = dialogView.findViewById<Button>(R.id.btnEnviarNotif)
         val btnCancelar    = dialogView.findViewById<Button>(R.id.btnCancelarNotif)
-        val btnCerrar      = dialogView.findViewById<Button>(R.id.btnCerrarDialog)
+        val btnCerrar      = dialogView.findViewById<android.widget.ImageButton>(R.id.btnCerrarDialog)
 
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setView(dialogView)
