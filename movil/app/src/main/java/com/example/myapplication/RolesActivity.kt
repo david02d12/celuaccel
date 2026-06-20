@@ -28,6 +28,7 @@ class RolesActivity : AppCompatActivity() {
     // IDs del activity_roles.xml
     private lateinit var recyclerView: RecyclerView
     private lateinit var cardForm:     View
+    private lateinit var etCodigo:     EditText    // código numérico del rol
     private lateinit var etNombre:     EditText    // nombre/descripcion del rol
     private lateinit var btnNuevo:     Button
     private lateinit var btnGuardar:   Button
@@ -43,6 +44,7 @@ class RolesActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerRoles)
         cardForm     = findViewById(R.id.cardFormRol)
+        etCodigo     = findViewById(R.id.etCodigoRol)
         etNombre     = findViewById(R.id.etNombreRol)
         btnNuevo     = findViewById(R.id.btnNuevoRol)
         btnGuardar   = findViewById(R.id.btnGuardarRol)
@@ -53,10 +55,13 @@ class RolesActivity : AppCompatActivity() {
 
         btnNuevo.setOnClickListener {
             rolEnEdicion = null
+            etCodigo.text.clear()
+            etCodigo.isEnabled = true
+            etCodigo.visibility = android.view.View.VISIBLE
             etNombre.text.clear()
             cardForm.visibility = View.VISIBLE
             btnNuevo.visibility = View.GONE
-            etNombre.requestFocus()
+            etCodigo.requestFocus()
         }
 
         btnGuardar.setOnClickListener { guardar() }
@@ -64,6 +69,7 @@ class RolesActivity : AppCompatActivity() {
         btnCancelar.setOnClickListener {
             cardForm.visibility = View.GONE
             btnNuevo.visibility = View.VISIBLE
+            etCodigo.text.clear()
             etNombre.text.clear()
             rolEnEdicion = null
         }
@@ -97,9 +103,13 @@ class RolesActivity : AppCompatActivity() {
         if (descripcion.isEmpty()) { etNombre.error = "Nombre requerido"; return }
 
         val call: Call<Void> = if (rolEnEdicion != null) {
+            // Editar: usa el código existente
             api.actualizarRol(token, Rol(codigoRol = rolEnEdicion!!.codigoRol, descripcionRol = descripcion))
         } else {
-            api.agregarRol(token, Rol(codigoRol = "", descripcionRol = descripcion))
+            // Crear: requiere código nuevo proporcionado por el usuario
+            val codigo = etCodigo.text.toString().trim()
+            if (codigo.isEmpty()) { etCodigo.error = "Código requerido"; return }
+            api.agregarRol(token, Rol(codigoRol = codigo, descripcionRol = descripcion))
         }
 
         call.enqueue(object : Callback<Void> {
@@ -109,11 +119,13 @@ class RolesActivity : AppCompatActivity() {
                     Toast.makeText(this@RolesActivity, msg, Toast.LENGTH_SHORT).show()
                     cardForm.visibility = View.GONE
                     btnNuevo.visibility = View.VISIBLE
+                    etCodigo.text.clear()
                     etNombre.text.clear()
                     rolEnEdicion = null
                     cargar()
                 } else {
-                    Toast.makeText(this@RolesActivity, "Error: ${response.code()}", Toast.LENGTH_LONG).show()
+                    val errBody = response.errorBody()?.string() ?: ""
+                    Toast.makeText(this@RolesActivity, "Error ${response.code()}: $errBody", Toast.LENGTH_LONG).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -124,6 +136,10 @@ class RolesActivity : AppCompatActivity() {
 
     private fun iniciarEdicion(rol: Rol) {
         rolEnEdicion = rol
+        // Al editar, el código es inmutable: lo ocultamos
+        etCodigo.setText(rol.codigoRol)
+        etCodigo.isEnabled = false
+        etCodigo.visibility = android.view.View.GONE
         etNombre.setText(rol.descripcionRol)
         cardForm.visibility = View.VISIBLE
         btnNuevo.visibility = View.GONE

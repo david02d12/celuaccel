@@ -52,6 +52,17 @@ class ListaServicioActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
+        // Botón flotante para crear nuevo servicio o solicitud
+        val fabAdd = findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAddServicio)
+        fabAdd.setOnClickListener {
+            val intent = if (userRole == 2) {
+                android.content.Intent(this, SolicitarServicioActivity::class.java)
+            } else {
+                android.content.Intent(this, ServicioActivity::class.java)
+            }
+            startActivity(intent)
+        }
+
         cargarServicios()
     }
 

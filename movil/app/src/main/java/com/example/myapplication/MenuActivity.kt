@@ -112,14 +112,9 @@ class MenuActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Servicios: cliente → solicitar, técnico/admin → gestionar
+        // Servicios: abre la lista; desde ahí se puede crear (botón +)
         cardServicio.setOnClickListener {
-            val intent = if (userRole == 2) {
-                Intent(this, SolicitarServicioActivity::class.java)
-            } else {
-                Intent(this, ServicioActivity::class.java)
-            }
-            startActivity(intent)
+            startActivity(Intent(this, ListaServicioActivity::class.java))
         }
 
         // Chats
