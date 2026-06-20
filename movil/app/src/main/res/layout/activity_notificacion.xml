@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_notificacion.xml — CeluAccel
-  Header gradiente + RecyclerView + FAB para crear (solo técnico/admin)
+  Header gradiente + pills de filtro (Todas / Sin leer / Leídas) + RecyclerView
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,7 +10,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header gradiente -->
+    <!-- ── Header Gradiente ── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,6 +46,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
+            <!-- Conteo dinámico: "3 notificaciones · 2 sin leer" -->
             <TextView
                 android:id="@+id/tvConteoNotif"
                 android:layout_width="wrap_content"
@@ -55,6 +56,7 @@
                 android:textSize="12sp"/>
         </LinearLayout>
 
+        <!-- Botón Nueva Notificación (solo técnico/admin) -->
         <Button
             android:id="@+id/btnNuevaNotificacion"
             android:layout_width="wrap_content"
@@ -67,13 +69,73 @@
             android:background="@drawable/bg_btn_outline_white"/>
     </LinearLayout>
 
-    <!-- Lista -->
+    <!-- ── Pills de Filtro ── -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingLeft="12dp" android:paddingRight="12dp"
+        android:paddingTop="12dp" android:paddingBottom="8dp"
+        android:background="@color/celuaccel_surface"
+        android:elevation="2dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Pill: Todas -->
+            <Button
+                android:id="@+id/btnFiltroTodas"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:text="Todas"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingLeft="16dp" android:paddingRight="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_btn_primary"
+                android:textColor="#FFFFFF"/>
+
+            <!-- Pill: Sin leer -->
+            <Button
+                android:id="@+id/btnFiltroNuevas"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:text="Sin leer"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingLeft="16dp" android:paddingRight="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_btn_outline"
+                android:textColor="@color/celuaccel_primary"/>
+
+            <!-- Pill: Leídas -->
+            <Button
+                android:id="@+id/btnFiltroLeidas"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:text="✓ Leídas"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingLeft="16dp" android:paddingRight="16dp"
+                android:background="@drawable/bg_btn_outline"
+                android:textColor="@color/celuaccel_primary"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- ── Lista ── -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerNotificaciones"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
         android:clipToPadding="false"/>
 
 </LinearLayout>

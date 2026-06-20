@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -20,28 +21,47 @@ class NotificacionActivity : AppCompatActivity() {
 
     private lateinit var token: String
     private var userRole: Int = 2
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var tvConteo: TextView
+
+    private lateinit var recyclerView:   RecyclerView
+    private lateinit var tvConteo:       TextView
+    private lateinit var btnFiltroTodas: Button
+    private lateinit var btnFiltroNuevas:Button
+    private lateinit var btnFiltroLeidas:Button
+
     private val api by lazy { ApiClient.retrofit.create(ApiService::class.java) }
+
+    /** Lista completa sin filtrar */
+    private var listaCompleta: MutableList<Notificacion> = mutableListOf()
+
+    /** Filtro activo: "todas" | "nuevas" | "leidas" */
+    private var filtroActual = "todas"
+
+    // ── Colores para pills ──────────────────────────────────────────────────
+    private val colorActivo   = Color.parseColor("#DB0000")
+    private val colorInactivo = Color.parseColor("#6C757D")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notificacion)
 
         val prefs = getSharedPreferences("app", MODE_PRIVATE)
-        val raw  = prefs.getString("token", "") ?: ""
-        token    = if (raw.startsWith("Bearer ")) raw else "Bearer $raw"
-        userRole = prefs.getInt("user_role", 2)
+        val raw   = prefs.getString("token", "") ?: ""
+        token     = if (raw.startsWith("Bearer ")) raw else "Bearer $raw"
+        userRole  = prefs.getInt("user_role", 2)
 
-        // IDs del nuevo activity_notificacion.xml
-        recyclerView = findViewById(R.id.recyclerNotificaciones)
-        tvConteo     = findViewById(R.id.tvConteoNotif)
+        // ── Views ───────────────────────────────────────────────────────────
+        recyclerView    = findViewById(R.id.recyclerNotificaciones)
+        tvConteo        = findViewById(R.id.tvConteoNotif)
+        btnFiltroTodas  = findViewById(R.id.btnFiltroTodas)
+        btnFiltroNuevas = findViewById(R.id.btnFiltroNuevas)
+        btnFiltroLeidas = findViewById(R.id.btnFiltroLeidas)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // ── Botón regresar ──────────────────────────────────────────────────
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // Botón "Nueva Notificación" — solo visible para técnico/admin
+        // ── Botón Nueva Notificación (solo técnico/admin) ───────────────────
         val btnNuevaNotificacion = findViewById<Button>(R.id.btnNuevaNotificacion)
         if (userRole != 2) {
             btnNuevaNotificacion.visibility = View.VISIBLE
@@ -50,11 +70,15 @@ class NotificacionActivity : AppCompatActivity() {
             btnNuevaNotificacion.visibility = View.GONE
         }
 
+        // ── Pills de filtro ─────────────────────────────────────────────────
+        btnFiltroTodas.setOnClickListener  { aplicarFiltro("todas") }
+        btnFiltroNuevas.setOnClickListener { aplicarFiltro("nuevas") }
+        btnFiltroLeidas.setOnClickListener { aplicarFiltro("leidas") }
+
         cargarNotificaciones()
     }
 
     private fun cargarNotificaciones() {
-        // Rol 2 (cliente) → sus notificaciones | Rol 1/3 → todas
         val call: Call<List<Notificacion>> = if (userRole == 2) {
             api.getMisNotificaciones(token)
         } else {
@@ -62,37 +86,14 @@ class NotificacionActivity : AppCompatActivity() {
         }
 
         call.enqueue(object : Callback<List<Notificacion>> {
-            override fun onResponse(call: Call<List<Notificacion>>, response: Response<List<Notificacion>>) {
+            override fun onResponse(
+                call: Call<List<Notificacion>>,
+                response: Response<List<Notificacion>>
+            ) {
                 if (response.isSuccessful && response.body() != null) {
-                    val lista = response.body()!!
-
-                    // Contador en el header
-                    val noLeidas = lista.count { it.leida == 0 }
-                    tvConteo.text = if (noLeidas > 0)
-                        "${lista.size} notificaciones · $noLeidas sin leer"
-                    else
-                        "${lista.size} notificaciones"
-
-                    val adapter = NotificacionAdapter(
-                        lista.toMutableList(),
-                        onMarcarLeida = { notificacion ->
-                            // Todos los roles pueden marcar sus notificaciones como leídas
-                            notificacion.codigoNotificaciones?.let { id -> marcarLeida(id) }
-                        },
-                        onLongClick = { notificacion ->
-                            if (userRole != 2) {
-                                notificacion.codigoNotificaciones?.let { id ->
-                                    androidx.appcompat.app.AlertDialog.Builder(this@NotificacionActivity)
-                                        .setTitle("Eliminar Notificación")
-                                        .setMessage("¿Estás seguro de eliminar esta notificación?")
-                                        .setPositiveButton("Eliminar") { _, _ -> eliminarNotificacion(id) }
-                                        .setNegativeButton("Cancelar", null)
-                                        .show()
-                                }
-                            }
-                        }
-                    )
-                    recyclerView.adapter = adapter
+                    listaCompleta = response.body()!!.toMutableList()
+                    actualizarConteo()
+                    mostrarFiltrado()
                 } else {
                     Toast.makeText(
                         this@NotificacionActivity,
@@ -101,12 +102,81 @@ class NotificacionActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+
             override fun onFailure(call: Call<List<Notificacion>>, t: Throwable) {
-                Toast.makeText(this@NotificacionActivity, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@NotificacionActivity,
+                    "Error de red: ${t.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
 
+    // ── Filtrado ────────────────────────────────────────────────────────────
+    private fun aplicarFiltro(filtro: String) {
+        filtroActual = filtro
+        actualizarPills()
+        mostrarFiltrado()
+    }
+
+    private fun mostrarFiltrado() {
+        val lista = when (filtroActual) {
+            "nuevas"  -> listaCompleta.filter { it.leida != 1 }
+            "leidas"  -> listaCompleta.filter { it.leida == 1 }
+            else      -> listaCompleta
+        }.toMutableList()
+
+        val adapter = NotificacionAdapter(
+            lista,
+            onMarcarLeida = { notif ->
+                if (userRole == 2) {
+                    notif.codigoNotificaciones?.let { id -> marcarLeida(id) }
+                }
+            },
+            onLongClick = { notif ->
+                if (userRole != 2) {
+                    notif.codigoNotificaciones?.let { id ->
+                        androidx.appcompat.app.AlertDialog.Builder(this)
+                            .setTitle("Eliminar Notificación")
+                            .setMessage("¿Estás seguro de eliminar esta notificación?")
+                            .setPositiveButton("Eliminar") { _, _ -> eliminarNotificacion(id) }
+                            .setNegativeButton("Cancelar", null)
+                            .show()
+                    }
+                }
+            }
+        )
+        recyclerView.adapter = adapter
+    }
+
+    private fun actualizarPills() {
+        // Resetear todos a outline
+        val inactive = listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas)
+        inactive.forEach { btn ->
+            btn.setBackgroundResource(R.drawable.bg_btn_outline)
+            btn.setTextColor(colorActivo)
+        }
+        // Activar el seleccionado
+        val active = when (filtroActual) {
+            "nuevas"  -> btnFiltroNuevas
+            "leidas"  -> btnFiltroLeidas
+            else      -> btnFiltroTodas
+        }
+        active.setBackgroundResource(R.drawable.bg_btn_primary)
+        active.setTextColor(Color.WHITE)
+    }
+
+    private fun actualizarConteo() {
+        val total   = listaCompleta.size
+        val noLeidas = listaCompleta.count { it.leida != 1 }
+        tvConteo.text = if (noLeidas > 0)
+            "$total notificaciones · $noLeidas sin leer"
+        else
+            "$total notificaciones"
+    }
+
+    // ── API calls ───────────────────────────────────────────────────────────
     private fun marcarLeida(id: Int) {
         api.marcarNotificacionLeida(token, id).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -125,7 +195,7 @@ class NotificacionActivity : AppCompatActivity() {
                     Toast.makeText(this@NotificacionActivity, "Notificación eliminada", Toast.LENGTH_SHORT).show()
                     cargarNotificaciones()
                 } else {
-                    Toast.makeText(this@NotificacionActivity, "Error al eliminar: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NotificacionActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -135,14 +205,13 @@ class NotificacionActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoNuevaNotificacion() {
-        // dialog_nueva_notificacion.xml IDs: etTituloNotif, etMensajeNotif, etDestinatarioNotif
         val dialogView = layoutInflater.inflate(R.layout.dialog_nueva_notificacion, null)
-        val etTitulo      = dialogView.findViewById<EditText>(R.id.etTituloNotif)
-        val etMensaje     = dialogView.findViewById<EditText>(R.id.etMensajeNotif)
-        val etDestinatario= dialogView.findViewById<EditText>(R.id.etDestinatarioNotif)
-        val btnEnviar     = dialogView.findViewById<Button>(R.id.btnEnviarNotif)
-        val btnCancelar   = dialogView.findViewById<Button>(R.id.btnCancelarNotif)
-        val btnCerrar     = dialogView.findViewById<Button>(R.id.btnCerrarDialog)
+        val etTitulo       = dialogView.findViewById<EditText>(R.id.etTituloNotif)
+        val etMensaje      = dialogView.findViewById<EditText>(R.id.etMensajeNotif)
+        val etDestinatario = dialogView.findViewById<EditText>(R.id.etDestinatarioNotif)
+        val btnEnviar      = dialogView.findViewById<Button>(R.id.btnEnviarNotif)
+        val btnCancelar    = dialogView.findViewById<Button>(R.id.btnCancelarNotif)
+        val btnCerrar      = dialogView.findViewById<Button>(R.id.btnCerrarDialog)
 
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setView(dialogView)
@@ -150,12 +219,12 @@ class NotificacionActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         btnCerrar.setOnClickListener  { dialog.dismiss() }
-        btnCancelar.setOnClickListener { dialog.dismiss() }
+        btnCancelar.setOnClickListener{ dialog.dismiss() }
 
         btnEnviar.setOnClickListener {
-            val destino  = etDestinatario.text.toString().trim()
-            val titulo   = etTitulo.text.toString().trim()
-            val mensaje  = etMensaje.text.toString().trim()
+            val destino = etDestinatario.text.toString().trim()
+            val titulo  = etTitulo.text.toString().trim()
+            val mensaje = etMensaje.text.toString().trim()
 
             if (destino.isEmpty() || mensaje.isEmpty()) {
                 Toast.makeText(this, "Destinatario y mensaje son obligatorios", Toast.LENGTH_SHORT).show()
