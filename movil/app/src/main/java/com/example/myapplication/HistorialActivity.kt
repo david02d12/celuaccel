@@ -102,7 +102,7 @@ class HistorialActivity : AppCompatActivity() {
         if (listaFiltrada.isEmpty() && listaCompleta.isNotEmpty()) {
             Toast.makeText(this, "No hay resultados para \"$query\"", Toast.LENGTH_SHORT).show()
             recyclerView.visibility = View.GONE
-        } else if (listaFiltrada.isNotEmpty()) {
+        } else {
             recyclerView.visibility = View.VISIBLE
         }
         adapter.updateList(listaFiltrada)

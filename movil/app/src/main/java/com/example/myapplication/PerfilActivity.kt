@@ -27,6 +27,8 @@ class PerfilActivity : AppCompatActivity() {
     private lateinit var tvInicial:   TextView
 
     private var fechaNacimientoOriginal: String = ""
+    private var codigoDocumentoOriginal: Int = 1
+    private var codigoRolOriginal: Int = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +63,8 @@ class PerfilActivity : AppCompatActivity() {
                     etTelefono.setText(c.telefono)
                     etDireccion.setText(c.direccion)
                     fechaNacimientoOriginal = c.fechaNacimiento ?: ""
+                    codigoDocumentoOriginal = c.codigoDocumento
+                    codigoRolOriginal = c.codigoRol
                     // Mostrar inicial del nombre
                     tvInicial.text = c.nombre.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
                 }
@@ -93,14 +97,14 @@ class PerfilActivity : AppCompatActivity() {
         // Construimos el cliente con los datos actualizados (campos requeridos por el modelo)
         val clienteActualizado = Cliente(
             idUsuario       = userId,
-            codigoDocumento = 0,     // se mantiene el original (no se edita aquí)
+            codigoDocumento = codigoDocumentoOriginal,
             nombre          = nombre,
             fechaNacimiento = fechaNacimientoOriginal,
             direccion       = direccion,
             telefono        = telefono,
             correo          = correo,
             clave           = "",    // no se envía en actualización de perfil
-            codigoRol       = 0
+            codigoRol       = codigoRolOriginal
         )
 
         api.actualizarMiPerfil(token, clienteActualizado).enqueue(object : Callback<Void> {

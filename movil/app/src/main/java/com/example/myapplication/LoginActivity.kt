@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 mostrarError(tvMessage, "Por favor, complete todos los campos")
             } else {
                 tvMessage.visibility = android.view.View.VISIBLE
-                tvMessage.setTextColor(Color.BLUE)
+                tvMessage.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.celuaccel_primary))
                 tvMessage.text = "Validando credenciales..."
                 realizarLogin(documento, clave, tvMessage)
             }
@@ -119,7 +119,7 @@ class LoginActivity : AppCompatActivity() {
                     }.apply()
 
                     tvMessage.visibility = android.view.View.VISIBLE
-                    tvMessage.setTextColor(Color.GREEN)
+                    tvMessage.setTextColor(androidx.core.content.ContextCompat.getColor(this@LoginActivity, R.color.etapa_listo_border))
                     tvMessage.text = "Ingreso con éxito"
 
                     irAlMenu()

@@ -7,11 +7,23 @@ import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+const IconReply = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+  </svg>
+);
+
 const Preguntas = ({ cerrarSesion, setVista }) => {
   const [preguntas, setPreguntas] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
+  const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
   const [form, setForm] = useState({ ID_Consulta: '', ID_Usuario: '', Codigo_Producto: '', Pregunta: '', Fecha: '', Respuesta: '' });
+
+  const mostrarToast = (msg, ok = true) => {
+    setToast({ visible: true, msg, ok });
+    setTimeout(() => setToast({ visible: false, msg: '', ok: true }), 3000);
+  };
 
   const preguntasFiltradas = preguntas.filter(p =>
     String(p.ID_Consulta).includes(busqueda) ||
@@ -27,15 +39,12 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
     try {
       const res = await api.get('/preguntas/listar');
       setPreguntas(res.data);
-    } catch (err) {
-      console.error('Error al listar preguntas:', err);
-    }
+    } catch { mostrarToast('Error al cargar preguntas.', false); }
   };
 
   const guardar = async () => {
     try {
       if (enEdicion) {
-        // C5 FIX: al responder, enviar también los campos de respuesta de la nueva BD
         const tecnico = localStorage.getItem('userId') || localStorage.getItem('user');
         await api.put('/preguntas/actualizar', {
           ...form,
@@ -45,21 +54,17 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
       } else {
         await api.post('/preguntas/agregar', form);
       }
-      listar();
-      limpiar();
-    } catch (err) {
-      alert('Error al procesar la pregunta');
-    }
+      mostrarToast(enEdicion ? 'Respuesta guardada.' : 'Consulta registrada.');
+      listar(); limpiar();
+    } catch { mostrarToast('Error al procesar la pregunta.', false); }
   };
 
   const eliminar = async (id) => {
     if (window.confirm('¿Eliminar pregunta?')) {
       try {
         await api.delete(`/preguntas/eliminar/${id}`);
-        listar();
-      } catch (err) {
-        alert('Error al eliminar pregunta');
-      }
+        mostrarToast('Pregunta eliminada.'); listar();
+      } catch { mostrarToast('Error al eliminar.', false); }
     }
   };
 
@@ -76,6 +81,13 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
 
   return (
     <div>
+      {toast.visible && (
+        <div className={`toast show position-fixed top-0 end-0 m-3 text-white toast-premium ${toast.ok ? 'bg-success' : 'bg-danger'}`}
+          style={{ zIndex: 9999, minWidth: '260px' }} role="alert">
+          <div className="toast-body fw-bold">{toast.msg}</div>
+        </div>
+      )}
+
       <Navbar titulo="CELUACCEL — Preguntas de Clientes" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
@@ -157,9 +169,10 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                         <td>
                           <div>{p.Pregunta}</div>
                           {p.Respuesta && (
-                            <div className="mt-1 p-2 rounded-2 small"
+                            <div className="mt-1 p-2 rounded-2 small d-flex align-items-start gap-1"
                               style={{ backgroundColor: 'var(--color-primary-lt)', color: 'var(--color-primary)', fontStyle: 'italic' }}>
-                              💬 {p.Respuesta}
+                              <IconReply />
+                              <span>{p.Respuesta}</span>
                             </div>
                           )}
                         </td>

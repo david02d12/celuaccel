@@ -8,9 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Cliente
 
 class ClienteAdapter(
-    private val clientes: List<Cliente>,
+    private var clientes: MutableList<Cliente>,
     private val onClick: ((Cliente) -> Unit)? = null
 ) : RecyclerView.Adapter<ClienteAdapter.ViewHolder>() {
+
+    fun actualizarLista(nuevaLista: MutableList<Cliente>) {
+        clientes = nuevaLista
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // IDs del nuevo item_cliente.xml

@@ -36,7 +36,8 @@ class ServicioAdapter(
         val progressColorRes: Int
     )
 
-    private fun etapaInfo(etapa: Int): EtapaInfo = when {
+    private fun etapaInfo(etapa: Int?): EtapaInfo = when {
+        etapa == null -> EtapaInfo("Sin etapa",            R.drawable.bg_badge_recibido,     R.color.etapa_recibido_text,     0,   R.color.etapa_recibido_border)
         etapa == -1  -> EtapaInfo("Cancelado",            R.drawable.bg_badge_cancelado,    R.color.etapa_cancelado_text,    0,   R.color.etapa_cancelado_border)
         etapa == 0   -> EtapaInfo("Recibido",             R.drawable.bg_badge_recibido,     R.color.etapa_recibido_text,     5,   R.color.etapa_recibido_border)
         etapa <= 25  -> EtapaInfo("En Diagnóstico",       R.drawable.bg_badge_diagnostico,  R.color.etapa_diagnostico_text,  25,  R.color.etapa_diagnostico_border)
@@ -77,16 +78,18 @@ class ServicioAdapter(
         holder.tvBadgeEtapa.setTextColor(ContextCompat.getColor(ctx, info.textColorAttr))
 
         // Dispositivo
+        val movilN = s.movilNombre.orEmpty()
+        val movilE = s.movilEspecificacion.orEmpty()
         holder.tvDispositivo.text = buildString {
-            append(s.movilNombre.ifEmpty { "Dispositivo sin nombre" })
-            if (s.movilEspecificacion.isNotEmpty()) append(" — ${s.movilEspecificacion}")
+            append(movilN.ifEmpty { "Dispositivo sin nombre" })
+            if (movilE.isNotEmpty()) append(" — $movilE")
         }
 
         // Descripción
-        holder.tvDescripcion.text = s.descripcion.ifEmpty { "Sin descripción" }
+        holder.tvDescripcion.text = s.descripcion.orEmpty().ifEmpty { "Sin descripción" }
 
         // Barra de progreso
-        if (s.etapa == -1) {
+        if (s.etapa == null || s.etapa == -1) {
             holder.progressEtapa.visibility = View.INVISIBLE
         } else {
             holder.progressEtapa.visibility = View.VISIBLE
@@ -96,11 +99,13 @@ class ServicioAdapter(
         }
 
         // Fecha
-        val fechaStr = s.fecha.takeIf { it.length >= 10 }?.substring(0, 10) ?: s.fecha
+        val rawFecha = s.fecha.orEmpty()
+        val fechaStr = rawFecha.takeIf { it.length >= 10 }?.substring(0, 10) ?: rawFecha
         holder.tvFecha.text = "📅 $fechaStr"
 
         // Precio
-        holder.tvPrecio.text = if (s.precio > 0) "$${"%.0f".format(s.precio)}" else "Por definir"
+        val precio = s.precio ?: 0.0
+        holder.tvPrecio.text = if (precio > 0) "$${"%.0f".format(precio)}" else "Por definir"
 
         // Click en la card
         holder.itemView.setOnClickListener { onClick?.invoke(s) }

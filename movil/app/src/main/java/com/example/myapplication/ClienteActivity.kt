@@ -51,6 +51,7 @@ class ClienteActivity : AppCompatActivity() {
         // Pasamos el callback de click para abrir el diálogo de edición
         adapter = ClienteAdapter(mutableListOf()) { cliente -> mostrarDialogoEdicion(cliente) }
         recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
 
         btnRegresar.setOnClickListener { finish() }
 
@@ -90,8 +91,7 @@ class ClienteActivity : AppCompatActivity() {
                 it.nombre.lowercase().contains(q) || it.idUsuario.lowercase().contains(q)
             }
         }
-        adapter = ClienteAdapter(filtrados.toMutableList()) { cliente -> mostrarDialogoEdicion(cliente) }
-        recyclerView.adapter = adapter
+        adapter.actualizarLista(filtrados.toMutableList())
     }
 
     /**
