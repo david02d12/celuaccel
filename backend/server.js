@@ -5,13 +5,17 @@ const swaggerDocumentation = require('./swagger.json');
 const cors = require('cors');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// M3 FIX: CORS restringido al origen del frontend (no más '*')
+// M3 FIX: CORS restringido al origen del frontend y de Swagger
 // Configurar FRONTEND_URL en el .env para producción
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     'http://localhost:5174',  // puerto alternativo de Vite
     'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    `http://localhost:${PORT}`,
+    `http://127.0.0.1:${PORT}`,
 ];
 app.use(cors({
     origin: (origin, callback) => {
@@ -54,7 +58,6 @@ process.on('uncaughtException', (err) => {
 });
 
 // Arrancar servidor
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     console.log(`Documentacion: http://localhost:${PORT}/doc`);

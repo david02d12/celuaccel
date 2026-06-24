@@ -7,9 +7,63 @@
   },
   "host": "localhost:3000",
   "basePath": "/api",
-  "schemes": ["http"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Registro, login y gestión de contraseñas"
+    },
+    {
+      "name": "Usuarios",
+      "description": "Administración de usuarios"
+    },
+    {
+      "name": "Roles",
+      "description": "Administración de roles"
+    },
+    {
+      "name": "Servicios",
+      "description": "Órdenes de servicio / reparaciones"
+    },
+    {
+      "name": "Historial",
+      "description": "Historial de acciones sobre servicios"
+    },
+    {
+      "name": "Productos",
+      "description": "Catálogo de productos / repuestos"
+    },
+    {
+      "name": "Categorías",
+      "description": "Categorías de productos"
+    },
+    {
+      "name": "Preguntas",
+      "description": "Preguntas frecuentes de clientes"
+    },
+    {
+      "name": "Chats",
+      "description": "Canales de chat entre usuario y técnico"
+    },
+    {
+      "name": "Mensajes",
+      "description": "Mensajes dentro de un chat"
+    },
+    {
+      "name": "Comentarios",
+      "description": "Comentarios / valoraciones de servicios"
+    },
+    {
+      "name": "Notificaciones",
+      "description": "Notificaciones push / internas"
+    },
+    {
+      "name": "TipoDocumento",
+      "description": "Tipos de documento de identidad"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
   "securityDefinitions": {
     "BearerAuth": {
       "type": "apiKey",
@@ -18,281 +72,167 @@
       "description": "Ingresa: Bearer <tu_token_jwt>"
     }
   },
-  "tags": [
-    { "name": "Auth",           "description": "Registro, login y gestión de contraseñas" },
-    { "name": "Usuarios",       "description": "Administración de usuarios" },
-    { "name": "Roles",          "description": "Administración de roles" },
-    { "name": "Servicios",      "description": "Órdenes de servicio / reparaciones" },
-    { "name": "Historial",      "description": "Historial de acciones sobre servicios" },
-    { "name": "Productos",      "description": "Catálogo de productos / repuestos" },
-    { "name": "Categorías",     "description": "Categorías de productos" },
-    { "name": "Preguntas",      "description": "Preguntas frecuentes de clientes" },
-    { "name": "Chats",          "description": "Canales de chat entre usuario y técnico" },
-    { "name": "Mensajes",       "description": "Mensajes dentro de un chat" },
-    { "name": "Comentarios",    "description": "Comentarios / valoraciones de servicios" },
-    { "name": "Notificaciones", "description": "Notificaciones push / internas" },
-    { "name": "TipoDocumento",  "description": "Tipos de documento de identidad" }
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
   ],
   "paths": {
-
     "/registro": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Registrar nuevo usuario",
-        "description": "Crea una cuenta de usuario nueva en el sistema.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["nombre", "email", "password"],
-              "properties": {
-                "nombre":   { "type": "string", "example": "Juan Pérez" },
-                "email":    { "type": "string", "example": "juan@email.com" },
-                "password": { "type": "string", "example": "MiPass123!" },
-                "telefono": { "type": "string", "example": "3001234567" },
-                "idRol":    { "type": "integer", "example": 2 }
-              }
-            }
-          }
-        ],
+        "description": "",
         "responses": {
-          "201": { "description": "Usuario creado exitosamente" },
-          "400": { "description": "Datos inválidos o email ya registrado" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          }
         }
       }
     },
-
     "/login": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Iniciar sesión",
-        "description": "Autentica al usuario y devuelve un token JWT.",
+        "description": "",
         "parameters": [
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "object",
-              "required": ["user", "password"],
               "properties": {
-                "user":     { "type": "string", "example": "juan@email.com" },
-                "password": { "type": "string", "example": "MiPass123!" }
+                "user": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
               }
             }
           }
         ],
         "responses": {
-          "200": { "description": "Login exitoso, retorna token JWT" },
-          "401": { "description": "Credenciales incorrectas" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/forgot-password": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Solicitar restablecimiento de contraseña",
-        "description": "Envía un correo con enlace para restablecer la contraseña.",
+        "description": "",
         "parameters": [
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "object",
-              "required": ["email"],
               "properties": {
-                "email": { "type": "string", "example": "juan@email.com" }
+                "email": {
+                  "example": "any"
+                }
               }
             }
           }
         ],
         "responses": {
-          "200": { "description": "Correo enviado exitosamente" },
-          "404": { "description": "Email no encontrado" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
-
     "/reset-password/{token}": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Restablecer contraseña con token",
-        "description": "Restablece la contraseña usando el token recibido por email.",
+        "description": "",
         "parameters": [
           {
             "name": "token",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "Token de restablecimiento enviado por email"
+            "type": "string"
           },
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "object",
-              "required": ["newPassword"],
               "properties": {
-                "newPassword": { "type": "string", "example": "NuevaPass456!" }
+                "newPassword": {
+                  "example": "any"
+                }
               }
             }
           }
         ],
         "responses": {
-          "200": { "description": "Contraseña restablecida correctamente" },
-          "400": { "description": "Token inválido o expirado" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
-
     "/usuarios/perfil/{id}": {
       "get": {
-        "tags": ["Auth"],
-        "summary": "Ver perfil público de usuario",
-        "description": "Obtiene la información de perfil de un usuario por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del usuario"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Perfil obtenido correctamente" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "404": { "description": "Usuario no encontrado" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/usuarios/mi-perfil": {
       "put": {
-        "tags": ["Auth"],
-        "summary": "Actualizar mi perfil",
-        "description": "Permite al usuario autenticado actualizar sus propios datos de perfil.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nombre":   { "type": "string", "example": "Juan Actualizado" },
-                "telefono": { "type": "string", "example": "3009876543" },
-                "direccion":{ "type": "string", "example": "Calle 123 #45-67" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Perfil actualizado correctamente" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/change-password": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Cambiar contraseña (autenticado)",
-        "description": "Permite al usuario autenticado cambiar su contraseña actual.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["oldPassword", "newPassword"],
-              "properties": {
-                "oldPassword": { "type": "string", "example": "MiPass123!" },
-                "newPassword": { "type": "string", "example": "NuevaPass456!" }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": { "description": "Contraseña cambiada correctamente" },
-          "401": { "description": "No autenticado o contraseña actual incorrecta" },
-          "403": { "description": "Sin permisos" }
-        }
-      }
-    },
-
-    "/usuarios/listar": {
-      "get": {
-        "tags": ["Usuarios"],
-        "summary": "Listar todos los usuarios (Admin)",
-        "description": "Devuelve la lista completa de usuarios. Solo accesible por administradores (rol 3).",
-        "security": [{ "BearerAuth": [] }],
-        "responses": {
-          "200": { "description": "Lista de usuarios" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos (se requiere rol Administrador)" },
-          "500": { "description": "Error interno del servidor" }
-        }
-      }
-    },
-
-    "/usuarios/actualizar": {
-      "put": {
-        "tags": ["Usuarios"],
-        "summary": "Actualizar usuario (Admin)",
-        "description": "Actualiza los datos de un usuario. Solo para administradores (rol 3).",
-        "security": [{ "BearerAuth": [] }],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":       { "type": "integer", "example": 5 },
-                "nombre":   { "type": "string",  "example": "Nuevo Nombre" },
-                "email":    { "type": "string",  "example": "nuevo@email.com" },
-                "idRol":    { "type": "integer", "example": 2 },
-                "activo":   { "type": "boolean", "example": true }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": { "description": "Usuario actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
-        }
-      }
-    },
-
-    "/usuarios/actualizar/{id}": {
-      "put": {
-        "tags": ["Usuarios"],
-        "summary": "Actualizar usuario por ID (Admin)",
-        "description": "Actualiza los datos de un usuario por su ID en la URL. Solo para administradores.",
-        "security": [{ "BearerAuth": [] }],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "description": "ID del usuario a actualizar"
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           },
           {
             "name": "body",
@@ -300,1454 +240,1761 @@
             "schema": {
               "type": "object",
               "properties": {
-                "nombre":  { "type": "string",  "example": "Nuevo Nombre" },
-                "email":   { "type": "string",  "example": "nuevo@email.com" },
-                "idRol":   { "type": "integer", "example": 2 },
-                "activo":  { "type": "boolean", "example": true }
+                "oldPassword": {
+                  "example": "any"
+                },
+                "newPassword": {
+                  "example": "any"
+                }
               }
             }
           }
         ],
         "responses": {
-          "200": { "description": "Usuario actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
+    "/usuarios/listar": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/usuarios/actualizar": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/usuarios/actualizar/{id}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/usuarios/eliminar/{id}": {
       "delete": {
-        "tags": ["Usuarios"],
-        "summary": "Eliminar usuario (Admin)",
-        "description": "Elimina un usuario del sistema por su ID. Solo para administradores.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del usuario a eliminar"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Usuario eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/roles/listar": {
       "get": {
-        "tags": ["Roles"],
-        "summary": "Listar roles",
-        "description": "Obtiene todos los roles disponibles en el sistema.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de roles" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/roles/agregar": {
       "post": {
-        "tags": ["Roles"],
-        "summary": "Agregar rol",
-        "description": "Crea un nuevo rol en el sistema.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "object",
-              "required": ["Codigo_Rol", "Descripcion_Rol"],
               "properties": {
-                "Codigo_Rol":      { "type": "string",  "example": "TEC" },
-                "Descripcion_Rol": { "type": "string",  "example": "Técnico de reparaciones" }
+                "Codigo_Rol": {
+                  "example": "any"
+                },
+                "Descripcion_Rol": {
+                  "example": "any"
+                }
               }
             }
           }
         ],
         "responses": {
-          "201": { "description": "Rol creado exitosamente" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/roles/actualizar": {
       "put": {
-        "tags": ["Roles"],
-        "summary": "Actualizar rol",
-        "description": "Modifica un rol existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "object",
-              "required": ["Codigo_Rol"],
               "properties": {
-                "Codigo_Rol":      { "type": "string", "example": "TEC" },
-                "Descripcion_Rol": { "type": "string", "example": "Técnico senior" }
+                "Codigo_Rol": {
+                  "example": "any"
+                },
+                "Descripcion_Rol": {
+                  "example": "any"
+                }
               }
             }
           }
         ],
         "responses": {
-          "200": { "description": "Rol actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/roles/eliminar/{id}": {
       "delete": {
-        "tags": ["Roles"],
-        "summary": "Eliminar rol",
-        "description": "Elimina un rol por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del rol"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Rol eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/servicios/listar": {
       "get": {
-        "tags": ["Servicios"],
-        "summary": "Listar todos los servicios",
-        "description": "Devuelve todos los servicios/reparaciones registrados (acceso autenticado).",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de servicios" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/servicios/listar-mios": {
       "get": {
-        "tags": ["Servicios"],
-        "summary": "Listar mis servicios (cliente)",
-        "description": "Devuelve los servicios asociados al usuario autenticado.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de servicios del usuario" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/servicios/mis-servicios/{idUsuario}": {
       "get": {
-        "tags": ["Servicios"],
-        "summary": "Servicios de un usuario por ID",
-        "description": "Obtiene los servicios de un usuario específico. El técnico o admin puede consultar cualquier usuario.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "idUsuario",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del usuario"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Servicios del usuario" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/servicios/agregar": {
       "post": {
-        "tags": ["Servicios"],
-        "summary": "Agregar/Solicitar servicio (cliente)",
-        "description": "Permite a un cliente crear una nueva solicitud de servicio/reparación.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["descripcion", "dispositivo"],
-              "properties": {
-                "descripcion":  { "type": "string",  "example": "Pantalla rota" },
-                "dispositivo":  { "type": "string",  "example": "iPhone 13" },
-                "marca":        { "type": "string",  "example": "Apple" },
-                "modelo":       { "type": "string",  "example": "A2482" },
-                "idUsuario":    { "type": "integer", "example": 4 }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Servicio creado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/servicios/actualizar": {
       "put": {
-        "tags": ["Servicios"],
-        "summary": "Actualizar servicio (Admin/Técnico)",
-        "description": "Modifica los datos o estado de un servicio. Requiere rol Administrador (1) o Técnico (3).",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":          { "type": "integer", "example": 10 },
-                "estado":      { "type": "string",  "example": "En proceso" },
-                "descripcion": { "type": "string",  "example": "Diagnóstico completado" },
-                "costo":       { "type": "number",  "example": 150000 }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Servicio actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/servicios/cancelar/{id}": {
       "put": {
-        "tags": ["Servicios"],
-        "summary": "Cancelar servicio (PUT)",
-        "description": "Cancela un servicio por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del servicio a cancelar"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Servicio cancelado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       },
       "patch": {
-        "tags": ["Servicios"],
-        "summary": "Cancelar servicio (PATCH)",
-        "description": "Cancela un servicio por su ID (método alternativo PATCH).",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del servicio a cancelar"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Servicio cancelado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/servicios/eliminar/{id}": {
       "delete": {
-        "tags": ["Servicios"],
-        "summary": "Eliminar servicio (Admin/Técnico)",
-        "description": "Elimina permanentemente un servicio por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del servicio"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Servicio eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/historial/listar": {
       "get": {
-        "tags": ["Historial"],
-        "summary": "Listar historial",
-        "description": "Devuelve el historial de eventos de todos los servicios.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Historial obtenido" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/historial/agregar": {
       "post": {
-        "tags": ["Historial"],
-        "summary": "Agregar entrada al historial",
-        "description": "Registra un nuevo evento en el historial de un servicio.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idServicio", "descripcion"],
-              "properties": {
-                "idServicio":  { "type": "integer", "example": 10 },
-                "descripcion": { "type": "string",  "example": "Se reemplazó la pantalla" },
-                "estado":      { "type": "string",  "example": "Completado" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Historial agregado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/historial/actualizar": {
       "put": {
-        "tags": ["Historial"],
-        "summary": "Actualizar entrada del historial",
-        "description": "Modifica una entrada existente del historial.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":          { "type": "integer", "example": 3 },
-                "descripcion": { "type": "string",  "example": "Descripción corregida" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Historial actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/historial/eliminar/{id}": {
       "delete": {
-        "tags": ["Historial"],
-        "summary": "Eliminar entrada del historial",
-        "description": "Elimina una entrada del historial por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID de la entrada de historial"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Entrada eliminada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/productos/publico": {
       "get": {
-        "tags": ["Productos"],
-        "summary": "Listar productos públicos",
-        "description": "Devuelve productos activos con stock > 0. No requiere autenticación.",
+        "description": "",
         "responses": {
-          "200": { "description": "Productos disponibles" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
-
     "/productos/listar": {
       "get": {
-        "tags": ["Productos"],
-        "summary": "Listar todos los productos (autenticado)",
-        "description": "Devuelve todos los productos incluyendo los inactivos. Requiere autenticación.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de productos" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/productos/agregar": {
       "post": {
-        "tags": ["Productos"],
-        "summary": "Agregar producto (Admin/Técnico)",
-        "description": "Crea un nuevo producto en el catálogo.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["nombre", "precio", "stock"],
-              "properties": {
-                "nombre":      { "type": "string",  "example": "Pantalla OLED Samsung S21" },
-                "descripcion": { "type": "string",  "example": "Pantalla original de fábrica" },
-                "precio":      { "type": "number",  "example": 250000 },
-                "stock":       { "type": "integer", "example": 10 },
-                "idCategoria": { "type": "integer", "example": 2 }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Producto creado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/productos/actualizar": {
       "put": {
-        "tags": ["Productos"],
-        "summary": "Actualizar producto (Admin/Técnico)",
-        "description": "Modifica un producto existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":          { "type": "integer", "example": 3 },
-                "nombre":      { "type": "string",  "example": "Nombre actualizado" },
-                "precio":      { "type": "number",  "example": 280000 },
-                "stock":       { "type": "integer", "example": 5 },
-                "activo":      { "type": "boolean", "example": true }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Producto actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/productos/eliminar/{id}": {
       "delete": {
-        "tags": ["Productos"],
-        "summary": "Eliminar producto (Admin/Técnico)",
-        "description": "Elimina un producto por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del producto"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Producto eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/categorias/publico": {
       "get": {
-        "tags": ["Categorías"],
-        "summary": "Listar categorías públicas",
-        "description": "Devuelve todas las categorías. No requiere autenticación.",
+        "description": "",
         "responses": {
-          "200": { "description": "Lista de categorías" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
-
     "/categorias/listar": {
       "get": {
-        "tags": ["Categorías"],
-        "summary": "Listar categorías (autenticado)",
-        "description": "Devuelve todas las categorías de productos.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de categorías" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/categorias/agregar": {
       "post": {
-        "tags": ["Categorías"],
-        "summary": "Agregar categoría",
-        "description": "Crea una nueva categoría de productos.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["nombre"],
-              "properties": {
-                "nombre":      { "type": "string", "example": "Pantallas" },
-                "descripcion": { "type": "string", "example": "Pantallas y displays" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Categoría creada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/categorias/actualizar": {
       "put": {
-        "tags": ["Categorías"],
-        "summary": "Actualizar categoría",
-        "description": "Modifica una categoría existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":     { "type": "integer", "example": 1 },
-                "nombre": { "type": "string",  "example": "Pantallas y módulos" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Categoría actualizada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/categorias/eliminar/{id}": {
       "delete": {
-        "tags": ["Categorías"],
-        "summary": "Eliminar categoría",
-        "description": "Elimina una categoría por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID de la categoría"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Categoría eliminada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/preguntas/mis-preguntas": {
       "get": {
-        "tags": ["Preguntas"],
-        "summary": "Mis preguntas (cliente)",
-        "description": "Devuelve las preguntas realizadas por el usuario autenticado.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de preguntas del usuario" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/preguntas/listar": {
       "get": {
-        "tags": ["Preguntas"],
-        "summary": "Listar todas las preguntas (Admin/Técnico)",
-        "description": "Devuelve todas las preguntas del sistema.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de preguntas" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/preguntas/agregar": {
       "post": {
-        "tags": ["Preguntas"],
-        "summary": "Agregar pregunta",
-        "description": "Permite crear una nueva pregunta o consulta al técnico.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["titulo", "descripcion"],
-              "properties": {
-                "titulo":      { "type": "string", "example": "¿Cuánto tarda la reparación?" },
-                "descripcion": { "type": "string", "example": "Quisiera saber el tiempo promedio de reparación de una pantalla." }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Pregunta creada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/preguntas/actualizar": {
       "put": {
-        "tags": ["Preguntas"],
-        "summary": "Actualizar pregunta (Admin/Técnico)",
-        "description": "Modifica o responde una pregunta existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":        { "type": "integer", "example": 2 },
-                "respuesta": { "type": "string",  "example": "Depende del daño, generalmente 24-48 horas." }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Pregunta actualizada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/preguntas/eliminar/{id}": {
       "delete": {
-        "tags": ["Preguntas"],
-        "summary": "Eliminar pregunta (Admin/Técnico)",
-        "description": "Elimina una pregunta por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID de la pregunta"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Pregunta eliminada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/chats/listar-mios": {
       "get": {
-        "tags": ["Chats"],
-        "summary": "Mis chats",
-        "description": "Devuelve los chats del usuario autenticado.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de chats del usuario" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/chats/listar": {
       "get": {
-        "tags": ["Chats"],
-        "summary": "Listar todos los chats (Admin/Técnico)",
-        "description": "Devuelve todos los chats del sistema.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de chats" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/chats/agregar": {
       "post": {
-        "tags": ["Chats"],
-        "summary": "Agregar mensaje a chat existente",
-        "description": "Envía un mensaje dentro de un chat ya creado.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idChat", "mensaje"],
-              "properties": {
-                "idChat":  { "type": "integer", "example": 5 },
-                "mensaje": { "type": "string",  "example": "Hola, ¿cómo va mi reparación?" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Mensaje enviado" },
-          "201": { "description": "Mensaje creado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/chats/crear": {
       "post": {
-        "tags": ["Chats"],
-        "summary": "Crear nuevo chat",
-        "description": "Crea un nuevo canal de chat entre cliente y técnico.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idServicio"],
-              "properties": {
-                "idServicio": { "type": "integer", "example": 10 },
-                "idTecnico":  { "type": "integer", "example": 3 }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Chat ya existía, devuelve el existente" },
-          "201": { "description": "Chat creado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/chats/actualizar": {
       "put": {
-        "tags": ["Chats"],
-        "summary": "Actualizar chat",
-        "description": "Modifica los datos de un chat.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":     { "type": "integer", "example": 5 },
-                "estado": { "type": "string",  "example": "cerrado" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Chat actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/chats/eliminar/{id}": {
       "delete": {
-        "tags": ["Chats"],
-        "summary": "Eliminar chat",
-        "description": "Elimina un chat por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del chat"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Chat eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/comentarios/listar": {
       "get": {
-        "tags": ["Comentarios"],
-        "summary": "Listar comentarios",
-        "description": "Devuelve todos los comentarios/valoraciones.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de comentarios" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/comentarios/agregar": {
       "post": {
-        "tags": ["Comentarios"],
-        "summary": "Agregar comentario",
-        "description": "Crea un nuevo comentario o valoración sobre un servicio.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idServicio", "comentario"],
-              "properties": {
-                "idServicio":  { "type": "integer", "example": 10 },
-                "comentario":  { "type": "string",  "example": "Excelente servicio, muy profesional" },
-                "calificacion":{ "type": "integer", "example": 5, "description": "Calificación del 1 al 5" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Comentario agregado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/comentarios/actualizar": {
       "put": {
-        "tags": ["Comentarios"],
-        "summary": "Actualizar comentario",
-        "description": "Modifica un comentario existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":         { "type": "integer", "example": 2 },
-                "comentario": { "type": "string",  "example": "Actualizo mi comentario: muy buen servicio" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Comentario actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/comentarios/eliminar/{id}": {
       "delete": {
-        "tags": ["Comentarios"],
-        "summary": "Eliminar comentario",
-        "description": "Elimina un comentario por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del comentario"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Comentario eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/mensajes/listar": {
       "get": {
-        "tags": ["Mensajes"],
-        "summary": "Listar todos los mensajes",
-        "description": "Devuelve todos los mensajes del sistema.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de mensajes" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/mensajes/por-chat/{id}": {
       "get": {
-        "tags": ["Mensajes"],
-        "summary": "Mensajes de un chat",
-        "description": "Devuelve todos los mensajes de un chat específico.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del chat"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Mensajes del chat" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/mensajes/agregar": {
       "post": {
-        "tags": ["Mensajes"],
-        "summary": "Enviar mensaje",
-        "description": "Envía un nuevo mensaje dentro de un chat.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idChat", "contenido"],
-              "properties": {
-                "idChat":   { "type": "integer", "example": 5 },
-                "contenido":{ "type": "string",  "example": "Buenos días, ¿tiene novedades de mi equipo?" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Mensaje enviado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/mensajes/actualizar": {
       "put": {
-        "tags": ["Mensajes"],
-        "summary": "Actualizar mensaje",
-        "description": "Modifica el contenido de un mensaje.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":       { "type": "integer", "example": 12 },
-                "contenido":{ "type": "string",  "example": "Mensaje corregido" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Mensaje actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/mensajes/eliminar/{id}": {
       "delete": {
-        "tags": ["Mensajes"],
-        "summary": "Eliminar mensaje",
-        "description": "Elimina un mensaje por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del mensaje"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Mensaje eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/notificaciones/listar": {
       "get": {
-        "tags": ["Notificaciones"],
-        "summary": "Listar todas las notificaciones (Admin/Técnico)",
-        "description": "Devuelve todas las notificaciones del sistema.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de notificaciones" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/notificaciones/agregar": {
       "post": {
-        "tags": ["Notificaciones"],
-        "summary": "Agregar notificación (Admin/Técnico)",
-        "description": "Crea una nueva notificación.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idUsuario", "titulo", "mensaje"],
-              "properties": {
-                "idUsuario": { "type": "integer", "example": 4 },
-                "titulo":    { "type": "string",  "example": "Servicio actualizado" },
-                "mensaje":   { "type": "string",  "example": "Tu equipo está listo para recoger." }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Notificación creada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/notificaciones/actualizar": {
       "put": {
-        "tags": ["Notificaciones"],
-        "summary": "Actualizar notificación (Admin/Técnico)",
-        "description": "Modifica una notificación existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":      { "type": "integer", "example": 7 },
-                "titulo":  { "type": "string",  "example": "Título actualizado" },
-                "mensaje": { "type": "string",  "example": "Mensaje actualizado" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Notificación actualizada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/notificaciones/eliminar/{id}": {
       "delete": {
-        "tags": ["Notificaciones"],
-        "summary": "Eliminar notificación (Admin/Técnico)",
-        "description": "Elimina una notificación por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID de la notificación"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Notificación eliminada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/notificaciones/enviar": {
       "post": {
-        "tags": ["Notificaciones"],
-        "summary": "Enviar notificación dirigida (Admin/Técnico)",
-        "description": "Envía una notificación a un usuario específico.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["idUsuario", "titulo", "mensaje"],
-              "properties": {
-                "idUsuario": { "type": "integer", "example": 4 },
-                "titulo":    { "type": "string",  "example": "Tu servicio está listo" },
-                "mensaje":   { "type": "string",  "example": "Puedes pasar a recoger tu equipo." }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Notificación enviada" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/notificaciones/mis-notificaciones": {
       "get": {
-        "tags": ["Notificaciones"],
-        "summary": "Mis notificaciones",
-        "description": "Devuelve las notificaciones del usuario autenticado. Filtra por ?noLeidas=true para obtener solo las no leídas.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "noLeidas",
             "in": "query",
-            "type": "boolean",
-            "description": "Si es true, devuelve solo notificaciones no leídas",
-            "required": false
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Notificaciones del usuario" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/notificaciones/listar-mias": {
       "get": {
-        "tags": ["Notificaciones"],
-        "summary": "Mis notificaciones (alias)",
-        "description": "Alias de /mis-notificaciones. Devuelve las notificaciones del usuario autenticado.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "noLeidas",
             "in": "query",
-            "type": "boolean",
-            "description": "Si es true, devuelve solo notificaciones no leídas",
-            "required": false
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Notificaciones del usuario" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/notificaciones/no-leidas/count": {
       "get": {
-        "tags": ["Notificaciones"],
-        "summary": "Conteo de notificaciones no leídas",
-        "description": "Devuelve la cantidad de notificaciones no leídas del usuario autenticado. Útil para mostrar un badge/indicador en el frontend.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Conteo de notificaciones no leídas", "schema": { "type": "object", "properties": { "count": { "type": "integer", "example": 3 } } } },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/notificaciones/marcar-leida/{id}": {
       "put": {
-        "tags": ["Notificaciones"],
-        "summary": "Marcar notificación como leída (PUT)",
-        "description": "Marca una notificación específica como leída.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID de la notificación"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Notificación marcada como leída" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       },
       "patch": {
-        "tags": ["Notificaciones"],
-        "summary": "Marcar notificación como leída (PATCH)",
-        "description": "Marca una notificación específica como leída (método alternativo PATCH).",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID de la notificación"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Notificación marcada como leída" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/notificaciones/marcar-todas-leidas": {
       "put": {
-        "tags": ["Notificaciones"],
-        "summary": "Marcar TODAS las notificaciones como leídas (PUT)",
-        "description": "Marca todas las notificaciones del usuario autenticado como leídas.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Todas las notificaciones marcadas como leídas" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       },
       "patch": {
-        "tags": ["Notificaciones"],
-        "summary": "Marcar TODAS las notificaciones como leídas (PATCH)",
-        "description": "Marca todas las notificaciones del usuario autenticado como leídas (método alternativo PATCH).",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Todas las notificaciones marcadas como leídas" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/tipodocumento/listar": {
       "get": {
-        "tags": ["TipoDocumento"],
-        "summary": "Listar tipos de documento",
-        "description": "Devuelve los tipos de documentos de identidad disponibles.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
-          "200": { "description": "Lista de tipos de documento" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         }
       }
     },
-
     "/tipodocumento/agregar": {
       "post": {
-        "tags": ["TipoDocumento"],
-        "summary": "Agregar tipo de documento (Admin)",
-        "description": "Crea un nuevo tipo de documento. Solo para administradores (rol 3).",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": ["nombre"],
-              "properties": {
-                "nombre":      { "type": "string", "example": "Cédula de Ciudadanía" },
-                "abreviatura": { "type": "string", "example": "CC" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "201": { "description": "Tipo de documento creado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/tipodocumento/actualizar": {
       "put": {
-        "tags": ["TipoDocumento"],
-        "summary": "Actualizar tipo de documento (Admin)",
-        "description": "Modifica un tipo de documento existente.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id":          { "type": "integer", "example": 1 },
-                "nombre":      { "type": "string",  "example": "Cédula de Extranjería" },
-                "abreviatura": { "type": "string",  "example": "CE" }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Tipo de documento actualizado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
-
     "/tipodocumento/eliminar/{id}": {
       "delete": {
-        "tags": ["TipoDocumento"],
-        "summary": "Eliminar tipo de documento (Admin)",
-        "description": "Elimina un tipo de documento por su ID.",
-        "security": [{ "BearerAuth": [] }],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "description": "ID del tipo de documento"
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "200": { "description": "Tipo de documento eliminado" },
-          "401": { "description": "No autenticado" },
-          "403": { "description": "Sin permisos" },
-          "500": { "description": "Error interno del servidor" }
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     }
-
   }
 }

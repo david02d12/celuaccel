@@ -46,7 +46,7 @@ const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccio
 
 const eliminar = async (id) => {
     if (!id) throw new AppError('El ID del usuario es obligatorio.', 400);
-    const result = await usuarioDao.remove(id);
+    const result = await usuarioDao.removeWithDependencies(id);
     if (result.affectedRows === 0) throw new AppError('Usuario no encontrado.', 404);
 };
 

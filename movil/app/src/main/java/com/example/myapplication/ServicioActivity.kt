@@ -319,7 +319,7 @@ class ServicioActivity : AppCompatActivity() {
     private fun enviarNotificacionRapida(api: ApiService, idUser: String, idServicio: String, mensaje: String) {
         val notif = Notificacion(
             idUsuarioDestino = idUser,
-            idServicio = idServicio,
+            idServicio = idServicio.toIntOrNull(),
             mensaje = mensaje
         )
         api.enviarNotificacion(token, notif).enqueue(object : Callback<Void> {
