@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  main_menu.xml — CeluAccel
+  Diseño inspirado en Home.jsx del frontend web:
+  • Header con gradiente rojo, nombre usuario y badge
+  • Grid 2×N de cards con sombra y radius 14dp
+  • Cada card tiene ícono emoji + etiqueta
+  • Botón "Cerrar sesión" outline rojo al final
+  Las cards se muestran/ocultan desde MenuActivity.kt según el rol
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/celuaccel_bg">
+
+    <!-- ── Header con gradiente rojo ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_gradient_header"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp" android:paddingRight="20dp"
+        android:paddingTop="18dp" android:paddingBottom="18dp"
+        android:elevation="6dp">
+
+        <!-- Logo + saludo -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CELUACCEL"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"/>
+
+            <TextView
+                android:id="@+id/textViewTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bienvenido"
+                android:textColor="#CCffffff"
+                android:textSize="13sp"/>
+        </LinearLayout>
+
+        <!-- Badge de notificaciones no leídas -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_avatar_white_alpha"
+                android:gravity="center"
+                android:text="&#128276;"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/tvBadgeMenu"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_badge_notification"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="#FFFFFF"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- ── Contenido con scroll ── -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- ── Sección CLIENTE (rol 2) ── -->
+            <TextView
+                android:id="@+id/labelSeccionCliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MI CUENTA"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="4dp"/>
+
+            <!-- Fila 1 cliente: Catálogo / Mi Servicio -->
+            <LinearLayout
+                android:id="@+id/filaClienteA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Card: Catálogo / Productos -->
+                <LinearLayout
+                    android:id="@+id/cardCompras"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128241;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnCompras"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Catálogo/Productos"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Catálogo"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Card: Servicios -->
+                <LinearLayout
+                    android:id="@+id/cardServicio"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128295;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnServicio"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Servicios"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Servicios"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Fila 2 cliente: Chat / Notificaciones -->
+            <LinearLayout
+                android:id="@+id/filaClienteB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Card: Chat -->
+                <LinearLayout
+                    android:id="@+id/cardChat"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128172;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnChat"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Chats"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chats"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Card: Notificaciones -->
+                <LinearLayout
+                    android:id="@+id/cardGear"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128276;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnGear"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Notificaciones"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notificaciones"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Fila 3: Preguntas / Perfil -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Card: Preguntas -->
+                <LinearLayout
+                    android:id="@+id/cardPreguntas"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#10067;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnPreguntas"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Preguntas"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preguntas"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Card: Mi Perfil -->
+                <LinearLayout
+                    android:id="@+id/cardPerfil"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128100;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnPerfil"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Mi Perfil"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mi Perfil"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── Sección TÉCNICO / ADMIN ── -->
+            <TextView
+                android:id="@+id/labelSeccionTecnico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GESTIÓN TÉCNICA"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"/>
+
+            <!-- Fila: Historial / Comentarios -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Card: Historial -->
+                <LinearLayout
+                    android:id="@+id/cardHistorial"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128203;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnHistorial"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Historial"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Historial"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Card: Comentarios -->
+                <LinearLayout
+                    android:id="@+id/cardComentarios"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#11088;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnComentarios"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Comentarios"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Comentarios"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Fila: Categorías / (vacío placeholder) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Card: Categorías -->
+                <LinearLayout
+                    android:id="@+id/cardCategorias"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128722;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnCategorias"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Categorías"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Categorías"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Placeholder vacío (balance de grid) -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"/>
+            </LinearLayout>
+
+            <!-- ── Sección ADMIN ── -->
+            <TextView
+                android:id="@+id/labelSeccionAdmin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADMINISTRACIÓN"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"/>
+
+            <!-- Fila: Usuarios / Roles -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Card: Usuarios -->
+                <LinearLayout
+                    android:id="@+id/cardCliente"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128101;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnCliente"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Usuarios"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Usuarios"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Card: Roles -->
+                <LinearLayout
+                    android:id="@+id/cardRoles"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128737;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnRoles"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Roles"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Roles"
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Fila: Tipo Documento -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+
+                <!-- Card: Tipo Documento -->
+                <LinearLayout
+                    android:id="@+id/cardTipoDoc"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_elevated"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_circle_red_light"
+                        android:gravity="center"
+                        android:text="&#128196;"
+                        android:textSize="26sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btnTipoDoc"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Tipo Documento"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tipo Doc."
+                        android:textColor="@color/celuaccel_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Placeholder vacío -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"/>
+            </LinearLayout>
+
+            <!-- ── Botón Cerrar Sesión ── -->
+            <Button
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Cerrar Sesión"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/celuaccel_primary"
+                android:background="@drawable/bg_btn_outline"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

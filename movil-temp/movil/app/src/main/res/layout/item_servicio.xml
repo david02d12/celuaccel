@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_servicio.xml — CeluAccel
+  Igual que el componente de tarjeta de servicio en la web:
+  • Card elevada con radius 14dp
+  • Badge de etapa coloreado (pill)
+  • Barra de progreso horizontal
+  • Información jerarquizada
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card_elevated"
+    android:elevation="3dp"
+    android:layout_marginLeft="4dp" android:layout_marginRight="4dp"
+    android:layout_marginBottom="12dp"
+    android:padding="16dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Fila 1: ID + Badge de etapa -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvIdServicio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="#001"
+            android:textColor="@color/celuaccel_text_muted"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04"/>
+
+        <!-- Badge de etapa dinámico (se cambia desde adapter) -->
+        <TextView
+            android:id="@+id/tvBadgeEtapa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recibido"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:paddingLeft="10dp" android:paddingRight="10dp"
+            android:paddingTop="4dp" android:paddingBottom="4dp"
+            android:background="@drawable/bg_badge_recibido"
+            android:textColor="@color/etapa_recibido_text"/>
+    </LinearLayout>
+
+    <!-- Fila 2: Dispositivo -->
+    <TextView
+        android:id="@+id/tvDispositivo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="iPhone 13 — 128GB"
+        android:textColor="@color/celuaccel_text"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Fila 3: Descripción corta -->
+    <TextView
+        android:id="@+id/tvDescripcionServicio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pantalla rota, necesita reemplazo"
+        android:textColor="@color/celuaccel_text_muted"
+        android:textSize="13sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Barra de progreso de etapa -->
+    <ProgressBar
+        android:id="@+id/progressEtapa"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/celuaccel_primary"
+        android:progressBackgroundTint="@color/celuaccel_border"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Fila 4: Fecha + Precio -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvFechaServicio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="📅 01/01/2025"
+            android:textColor="@color/celuaccel_text_muted"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/tvPrecioServicio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$150.000"
+            android:textColor="@color/celuaccel_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</LinearLayout>

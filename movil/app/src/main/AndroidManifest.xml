@@ -47,10 +47,11 @@
         </activity>
 
         <!-- ── USUARIOS / PERFIL ──────────────────────────────────────────── -->
-        <activity android:name=".ClienteActivity"       android:exported="false"/>
-        <activity android:name=".ListaClienteActivity"  android:exported="false"/>
-        <activity android:name=".RolesActivity"         android:exported="false"/>
-        <activity android:name=".PerfilActivity"        android:exported="false"/>
+        <activity android:name=".ClienteActivity"            android:exported="false"/>
+        <activity android:name=".ListaClienteActivity"       android:exported="false"/>
+        <activity android:name=".FormularioClienteActivity"  android:exported="false"/>
+        <activity android:name=".RolesActivity"              android:exported="false"/>
+        <activity android:name=".PerfilActivity"             android:exported="false"/>
 
         <!-- ── SERVICIOS ──────────────────────────────────────────────────── -->
         <activity android:name=".ServicioActivity"          android:exported="false"/>

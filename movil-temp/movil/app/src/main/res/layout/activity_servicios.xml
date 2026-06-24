@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_servicios.xml — CeluAccel
+  Diseño idéntico a Servicios.jsx del frontend web:
+  • Header gradiente rojo + flecha regresar
+  • Formulario en card blanca con campos redondeados
+  • Spinner de etapa con fondo card
+  • Botones con jerarquía clara: primario / outline / peligro
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/celuaccel_bg"
+    android:fillViewport="true"
+    tools:context=".ServicioActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ── Header gradiente ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gradient_header"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp" android:paddingRight="16dp"
+            android:paddingTop="16dp" android:paddingBottom="16dp"
+            android:elevation="6dp">
+
+            <Button
+                android:id="@+id/btnRegresar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="←"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:background="@drawable/bg_avatar_white_alpha"
+                android:padding="0dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gestión de Servicios"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Registro y seguimiento"
+                    android:textColor="#CCffffff"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── Card: Formulario ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_card_elevated"
+            android:elevation="3dp"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Datos del Servicio"
+                android:textColor="@color/celuaccel_primary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- ID Servicio -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID SERVICIO (AUTO / EDICIÓN)"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtIdServicio"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="number"
+                android:hint="Dejar vacío para nuevo"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- ID Usuario -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID USUARIO ASOCIADO"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtIdUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="text"
+                android:hint="Número de documento"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Descripción -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DESCRIPCIÓN / FALLA"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:hint="Describe la falla o servicio"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="12dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Precio -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRECIO ($)"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtPrecio"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="numberDecimal"
+                android:hint="0.00"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Dispositivo -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NOMBRE DEL DISPOSITIVO"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtMovilNombre"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="text"
+                android:hint="Ej: iPhone 13"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Especificación -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ESPECIFICACIONES"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtMovilEspecificacion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="text"
+                android:hint="Ej: 128GB, Azul"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Fecha -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FECHA (YYYY-MM-DD)"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/txtFecha"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="date"
+                android:hint="2025-01-01"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field"
+                android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Etapa -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ETAPA / ESTADO"
+                android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <Spinner
+                android:id="@+id/spinnerEtapa"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_input_field"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+
+        <!-- ── Card: Acciones ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="16dp" android:layout_marginRight="16dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_card_elevated"
+            android:elevation="3dp"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Acciones"
+                android:textColor="@color/celuaccel_primary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <Button
+                android:id="@+id/btnAgregarServicio"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="✓  Registrar Servicio"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_btn_primary"
+                android:elevation="3dp"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btnBuscarMisServicios"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="🔍  Buscar Servicios"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/celuaccel_primary"
+                android:background="@drawable/bg_btn_outline"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btnIrAListarServicios"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="☰  Listar Servicios"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/celuaccel_primary"
+                android:background="@drawable/bg_btn_outline"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btnActualizarServicio"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="✏  Actualizar Servicio"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/celuaccel_text"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btnNotificarCliente"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="🔔  Notificar al Cliente"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/celuaccel_info"
+                android:background="@drawable/bg_btn_outline_info"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btnCancelarServicio"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="✕  Cancelar Servicio"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/celuaccel_primary"
+                android:background="@drawable/bg_btn_outline"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btnEliminarServicio"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="⚠  Eliminar Definitivamente"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_btn_danger"
+                android:elevation="2dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
