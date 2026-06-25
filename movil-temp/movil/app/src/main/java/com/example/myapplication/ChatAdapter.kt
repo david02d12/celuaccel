@@ -8,49 +8,56 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Chat
 
 class ChatAdapter(
-    private val listaChats: List<Chat>,
-    private val mapasNombresClientes: Map<String, String>, // ID_Usuario -> Nombre
-    private val mapasNombreMoviles: Map<Int, String>,     // ID_Servicio -> Movil_Nombre
-    private val onClick: (Chat) -> Unit
-) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
+    private val chats: List<Chat>,
+    private val onChatClick: (Chat) -> Unit
+) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
-    class ChatViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val tvAvatar: TextView = v.findViewById(R.id.tvAvatarChat)
-        val tvNombre: TextView = v.findViewById(R.id.tvNombreChat)
-        val tvUltimoMsg: TextView = v.findViewById(R.id.tvUltimoMensaje)
-        val tvHora: TextView = v.findViewById(R.id.tvHoraChat)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvAvatarChat:     TextView = view.findViewById(R.id.tvAvatarChat)
+        val tvNombreChat:     TextView = view.findViewById(R.id.tvNombreChat)
+        val tvUltimoMensaje:  TextView = view.findViewById(R.id.tvUltimoMensaje)
+        val tvHoraChat:       TextView = view.findViewById(R.id.tvHoraChat)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
-        return ChatViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_chat, parent, false)
+        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        val chat = listaChats[position]
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val chat = chats[position]
 
-        // Cruzar datos: Buscar el nombre del cliente usando su ID_Usuario
-        val nombreCliente = mapasNombresClientes[chat.idUsuario] ?: "Usuario (${chat.idUsuario})"
+        // Nombre real del usuario (del JOIN con Usuario), sino fallback a ID
+        val nombreMostrar = chat.nombreUsuario?.takeIf { it.isNotBlank() }
+            ?: "Usuario: ${chat.idUsuario}"
 
-        // Cruzar datos: Buscar el nombre del celular usando el ID_Servicio
-        val dispositivo = if (chat.idServicio != null) {
-            mapasNombreMoviles[chat.idServicio] ?: "Servicio #${chat.idServicio}"
-        } else {
-            "Consulta general"
+        // Subtítulo: último mensaje o indicador de servicio
+        val subtitulo = when {
+            !chat.ultimoMensaje.isNullOrBlank()           -> chat.ultimoMensaje
+            (chat.idServicio ?: 0) > 0                    -> "Servicio #${chat.idServicio}"
+            else                                          -> "Sin mensajes aún"
         }
 
-        // Asignar los textos reales al diseño
-        holder.tvNombre.text = nombreCliente
-        holder.tvUltimoMsg.text = "Dispositivo: $dispositivo"
+        // Hora del último mensaje (solo HH:mm si viene como ISO 8601)
+        val hora = chat.fechaUltimoMensaje?.let { fecha ->
+            when {
+                fecha.contains("T") -> fecha.substringAfter("T").take(5)
+                fecha.length >= 5   -> fecha.takeLast(5)
+                else                -> ""
+            }
+        } ?: ""
 
-        // Colocar la inicial del cliente en el avatar circular
-        holder.tvAvatar.text = if (nombreCliente.isNotEmpty()) nombreCliente.take(1).uppercase() else "💬"
+        // Inicial del avatar
+        val inicial = nombreMostrar.firstOrNull()?.uppercaseChar()?.toString() ?: "C"
 
-        // Usar la hora para pintar el ID del Chat para control interno del técnico/admin
-        holder.tvHora.text = "N° ${chat.codigoChat ?: 0}"
+        holder.tvNombreChat.text    = nombreMostrar
+        holder.tvAvatarChat.text    = inicial
+        holder.tvUltimoMensaje.text = subtitulo
+        holder.tvHoraChat.text      = hora
 
-        holder.itemView.setOnClickListener { onClick(chat) }
+        holder.itemView.setOnClickListener { onChatClick(chat) }
     }
 
-    override fun getItemCount(): Int = listaChats.size
+    override fun getItemCount(): Int = chats.size
 }

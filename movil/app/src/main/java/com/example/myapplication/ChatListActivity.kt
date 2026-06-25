@@ -111,7 +111,7 @@ class ChatListActivity : AppCompatActivity() {
     }
 
     private fun mostrarLista(chats: List<Chat>) {
-        val adapter = ChatAdapter(chats) { chat ->
+        val adapter = ChatAdapter(chats, userRole) { chat ->
             val intent = Intent(this@ChatListActivity, ChatDetailActivity::class.java)
             intent.putExtra("CODIGO_CHAT", chat.codigoChat)
             chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }

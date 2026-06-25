@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_categorias.xml — CeluAccel
-  Header gradiente + formulario CRUD + RecyclerView
+  Header gradiente + formulario CRUD + búsqueda + RecyclerView
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -121,6 +121,23 @@
                 android:background="@drawable/bg_btn_outline"/>
         </LinearLayout>
     </LinearLayout>
+
+    <!-- NUEVO: Barra de búsqueda -->
+    <EditText
+        android:id="@+id/etBusquedaCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Buscar por ID o nombre..."
+        android:inputType="text"
+        android:paddingLeft="16dp" android:paddingRight="16dp"
+        android:layout_marginLeft="12dp" android:layout_marginRight="12dp"
+        android:layout_marginTop="8dp" android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_input_field"
+        android:textSize="14sp"
+        android:textColor="@color/celuaccel_text"
+        android:textColorHint="@color/celuaccel_text_light"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="8dp"/>
 
     <!-- Lista -->
     <androidx.recyclerview.widget.RecyclerView

@@ -1,7 +1,8 @@
 package com.example.myapplication
 
-import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -27,16 +28,25 @@ class ProductoActivity : AppCompatActivity() {
     private var categoriasLista: List<Categoria> = emptyList()
     private var productoEnEdicion: Producto? = null
 
-    // Views
+    // Lista completa en memoria para filtrar localmente
+    private var listaCompleta: List<Producto> = emptyList()
+
+    // Views — formulario
     private lateinit var scrollForm: ScrollView
-    private lateinit var recyclerView: RecyclerView
     private lateinit var etNombre: EditText
     private lateinit var etPrecio: EditText
     private lateinit var etStock: EditText
+    private lateinit var etDescripcion: EditText      // NUEVO
+    private lateinit var etImagen: EditText           // NUEVO
     private lateinit var spinnerCategoria: Spinner
+    private lateinit var spinnerCatalogo: Spinner     // NUEVO: Activo_Catalogo
     private lateinit var btnNuevo: Button
     private lateinit var btnGuardar: Button
     private lateinit var btnCancelar: Button
+
+    // Views — lista
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var etBusqueda: EditText         // NUEVO
 
     private val api by lazy { ApiClient.retrofit.create(ApiService::class.java) }
 
@@ -48,22 +58,33 @@ class ProductoActivity : AppCompatActivity() {
         val tokenGuardado = sharedPref.getString("token", "") ?: ""
         token = if (tokenGuardado.startsWith("Bearer ")) tokenGuardado else "Bearer $tokenGuardado"
 
+        // Binding
         scrollForm       = findViewById(R.id.scrollFormProducto)
         recyclerView     = findViewById(R.id.recyclerProductos)
         etNombre         = findViewById(R.id.etNombreProducto)
         etPrecio         = findViewById(R.id.etPrecioProducto)
         etStock          = findViewById(R.id.etStockProducto)
+        etDescripcion    = findViewById(R.id.etDescripcionProducto)
+        etImagen         = findViewById(R.id.etImagenProducto)
         spinnerCategoria = findViewById(R.id.spinnerCategoriaProducto)
+        spinnerCatalogo  = findViewById(R.id.spinnerActivoCatalogo)
         btnNuevo         = findViewById(R.id.btnNuevoProducto)
         btnGuardar       = findViewById(R.id.btnGuardarProducto)
         btnCancelar      = findViewById(R.id.btnCancelarProducto)
+        etBusqueda       = findViewById(R.id.etBusquedaProducto)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Spinner Activo_Catalogo: 0 = Oculto, 1 = Visible en catálogo
+        val catalogoOpciones = listOf("Visible en catálogo", "Oculto del catálogo")
+        val catalogoAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, catalogoOpciones)
+        catalogoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCatalogo.adapter = catalogoAdapter
 
         // Botón regresar
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // Mostrar formulario vacío para nuevo producto
+        // Nuevo producto
         btnNuevo.setOnClickListener {
             productoEnEdicion = null
             limpiarFormulario()
@@ -79,6 +100,15 @@ class ProductoActivity : AppCompatActivity() {
         }
 
         btnGuardar.setOnClickListener { guardar() }
+
+        // Búsqueda en tiempo real
+        etBusqueda.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filtrarLista(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         cargarCategorias()
         cargarProductos()
@@ -108,12 +138,9 @@ class ProductoActivity : AppCompatActivity() {
         api.getProductos(token).enqueue(object : Callback<List<Producto>> {
             override fun onResponse(call: Call<List<Producto>>, response: Response<List<Producto>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val lista = response.body()!!
-                    recyclerView.adapter = ProductoAdapter(
-                        lista.toMutableList(),
-                        onEditar   = { producto -> editarProducto(producto) },
-                        onEliminar = { producto -> eliminarProducto(producto) }
-                    )
+                    listaCompleta = response.body()!!
+                    // Aplicar búsqueda activa al recargar
+                    filtrarLista(etBusqueda.text.toString())
                 } else {
                     Toast.makeText(this@ProductoActivity, "Error cargando productos (${response.code()})", Toast.LENGTH_SHORT).show()
                 }
@@ -124,20 +151,60 @@ class ProductoActivity : AppCompatActivity() {
         })
     }
 
+    /** Filtra la lista en memoria y actualiza el adapter */
+    private fun filtrarLista(query: String) {
+        val filtrada = if (query.isBlank()) {
+            listaCompleta
+        } else {
+            val q = query.lowercase()
+            listaCompleta.filter { p ->
+                p.nombre.lowercase().contains(q) ||
+                p.codigoProducto.lowercase().contains(q) ||
+                (p.descripcion?.lowercase()?.contains(q) == true)
+            }
+        }
+        recyclerView.adapter = ProductoAdapter(
+            filtrada.toMutableList(),
+            onEditar   = { producto -> editarProducto(producto) },
+            onEliminar = { producto -> eliminarProducto(producto) }
+        )
+    }
+
     private fun guardar() {
-        val nombre   = etNombre.text.toString().trim()
-        val precio   = etPrecio.text.toString().toDoubleOrNull() ?: 0.0
-        val cantidad = etStock.text.toString().toIntOrNull() ?: 0
-        val catIdx   = spinnerCategoria.selectedItemPosition
-        val idCat    = if (catIdx >= 0 && categoriasLista.isNotEmpty()) categoriasLista[catIdx].idCategoria else null
+        val nombre      = etNombre.text.toString().trim()
+        val precio      = etPrecio.text.toString().toDoubleOrNull() ?: 0.0
+        val cantidad    = etStock.text.toString().toIntOrNull() ?: 0
+        val descripcion = etDescripcion.text.toString().trim().ifBlank { null }
+        val imagen      = etImagen.text.toString().trim().ifBlank { null }
+        val catIdx      = spinnerCategoria.selectedItemPosition
+        val idCat       = if (catIdx >= 0 && categoriasLista.isNotEmpty()) categoriasLista[catIdx].idCategoria else null
+        // 0 = Visible (primera opción), 1 = Oculto (segunda)
+        val activoCatalogo = if (spinnerCatalogo.selectedItemPosition == 0) 1 else 0
 
         if (nombre.isEmpty()) { etNombre.error = "Requerido"; return }
 
         val call: Call<Void> = if (productoEnEdicion != null) {
-            val actualizado = productoEnEdicion!!.copy(nombre = nombre, precio = precio, cantidad = cantidad, idCategoria = idCat)
+            val actualizado = productoEnEdicion!!.copy(
+                nombre         = nombre,
+                precio         = precio,
+                cantidad       = cantidad,
+                descripcion    = descripcion,
+                imagen         = imagen,
+                idCategoria    = idCat,
+                activoCatalogo = activoCatalogo
+            )
             api.actualizarProducto(token, actualizado)
         } else {
-            val nuevo = Producto(codigoProducto = "", nombre = nombre, precio = precio, cantidad = cantidad, descripcion = null, imagen = null, idCategoria = idCat, activoCatalogo = 1)
+            val nuevo = Producto(
+                codigoProducto = "",
+                nombre         = nombre,
+                precio         = precio,
+                cantidad       = cantidad,
+                descripcion    = descripcion,
+                imagen         = imagen,
+                idCategoria    = idCat,
+                activoCatalogo = activoCatalogo
+            )
             api.agregarProducto(token, nuevo)
         }
 
@@ -165,8 +232,15 @@ class ProductoActivity : AppCompatActivity() {
         etNombre.setText(producto.nombre)
         etPrecio.setText(producto.precio.toString())
         etStock.setText(producto.cantidad.toString())
+        etDescripcion.setText(producto.descripcion ?: "")
+        etImagen.setText(producto.imagen ?: "")
+
         val catIdx = categoriasLista.indexOfFirst { it.idCategoria == producto.idCategoria }
         if (catIdx >= 0) spinnerCategoria.setSelection(catIdx)
+
+        // 1 = Visible → posición 0 del spinner; 0 = Oculto → posición 1
+        spinnerCatalogo.setSelection(if (producto.activoCatalogo == 1) 0 else 1)
+
         scrollForm.visibility = View.VISIBLE
         btnNuevo.visibility   = View.GONE
         etNombre.requestFocus()
@@ -199,5 +273,8 @@ class ProductoActivity : AppCompatActivity() {
         etNombre.text.clear()
         etPrecio.text.clear()
         etStock.text.clear()
+        etDescripcion.text.clear()
+        etImagen.text.clear()
+        spinnerCatalogo.setSelection(0) // Por defecto: Visible en catálogo
     }
 }

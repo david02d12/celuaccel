@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,10 +27,14 @@ class CategoriaActivity : AppCompatActivity() {
     private lateinit var token: String
     private var categoriaEnEdicion: Categoria? = null
 
+    // Lista completa en memoria para filtrar localmente
+    private var listaCompleta: List<Categoria> = emptyList()
+
     // IDs del nuevo activity_categorias.xml
     private lateinit var recyclerView:   RecyclerView
     private lateinit var cardForm:       View
     private lateinit var etNombre:       EditText
+    private lateinit var etBusqueda:     EditText        // NUEVO
     private lateinit var btnNueva:       Button
     private lateinit var btnGuardar:     Button
     private lateinit var btnCancelar:    Button
@@ -44,6 +50,7 @@ class CategoriaActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerCategorias)
         cardForm     = findViewById(R.id.cardFormCategoria)
         etNombre     = findViewById(R.id.etNombreCategoria)
+        etBusqueda   = findViewById(R.id.etBusquedaCategoria)
         btnNueva     = findViewById(R.id.btnNuevaCategoria)
         btnGuardar   = findViewById(R.id.btnGuardarCategoria)
         btnCancelar  = findViewById(R.id.btnCancelarCategoria)
@@ -72,6 +79,15 @@ class CategoriaActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
+        // Búsqueda en tiempo real
+        etBusqueda.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filtrarLista(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         cargar()
     }
 
@@ -79,11 +95,9 @@ class CategoriaActivity : AppCompatActivity() {
         api.getCategorias(token).enqueue(object : Callback<List<Categoria>> {
             override fun onResponse(call: Call<List<Categoria>>, response: Response<List<Categoria>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val lista = response.body()!!
-                    recyclerView.adapter = CategoriaAdapter(lista,
-                        onEditar   = { cat -> iniciarEdicion(cat) },
-                        onEliminar = { cat -> confirmarEliminar(cat) }
-                    )
+                    listaCompleta = response.body()!!
+                    // Aplicar búsqueda activa al recargar
+                    filtrarLista(etBusqueda.text.toString())
                 } else {
                     Toast.makeText(this@CategoriaActivity, "Error al cargar categorías (${response.code()})", Toast.LENGTH_SHORT).show()
                 }
@@ -92,6 +106,24 @@ class CategoriaActivity : AppCompatActivity() {
                 Toast.makeText(this@CategoriaActivity, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    /** Filtra la lista en memoria y actualiza el adapter */
+    private fun filtrarLista(query: String) {
+        val filtrada = if (query.isBlank()) {
+            listaCompleta
+        } else {
+            val q = query.lowercase()
+            listaCompleta.filter { cat ->
+                cat.nombreCategoria.lowercase().contains(q) ||
+                cat.idCategoria?.toString()?.contains(q) == true
+            }
+        }
+        recyclerView.adapter = CategoriaAdapter(
+            filtrada,
+            onEditar   = { cat -> iniciarEdicion(cat) },
+            onEliminar = { cat -> confirmarEliminar(cat) }
+        )
     }
 
     private fun guardar() {

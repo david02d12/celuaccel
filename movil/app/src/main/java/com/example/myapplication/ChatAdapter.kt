@@ -9,6 +9,7 @@ import com.example.myapplication.model.Chat
 
 class ChatAdapter(
     private val chats: List<Chat>,
+    private val userRole: Int,
     private val onChatClick: (Chat) -> Unit
 ) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
@@ -28,15 +29,20 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val chat = chats[position]
 
-        // Nombre real del usuario (del JOIN con Usuario), sino fallback a ID
-        val nombreMostrar = chat.nombreUsuario?.takeIf { it.isNotBlank() }
-            ?: "Usuario: ${chat.idUsuario}"
+        // Nombre según rol: 
+        // - Si es Cliente (2), mostrar "Soporte Técnico (Chat #ID)"
+        // - Si es Admin (3) / Técnico (1), mostrar el nombre real del cliente
+        val nombreMostrar = if (userRole == 2) {
+            "Soporte (Chat #${chat.codigoChat ?: ""})"
+        } else {
+            chat.nombreUsuario?.takeIf { it.isNotBlank() } ?: "Usuario: ${chat.idUsuario}"
+        }
 
         // Subtítulo: último mensaje o indicador de servicio
         val subtitulo = when {
             !chat.ultimoMensaje.isNullOrBlank()           -> chat.ultimoMensaje
             (chat.idServicio ?: 0) > 0                    -> "Servicio #${chat.idServicio}"
-            else                                          -> "Sin mensajes aún"
+            else                                          -> "Consulta de catálogo"
         }
 
         // Hora del último mensaje (solo HH:mm si viene como ISO 8601)
@@ -48,8 +54,8 @@ class ChatAdapter(
             }
         } ?: ""
 
-        // Inicial del avatar
-        val inicial = nombreMostrar.firstOrNull()?.uppercaseChar()?.toString() ?: "C"
+        // Inicial del avatar (si es soporte, usar 'S')
+        val inicial = if (userRole == 2) "S" else (nombreMostrar.firstOrNull()?.uppercaseChar()?.toString() ?: "C")
 
         holder.tvNombreChat.text    = nombreMostrar
         holder.tvAvatarChat.text    = inicial

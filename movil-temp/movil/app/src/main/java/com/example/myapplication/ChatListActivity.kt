@@ -2,7 +2,6 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Chat
-import com.example.myapplication.model.Cliente
-import com.example.myapplication.model.Servicio
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,10 +22,6 @@ class ChatListActivity : AppCompatActivity() {
     private var idServicioIntent: Int = -1
     private lateinit var recyclerChats: RecyclerView
 
-    // Diccionarios en memoria para almacenar las relaciones indexadas
-    private val mapaClientes = mutableMapOf<String, String>() // ID_Usuario -> Nombre
-    private val mapaServicios = mutableMapOf<Int, String>()   // ID_Servicio -> Movil_Nombre
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_list)
@@ -40,53 +33,14 @@ class ChatListActivity : AppCompatActivity() {
         userRole = sharedPref.getInt("user_role", 2)
         idServicioIntent = intent.getIntExtra("ID_SERVICIO", -1)
 
+        // IDs del nuevo activity_chat_list.xml
         recyclerChats = findViewById(R.id.recyclerChats)
         val btnRegresar = findViewById<Button>(R.id.btnRegresar)
 
         recyclerChats.layoutManager = LinearLayoutManager(this)
         btnRegresar.setOnClickListener { finish() }
 
-        // Primero precargamos las dependencias de nombres, y dentro de ellas llamamos a los chats
-        cargarDatosDeSoporte()
-    }
-
-    private fun cargarDatosDeSoporte() {
-        val api = ApiClient.retrofit.create(ApiService::class.java)
-
-        // 1. Traer Clientes para indexar nombres
-        api.getClientes(token).enqueue(object : Callback<List<Cliente>> {
-            override fun onResponse(call: Call<List<Cliente>>, response: Response<List<Cliente>>) {
-                if (response.isSuccessful && response.body() != null) {
-                    response.body()!!.forEach { cliente ->
-                        mapaClientes[cliente.idUsuario] = cliente.nombre
-                    }
-                }
-                // 2. Anidamos la carga de servicios para asegurar orden
-                cargarServiciosYSeguir(api)
-            }
-            override fun onFailure(call: Call<List<Cliente>>, t: Throwable) {
-                cargarServiciosYSeguir(api) // Continuar aunque falle para no congelar la pantalla
-            }
-        })
-    }
-
-    private fun cargarServiciosYSeguir(api: ApiService) {
-        api.getServicios(token).enqueue(object : Callback<List<Servicio>> {
-            override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
-                if (response.isSuccessful && response.body() != null) {
-                    response.body()!!.forEach { servicio ->
-                        servicio.idServicio?.let { id ->
-                            mapaServicios[id] = servicio.movilNombre
-                        }
-                    }
-                }
-                // 3. Ya con los mapas listos, cargamos la lista de chats final
-                cargarChats()
-            }
-            override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
-                cargarChats()
-            }
-        })
+        cargarChats()
     }
 
     private fun cargarChats() {
@@ -131,17 +85,17 @@ class ChatListActivity : AppCompatActivity() {
         api.crearChat(token, nuevoChat).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    cargarDatosDeSoporte() // Recargar estructura completa
+                    cargarChats()
                 } else {
-                    Toast.makeText(this@ChatListActivity, "Error al iniciar el chat", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ChatListActivity, "Error al iniciar el chat (${response.code()})", Toast.LENGTH_SHORT).show()
                     idServicioIntent = -1
-                    cargarDatosDeSoporte()
+                    cargarChats()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@ChatListActivity, "Error de red", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ChatListActivity, "Error de red al crear chat", Toast.LENGTH_SHORT).show()
                 idServicioIntent = -1
-                cargarDatosDeSoporte()
+                cargarChats()
             }
         })
     }
@@ -149,17 +103,17 @@ class ChatListActivity : AppCompatActivity() {
     private fun abrirDetalleChat(chat: Chat) {
         val intent = Intent(this, ChatDetailActivity::class.java)
         intent.putExtra("CODIGO_CHAT", chat.codigoChat)
-        intent.putExtra("ID_SERVICIO", chat.idServicio)
+        // idServicio puede ser null para chats de catálogo
+        chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }
         startActivity(intent)
         finish()
     }
 
     private fun mostrarLista(chats: List<Chat>) {
-        // Pasamos la lista de chats junto con nuestros mapas relacionales de memoria
-        val adapter = ChatAdapter(chats, mapaClientes, mapaServicios) { chat ->
+        val adapter = ChatAdapter(chats) { chat ->
             val intent = Intent(this@ChatListActivity, ChatDetailActivity::class.java)
             intent.putExtra("CODIGO_CHAT", chat.codigoChat)
-            intent.putExtra("ID_SERVICIO", chat.idServicio)
+            chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }
             startActivity(intent)
         }
         recyclerChats.adapter = adapter
