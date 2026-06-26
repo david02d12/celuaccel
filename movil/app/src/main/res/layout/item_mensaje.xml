@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_mensaje.xml — CeluAccel
+  Burbuja de mensaje de chat.
+  Soporta dos alineaciones desde el adapter:
+  • Yo (enviado): burbuja ROJA (#DB0000) alineada a la derecha
+  • Otro (recibido): burbuja GRIS CLARO (#E9ECEF) alineada a la izquierda
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="8dp" android:paddingRight="8dp"
+    android:paddingTop="4dp" android:paddingBottom="4dp">
+
+    <!-- Burbuja: Mensaje enviado por mí (rojo, derecha) -->
+    <LinearLayout
+        android:id="@+id/bubbleMio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bubble_sent"
+        android:paddingLeft="14dp" android:paddingRight="14dp"
+        android:paddingTop="10dp" android:paddingBottom="10dp"
+        android:maxWidth="280dp"
+        android:elevation="1dp"
+        android:layout_marginStart="60dp">
+
+        <TextView
+            android:id="@+id/tvMensajeMio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hola, ¿cómo van con mi reparación?"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:lineSpacingExtra="2dp"/>
+
+        <TextView
+            android:id="@+id/tvHoraMio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="10:30"
+            android:textColor="#99FFFFFF"
+            android:textSize="10sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- Burbuja: Mensaje recibido (gris, izquierda) -->
+    <LinearLayout
+        android:id="@+id/bubbleOtro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bubble_received"
+        android:paddingLeft="14dp" android:paddingRight="14dp"
+        android:paddingTop="10dp" android:paddingBottom="10dp"
+        android:maxWidth="280dp"
+        android:elevation="1dp"
+        android:layout_marginEnd="60dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvMensajeOtro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ya casi está listo, en 2 días."
+            android:textColor="@color/celuaccel_text"
+            android:textSize="14sp"
+            android:lineSpacingExtra="2dp"/>
+
+        <TextView
+            android:id="@+id/tvHoraOtro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="10:32"
+            android:textColor="@color/celuaccel_text_light"
+            android:textSize="10sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+</FrameLayout>
