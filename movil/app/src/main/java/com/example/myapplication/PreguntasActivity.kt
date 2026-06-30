@@ -45,7 +45,7 @@ class PreguntasActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Para clientes: mostrar el card de nueva pregunta con toggle
+
         val cardNuevaPregunta = findViewById<View>(R.id.cardNuevaPregunta)
         val btnNuevaPregunta  = findViewById<Button>(R.id.btnNuevaPregunta)
         if (userRole == 2) {

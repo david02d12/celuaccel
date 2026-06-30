@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Notificacion
 
-/** Tipos de notificación — cada uno define color, ícono y fondo del ícono */
+
 enum class TipoNotif(
     val colorHex:  String,
     val iconRes:   Int,
@@ -28,11 +28,11 @@ private fun resolverTipo(texto: String): TipoNotif {
     val t = texto.lowercase()
     return when {
         t.contains("listo") || t.contains("retirar") || t.contains("entregado") -> TipoNotif.LISTO
-        t.contains("cancel")                                                      -> TipoNotif.CANCELADO
-        t.contains("diagnos")                                                     -> TipoNotif.DIAGNOSTICO
-        t.contains("reparac")                                                     -> TipoNotif.REPARACION
-        t.contains("calidad") || t.contains("control")                            -> TipoNotif.CALIDAD
-        else                                                                      -> TipoNotif.INFO
+        t.contains("cancel")   -> TipoNotif.CANCELADO
+        t.contains("diagnos")  -> TipoNotif.DIAGNOSTICO
+        t.contains("reparac")  -> TipoNotif.REPARACION
+        t.contains("calidad") || t.contains("control")   -> TipoNotif.CALIDAD
+        else  -> TipoNotif.INFO
     }
 }
 
@@ -60,7 +60,7 @@ class NotificacionAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val n = items[position]
 
-        // ── Texto principal (varios campos posibles) ──
+
         val titulo  = n.titulo ?: n.tipoNotificacion ?: "Notificación"
         val mensaje = n.mensaje ?: "—"
         val esLeida = n.leida == 1
@@ -71,7 +71,7 @@ class NotificacionAdapter(
 
         val ctx = holder.itemView.context
         if (esLeida) {
-            // ── Leída: gris neutro, compatible con dark mode ──
+
             holder.viewBorder.setBackgroundColor(ContextCompat.getColor(ctx, R.color.celuaccel_border))
             holder.ivIcono.setImageResource(R.drawable.ic_notif_bell)
             holder.ivIcono.setBackgroundResource(R.drawable.bg_notif_icon_gray)
@@ -82,7 +82,6 @@ class NotificacionAdapter(
             holder.tvMensaje.setTextColor(ContextCompat.getColor(ctx, R.color.celuaccel_text_light))
             holder.itemView.alpha = 0.62f
         } else {
-            // ── Sin leer: color por tipo de mensaje ──
             val tipo = resolverTipo(titulo)
             holder.viewBorder.setBackgroundColor(Color.parseColor(tipo.colorHex))
             holder.ivIcono.setImageResource(tipo.iconRes)
@@ -95,7 +94,7 @@ class NotificacionAdapter(
             holder.itemView.alpha = 1.0f
         }
 
-        // ── Interacción: clic = marcar leída / long-press = acción admin ──
+
         holder.itemView.setOnClickListener     { onMarcarLeida(n) }
         holder.itemView.setOnLongClickListener { onLongClick(n); true }
     }

@@ -24,8 +24,9 @@ import MisNotificaciones from './components/usuario/MisNotificaciones';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import CatalogoPublico from './components/publico/CatalogoPublico';
+import MisPreguntas from './components/usuario/MisPreguntas';
 
-// RNF007 — Tiempo de inactividad antes del cierre automático de sesión (15 min)
+// Tiempo de inactividad antes del cierre automático de sesión (15 min)
 const INACTIVIDAD_MS = 15 * 60 * 1000;
 
 function App() {
@@ -48,7 +49,7 @@ function App() {
     // resetPassword se maneja en el inicializador de useState arriba
   }, []);
 
-  // RNF007 — Cierre automático por inactividad de 15 minutos
+  // Cierre automático por inactividad de 15 minutos
   const cerrarSesion = useCallback(() => {
     localStorage.clear();
     setLogueado(false);
@@ -154,6 +155,8 @@ function App() {
       return <Perfil cerrarSesion={cerrarSesion} setVista={cambiarVista} perfilObjetivoId={perfilTarget} />;
     case 'misNotificaciones':
       return <MisNotificaciones cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+    case 'misPreguntas':
+      return <MisPreguntas cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
 
     // TECNICO Y ADMINISTRADOR (Roles 1 y 3)
     case 'servicios':

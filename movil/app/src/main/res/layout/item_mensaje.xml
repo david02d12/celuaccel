@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  item_mensaje.xml — CeluAccel
-  Burbuja de mensaje de chat.
-  Soporta dos alineaciones desde el adapter:
-  • Yo (enviado): burbuja ROJA (#DB0000) alineada a la derecha
-  • Otro (recibido): burbuja GRIS CLARO (#E9ECEF) alineada a la izquierda
--->
+
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -13,7 +7,7 @@
     android:paddingLeft="8dp" android:paddingRight="8dp"
     android:paddingTop="4dp" android:paddingBottom="4dp">
 
-    <!-- Burbuja: Mensaje enviado por mí (rojo, derecha) -->
+    
     <LinearLayout
         android:id="@+id/bubbleMio"
         android:layout_width="wrap_content"
@@ -47,7 +41,7 @@
             android:layout_marginTop="4dp"/>
     </LinearLayout>
 
-    <!-- Burbuja: Mensaje recibido (gris, izquierda) -->
+    
     <LinearLayout
         android:id="@+id/bubbleOtro"
         android:layout_width="wrap_content"

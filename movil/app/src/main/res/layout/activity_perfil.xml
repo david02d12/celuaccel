@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_perfil.xml — CeluAccel
-  Diseño idéntico al componente Perfil.jsx del frontend web:
-  • Header gradiente rojo con flecha regresar
-  • Avatar circular con iniciales
-  • Cards de sección con título rojo
-  • Inputs redondeados
--->
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -19,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- ── Header gradiente ── -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +44,7 @@
                 android:layout_marginStart="12dp"/>
         </LinearLayout>
 
-        <!-- ── Avatar con iniciales ── -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="120dp"
@@ -71,7 +64,7 @@
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- ── Card: Información Personal ── -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,7 +83,7 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Nombre -->
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,7 +108,7 @@
                 android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="14dp"/>
 
-            <!-- Correo -->
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -140,7 +133,7 @@
                 android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="14dp"/>
 
-            <!-- Teléfono -->
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -165,7 +158,7 @@
                 android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="14dp"/>
 
-            <!-- Dirección -->
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -203,7 +196,7 @@
                 android:elevation="3dp"/>
         </LinearLayout>
 
-        <!-- ── Card: Cambiar Contraseña ── -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

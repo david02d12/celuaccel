@@ -41,18 +41,18 @@ class ListaServicioActivity : AppCompatActivity() {
         userId       = prefs.getString("user_id", "") ?: ""
         userRole     = prefs.getInt("user_role", 2)
 
-        // IDs del nuevo activity_lista_servicios.xml
+
         recyclerView = findViewById(R.id.recyclerServicios)
         tvTotal      = findViewById(R.id.tvTotalServicios)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Texto total según rol
+
         tvTotal.text = if (userRole == 2) "Mis Solicitudes" else "Historial de Servicios"
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // Botón flotante para crear nuevo servicio o solicitud
+
         val fabAdd = findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAddServicio)
         fabAdd.setOnClickListener {
             val intent = if (userRole == 2) {

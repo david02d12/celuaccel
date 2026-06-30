@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_clientes.xml — CeluAccel
-  Header gradiente + formulario de usuario + lista de clientes (admin)
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,7 +52,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Barra de búsqueda -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,7 +75,7 @@
             android:inputType="text"/>
     </LinearLayout>
 
-    <!-- Lista de usuarios -->
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerClientes"
         android:layout_width="match_parent"

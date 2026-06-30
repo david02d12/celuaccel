@@ -14,6 +14,7 @@ import com.example.myapplication.model.Mensaje
 import com.example.myapplication.model.Notificacion
 import com.example.myapplication.model.Pregunta
 import com.example.myapplication.model.Producto
+import com.example.myapplication.model.ResetPasswordRequest
 import com.example.myapplication.model.Rol
 import com.example.myapplication.model.Servicio
 import com.example.myapplication.model.ServicioResponse
@@ -42,8 +43,12 @@ interface ApiService {
     @POST("forgot-password")
     fun forgotPassword(@Body request: ForgotPasswordRequest): Call<Void>
 
-    @POST("reset-password")
-    fun resetPassword(@Body request: com.example.myapplication.model.ResetPasswordRequest): Call<Void>
+    // Token en URL path param — consistente con: POST /reset-password/:token (backend)
+    @POST("reset-password/{token}")
+    fun resetPassword(
+        @Path("token") token: String,
+        @Body request: ResetPasswordRequest
+    ): Call<Void>
 
     @POST("change-password")
     fun changePassword(
@@ -142,6 +147,18 @@ interface ApiService {
         @Body historial: Historial
     ): Call<Void>
 
+    @PUT("historial/actualizar")
+    fun actualizarHistorial(
+        @Header("Authorization") token: String,
+        @Body historial: Historial
+    ): Call<Void>
+
+    @DELETE("historial/eliminar/{id}")
+    fun eliminarHistorial(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<Void>
+
     // ===== PRODUCTOS =====
 
     /** Productos públicos — sin autenticación */
@@ -238,7 +255,11 @@ interface ApiService {
         @Body chat: Chat
     ): Call<ChatResponse>
 
-    // ===== MENSAJES =====
+    @DELETE("chats/eliminar/{id}")
+    fun eliminarChat(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<Void>
 
     // ==========================================
     // MENSAJES

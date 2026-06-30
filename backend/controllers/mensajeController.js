@@ -17,7 +17,7 @@ exports.agregar = async (req, res) => {
 
 exports.actualizar = async (req, res) => {
     try {
-        await mensajeService.actualizar(req.body);
+        await mensajeService.actualizar(req.body, req.userId);
         res.status(200).json({ message: 'Mensaje actualizado correctamente.' });
     } catch (err) { handleError(res, err); }
 };

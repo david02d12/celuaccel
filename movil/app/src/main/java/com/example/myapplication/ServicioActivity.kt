@@ -62,7 +62,7 @@ class ServicioActivity : AppCompatActivity() {
 
         txtIdUsuario.setText(idUsuarioAutenticado)
 
-        // Si vienen datos por Intent (al editar desde la lista), precargar formulario
+
         if (intent.hasExtra("ID_SERVICIO") && intent.getIntExtra("ID_SERVICIO", 0) > 0) {
             txtIdServicio.setText(intent.getIntExtra("ID_SERVICIO", 0).toString())
             txtDescripcion.setText(intent.getStringExtra("DESCRIPCION") ?: "")
@@ -111,7 +111,7 @@ class ServicioActivity : AppCompatActivity() {
                 precio = precioStr.toDoubleOrNull() ?: 0.0,
                 movilNombre = movilNom,
                 movilEspecificacion = movilEsp,
-                fecha = if (fecha.isEmpty()) "2026-01-01" else fecha, // Formato YYYY-MM-DD
+                fecha = if (fecha.isEmpty()) "2026-01-01" else fecha,
                 etapa = etapaStr.toIntOrNull() ?: 0
             )
 
@@ -148,7 +148,6 @@ class ServicioActivity : AppCompatActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         val lista = response.body()!!
                         if (lista.isNotEmpty()) {
-                            // Tomamos el primer servicio de la lista para rellenar el formulario de ejemplo
                             val primerServicio = lista[0]
                             txtIdServicio.setText(primerServicio.idServicio.toString())
                             txtDescripcion.setText(primerServicio.descripcion)

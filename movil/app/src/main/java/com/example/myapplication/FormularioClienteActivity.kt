@@ -29,8 +29,8 @@ class FormularioClienteActivity : AppCompatActivity() {
     private lateinit var spinnerDoc: Spinner
     private lateinit var spinnerRol: Spinner
 
-    private val listaRolesValores = listOf(2, 1, 3) // 2=Cliente, 1=Técnico, 3=Admin
-    private val listaDocValores = listOf(1, 2, 3)   // 1=CC, 2=CE, 3=NIT
+    private val listaRolesValores = listOf(2, 1, 3)
+    private val listaDocValores = listOf(1, 2, 3)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,7 @@ class FormularioClienteActivity : AppCompatActivity() {
         val raw = prefs.getString("token", "") ?: ""
         token = if (raw.startsWith("Bearer ")) raw else "Bearer $raw"
 
-        // Vincular componentes
+
         etIdCliente = findViewById(R.id.txtIdClienteForm)
         etNombre = findViewById(R.id.txtNombreClienteForm)
         etFechaNac = findViewById(R.id.txtFechaNacClienteForm)
@@ -62,7 +62,7 @@ class FormularioClienteActivity : AppCompatActivity() {
         val btnEliminar = findViewById<Button>(R.id.btnEliminarClienteForm)
         findViewById<Button>(R.id.btnRegresarClienteForm).setOnClickListener { finish() }
 
-        // Cargar datos si viene direccionado desde el RecyclerView
+
         val idRecibido = intent.getStringExtra("ID_CLIENTE_SELECCIONADO")
         if (!idRecibido.isNullOrEmpty()) {
             etIdCliente.setText(idRecibido)

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_productos.xml — CeluAccel (TÉCNICO/ADMIN)
-  Gestión de productos: header gradiente + formulario CRUD + búsqueda + lista
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,7 +63,7 @@
             android:background="@drawable/bg_btn_outline_white"/>
     </LinearLayout>
 
-    <!-- Formulario CRUD -->
+    
     <ScrollView
         android:id="@+id/scrollFormProducto"
         android:layout_width="match_parent"
@@ -123,7 +120,7 @@
                 android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="10dp"/>
 
-            <!-- NUEVO: Descripción -->
+            
             <EditText android:id="@+id/etDescripcionProducto"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:hint="Descripción del producto (opcional)"
@@ -136,7 +133,7 @@
                 android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="10dp"/>
 
-            <!-- NUEVO: Imagen URL -->
+            
             <EditText android:id="@+id/etImagenProducto"
                 android:layout_width="match_parent" android:layout_height="50dp"
                 android:hint="URL de imagen (opcional)"
@@ -148,14 +145,14 @@
                 android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="10dp"/>
 
-            <!-- Categoría -->
+            
             <Spinner android:id="@+id/spinnerCategoriaProducto"
                 android:layout_width="match_parent" android:layout_height="50dp"
                 android:background="@drawable/bg_input_field"
                 android:paddingLeft="14dp" android:paddingRight="14dp"
                 android:layout_marginBottom="10dp"/>
 
-            <!-- NUEVO: Visibilidad en catálogo -->
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -188,7 +185,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- NUEVO: Barra de búsqueda -->
+    
     <EditText
         android:id="@+id/etBusquedaProducto"
         android:layout_width="match_parent"
@@ -205,7 +202,7 @@
         android:drawableStart="@android:drawable/ic_menu_search"
         android:drawablePadding="8dp"/>
 
-    <!-- Lista de productos -->
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProductos"
         android:layout_width="match_parent"

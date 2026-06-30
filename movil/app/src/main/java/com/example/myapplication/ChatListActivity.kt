@@ -35,7 +35,7 @@ class ChatListActivity : AppCompatActivity() {
         userRole = sharedPref.getInt("user_role", 2)
         idServicioIntent = intent.getIntExtra("ID_SERVICIO", -1)
 
-        // IDs del nuevo activity_chat_list.xml
+
         recyclerChats = findViewById(R.id.recyclerChats)
         val btnRegresar = findViewById<Button>(R.id.btnRegresar)
 
@@ -105,7 +105,7 @@ class ChatListActivity : AppCompatActivity() {
     private fun abrirDetalleChat(chat: Chat) {
         val intent = Intent(this, ChatDetailActivity::class.java)
         intent.putExtra("CODIGO_CHAT", chat.codigoChat)
-        // idServicio puede ser null para chats de catálogo
+
         chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }
         startActivity(intent)
         finish()

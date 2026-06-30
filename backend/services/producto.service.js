@@ -4,7 +4,7 @@ const productoDao = require('../dao/producto.dao');
 /** Todos los productos (admin/técnico) */
 const listar = () => productoDao.getAll();
 
-/** B5 FIX: Solo activos con stock > 0 (catálogo público) */
+/** Solo activos con stock > 0 (catálogo público) */
 const listarPublicos = () => productoDao.getPublicos();
 
 const agregar = async (data) => {

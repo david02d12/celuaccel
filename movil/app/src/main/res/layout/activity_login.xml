@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_login.xml — CeluAccel
-  Diseño idéntico al componente Login.jsx del frontend web:
-  • Fondo #F4F6F8
-  • Card centrada con franja superior roja gradiente
-  • Inputs redondeados 10dp con borde sutil
-  • Botón primario rojo con sombra
-  • Links secundarios alineados
--->
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -23,7 +15,7 @@
         android:paddingLeft="20dp" android:paddingRight="20dp"
         android:paddingTop="32dp" android:paddingBottom="32dp">
 
-        <!-- ── Mini navbar / Marca ── -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="52dp"
@@ -55,7 +47,7 @@
                 android:background="@drawable/bg_btn_outline_white"/>
         </LinearLayout>
 
-        <!-- ── Card principal ── -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,7 +55,7 @@
             android:background="@drawable/bg_card_login"
             android:elevation="8dp">
 
-            <!-- Franja roja superior (igual que en la web) -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,7 +64,7 @@
                 android:gravity="center"
                 android:padding="28dp">
 
-                <!-- Ícono de usuario en círculo translúcido -->
+                
                 <FrameLayout
                     android:layout_width="52dp"
                     android:layout_height="52dp"
@@ -104,14 +96,14 @@
                     android:textSize="13sp"/>
             </LinearLayout>
 
-            <!-- ── Formulario ── -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="28dp">
 
-                <!-- Label + Campo documento -->
+                
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -136,7 +128,7 @@
                     android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="18dp"/>
 
-                <!-- Label + Campo contraseña -->
+                
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -161,7 +153,7 @@
                     android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="24dp"/>
 
-                <!-- Botón principal -->
+                
                 <Button
                     android:id="@+id/btnLogin"
                     android:layout_width="match_parent"
@@ -175,7 +167,7 @@
                     android:elevation="4dp"
                     android:layout_marginBottom="12dp"/>
 
-                <!-- Mensaje de error -->
+                
                 <TextView
                     android:id="@+id/tvMessage"
                     android:layout_width="match_parent"
@@ -186,14 +178,14 @@
                     android:layout_marginBottom="8dp"
                     android:visibility="gone"/>
 
-                <!-- Separador -->
+                
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/celuaccel_border"
                     android:layout_marginTop="8dp" android:layout_marginBottom="8dp"/>
 
-                <!-- Crear cuenta -->
+                
                 <Button
                     android:id="@+id/tvCrearCuenta"
                     android:layout_width="match_parent"
@@ -206,16 +198,16 @@
                     android:background="@drawable/bg_input_field"
                     android:layout_marginBottom="8dp"/>
 
-                <!-- Olvidé contraseña -->
+                
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/tvOlvideContrasena"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Olvidé mi contraseña"
-                    android:textColor="@color/celuaccel_text_muted"
+                    android:text="¿Olvidaste tu contraseña?"
+                    android:textColor="@color/celuaccel_primary"
                     android:textSize="13sp"
                     android:textAlignment="center"
-                    android:padding="8dp"
+                    android:padding="10dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_marginBottom="4dp"/>

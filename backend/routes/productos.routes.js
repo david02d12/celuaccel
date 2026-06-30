@@ -2,7 +2,7 @@ const router = require('express').Router();
 const productoController = require('../controllers/productoController');
 const { validarToken, validarRol } = require('../middlewares/authMiddleware');
 
-// B5 FIX: Solo muestra productos activos con stock > 0 (sin autenticación)
+// Solo muestra productos activos con stock > 0 (sin autenticación)
 router.get('/productos/publico',         productoController.listarPublicos);
 
 // Rutas protegidas

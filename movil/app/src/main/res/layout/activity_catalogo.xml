@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_catalogo.xml — CeluAccel
-  Header gradiente + barra de búsqueda + grid de productos (2 columnas)
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,7 +52,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Barra de búsqueda y filtro -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -89,7 +86,7 @@
             android:paddingLeft="10dp" android:paddingRight="10dp"/>
     </LinearLayout>
 
-    <!-- Grid de productos (2 columnas) -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerCatalogo"
         android:layout_width="match_parent"

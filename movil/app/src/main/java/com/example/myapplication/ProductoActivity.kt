@@ -28,26 +28,22 @@ class ProductoActivity : AppCompatActivity() {
     private var categoriasLista: List<Categoria> = emptyList()
     private var productoEnEdicion: Producto? = null
 
-    // Lista completa en memoria para filtrar localmente
     private var listaCompleta: List<Producto> = emptyList()
 
-    // Views — formulario
     private lateinit var scrollForm: ScrollView
     private lateinit var etCodigo: EditText
     private lateinit var etNombre: EditText
     private lateinit var etPrecio: EditText
     private lateinit var etStock: EditText
-    private lateinit var etDescripcion: EditText      // NUEVO
-    private lateinit var etImagen: EditText           // NUEVO
+    private lateinit var etDescripcion: EditText
+    private lateinit var etImagen: EditText
     private lateinit var spinnerCategoria: Spinner
-    private lateinit var spinnerCatalogo: Spinner     // NUEVO: Activo_Catalogo
+    private lateinit var spinnerCatalogo: Spinner
     private lateinit var btnNuevo: Button
     private lateinit var btnGuardar: Button
     private lateinit var btnCancelar: Button
-
-    // Views — lista
     private lateinit var recyclerView: RecyclerView
-    private lateinit var etBusqueda: EditText         // NUEVO
+    private lateinit var etBusqueda: EditText
 
     private val api by lazy { ApiClient.retrofit.create(ApiService::class.java) }
 
@@ -59,7 +55,7 @@ class ProductoActivity : AppCompatActivity() {
         val tokenGuardado = sharedPref.getString("token", "") ?: ""
         token = if (tokenGuardado.startsWith("Bearer ")) tokenGuardado else "Bearer $tokenGuardado"
 
-        // Binding
+
         scrollForm       = findViewById(R.id.scrollFormProducto)
         recyclerView     = findViewById(R.id.recyclerProductos)
         etCodigo         = findViewById(R.id.etCodigoProducto)
@@ -77,16 +73,16 @@ class ProductoActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Spinner Activo_Catalogo: 0 = Oculto, 1 = Visible en catálogo
+
         val catalogoOpciones = listOf("Visible en catálogo", "Oculto del catálogo")
         val catalogoAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, catalogoOpciones)
         catalogoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCatalogo.adapter = catalogoAdapter
 
-        // Botón regresar
+
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // Nuevo producto
+
         btnNuevo.setOnClickListener {
             productoEnEdicion = null
             limpiarFormulario()
@@ -103,7 +99,7 @@ class ProductoActivity : AppCompatActivity() {
 
         btnGuardar.setOnClickListener { guardar() }
 
-        // Búsqueda en tiempo real
+
         etBusqueda.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -141,7 +137,7 @@ class ProductoActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<Producto>>, response: Response<List<Producto>>) {
                 if (response.isSuccessful && response.body() != null) {
                     listaCompleta = response.body()!!
-                    // Aplicar búsqueda activa al recargar
+
                     filtrarLista(etBusqueda.text.toString())
                 } else {
                     Toast.makeText(this@ProductoActivity, "Error cargando productos (${response.code()})", Toast.LENGTH_SHORT).show()
@@ -153,7 +149,7 @@ class ProductoActivity : AppCompatActivity() {
         })
     }
 
-    /** Filtra la lista en memoria y actualiza el adapter */
+
     private fun filtrarLista(query: String) {
         val filtrada = if (query.isBlank()) {
             listaCompleta
@@ -244,7 +240,7 @@ class ProductoActivity : AppCompatActivity() {
         val catIdx = categoriasLista.indexOfFirst { it.idCategoria == producto.idCategoria }
         if (catIdx >= 0) spinnerCategoria.setSelection(catIdx)
 
-        // 1 = Visible → posición 0 del spinner; 0 = Oculto → posición 1
+
         spinnerCatalogo.setSelection(if (producto.activoCatalogo == 1) 0 else 1)
 
         scrollForm.visibility = View.VISIBLE
@@ -283,6 +279,6 @@ class ProductoActivity : AppCompatActivity() {
         etStock.text.clear()
         etDescripcion.text.clear()
         etImagen.text.clear()
-        spinnerCatalogo.setSelection(0) // Por defecto: Visible en catálogo
+        spinnerCatalogo.setSelection(0)
     }
 }

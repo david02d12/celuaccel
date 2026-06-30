@@ -27,5 +27,4 @@ exports.eliminar = async (req, res) => {
         await categoriaService.eliminar(req.params.id);
         res.status(200).json({ message: 'Categoría eliminada correctamente.' });
     } catch (err) { handleError(res, err); }
-
 };

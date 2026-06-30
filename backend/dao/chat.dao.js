@@ -6,19 +6,16 @@ const CHAT_SELECT = `
         c.Codigo_Chat,
         c.ID_Usuario,
         c.ID_Servicio,
-        u.Nombre                    AS Nombre_Usuario,
-        m.Mensaje                   AS Ultimo_Mensaje,
-        m.Fecha_Mensaje             AS Fecha_Ultimo_Mensaje,
-        s.Descripcion               AS Servicio_Descripcion,
-        s.Movil_Nombre              AS Servicio_Movil
+        u.Nombre            AS Nombre_Usuario,
+        m.Mensaje           AS Ultimo_Mensaje,
+        m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje
     FROM Chat c
-    LEFT JOIN Usuario u      ON TRIM(u.ID_Usuario) = TRIM(c.ID_Usuario)
-    LEFT JOIN Mensajes m     ON m.Codigo_Mensaje = (
+    LEFT JOIN Usuario u  ON TRIM(u.ID_Usuario) = TRIM(c.ID_Usuario)
+    LEFT JOIN Mensajes m ON m.Codigo_Mensaje = (
         SELECT Codigo_Mensaje FROM Mensajes
         WHERE Codigo_Chat = c.Codigo_Chat
         ORDER BY Codigo_Mensaje DESC LIMIT 1
     )
-    LEFT JOIN Servicio s     ON s.ID_Servicio = c.ID_Servicio
 `;
 
 const getAll = () =>

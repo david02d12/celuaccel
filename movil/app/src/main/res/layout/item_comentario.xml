@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  item_comentario.xml — CeluAccel
-  Card de comentario con avatar, estrellas y texto
-  igual que Comentarios.jsx de la web
--->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -15,15 +10,13 @@
     android:layout_marginBottom="10dp"
     android:padding="16dp">
 
-    <!-- Fila: Avatar + Nombre + Fecha -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="8dp">
 
-        <!-- Avatar circular con inicial -->
         <TextView
             android:id="@+id/tvAvatarComentario"
             android:layout_width="40dp"
@@ -36,7 +29,6 @@
             android:textStyle="bold"
             android:layout_marginEnd="12dp"/>
 
-        <!-- Nombre + Fecha -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -47,7 +39,7 @@
                 android:id="@+id/tvNombreComentario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cliente Ejemplo"
+                android:text="Cliente"
                 android:textColor="@color/celuaccel_text"
                 android:textSize="14sp"
                 android:textStyle="bold"/>
@@ -56,35 +48,58 @@
                 android:id="@+id/tvFechaComentario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="01/01/2025"
+                android:text=""
                 android:textColor="@color/celuaccel_text_light"
                 android:textSize="11sp"/>
         </LinearLayout>
 
-        <!-- Estrellas de calificación -->
-        <TextView
-            android:id="@+id/tvEstrellas"
+        <LinearLayout
+            android:id="@+id/actionButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⭐⭐⭐⭐⭐"
-            android:textSize="13sp"/>
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/btnEditComentario"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="✎"
+                android:textSize="18sp"
+                android:textColor="@color/celuaccel_info"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackgroundBorderless"/>
+
+            <TextView
+                android:id="@+id/btnDeleteComentario"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="✕"
+                android:textSize="18sp"
+                android:textColor="@color/celuaccel_danger"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackgroundBorderless"/>
+        </LinearLayout>
     </LinearLayout>
 
-    <!-- Separador -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/celuaccel_border"
-        android:layout_marginBottom="10dp"/>
+    <LinearLayout
+        android:id="@+id/starContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"/>
 
-    <!-- Texto del comentario -->
     <TextView
         android:id="@+id/tvTextoComentario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Excelente servicio, muy rápido y profesional."
+        android:text=""
         android:textColor="@color/celuaccel_text"
         android:textSize="13sp"
-        android:lineSpacingExtra="3dp"/>
-
+        android:lineSpacingExtra="3dp"
+        android:paddingTop="4dp"/>
 </LinearLayout>

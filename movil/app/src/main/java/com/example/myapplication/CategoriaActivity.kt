@@ -27,15 +27,13 @@ class CategoriaActivity : AppCompatActivity() {
     private lateinit var token: String
     private var categoriaEnEdicion: Categoria? = null
 
-    // Lista completa en memoria para filtrar localmente
     private var listaCompleta: List<Categoria> = emptyList()
 
-    // IDs del nuevo activity_categorias.xml
     private lateinit var recyclerView:   RecyclerView
     private lateinit var cardForm:       View
     private lateinit var etIdCategoria:  EditText
     private lateinit var etNombre:       EditText
-    private lateinit var etBusqueda:     EditText        // NUEVO
+    private lateinit var etBusqueda:     EditText
     private lateinit var btnNueva:       Button
     private lateinit var btnGuardar:     Button
     private lateinit var btnCancelar:    Button
@@ -59,7 +57,6 @@ class CategoriaActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // El card del form empieza oculto
         cardForm.visibility = View.GONE
 
         btnNueva.setOnClickListener {
@@ -85,7 +82,6 @@ class CategoriaActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // Búsqueda en tiempo real
         etBusqueda.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -102,7 +98,7 @@ class CategoriaActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<Categoria>>, response: Response<List<Categoria>>) {
                 if (response.isSuccessful && response.body() != null) {
                     listaCompleta = response.body()!!
-                    // Aplicar búsqueda activa al recargar
+
                     filtrarLista(etBusqueda.text.toString())
                 } else {
                     Toast.makeText(this@CategoriaActivity, "Error al cargar categorías (${response.code()})", Toast.LENGTH_SHORT).show()
@@ -114,7 +110,7 @@ class CategoriaActivity : AppCompatActivity() {
         })
     }
 
-    /** Filtra la lista en memoria y actualiza el adapter */
+
     private fun filtrarLista(query: String) {
         val filtrada = if (query.isBlank()) {
             listaCompleta
@@ -204,7 +200,7 @@ class CategoriaActivity : AppCompatActivity() {
     }
 }
 
-// ─── Adapter inline — IDs del item_categoria.xml ─────────────────────────────
+
 class CategoriaAdapter(
     private val items: List<Categoria>,
     private val onEditar:   (Categoria) -> Unit,

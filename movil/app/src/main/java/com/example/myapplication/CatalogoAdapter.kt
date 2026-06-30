@@ -16,7 +16,7 @@ class CatalogoAdapter(
 ) : RecyclerView.Adapter<CatalogoAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // IDs del nuevo item_producto_catalogo.xml
+
         val imgProducto:       ImageView = view.findViewById(R.id.imgProducto)
         val placeholderImg:    View      = view.findViewById(R.id.placeholderImg)
         val tvCategoriaCatalogo: TextView = view.findViewById(R.id.tvCategoriaCatalogo)
@@ -39,11 +39,11 @@ class CatalogoAdapter(
         val catNombre = categorias.find { it.idCategoria == prod.idCategoria }?.nombreCategoria ?: "Sin categoría"
         holder.tvCategoriaCatalogo.text = catNombre
 
-        // Imagen: por ahora siempre placeholder (Glide puede agregarse después)
+
         holder.imgProducto.visibility    = View.GONE
         holder.placeholderImg.visibility = View.VISIBLE
 
-        // Clic en la card para ver detalle
+
         holder.itemView.setOnClickListener { onDetalleClick(prod) }
     }
 

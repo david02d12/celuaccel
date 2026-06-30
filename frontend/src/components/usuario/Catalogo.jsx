@@ -22,7 +22,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
           api.get('/productos/listar'),
           api.get('/categorias/listar'),
         ]);
-        // RNF002: Solo mostrar activos en catálogo Y con stock disponible
+        // Solo mostrar activos en catálogo Y con stock disponible
         setProductos(pRes.data.filter(p => Number(p.Activo_Catalogo) === 1 && Number(p.Cantidad) > 0));
         setCategorias(cRes.data);
       } catch (err) {

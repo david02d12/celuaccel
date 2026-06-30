@@ -17,8 +17,7 @@ const validarToken = (req, res, next) => {
     });
 };
 
-// C3 FIX: validarRol ahora usa async/await con queryPromise en lugar de callback
-// Evita requests colgados por timeout de callback y es consistente con el resto de la app
+// validarRol usa async/await con queryPromise para consistencia con el resto de la app
 const validarRol = (...rolesPermitidos) => {
     return async (req, res, next) => {
         if (!req.userId) return res.status(401).json({ error: 'Usuario no autenticado.' });
@@ -45,5 +44,5 @@ const validarRol = (...rolesPermitidos) => {
     };
 };
 
-// B2 FIX: SECRET_KEY ya no se exporta (era innecesario y un riesgo de seguridad)
+// SECRET_KEY no se exporta para no exponerla innecesariamente
 module.exports = { validarToken, validarRol };

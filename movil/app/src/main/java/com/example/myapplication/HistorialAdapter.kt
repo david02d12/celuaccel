@@ -20,7 +20,7 @@ class HistorialAdapter(
         notifyDataSetChanged()
     }
 
-    // ─── Mismo mapa de etapas que ServicioAdapter ─────────────────────────────
+
     data class EtapaInfo(
         val texto: String,
         val badgeDrawable: Int,
@@ -58,7 +58,7 @@ class HistorialAdapter(
         val h   = items[position]
         val ctx = holder.itemView.context
 
-        // Determinar etapa desde el campo Estado (puede ser "0","25","50","75","100","-1","Activo", etc.)
+
         val etapaNum = when {
             h.estado == null                               -> 0
             h.estado.toIntOrNull() != null                 -> h.estado.toInt()
@@ -75,20 +75,20 @@ class HistorialAdapter(
         holder.tvEtapaHistorial.background = ContextCompat.getDrawable(ctx, info.badgeDrawable)
         holder.tvEtapaHistorial.setTextColor(ContextCompat.getColor(ctx, info.textColorRes))
 
-        // Dispositivo — no disponible en modelo, usamos descripción truncada
+
         holder.tvDispositivoHistorial.text = h.descripcionEvento.take(40)
         holder.tvDescHistorial.text        = h.descripcionEvento
 
-        // Barra de progreso
+
         holder.progressHistorial.progress = info.porcentaje
         holder.progressHistorial.progressTintList =
             ColorStateList.valueOf(ContextCompat.getColor(ctx, info.progressColorRes))
 
-        // Fecha
+
         val fechaStr = h.fechaEvento
         holder.tvFechaHistorial.text = "📅 ${if (fechaStr.contains("T")) fechaStr.substringBefore("T") else fechaStr}"
 
-        // Precio — no disponible en modelo de historial, se oculta
+
         holder.tvPrecioHistorial.visibility = View.GONE
 
         holder.itemView.setOnClickListener { onClick?.invoke(h) }
