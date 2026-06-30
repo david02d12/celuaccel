@@ -20,7 +20,7 @@
     <!-- ⚠️ Eliminar en producción y reemplazar por HTTPS      -->
     <!-- ⚠️ Actualizar IP si cambia la red de desarrollo        -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">192.168.80.15</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
     </domain-config>
 
 </network-security-config>

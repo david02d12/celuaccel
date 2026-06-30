@@ -90,7 +90,7 @@ const forgotPassword = async (email) => {
     );
 
     // Link para el frontend web (React/Vite)
-    const webUrl    = `http://192.168.0.11:5173/?token=${token}`;
+    const webUrl    = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/?token=${token}`;
     // Link para la app Android (Custom Scheme — interceptado por ResetPasswordActivity)
     const androidUrl = `celuaccel://reset-password?token=${token}`;
 
