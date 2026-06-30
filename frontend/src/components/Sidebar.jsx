@@ -36,6 +36,7 @@ const Sidebar = ({ setVista }) => {
             <Btn label="Mis Servicios"       vista="miServicio" />
             <Btn label="Chat con Asesor"     vista="chatVista" />
             <Btn label="Mis Notificaciones"  vista="misNotificaciones" />
+            <Btn label="Mis Preguntas"       vista="misPreguntas" />
 
             <SectionLabel>Tienda</SectionLabel>
             <Btn label="Catálogo"            vista="catalogo" />

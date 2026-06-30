@@ -1,13 +1,19 @@
 require('dotenv').config();
-const express = require('express');
-const swaggerUI = require('swagger-ui-express');
+const express    = require('express');
+const helmet     = require('helmet');
+const rateLimit  = require('express-rate-limit');
+const swaggerUI  = require('swagger-ui-express');
 const swaggerDocumentation = require('./swagger.json');
 const cors = require('cors');
 
 const app = express();
 
-// M3 FIX: CORS restringido al origen del frontend (no más '*')
-// Configurar FRONTEND_URL en el .env para producción
+// Seguridad HTTP — Headers de protección (XSS, clickjacking, MIME sniffing)
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
+
+// CORS restringido al origen del frontend
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     'http://localhost:5174',  // puerto alternativo de Vite
@@ -22,13 +28,28 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-// B6 FIX: Limite de tamaño de body para prevenir payloads gigantes
+
+// Limite de tamaño de body para prevenir payloads gigantes
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
-// TODO B7: Añadir rate limiting en rutas públicas (/login, /registro, /forgot-password)
-// npm install express-rate-limit
-// const rateLimit = require('express-rate-limit');
-// app.use('/api/login', rateLimit({ windowMs: 15*60*1000, max: 10 }));
+
+// Rate limiting en rutas públicas para prevenir fuerza bruta y spam
+const limiterPublico = rateLimit({
+    windowMs: 15 * 60 * 1000, // ventana de 15 minutos
+    max: 20,                   // máximo 20 intentos por ventana por IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Demasiados intentos. Por favor espera 15 minutos e intenta de nuevo.' }
+});
+app.use('/api/login',           limiterPublico);
+app.use('/api/registro',        limiterPublico);
+app.use('/api/forgot-password', limiterPublico);
+app.use('/api/reset-password',  limiterPublico);
+
+// Health check para monitoreo de disponibilidad
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // Documentacion Swagger
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocumentation));

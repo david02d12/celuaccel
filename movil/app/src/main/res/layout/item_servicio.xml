@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  item_servicio.xml — CeluAccel
-  Igual que el componente de tarjeta de servicio en la web:
-  • Card elevada con radius 14dp
-  • Badge de etapa coloreado (pill)
-  • Barra de progreso horizontal
-  • Información jerarquizada
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -20,7 +13,7 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- Fila 1: ID + Badge de etapa -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,7 +32,7 @@
             android:textStyle="bold"
             android:letterSpacing="0.04"/>
 
-        <!-- Badge de etapa dinámico (se cambia desde adapter) -->
+        
         <TextView
             android:id="@+id/tvBadgeEtapa"
             android:layout_width="wrap_content"
@@ -53,7 +46,7 @@
             android:textColor="@color/etapa_recibido_text"/>
     </LinearLayout>
 
-    <!-- Fila 2: Dispositivo -->
+    
     <TextView
         android:id="@+id/tvDispositivo"
         android:layout_width="match_parent"
@@ -64,7 +57,7 @@
         android:textStyle="bold"
         android:layout_marginBottom="4dp"/>
 
-    <!-- Fila 3: Descripción corta -->
+    
     <TextView
         android:id="@+id/tvDescripcionServicio"
         android:layout_width="match_parent"
@@ -76,7 +69,7 @@
         android:ellipsize="end"
         android:layout_marginBottom="10dp"/>
 
-    <!-- Barra de progreso de etapa -->
+    
     <ProgressBar
         android:id="@+id/progressEtapa"
         style="?android:attr/progressBarStyleHorizontal"
@@ -88,7 +81,7 @@
         android:progressBackgroundTint="@color/celuaccel_border"
         android:layout_marginBottom="10dp"/>
 
-    <!-- Fila 4: Fecha + Precio -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

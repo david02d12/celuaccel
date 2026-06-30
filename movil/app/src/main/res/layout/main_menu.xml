@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  main_menu.xml — CeluAccel
-  Diseño inspirado en Home.jsx del frontend web:
-  • Header con gradiente rojo, nombre usuario y badge
-  • Grid 2×N de cards con sombra y radius 14dp
-  • Cada card tiene ícono emoji + etiqueta
-  • Botón "Cerrar sesión" outline rojo al final
-  Las cards se muestran/ocultan desde MenuActivity.kt según el rol
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -15,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- ── Header con gradiente rojo ── -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +18,7 @@
         android:paddingTop="18dp" android:paddingBottom="18dp"
         android:elevation="6dp">
 
-        <!-- Logo + saludo -->
+        
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -51,7 +43,7 @@
                 android:textSize="13sp"/>
         </LinearLayout>
 
-        <!-- Badge de notificaciones no leídas -->
+        
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -79,7 +71,7 @@
         </FrameLayout>
     </LinearLayout>
 
-    <!-- ── Contenido con scroll ── -->
+    
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -92,7 +84,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ── Sección CLIENTE (rol 2) ── -->
+            
             <TextView
                 android:id="@+id/labelSeccionCliente"
                 android:layout_width="wrap_content"
@@ -105,7 +97,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="4dp"/>
 
-            <!-- Fila 1 cliente: Catálogo / Mi Servicio -->
+            
             <LinearLayout
                 android:id="@+id/filaClienteA"
                 android:layout_width="match_parent"
@@ -113,7 +105,7 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <!-- Card: Catálogo / Productos -->
+                
                 <LinearLayout
                     android:id="@+id/cardCompras"
                     android:layout_width="0dp"
@@ -153,7 +145,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Card: Servicios -->
+                
                 <LinearLayout
                     android:id="@+id/cardServicio"
                     android:layout_width="0dp"
@@ -194,7 +186,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Fila 2 cliente: Chat / Notificaciones -->
+            
             <LinearLayout
                 android:id="@+id/filaClienteB"
                 android:layout_width="match_parent"
@@ -202,7 +194,7 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <!-- Card: Chat -->
+                
                 <LinearLayout
                     android:id="@+id/cardChat"
                     android:layout_width="0dp"
@@ -242,7 +234,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Card: Notificaciones -->
+                
                 <LinearLayout
                     android:id="@+id/cardGear"
                     android:layout_width="0dp"
@@ -283,14 +275,14 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Fila 3: Preguntas / Perfil -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <!-- Card: Preguntas -->
+                
                 <LinearLayout
                     android:id="@+id/cardPreguntas"
                     android:layout_width="0dp"
@@ -330,7 +322,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Card: Mi Perfil -->
+                
                 <LinearLayout
                     android:id="@+id/cardPerfil"
                     android:layout_width="0dp"
@@ -371,7 +363,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ── Sección TÉCNICO / ADMIN ── -->
+            
             <TextView
                 android:id="@+id/labelSeccionTecnico"
                 android:layout_width="wrap_content"
@@ -385,14 +377,14 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"/>
 
-            <!-- Fila: Historial / Comentarios -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <!-- Card: Historial -->
+                
                 <LinearLayout
                     android:id="@+id/cardHistorial"
                     android:layout_width="0dp"
@@ -432,7 +424,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Card: Comentarios -->
+                
                 <LinearLayout
                     android:id="@+id/cardComentarios"
                     android:layout_width="0dp"
@@ -473,14 +465,14 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Fila: Categorías / (vacío placeholder) -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <!-- Card: Categorías -->
+                
                 <LinearLayout
                     android:id="@+id/cardCategorias"
                     android:layout_width="0dp"
@@ -520,7 +512,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Placeholder vacío (balance de grid) -->
+                
                 <View
                     android:layout_width="0dp"
                     android:layout_height="130dp"
@@ -528,7 +520,7 @@
                     android:layout_marginStart="6dp"/>
             </LinearLayout>
 
-            <!-- ── Sección ADMIN ── -->
+            
             <TextView
                 android:id="@+id/labelSeccionAdmin"
                 android:layout_width="wrap_content"
@@ -542,14 +534,14 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"/>
 
-            <!-- Fila: Usuarios / Roles -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <!-- Card: Usuarios -->
+                
                 <LinearLayout
                     android:id="@+id/cardCliente"
                     android:layout_width="0dp"
@@ -589,7 +581,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Card: Roles -->
+                
                 <LinearLayout
                     android:id="@+id/cardRoles"
                     android:layout_width="0dp"
@@ -630,14 +622,14 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Fila: Tipo Documento -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="20dp">
 
-                <!-- Card: Tipo Documento -->
+                
                 <LinearLayout
                     android:id="@+id/cardTipoDoc"
                     android:layout_width="0dp"
@@ -677,7 +669,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- Placeholder vacío -->
+                
                 <View
                     android:layout_width="0dp"
                     android:layout_height="130dp"
@@ -685,7 +677,7 @@
                     android:layout_marginStart="6dp"/>
             </LinearLayout>
 
-            <!-- ── Botón Cerrar Sesión ── -->
+            
             <Button
                 android:id="@+id/btnCerrarSesion"
                 android:layout_width="match_parent"

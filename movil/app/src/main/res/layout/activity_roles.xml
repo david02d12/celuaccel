@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_roles.xml — CeluAccel
-  Header gradiente + formulario CRUD roles + lista
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,7 +63,7 @@
             android:background="@drawable/bg_btn_outline_white"/>
     </LinearLayout>
 
-    <!-- Formulario CRUD -->
+    
     <LinearLayout
         android:id="@+id/cardFormRol"
         android:layout_width="match_parent"
@@ -136,7 +133,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Lista -->
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerRoles"
         android:layout_width="match_parent"

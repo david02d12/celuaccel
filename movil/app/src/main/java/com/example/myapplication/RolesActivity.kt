@@ -25,11 +25,10 @@ class RolesActivity : AppCompatActivity() {
     private lateinit var token: String
     private var rolEnEdicion: Rol? = null
 
-    // IDs del activity_roles.xml
     private lateinit var recyclerView: RecyclerView
     private lateinit var cardForm:     View
-    private lateinit var etCodigo:     EditText    // código numérico del rol
-    private lateinit var etNombre:     EditText    // nombre/descripcion del rol
+    private lateinit var etCodigo:     EditText
+    private lateinit var etNombre:     EditText
     private lateinit var btnNuevo:     Button
     private lateinit var btnGuardar:   Button
     private lateinit var btnCancelar:  Button
@@ -103,10 +102,10 @@ class RolesActivity : AppCompatActivity() {
         if (descripcion.isEmpty()) { etNombre.error = "Nombre requerido"; return }
 
         val call: Call<Void> = if (rolEnEdicion != null) {
-            // Editar: usa el código existente
+
             api.actualizarRol(token, Rol(codigoRol = rolEnEdicion!!.codigoRol, descripcionRol = descripcion))
         } else {
-            // Crear: requiere código nuevo proporcionado por el usuario
+
             val codigo = etCodigo.text.toString().trim()
             if (codigo.isEmpty()) { etCodigo.error = "Código requerido"; return }
             api.agregarRol(token, Rol(codigoRol = codigo, descripcionRol = descripcion))
@@ -136,7 +135,7 @@ class RolesActivity : AppCompatActivity() {
 
     private fun iniciarEdicion(rol: Rol) {
         rolEnEdicion = rol
-        // Al editar, el código es inmutable: lo ocultamos
+
         etCodigo.setText(rol.codigoRol)
         etCodigo.isEnabled = false
         etCodigo.visibility = android.view.View.GONE

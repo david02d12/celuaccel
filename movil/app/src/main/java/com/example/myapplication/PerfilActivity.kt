@@ -94,7 +94,7 @@ class PerfilActivity : AppCompatActivity() {
             return
         }
 
-        // Construimos el cliente con los datos actualizados (campos requeridos por el modelo)
+
         val clienteActualizado = Cliente(
             idUsuario       = userId,
             codigoDocumento = codigoDocumentoOriginal,
@@ -103,7 +103,7 @@ class PerfilActivity : AppCompatActivity() {
             direccion       = direccion,
             telefono        = telefono,
             correo          = correo,
-            clave           = "",    // no se envía en actualización de perfil
+            clave           = "",
             codigoRol       = codigoRolOriginal
         )
 

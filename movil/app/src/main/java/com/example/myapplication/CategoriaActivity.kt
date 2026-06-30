@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,10 +27,13 @@ class CategoriaActivity : AppCompatActivity() {
     private lateinit var token: String
     private var categoriaEnEdicion: Categoria? = null
 
-    // IDs del nuevo activity_categorias.xml
+    private var listaCompleta: List<Categoria> = emptyList()
+
     private lateinit var recyclerView:   RecyclerView
     private lateinit var cardForm:       View
+    private lateinit var etIdCategoria:  EditText
     private lateinit var etNombre:       EditText
+    private lateinit var etBusqueda:     EditText
     private lateinit var btnNueva:       Button
     private lateinit var btnGuardar:     Button
     private lateinit var btnCancelar:    Button
@@ -43,18 +48,21 @@ class CategoriaActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerCategorias)
         cardForm     = findViewById(R.id.cardFormCategoria)
+        etIdCategoria = findViewById(R.id.etIdCategoria)
         etNombre     = findViewById(R.id.etNombreCategoria)
+        etBusqueda   = findViewById(R.id.etBusquedaCategoria)
         btnNueva     = findViewById(R.id.btnNuevaCategoria)
         btnGuardar   = findViewById(R.id.btnGuardarCategoria)
         btnCancelar  = findViewById(R.id.btnCancelarCategoria)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // El card del form empieza oculto
         cardForm.visibility = View.GONE
 
         btnNueva.setOnClickListener {
             categoriaEnEdicion = null
+            etIdCategoria.text.clear()
+            etIdCategoria.isEnabled = true
             etNombre.text.clear()
             cardForm.visibility = View.VISIBLE
             btnNueva.visibility = View.GONE
@@ -66,11 +74,21 @@ class CategoriaActivity : AppCompatActivity() {
         btnCancelar.setOnClickListener {
             cardForm.visibility = View.GONE
             btnNueva.visibility = View.VISIBLE
+            etIdCategoria.text.clear()
+            etIdCategoria.isEnabled = true
             etNombre.text.clear()
             categoriaEnEdicion = null
         }
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
+
+        etBusqueda.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filtrarLista(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         cargar()
     }
@@ -79,11 +97,9 @@ class CategoriaActivity : AppCompatActivity() {
         api.getCategorias(token).enqueue(object : Callback<List<Categoria>> {
             override fun onResponse(call: Call<List<Categoria>>, response: Response<List<Categoria>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val lista = response.body()!!
-                    recyclerView.adapter = CategoriaAdapter(lista,
-                        onEditar   = { cat -> iniciarEdicion(cat) },
-                        onEliminar = { cat -> confirmarEliminar(cat) }
-                    )
+                    listaCompleta = response.body()!!
+
+                    filtrarLista(etBusqueda.text.toString())
                 } else {
                     Toast.makeText(this@CategoriaActivity, "Error al cargar categorías (${response.code()})", Toast.LENGTH_SHORT).show()
                 }
@@ -94,6 +110,24 @@ class CategoriaActivity : AppCompatActivity() {
         })
     }
 
+
+    private fun filtrarLista(query: String) {
+        val filtrada = if (query.isBlank()) {
+            listaCompleta
+        } else {
+            val q = query.lowercase()
+            listaCompleta.filter { cat ->
+                cat.nombreCategoria.lowercase().contains(q) ||
+                cat.idCategoria?.toString()?.contains(q) == true
+            }
+        }
+        recyclerView.adapter = CategoriaAdapter(
+            filtrada,
+            onEditar   = { cat -> iniciarEdicion(cat) },
+            onEliminar = { cat -> confirmarEliminar(cat) }
+        )
+    }
+
     private fun guardar() {
         val nombre = etNombre.text.toString().trim()
         if (nombre.isEmpty()) { etNombre.error = "Nombre requerido"; return }
@@ -101,7 +135,11 @@ class CategoriaActivity : AppCompatActivity() {
         val call: Call<Void> = if (categoriaEnEdicion != null) {
             api.actualizarCategoria(token, Categoria(idCategoria = categoriaEnEdicion!!.idCategoria, nombreCategoria = nombre))
         } else {
-            api.agregarCategoria(token, Categoria(nombreCategoria = nombre))
+            val idTexto = etIdCategoria.text.toString().trim()
+            if (idTexto.isEmpty()) { etIdCategoria.error = "ID requerido"; return }
+            val idCat = idTexto.toIntOrNull()
+            if (idCat == null) { etIdCategoria.error = "Debe ser un número"; return }
+            api.agregarCategoria(token, Categoria(idCategoria = idCat, nombreCategoria = nombre))
         }
 
         call.enqueue(object : Callback<Void> {
@@ -111,6 +149,8 @@ class CategoriaActivity : AppCompatActivity() {
                     Toast.makeText(this@CategoriaActivity, msg, Toast.LENGTH_SHORT).show()
                     cardForm.visibility = View.GONE
                     btnNueva.visibility = View.VISIBLE
+                    etIdCategoria.text.clear()
+                    etIdCategoria.isEnabled = true
                     etNombre.text.clear()
                     categoriaEnEdicion = null
                     cargar()
@@ -126,6 +166,8 @@ class CategoriaActivity : AppCompatActivity() {
 
     private fun iniciarEdicion(cat: Categoria) {
         categoriaEnEdicion  = cat
+        etIdCategoria.setText(cat.idCategoria?.toString() ?: "")
+        etIdCategoria.isEnabled = false
         etNombre.setText(cat.nombreCategoria)
         cardForm.visibility = View.VISIBLE
         btnNueva.visibility = View.GONE
@@ -158,7 +200,7 @@ class CategoriaActivity : AppCompatActivity() {
     }
 }
 
-// ─── Adapter inline — IDs del item_categoria.xml ─────────────────────────────
+
 class CategoriaAdapter(
     private val items: List<Categoria>,
     private val onEditar:   (Categoria) -> Unit,

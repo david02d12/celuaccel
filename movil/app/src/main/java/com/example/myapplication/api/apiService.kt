@@ -3,6 +3,7 @@ package com.example.myapplication.api
 import com.example.myapplication.model.Categoria
 import com.example.myapplication.model.ChangePasswordRequest
 import com.example.myapplication.model.Chat
+import com.example.myapplication.model.ChatResponse
 import com.example.myapplication.model.Cliente
 import com.example.myapplication.model.Comentario
 import com.example.myapplication.model.ForgotPasswordRequest
@@ -13,8 +14,10 @@ import com.example.myapplication.model.Mensaje
 import com.example.myapplication.model.Notificacion
 import com.example.myapplication.model.Pregunta
 import com.example.myapplication.model.Producto
+import com.example.myapplication.model.ResetPasswordRequest
 import com.example.myapplication.model.Rol
 import com.example.myapplication.model.Servicio
+import com.example.myapplication.model.ServicioResponse
 import com.example.myapplication.model.TipoDocumento
 import retrofit2.Call
 import retrofit2.http.Body
@@ -40,8 +43,12 @@ interface ApiService {
     @POST("forgot-password")
     fun forgotPassword(@Body request: ForgotPasswordRequest): Call<Void>
 
-    @POST("reset-password")
-    fun resetPassword(@Body request: com.example.myapplication.model.ResetPasswordRequest): Call<Void>
+    // Token en URL path param — consistente con: POST /reset-password/:token (backend)
+    @POST("reset-password/{token}")
+    fun resetPassword(
+        @Path("token") token: String,
+        @Body request: ResetPasswordRequest
+    ): Call<Void>
 
     @POST("change-password")
     fun changePassword(
@@ -109,7 +116,7 @@ interface ApiService {
     fun agregarServicio(
         @Header("Authorization") token: String,
         @Body servicio: Servicio
-    ): Call<Void>
+    ): Call<ServicioResponse>
 
     @PUT("servicios/actualizar")
     fun actualizarServicio(
@@ -138,6 +145,18 @@ interface ApiService {
     fun agregarHistorial(
         @Header("Authorization") token: String,
         @Body historial: Historial
+    ): Call<Void>
+
+    @PUT("historial/actualizar")
+    fun actualizarHistorial(
+        @Header("Authorization") token: String,
+        @Body historial: Historial
+    ): Call<Void>
+
+    @DELETE("historial/eliminar/{id}")
+    fun eliminarHistorial(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
     ): Call<Void>
 
     // ===== PRODUCTOS =====
@@ -234,9 +253,13 @@ interface ApiService {
     fun crearChat(
         @Header("Authorization") token: String,
         @Body chat: Chat
-    ): Call<Void>
+    ): Call<ChatResponse>
 
-    // ===== MENSAJES =====
+    @DELETE("chats/eliminar/{id}")
+    fun eliminarChat(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<Void>
 
     // ==========================================
     // MENSAJES

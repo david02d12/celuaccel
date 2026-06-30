@@ -41,18 +41,18 @@ class ListaServicioActivity : AppCompatActivity() {
         userId       = prefs.getString("user_id", "") ?: ""
         userRole     = prefs.getInt("user_role", 2)
 
-        // IDs del nuevo activity_lista_servicios.xml
+
         recyclerView = findViewById(R.id.recyclerServicios)
         tvTotal      = findViewById(R.id.tvTotalServicios)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Texto total según rol
+
         tvTotal.text = if (userRole == 2) "Mis Solicitudes" else "Historial de Servicios"
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // Botón flotante para crear nuevo servicio o solicitud
+
         val fabAdd = findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAddServicio)
         fabAdd.setOnClickListener {
             val intent = if (userRole == 2) {
@@ -91,7 +91,8 @@ class ListaServicioActivity : AppCompatActivity() {
                         servicios  = listaCargada,
                         esCliente  = userRole == 2,
                         onCancelar = { servicio -> confirmarCancelar(servicio) },
-                        onChat     = { servicio -> abrirChat(servicio) }
+                        onChat     = { servicio -> abrirChat(servicio) },
+                        onClick    = if (userRole != 2) { { servicio -> editarServicio(servicio) } } else null
                     )
                 } else {
                     Toast.makeText(
@@ -143,6 +144,19 @@ class ListaServicioActivity : AppCompatActivity() {
             intent.putExtra("ID_SERVICIO", id)
             startActivity(intent)
         } ?: Toast.makeText(this, "Servicio sin ID, no se puede abrir el chat.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun editarServicio(servicio: Servicio) {
+        val intent = Intent(this, ServicioActivity::class.java)
+        intent.putExtra("ID_SERVICIO", servicio.idServicio ?: 0)
+        intent.putExtra("DESCRIPCION", servicio.descripcion ?: "")
+        intent.putExtra("ID_USUARIO", servicio.idUsuario ?: "")
+        intent.putExtra("PRECIO", servicio.precio ?: 0.0)
+        intent.putExtra("MOVIL_NOMBRE", servicio.movilNombre ?: "")
+        intent.putExtra("MOVIL_ESPEC", servicio.movilEspecificacion ?: "")
+        intent.putExtra("FECHA", servicio.fecha ?: "")
+        intent.putExtra("ETAPA", servicio.etapa ?: 0)
+        startActivity(intent)
     }
 
     private fun generarPdf() {

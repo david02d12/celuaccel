@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_productos.xml — CeluAccel (TÉCNICO/ADMIN)
-  Gestión de productos: header gradiente + formulario CRUD + lista
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +46,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Inventario y precios"
+                android:text="Inventario, precios y catálogo"
                 android:textColor="#CCffffff"
                 android:textSize="12sp"/>
         </LinearLayout>
@@ -66,7 +63,7 @@
             android:background="@drawable/bg_btn_outline_white"/>
     </LinearLayout>
 
-    <!-- Formulario CRUD -->
+    
     <ScrollView
         android:id="@+id/scrollFormProducto"
         android:layout_width="match_parent"
@@ -82,33 +79,92 @@
             android:elevation="3dp"
             android:padding="16dp">
 
+            <EditText android:id="@+id/etCodigoProducto"
+                android:layout_width="match_parent" android:layout_height="50dp"
+                android:hint="Código del producto (obligatorio)"
+                android:inputType="text"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field" android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="10dp"/>
+
             <EditText android:id="@+id/etNombreProducto"
                 android:layout_width="match_parent" android:layout_height="50dp"
                 android:hint="Nombre del producto" android:inputType="text"
-                android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
                 android:background="@drawable/bg_input_field" android:textSize="14sp"
-                android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="10dp"/>
 
             <EditText android:id="@+id/etPrecioProducto"
                 android:layout_width="match_parent" android:layout_height="50dp"
                 android:hint="Precio" android:inputType="numberDecimal"
-                android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
                 android:background="@drawable/bg_input_field" android:textSize="14sp"
-                android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="10dp"/>
 
             <EditText android:id="@+id/etStockProducto"
                 android:layout_width="match_parent" android:layout_height="50dp"
                 android:hint="Stock disponible" android:inputType="number"
-                android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
                 android:background="@drawable/bg_input_field" android:textSize="14sp"
-                android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
                 android:layout_marginBottom="10dp"/>
 
+            
+            <EditText android:id="@+id/etDescripcionProducto"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="Descripción del producto (opcional)"
+                android:inputType="textMultiLine"
+                android:minLines="2" android:maxLines="4"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="10dp" android:paddingBottom="10dp"
+                android:background="@drawable/bg_input_field" android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="10dp"/>
+
+            
+            <EditText android:id="@+id/etImagenProducto"
+                android:layout_width="match_parent" android:layout_height="50dp"
+                android:hint="URL de imagen (opcional)"
+                android:inputType="textUri"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field" android:textSize="14sp"
+                android:textColor="@color/celuaccel_text"
+                android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="10dp"/>
+
+            
             <Spinner android:id="@+id/spinnerCategoriaProducto"
                 android:layout_width="match_parent" android:layout_height="50dp"
-                android:background="@drawable/bg_input_field" android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:background="@drawable/bg_input_field"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
+                android:layout_marginBottom="10dp"/>
+
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visibilidad en catálogo"
+                android:textSize="12sp"
+                android:textColor="@color/celuaccel_text_light"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner android:id="@+id/spinnerActivoCatalogo"
+                android:layout_width="match_parent" android:layout_height="50dp"
+                android:background="@drawable/bg_input_field"
+                android:paddingLeft="14dp" android:paddingRight="14dp"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -123,12 +179,30 @@
                 <Button android:id="@+id/btnCancelarProducto"
                     android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1"
                     android:text="Cancelar" android:textAllCaps="false" android:textSize="14sp"
-                    android:textColor="@color/celuaccel_primary" android:background="@drawable/bg_btn_outline"/>
+                    android:textColor="@color/celuaccel_primary"
+                    android:background="@drawable/bg_btn_outline"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Lista de productos -->
+    
+    <EditText
+        android:id="@+id/etBusquedaProducto"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Buscar por nombre, código o descripción..."
+        android:inputType="text"
+        android:paddingLeft="16dp" android:paddingRight="16dp"
+        android:layout_marginLeft="12dp" android:layout_marginRight="12dp"
+        android:layout_marginTop="8dp" android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_input_field"
+        android:textSize="14sp"
+        android:textColor="@color/celuaccel_text"
+        android:textColorHint="@color/celuaccel_text_light"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="8dp"/>
+
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProductos"
         android:layout_width="match_parent"

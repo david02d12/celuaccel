@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  item_categoria.xml — CeluAccel
-  Fila de categoría con nombre y botones CRUD
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -14,7 +11,7 @@
     android:paddingTop="14dp" android:paddingBottom="14dp"
     android:layout_marginBottom="1dp">
 
-    <!-- Ícono circular -->
+    
     <TextView
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -24,7 +21,7 @@
         android:textSize="16sp"
         android:layout_marginEnd="12dp"/>
 
-    <!-- Nombre -->
+    
     <TextView
         android:id="@+id/tvNombreCategoria"
         android:layout_width="0dp"
@@ -35,7 +32,7 @@
         android:textSize="14sp"
         android:textStyle="bold"/>
 
-    <!-- Botón editar -->
+    
     <Button
         android:id="@+id/btnEditarCategoria"
         android:layout_width="32dp"
@@ -47,7 +44,7 @@
         android:padding="0dp"
         android:layout_marginEnd="4dp"/>
 
-    <!-- Botón eliminar -->
+    
     <Button
         android:id="@+id/btnEliminarCategoria"
         android:layout_width="32dp"

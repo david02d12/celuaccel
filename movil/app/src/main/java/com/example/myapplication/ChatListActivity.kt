@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Chat
+import com.example.myapplication.model.ChatResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,7 +35,7 @@ class ChatListActivity : AppCompatActivity() {
         userRole = sharedPref.getInt("user_role", 2)
         idServicioIntent = intent.getIntExtra("ID_SERVICIO", -1)
 
-        // IDs del nuevo activity_chat_list.xml
+
         recyclerChats = findViewById(R.id.recyclerChats)
         val btnRegresar = findViewById<Button>(R.id.btnRegresar)
 
@@ -83,8 +84,8 @@ class ChatListActivity : AppCompatActivity() {
         val api = ApiClient.retrofit.create(ApiService::class.java)
         val nuevoChat = Chat(idUsuario = userId, idServicio = idServicio)
 
-        api.crearChat(token, nuevoChat).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        api.crearChat(token, nuevoChat).enqueue(object : Callback<ChatResponse> {
+            override fun onResponse(call: Call<ChatResponse>, response: Response<ChatResponse>) {
                 if (response.isSuccessful) {
                     cargarChats()
                 } else {
@@ -93,7 +94,7 @@ class ChatListActivity : AppCompatActivity() {
                     cargarChats()
                 }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
+            override fun onFailure(call: Call<ChatResponse>, t: Throwable) {
                 Toast.makeText(this@ChatListActivity, "Error de red al crear chat", Toast.LENGTH_SHORT).show()
                 idServicioIntent = -1
                 cargarChats()
@@ -104,14 +105,14 @@ class ChatListActivity : AppCompatActivity() {
     private fun abrirDetalleChat(chat: Chat) {
         val intent = Intent(this, ChatDetailActivity::class.java)
         intent.putExtra("CODIGO_CHAT", chat.codigoChat)
-        // idServicio puede ser null para chats de catálogo
+
         chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }
         startActivity(intent)
         finish()
     }
 
     private fun mostrarLista(chats: List<Chat>) {
-        val adapter = ChatAdapter(chats) { chat ->
+        val adapter = ChatAdapter(chats, userRole) { chat ->
             val intent = Intent(this@ChatListActivity, ChatDetailActivity::class.java)
             intent.putExtra("CODIGO_CHAT", chat.codigoChat)
             chat.idServicio?.let { intent.putExtra("ID_SERVICIO", it) }

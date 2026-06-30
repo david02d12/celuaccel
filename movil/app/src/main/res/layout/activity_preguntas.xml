@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_preguntas.xml — CeluAccel
-  Header gradiente + lista de preguntas/respuestas
--->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    <!-- Header -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,7 +63,7 @@
             android:background="@drawable/bg_btn_outline_white"/>
     </LinearLayout>
 
-    <!-- Card de nueva pregunta (inicialmente oculta) -->
+    
     <LinearLayout
         android:id="@+id/cardNuevaPregunta"
         android:layout_width="match_parent"
@@ -119,7 +116,7 @@
             android:elevation="2dp"/>
     </LinearLayout>
 
-    <!-- Lista -->
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerPreguntas"
         android:layout_width="match_parent"

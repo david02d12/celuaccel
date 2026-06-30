@@ -39,13 +39,13 @@ class NotificacionActivity : AppCompatActivity() {
 
     private val api by lazy { ApiClient.retrofit.create(ApiService::class.java) }
 
-    /** Lista completa sin filtrar */
+
     private var listaCompleta: MutableList<Notificacion> = mutableListOf()
 
-    /** Filtro activo: "todas" | "nuevas" | "leidas" */
+
     private var filtroActual = "todas"
 
-    // ── Colores para pills ──────────────────────────────────────────────────
+
     private val colorActivo   = Color.parseColor("#DB0000")
     private val colorInactivo = Color.parseColor("#6C757D")
 
@@ -58,7 +58,7 @@ class NotificacionActivity : AppCompatActivity() {
         token     = if (raw.startsWith("Bearer ")) raw else "Bearer $raw"
         userRole  = prefs.getInt("user_role", 2)
 
-        // ── Views ───────────────────────────────────────────────────────────
+
         recyclerView     = findViewById(R.id.recyclerNotificaciones)
         tvConteo         = findViewById(R.id.tvConteoNotif)
         btnFiltroTodas   = findViewById(R.id.btnFiltroTodas)
@@ -70,10 +70,10 @@ class NotificacionActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // ── Botón regresar ──────────────────────────────────────────────────
+
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 
-        // ── Botón Nueva Notificación (solo técnico/admin) ───────────────────
+
         val btnNuevaNotificacion = findViewById<Button>(R.id.btnNuevaNotificacion)
         if (userRole != 2) {
             btnNuevaNotificacion.visibility = View.VISIBLE
@@ -82,7 +82,7 @@ class NotificacionActivity : AppCompatActivity() {
             btnNuevaNotificacion.visibility = View.GONE
         }
 
-        // ── Pills de filtro ─────────────────────────────────────────────────
+
         btnFiltroTodas.setOnClickListener  { aplicarFiltro("todas") }
         btnFiltroNuevas.setOnClickListener { aplicarFiltro("nuevas") }
         btnFiltroLeidas.setOnClickListener { aplicarFiltro("leidas") }
@@ -91,7 +91,7 @@ class NotificacionActivity : AppCompatActivity() {
     }
 
     private fun cargarNotificaciones() {
-        // Fix A2: deshabilitar pills mientras carga para evitar race condition
+
         listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas).forEach { it.isEnabled = false }
 
         val call: Call<List<Notificacion>> = if (userRole == 2) {
@@ -105,7 +105,7 @@ class NotificacionActivity : AppCompatActivity() {
                 call: Call<List<Notificacion>>,
                 response: Response<List<Notificacion>>
             ) {
-                // Re-habilitar pills al terminar
+
                 listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas).forEach { it.isEnabled = true }
 
                 if (response.isSuccessful && response.body() != null) {
@@ -132,7 +132,7 @@ class NotificacionActivity : AppCompatActivity() {
         })
     }
 
-    // ── Filtrado ────────────────────────────────────────────────────────────
+
     private fun aplicarFiltro(filtro: String) {
         filtroActual = filtro
         actualizarPills()
@@ -146,7 +146,7 @@ class NotificacionActivity : AppCompatActivity() {
             else      -> listaCompleta
         }.toMutableList()
 
-        // ── Estado vacío ──────────────────────────────────────────────────────
+
         if (lista.isEmpty()) {
             viewEstadoVacio.visibility  = View.VISIBLE
             recyclerView.visibility     = View.GONE
@@ -184,7 +184,7 @@ class NotificacionActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
 
-        // ── Swipe gestures ────────────────────────────────────────────────────
+
         val bgEliminar = ColorDrawable(Color.parseColor("#DB0000"))
         val bgLeida    = ColorDrawable(Color.parseColor("#198754"))
         val iconEliminar = ContextCompat.getDrawable(this, R.drawable.ic_delete_white)
@@ -207,7 +207,7 @@ class NotificacionActivity : AppCompatActivity() {
                 val id    = notif.codigoNotificaciones ?: return
 
                 if (direction == ItemTouchHelper.LEFT) {
-                    // Eliminar (admin/técnico) o marcar leída (cliente)
+
                     if (userRole == 2) {
                         marcarLeida(id)
                     } else {
@@ -232,7 +232,7 @@ class NotificacionActivity : AppCompatActivity() {
                 val itemView = viewHolder.itemView
                 val iconMargin = (itemView.height - 64) / 2
 
-                if (dX < 0) { // Swipe izquierda — rojo (eliminar / marcar leída)
+                if (dX < 0) {
                     bgEliminar.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
                     bgEliminar.draw(c)
                     iconEliminar?.let {
@@ -244,7 +244,7 @@ class NotificacionActivity : AppCompatActivity() {
                         )
                         it.draw(c)
                     }
-                } else if (dX > 0) { // Swipe derecha — verde (marcar leída)
+                } else if (dX > 0) {
                     bgLeida.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
                     bgLeida.draw(c)
                     iconLeida?.let {
@@ -268,7 +268,7 @@ class NotificacionActivity : AppCompatActivity() {
         val inactive = listOf(btnFiltroTodas, btnFiltroNuevas, btnFiltroLeidas)
         inactive.forEach { btn ->
             btn.setBackgroundResource(R.drawable.bg_btn_outline)
-            btn.setTextColor(colorInactivo)   // gris — fix C2
+            btn.setTextColor(colorInactivo)
         }
         val active = when (filtroActual) {
             "nuevas"  -> btnFiltroNuevas
@@ -288,7 +288,7 @@ class NotificacionActivity : AppCompatActivity() {
             "$total notificaciones"
     }
 
-    // ── API calls ───────────────────────────────────────────────────────────
+
     private fun marcarLeida(id: Int) {
         api.marcarNotificacionLeida(token, id).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

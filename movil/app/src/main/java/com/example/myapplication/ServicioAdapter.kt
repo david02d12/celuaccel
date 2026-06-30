@@ -9,16 +9,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Servicio
-
-/**
- * Adapter para la lista de servicios.
- * Usa item_servicio.xml rediseñado al estilo web.
- *
- * @param servicios     Lista de servicios a mostrar
- * @param esCliente     true = rol cliente (muestra solo lo relevante para el cliente)
- * @param onCancelar    Callback al pulsar la card para cancelar
- * @param onChat        Callback al pulsar la card para abrir chat
- */
 class ServicioAdapter(
     private val servicios: List<Servicio>,
     private val esCliente: Boolean = true,
@@ -27,11 +17,11 @@ class ServicioAdapter(
     private val onClick:    ((Servicio) -> Unit)? = null
 ) : RecyclerView.Adapter<ServicioAdapter.ViewHolder>() {
 
-    // ─── Modelo de etapa con drawable de badge ────────────────────────────────
+
     data class EtapaInfo(
         val texto: String,
         val badgeDrawable: Int,
-        val textColorAttr: Int,  // color resource id
+        val textColorAttr: Int,
         val porcentaje: Int,
         val progressColorRes: Int
     )
@@ -47,7 +37,7 @@ class ServicioAdapter(
         else         -> EtapaInfo("En proceso ($etapa%)", R.drawable.bg_badge_reparacion,   R.color.etapa_reparacion_text,   etapa, R.color.etapa_reparacion_border)
     }
 
-    // ─── ViewHolder ───────────────────────────────────────────────────────────
+
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val tvIdServicio:       TextView    = v.findViewById(R.id.tvIdServicio)
         val tvBadgeEtapa:       TextView    = v.findViewById(R.id.tvBadgeEtapa)
@@ -69,15 +59,12 @@ class ServicioAdapter(
         val info = etapaInfo(s.etapa)
         val ctx  = holder.itemView.context
 
-        // ID
         holder.tvIdServicio.text = "#${s.idServicio ?: (position + 1)}"
 
-        // Badge de etapa con drawable de color correcto
         holder.tvBadgeEtapa.text = info.texto
         holder.tvBadgeEtapa.background = ContextCompat.getDrawable(ctx, info.badgeDrawable)
         holder.tvBadgeEtapa.setTextColor(ContextCompat.getColor(ctx, info.textColorAttr))
 
-        // Dispositivo
         val movilN = s.movilNombre.orEmpty()
         val movilE = s.movilEspecificacion.orEmpty()
         holder.tvDispositivo.text = buildString {
@@ -85,10 +72,8 @@ class ServicioAdapter(
             if (movilE.isNotEmpty()) append(" — $movilE")
         }
 
-        // Descripción
         holder.tvDescripcion.text = s.descripcion.orEmpty().ifEmpty { "Sin descripción" }
 
-        // Barra de progreso
         if (s.etapa == null || s.etapa == -1) {
             holder.progressEtapa.visibility = View.INVISIBLE
         } else {
@@ -98,16 +83,15 @@ class ServicioAdapter(
                 ColorStateList.valueOf(ContextCompat.getColor(ctx, info.progressColorRes))
         }
 
-        // Fecha
+
         val rawFecha = s.fecha.orEmpty()
         val fechaStr = rawFecha.takeIf { it.length >= 10 }?.substring(0, 10) ?: rawFecha
         holder.tvFecha.text = "📅 $fechaStr"
 
-        // Precio
+
         val precio = s.precio ?: 0.0
         holder.tvPrecio.text = if (precio > 0) "$${"%.0f".format(precio)}" else "Por definir"
 
-        // Click en la card
         holder.itemView.setOnClickListener { onClick?.invoke(s) }
         holder.itemView.setOnLongClickListener {
             onCancelar?.invoke(s)

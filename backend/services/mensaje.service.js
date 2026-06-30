@@ -7,8 +7,8 @@ const agregar = async ({ Codigo_Chat, ID_Usuario, Fecha_Mensaje, Mensaje, Estado
     if (!Codigo_Chat || !ID_Usuario || !Mensaje) {
         throw new AppError('Los campos Codigo_Chat, ID_Usuario y Mensaje son obligatorios.', 400);
     }
-    // C2 FIX: Estado: 0 = no leído (recién enviado), 1 = leído — BD usa TINYINT(1)
-    // Los mensajes nuevos siempre se crean con Estado=0 (sin leer)
+    // Estado: 0 = no leído (recién enviado), 1 = leído — BD usa TINYINT(1)
+    // Los mensajes nuevos siempre se crean con Estado=0
     const estadoInt = (Estado === 1 || Estado === true || String(Estado).toLowerCase().includes('le') && !String(Estado).toLowerCase().includes('env'))
         ? 1
         : 0;
@@ -18,8 +18,15 @@ const agregar = async ({ Codigo_Chat, ID_Usuario, Fecha_Mensaje, Mensaje, Estado
     return { message: 'Mensaje enviado correctamente.', id: result.insertId };
 };
 
-const actualizar = async (data) => {
+const actualizar = async (data, userId) => {
     if (!data.Codigo_Mensaje) throw new AppError('El campo Codigo_Mensaje es obligatorio para actualizar.', 400);
+    // Verificar propiedad: solo el autor del mensaje o técnico/admin puede editar
+    const rows = await mensajeDao.findWithOwnerCheck(data.Codigo_Mensaje, userId);
+    if (rows.length === 0) throw new AppError('Mensaje no encontrado.', 404);
+    const { dueno, rol } = rows[0];
+    if (rol === 2 && String(dueno) !== String(userId)) {
+        throw new AppError('No puedes editar mensajes de otro usuario.', 403);
+    }
     const result = await mensajeDao.update(data);
     if (result.affectedRows === 0) throw new AppError('Mensaje no encontrado.', 404);
 };

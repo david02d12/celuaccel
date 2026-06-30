@@ -26,11 +26,11 @@ class TipoDocumentoActivity : AppCompatActivity() {
     private lateinit var token: String
     private var tipoEnEdicion: TipoDocumento? = null
 
-    // IDs del activity_tipo_documento.xml
+
     private lateinit var recyclerView:  RecyclerView
-    private lateinit var cardForm:      View        // LinearLayout cardFormTipoDoc
-    private lateinit var etNombre:      EditText    // etNombreTipoDoc  → Nombre del tipo
-    private lateinit var etAbreviatura: EditText    // etAbreviaturaTipoDoc → Código/abreviatura
+    private lateinit var cardForm:      View
+    private lateinit var etNombre:      EditText
+    private lateinit var etAbreviatura: EditText
     private lateinit var btnNuevo:      Button
     private lateinit var btnGuardar:    Button
     private lateinit var btnCancelar:   Button
@@ -132,7 +132,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
         tipoEnEdicion          = tipo
         etNombre.setText(tipo.nombreDocumento)
         etAbreviatura.setText(tipo.codigoDocumento?.toString() ?: "")
-        etAbreviatura.isEnabled = false   // No permitir cambiar el código primario
+        etAbreviatura.isEnabled = false
         cardForm.visibility    = View.VISIBLE
         btnNuevo.visibility    = View.GONE
         etNombre.requestFocus()
@@ -173,7 +173,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
     }
 }
 
-// ─── Adapter inline ───────────────────────────────────────────────────────────
+
 class TipoDocumentoAdapter(
     private val items: List<TipoDocumento>,
     private val onEditar:   (TipoDocumento) -> Unit,

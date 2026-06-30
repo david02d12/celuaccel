@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  activity_registro.xml — CeluAccel
-  Mismo estilo que login: card centrada con franja roja
-  Diseño idéntico a Registro.jsx del frontend web
--->
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -18,7 +14,7 @@
         android:paddingLeft="20dp" android:paddingRight="20dp"
         android:paddingTop="32dp" android:paddingBottom="32dp">
 
-        <!-- Card principal -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,7 +22,7 @@
             android:background="@drawable/bg_card_login"
             android:elevation="8dp">
 
-            <!-- Franja roja superior -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,14 +48,14 @@
                     android:textSize="13sp"/>
             </LinearLayout>
 
-            <!-- Formulario -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Tipo de documento -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="TIPO DE DOCUMENTO" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -69,7 +65,7 @@
                     android:background="@drawable/bg_input_field" android:paddingLeft="14dp" android:paddingRight="14dp"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Número de documento -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="NÚMERO DE DOCUMENTO" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -82,7 +78,7 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Nombre completo -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="NOMBRE COMPLETO" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -95,7 +91,7 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Correo -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="CORREO ELECTRÓNICO" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -108,7 +104,7 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Teléfono -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="TELÉFONO" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -121,7 +117,7 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Dirección -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="DIRECCIÓN" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -134,7 +130,7 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Contraseña -->
+                
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="CONTRASEÑA" android:textColor="@color/celuaccel_text_muted"
                     android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
@@ -147,13 +143,13 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="24dp"/>
 
-                <!-- Mensaje de feedback -->
+                
                 <TextView android:id="@+id/tvMsgRegistro"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:textAlignment="center" android:textColor="@color/celuaccel_primary"
                     android:textSize="13sp" android:layout_marginBottom="10dp" android:visibility="gone"/>
 
-                <!-- Botón registrar -->
+                
                 <Button android:id="@+id/btnRegistrar"
                     android:layout_width="match_parent" android:layout_height="52dp"
                     android:text="Crear mi cuenta" android:textAllCaps="false"
@@ -161,7 +157,7 @@
                     android:background="@drawable/bg_btn_primary" android:elevation="4dp"
                     android:layout_marginBottom="12dp"/>
 
-                <!-- Volver al login -->
+                
                 <TextView android:id="@+id/tvVolverLogin"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="¿Ya tienes cuenta? Inicia sesión"

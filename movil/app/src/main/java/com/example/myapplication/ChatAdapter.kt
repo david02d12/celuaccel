@@ -9,6 +9,7 @@ import com.example.myapplication.model.Chat
 
 class ChatAdapter(
     private val chats: List<Chat>,
+    private val userRole: Int,
     private val onChatClick: (Chat) -> Unit
 ) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
@@ -28,33 +29,40 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val chat = chats[position]
 
-        // Nombre real del usuario (del JOIN con Usuario), sino fallback a ID
-        val nombreMostrar = chat.nombreUsuario?.takeIf { it.isNotBlank() }
-            ?: "Usuario: ${chat.idUsuario}"
+        val idDisplay = chat.idUsuario?.takeIf { it.isNotBlank() } ?: "?"
 
-        // Subtítulo: último mensaje o indicador de servicio
-        val subtitulo = when {
-            !chat.ultimoMensaje.isNullOrBlank()           -> chat.ultimoMensaje
-            (chat.idServicio ?: 0) > 0                    -> "Servicio #${chat.idServicio}"
-            else                                          -> "Sin mensajes aún"
+        val nombreMostrar = if (userRole == 2) {
+            chat.nombreUsuario?.takeIf { it.isNotBlank() } ?: "Soporte (Chat #${chat.codigoChat ?: idDisplay})"
+        } else {
+            chat.nombreUsuario?.takeIf { it.isNotBlank() } ?: "Usuario: $idDisplay"
         }
 
-        // Hora del último mensaje (solo HH:mm si viene como ISO 8601)
+        val servicioInfo = when {
+            chat.servicioMovil?.isNotBlank() == true -> chat.servicioMovil
+            chat.servicioDescripcion?.isNotBlank() == true -> chat.servicioDescripcion
+            else -> null
+        }
+        val subtitulo = when {
+            !chat.ultimoMensaje.isNullOrBlank() -> chat.ultimoMensaje
+            (chat.idServicio ?: 0) > 0 && servicioInfo != null -> "Servicio #${chat.idServicio}: $servicioInfo"
+            (chat.idServicio ?: 0) > 0 -> "Servicio #${chat.idServicio}"
+            else -> "Consulta de catálogo"
+        }
+
         val hora = chat.fechaUltimoMensaje?.let { fecha ->
             when {
                 fecha.contains("T") -> fecha.substringAfter("T").take(5)
-                fecha.length >= 5   -> fecha.takeLast(5)
-                else                -> ""
+                fecha.length >= 5 -> fecha.takeLast(5)
+                else -> ""
             }
         } ?: ""
 
-        // Inicial del avatar
-        val inicial = nombreMostrar.firstOrNull()?.uppercaseChar()?.toString() ?: "C"
+        val inicial = nombreMostrar.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
 
-        holder.tvNombreChat.text    = nombreMostrar
-        holder.tvAvatarChat.text    = inicial
+        holder.tvNombreChat.text = nombreMostrar
+        holder.tvAvatarChat.text = inicial
         holder.tvUltimoMensaje.text = subtitulo
-        holder.tvHoraChat.text      = hora
+        holder.tvHoraChat.text = hora
 
         holder.itemView.setOnClickListener { onChatClick(chat) }
     }

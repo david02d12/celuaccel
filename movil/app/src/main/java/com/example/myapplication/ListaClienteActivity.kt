@@ -1,9 +1,13 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,60 +20,70 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class ListaClienteActivity : AppCompatActivity() {
-    private lateinit var clienteAdapter: ClienteAdapter
-    private val listaClientes = mutableListOf<Cliente>()
+
     private lateinit var vistaClientes: RecyclerView
     private lateinit var btnRegresar: Button
+    private lateinit var etBuscarCliente: EditText
+    private lateinit var tvTotalClientes: TextView
     private lateinit var token: String
+
+
+    private val listaOriginal = mutableListOf<Cliente>()
+    private val listaFiltrada = mutableListOf<Cliente>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_clientes)
-
 
         val sharedPref = getSharedPreferences("app", MODE_PRIVATE)
         val tokenGuardado = sharedPref.getString("token", "") ?: ""
         token = if (tokenGuardado.startsWith("Bearer ")) tokenGuardado else "Bearer $tokenGuardado"
 
 
-        vistaClientes = findViewById(R.id.recyclerListaClientes)
-        btnRegresar = findViewById(R.id.btnRegresar)
-
+        vistaClientes = findViewById(R.id.recyclerClientes)
+        btnRegresar = findViewById(R.id.btnRegresarListaClientes) // Ajustado al XML creado
+        etBuscarCliente = findViewById(R.id.etBuscarCliente)
+        tvTotalClientes = findViewById(R.id.tvTotalClientes)
 
         vistaClientes.layoutManager = LinearLayoutManager(this)
 
 
-        cargarClientes()
-
+        etBuscarCliente.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filtrarClientes(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         btnRegresar.setOnClickListener {
             finish()
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        cargarClientes()
+    }
+
     private fun cargarClientes() {
-
         val apiService = ApiClient.retrofit.create(ApiService::class.java)
-
 
         apiService.getClientes(token).enqueue(object : Callback<List<Cliente>> {
             override fun onResponse(call: Call<List<Cliente>>, response: Response<List<Cliente>>) {
-
                 if (response.isSuccessful) {
-                    listaClientes.clear()
+                    listaOriginal.clear()
                     response.body()?.let {
-                        listaClientes.addAll(it)
+                        listaOriginal.addAll(it)
                     }
 
 
-                    clienteAdapter = ClienteAdapter(listaClientes)
-                    vistaClientes.adapter = clienteAdapter
+                    filtrarClientes(etBuscarCliente.text.toString())
 
-                    if (listaClientes.isEmpty()) {
+                    if (listaOriginal.isEmpty()) {
                         Toast.makeText(this@ListaClienteActivity, "No hay Clientes registrados.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-
                     Log.d("API_ERROR", "Error en respuesta: ${response.code()} | ${response.errorBody()?.string()}")
                     Toast.makeText(this@ListaClienteActivity, "Error de autenticación o del servidor (${response.code()})", Toast.LENGTH_LONG).show()
                 }
@@ -80,5 +94,29 @@ class ListaClienteActivity : AppCompatActivity() {
                 Toast.makeText(this@ListaClienteActivity, "Fallo de conexión de red", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun filtrarClientes(texto: String) {
+        val consulta = texto.trim().lowercase()
+        listaFiltrada.clear()
+
+        for (c in listaOriginal) {
+            if (consulta.isEmpty() ||
+                c.nombre.lowercase().contains(consulta) ||
+                c.idUsuario.contains(consulta) ||
+                c.correo.lowercase().contains(consulta)) {
+                listaFiltrada.add(c)
+            }
+        }
+
+
+        tvTotalClientes.text = "${listaFiltrada.size} clientes registrados"
+
+
+        vistaClientes.adapter = ClienteAdapter(listaFiltrada) { clienteSeleccionado ->
+            val intent = Intent(this@ListaClienteActivity, FormularioClienteActivity::class.java)
+            intent.putExtra("ID_CLIENTE_SELECCIONADO", clienteSeleccionado.idUsuario)
+            startActivity(intent)
+        }
     }
 }

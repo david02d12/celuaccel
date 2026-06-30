@@ -136,7 +136,7 @@ class ChatDetailActivity : AppCompatActivity() {
             .show()
     }
 
-    // ─── Adaptador de mensajes con burbujas (IDs del nuevo item_mensaje.xml) ──
+
     private class MensajeAdapter(
         private var mensajes: List<Mensaje>,
         private val idUsuarioActual: String,
@@ -144,11 +144,11 @@ class ChatDetailActivity : AppCompatActivity() {
     ) : RecyclerView.Adapter<MensajeAdapter.ViewHolder>() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            // Burbuja propia (lado derecho, roja)
+
             val bubbleMio:    View     = view.findViewById(R.id.bubbleMio)
             val tvMensajeMio: TextView = view.findViewById(R.id.tvMensajeMio)
             val tvHoraMio:    TextView = view.findViewById(R.id.tvHoraMio)
-            // Burbuja del otro (lado izquierdo, gris)
+
             val bubbleOtro:    View     = view.findViewById(R.id.bubbleOtro)
             val tvMensajeOtro: TextView = view.findViewById(R.id.tvMensajeOtro)
             val tvHoraOtro:    TextView = view.findViewById(R.id.tvHoraOtro)
@@ -164,7 +164,7 @@ class ChatDetailActivity : AppCompatActivity() {
             val msg   = mensajes[position]
             val esMio = msg.idUsuario == idUsuarioActual
 
-            // Hora corta
+
             val hora = msg.fechaMensaje.let {
                 if (it.contains("T")) it.substringAfter("T").take(5) else it.takeLast(5)
             }
@@ -174,7 +174,6 @@ class ChatDetailActivity : AppCompatActivity() {
                 holder.bubbleOtro.visibility  = View.GONE
                 holder.tvMensajeMio.text      = msg.mensaje
                 holder.tvHoraMio.text         = hora
-                // Long press para eliminar propio mensaje
                 holder.bubbleMio.setOnLongClickListener {
                     msg.codigoMensaje?.let { id -> onEliminar(id) }
                     true

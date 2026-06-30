@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Servicio
+import com.example.myapplication.model.ServicioResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,6 +63,19 @@ class ServicioActivity : AppCompatActivity() {
         txtIdUsuario.setText(idUsuarioAutenticado)
 
 
+        if (intent.hasExtra("ID_SERVICIO") && intent.getIntExtra("ID_SERVICIO", 0) > 0) {
+            txtIdServicio.setText(intent.getIntExtra("ID_SERVICIO", 0).toString())
+            txtDescripcion.setText(intent.getStringExtra("DESCRIPCION") ?: "")
+            txtIdUsuario.setText(intent.getStringExtra("ID_USUARIO") ?: idUsuarioAutenticado)
+            txtPrecio.setText(intent.getDoubleExtra("PRECIO", 0.0).toString())
+            txtMovilNombre.setText(intent.getStringExtra("MOVIL_NOMBRE") ?: "")
+            txtMovilEspecificacion.setText(intent.getStringExtra("MOVIL_ESPEC") ?: "")
+            txtFecha.setText(intent.getStringExtra("FECHA") ?: "")
+            val etapa = intent.getIntExtra("ETAPA", 0)
+            val idx = ETAPAS_MOSTRAR.indexOfFirst { it.valor == etapa.toString() }
+            if (idx >= 0) spinnerEtapa.setSelection(idx)
+        }
+
         val btnAgregar = findViewById<Button>(R.id.btnAgregarServicio)
         val btnBuscarMisServicios = findViewById<Button>(R.id.btnBuscarMisServicios)
         val btnActualizar = findViewById<Button>(R.id.btnActualizarServicio)
@@ -97,12 +111,12 @@ class ServicioActivity : AppCompatActivity() {
                 precio = precioStr.toDoubleOrNull() ?: 0.0,
                 movilNombre = movilNom,
                 movilEspecificacion = movilEsp,
-                fecha = if (fecha.isEmpty()) "2026-01-01" else fecha, // Formato YYYY-MM-DD
+                fecha = if (fecha.isEmpty()) "2026-01-01" else fecha,
                 etapa = etapaStr.toIntOrNull() ?: 0
             )
 
-            api.agregarServicio(token, nuevoServicio).enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            api.agregarServicio(token, nuevoServicio).enqueue(object : Callback<ServicioResponse> {
+                override fun onResponse(call: Call<ServicioResponse>, response: Response<ServicioResponse>) {
                     if (response.isSuccessful) {
                         Toast.makeText(this@ServicioActivity, "Servicio agregado correctamente.", Toast.LENGTH_SHORT).show()
                         limpiarCampos(txtIdServicio, txtDescripcion, txtPrecio, txtMovilNombre, txtMovilEspecificacion, txtFecha)
@@ -113,7 +127,7 @@ class ServicioActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<Void>, t: Throwable) {
+                override fun onFailure(call: Call<ServicioResponse>, t: Throwable) {
                     Toast.makeText(this@ServicioActivity, "Error de red: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -134,7 +148,6 @@ class ServicioActivity : AppCompatActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         val lista = response.body()!!
                         if (lista.isNotEmpty()) {
-                            // Tomamos el primer servicio de la lista para rellenar el formulario de ejemplo
                             val primerServicio = lista[0]
                             txtIdServicio.setText(primerServicio.idServicio.toString())
                             txtDescripcion.setText(primerServicio.descripcion)
@@ -319,7 +332,7 @@ class ServicioActivity : AppCompatActivity() {
     private fun enviarNotificacionRapida(api: ApiService, idUser: String, idServicio: String, mensaje: String) {
         val notif = Notificacion(
             idUsuarioDestino = idUser,
-            idServicio = idServicio,
+            idServicio = idServicio.toIntOrNull(),
             mensaje = mensaje
         )
         api.enviarNotificacion(token, notif).enqueue(object : Callback<Void> {

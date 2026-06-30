@@ -32,12 +32,12 @@ class ProductoAdapter(
         holder.tvPrecio.text    = "$${"%.0f".format(prod.precio)}"
         holder.tvCategoria.text = "Stock: ${prod.cantidad}"
 
-        // Clic simple: editar (si hay callback)
+
         holder.itemView.setOnClickListener {
             onEditar?.invoke(prod)
         }
 
-        // Long press: eliminar (si hay callback)
+
         holder.itemView.setOnLongClickListener {
             onEliminar?.invoke(prod)
             true

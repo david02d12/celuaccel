@@ -24,7 +24,7 @@ class RegistroActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registro)
 
-        // IDs del nuevo activity_registro.xml
+
         val spinnerTipo  = findViewById<Spinner>(R.id.spinnerTipoDoc)
         val etDocumento  = findViewById<EditText>(R.id.etDocumento)
         val etNombre     = findViewById<EditText>(R.id.etNombre)
@@ -36,7 +36,7 @@ class RegistroActivity : AppCompatActivity() {
         val tvVolver     = findViewById<TextView>(R.id.tvVolverLogin)
         tvMensaje        = findViewById(R.id.tvMsgRegistro)
 
-        // Tipos de documento (hardcoded igual que Registro.jsx del frontend)
+
         val tiposLocales = listOf(
             TipoDocumento(1, "Cédula de Ciudadanía"),
             TipoDocumento(2, "Tarjeta de Identidad"),
@@ -78,7 +78,7 @@ class RegistroActivity : AppCompatActivity() {
                 telefono        = telefono.ifEmpty { "" },
                 correo          = correo,
                 clave           = clave,
-                codigoRol       = 2  // siempre cliente al registrarse
+                codigoRol       = 2
             )
 
             api.createCliente(nuevoCliente).enqueue(object : Callback<Void> {
@@ -106,7 +106,7 @@ class RegistroActivity : AppCompatActivity() {
             })
         }
 
-        // Volver al login (tvVolverLogin es un TextView, no Button)
+
         tvVolver.setOnClickListener { finish() }
     }
 

@@ -18,7 +18,7 @@ class PreguntaAdapter(
 ) : RecyclerView.Adapter<PreguntaAdapter.VH>() {
 
     inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-        // IDs del nuevo item_pregunta.xml
+
         val tvTituloPregunta:   TextView    = v.findViewById(R.id.tvTituloPregunta)
         val tvContenidoPregunta:TextView    = v.findViewById(R.id.tvContenidoPregunta)
         val tvExpandir:         TextView    = v.findViewById(R.id.tvExpandir)
@@ -38,12 +38,12 @@ class PreguntaAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val p = items[position]
 
-        // Pregunta model usa campo 'pregunta' directamente (sin campo titulo)
+
         holder.tvTituloPregunta.text    = p.pregunta.take(70)
         holder.tvContenidoPregunta.text = p.pregunta
         holder.tvFechaPregunta.text     = p.fecha ?: ""
 
-        // Respuesta
+
         val respuesta = p.respuesta
         if (!respuesta.isNullOrEmpty()) {
             holder.separadorRespuesta.visibility  = View.VISIBLE
@@ -56,14 +56,14 @@ class PreguntaAdapter(
             holder.tvExpandir.text                = "▼"
         }
 
-        // Botón "Responder" visible solo para técnico (1) y admin (3)
+
         val puedeResponder = currentUserRole != 2 && onRespond != null
         holder.btnResponder.visibility = if (puedeResponder) View.VISIBLE else View.GONE
         if (puedeResponder) {
             holder.btnResponder.setOnClickListener { onRespond?.invoke(p) }
         }
 
-        // Long click para eliminar si es dueño o admin
+
         val esDuenio = p.idUsuario == currentUserId
         val esAdmin  = currentUserRole == 3
         if ((esDuenio || esAdmin) && onDelete != null) {

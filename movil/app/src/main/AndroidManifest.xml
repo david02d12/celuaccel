@@ -13,7 +13,6 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.MyApplication"
-            android:usesCleartextTraffic="true"
             android:networkSecurityConfig="@xml/network_security_config"
             tools:targetApi="31">
 
@@ -33,24 +32,30 @@
         <!-- ── AUTH / REGISTRO ────────────────────────────────────────────── -->
         <activity android:name=".RegistroActivity"       android:exported="false"/>
         
-        <activity android:name=".ResetPasswordActivity"  android:exported="true">
-            <intent-filter android:autoVerify="true">
+        <!--
+            ══ RESET PASSWORD — Custom Scheme Deep Link ═══════════════════════
+            URL que el backend debe enviar en el correo:
+                celuaccel://reset-password?token=TOKEN_AQUI
+            No requiere assetlinks.json ni verificación de dominio.
+            ════════════════════════════════════════════════════════════════════
+        -->
+        <activity android:name=".ResetPasswordActivity" android:exported="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="http"
-                    android:host="localhost"
-                    android:port="5173"
-                    android:pathPattern="/" />
+                    android:scheme="celuaccel"
+                    android:host="reset-password" />
             </intent-filter>
         </activity>
 
         <!-- ── USUARIOS / PERFIL ──────────────────────────────────────────── -->
-        <activity android:name=".ClienteActivity"       android:exported="false"/>
-        <activity android:name=".ListaClienteActivity"  android:exported="false"/>
-        <activity android:name=".RolesActivity"         android:exported="false"/>
-        <activity android:name=".PerfilActivity"        android:exported="false"/>
+        <activity android:name=".ClienteActivity"            android:exported="false"/>
+        <activity android:name=".ListaClienteActivity"       android:exported="false"/>
+        <activity android:name=".FormularioClienteActivity"  android:exported="false"/>
+        <activity android:name=".RolesActivity"              android:exported="false"/>
+        <activity android:name=".PerfilActivity"             android:exported="false"/>
 
         <!-- ── SERVICIOS ──────────────────────────────────────────────────── -->
         <activity android:name=".ServicioActivity"          android:exported="false"/>
@@ -82,6 +87,17 @@
 
         <!-- ── COMENTARIOS ────────────────────────────────────────────────── -->
         <activity android:name=".ComentariosActivity" android:exported="false"/>
+
+        <!-- ── FILE PROVIDER para compartir PDFs ──────────────────────────── -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

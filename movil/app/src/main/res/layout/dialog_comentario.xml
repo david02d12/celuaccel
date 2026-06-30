@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- dialog_comentario.xml — CeluAccel: diálogo para crear/editar comentario -->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -8,7 +8,7 @@
     android:background="@drawable/bg_card_elevated"
     android:padding="0dp">
 
-    <!-- Header -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
             android:textStyle="bold"/>
     </LinearLayout>
 
-    <!-- Formulario -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
