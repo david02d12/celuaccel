@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Mensaje
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -125,7 +126,7 @@ class ChatDetailActivity : AppCompatActivity() {
                 api.eliminarMensaje(token, idMensaje).enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
                         if (response.isSuccessful) cargarMensajes()
-                        else Toast.makeText(this@ChatDetailActivity, "Error al eliminar (${response.code()})", Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(this@ChatDetailActivity, "Error al eliminar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {
                         Toast.makeText(this@ChatDetailActivity, "Fallo de red.", Toast.LENGTH_SHORT).show()

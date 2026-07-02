@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Servicio
+import com.example.myapplication.util.formatearPrecio
 class ServicioAdapter(
     private val servicios: List<Servicio>,
     private val esCliente: Boolean = true,
@@ -90,7 +91,7 @@ class ServicioAdapter(
 
 
         val precio = s.precio ?: 0.0
-        holder.tvPrecio.text = if (precio > 0) "$${"%.0f".format(precio)}" else "Por definir"
+        holder.tvPrecio.text = if (precio > 0) "$${precio.formatearPrecio()}" else "Por definir"
 
         holder.itemView.setOnClickListener { onClick?.invoke(s) }
         holder.itemView.setOnLongClickListener {

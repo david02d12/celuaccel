@@ -12,6 +12,7 @@ import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Chat
 import com.example.myapplication.model.ChatResponse
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -89,7 +90,7 @@ class ChatListActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     cargarChats()
                 } else {
-                    Toast.makeText(this@ChatListActivity, "Error al iniciar el chat (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ChatListActivity, "Error al iniciar el chat: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                     idServicioIntent = -1
                     cargarChats()
                 }

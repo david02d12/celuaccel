@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Producto
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,7 +58,7 @@ class ListaProductoActivity : AppCompatActivity() {
                         Toast.makeText(this@ListaProductoActivity, "No hay productos.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@ListaProductoActivity, "Error (${response.code()})", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@ListaProductoActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_LONG).show()
                 }
             }
 

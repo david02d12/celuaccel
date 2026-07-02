@@ -15,6 +15,7 @@ import com.example.myapplication.ClienteAdapter
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Cliente
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -69,7 +70,7 @@ class ClienteActivity : AppCompatActivity() {
                     filtrarClientes(etBuscarCliente.text.toString())
                 } else {
                     tvTotalClientes.text = "Error al leer datos"
-                    Toast.makeText(this@ClienteActivity, "Código: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ClienteActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                 }
             }
 

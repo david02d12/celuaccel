@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Historial
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -81,7 +82,7 @@ class HistorialActivity : AppCompatActivity() {
                     findViewById<Button>(R.id.btnExportarPdf).visibility = View.VISIBLE
                     filtrar(etBuscar.text.toString())
                 } else {
-                    Toast.makeText(this@HistorialActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@HistorialActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Historial>>, t: Throwable) {

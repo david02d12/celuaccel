@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.TipoDocumento
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -83,7 +84,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
                         onEliminar = { tipo -> confirmarEliminar(tipo) }
                     )
                 } else {
-                    Toast.makeText(this@TipoDocumentoActivity, "Error al cargar tipos (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@TipoDocumentoActivity, "Error al cargar tipos: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<TipoDocumento>>, t: Throwable) {
@@ -118,7 +119,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
                     cancelarEdicion()
                     cargar()
                 } else {
-                    val msg = if (response.code() == 409) "Ese código ya existe" else "Error: ${response.code()}"
+                    val msg = if (response.code() == 409) "Ese código ya existe" else mensajeErrorHttp(response.code())
                     Toast.makeText(this@TipoDocumentoActivity, msg, Toast.LENGTH_LONG).show()
                 }
             }
@@ -159,7 +160,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
                                 Toast.makeText(this@TipoDocumentoActivity, "Tipo eliminado", Toast.LENGTH_SHORT).show()
                                 cargar()
                             } else {
-                                Toast.makeText(this@TipoDocumentoActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@TipoDocumentoActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {

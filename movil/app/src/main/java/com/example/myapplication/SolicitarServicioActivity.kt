@@ -12,6 +12,7 @@ import com.example.myapplication.model.Chat
 import com.example.myapplication.model.ChatResponse
 import com.example.myapplication.model.Servicio
 import com.example.myapplication.model.ServicioResponse
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,7 +81,7 @@ class SolicitarServicioActivity : AppCompatActivity() {
                             etDispositivo.text.clear()
                         }
                     } else {
-                        Toast.makeText(this@SolicitarServicioActivity, "Error al enviar: ${response.code()}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@SolicitarServicioActivity, "Error al enviar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_LONG).show()
                     }
                 }
 

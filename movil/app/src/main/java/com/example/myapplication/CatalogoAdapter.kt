@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Categoria
 import com.example.myapplication.model.Producto
+import com.example.myapplication.util.formatearPrecio
 
 class CatalogoAdapter(
     private var productos: List<Producto>,
@@ -34,7 +35,7 @@ class CatalogoAdapter(
         val prod = productos[position]
 
         holder.tvNombreCatalogo.text  = prod.nombre
-        holder.tvPrecioCatalogo.text  = "$${"%.0f".format(prod.precio)}"
+        holder.tvPrecioCatalogo.text  = "$${prod.precio.formatearPrecio()}"
 
         val catNombre = categorias.find { it.idCategoria == prod.idCategoria }?.nombreCategoria ?: "Sin categoría"
         holder.tvCategoriaCatalogo.text = catNombre

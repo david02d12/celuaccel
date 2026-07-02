@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Pregunta
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -77,7 +78,7 @@ class PreguntasActivity : AppCompatActivity() {
                         mostrarDialogoResponder(p)
                     })
                 } else {
-                    Toast.makeText(this@PreguntasActivity, "Error al cargar preguntas: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PreguntasActivity, "Error al cargar preguntas: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Pregunta>>, t: Throwable) {
@@ -98,7 +99,7 @@ class PreguntasActivity : AppCompatActivity() {
                                 Toast.makeText(this@PreguntasActivity, "Pregunta eliminada", Toast.LENGTH_SHORT).show()
                                 cargarPreguntas()
                             } else {
-                                Toast.makeText(this@PreguntasActivity, "Error al eliminar: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@PreguntasActivity, "Error al eliminar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -135,7 +136,7 @@ class PreguntasActivity : AppCompatActivity() {
                                 Toast.makeText(this@PreguntasActivity, "Respuesta guardada", Toast.LENGTH_SHORT).show()
                                 cargarPreguntas()
                             } else {
-                                Toast.makeText(this@PreguntasActivity, "Error al guardar: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@PreguntasActivity, "Error al guardar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -170,7 +171,7 @@ class PreguntasActivity : AppCompatActivity() {
                     etContenido.text.clear()
                     cargarPreguntas()
                 } else {
-                    Toast.makeText(this@PreguntasActivity, "Error al enviar: ${response.code()}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@PreguntasActivity, "Error al enviar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_LONG).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {

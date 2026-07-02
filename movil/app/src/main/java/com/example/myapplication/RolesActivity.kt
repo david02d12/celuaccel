@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Rol
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -88,7 +89,7 @@ class RolesActivity : AppCompatActivity() {
                         onEliminar    = { rol -> confirmarEliminar(rol) }
                     )
                 } else {
-                    Toast.makeText(this@RolesActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RolesActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Rol>>, t: Throwable) {
@@ -124,7 +125,7 @@ class RolesActivity : AppCompatActivity() {
                     cargar()
                 } else {
                     val errBody = response.errorBody()?.string() ?: ""
-                    Toast.makeText(this@RolesActivity, "Error ${response.code()}: $errBody", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@RolesActivity, "${mensajeErrorHttp(response.code())}: $errBody", Toast.LENGTH_LONG).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -156,7 +157,7 @@ class RolesActivity : AppCompatActivity() {
                             Toast.makeText(this@RolesActivity, "Rol eliminado", Toast.LENGTH_SHORT).show()
                             cargar()
                         } else {
-                            Toast.makeText(this@RolesActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RolesActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                         }
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {

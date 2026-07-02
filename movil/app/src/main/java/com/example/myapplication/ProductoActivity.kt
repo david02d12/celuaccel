@@ -18,6 +18,7 @@ import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Categoria
 import com.example.myapplication.model.Producto
+import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -140,7 +141,7 @@ class ProductoActivity : AppCompatActivity() {
 
                     filtrarLista(etBusqueda.text.toString())
                 } else {
-                    Toast.makeText(this@ProductoActivity, "Error cargando productos (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProductoActivity, "Error cargando productos: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Producto>>, t: Throwable) {
@@ -218,7 +219,7 @@ class ProductoActivity : AppCompatActivity() {
                     productoEnEdicion     = null
                     cargarProductos()
                 } else {
-                    Toast.makeText(this@ProductoActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProductoActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -259,7 +260,7 @@ class ProductoActivity : AppCompatActivity() {
                             Toast.makeText(this@ProductoActivity, "Producto eliminado", Toast.LENGTH_SHORT).show()
                             cargarProductos()
                         } else {
-                            Toast.makeText(this@ProductoActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ProductoActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
                         }
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {

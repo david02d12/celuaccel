@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.ChangePasswordRequest
+import com.example.myapplication.util.mensajeErrorHttp
 import com.example.myapplication.model.Cliente
 import retrofit2.Call
 import retrofit2.Callback
@@ -113,7 +114,7 @@ class PerfilActivity : AppCompatActivity() {
                     Toast.makeText(this@PerfilActivity, "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show()
                     tvInicial.text = nombre.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
                 } else {
-                    Toast.makeText(this@PerfilActivity, "Error ${response.code()}: No se pudo actualizar", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@PerfilActivity, "${mensajeErrorHttp(response.code())}: No se pudo actualizar", Toast.LENGTH_LONG).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
