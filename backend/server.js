@@ -1,8 +1,8 @@
 require('dotenv').config();
-const express    = require('express');
-const helmet     = require('helmet');
-const rateLimit  = require('express-rate-limit');
-const swaggerUI  = require('swagger-ui-express');
+const express = require('express');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const swaggerUI = require('swagger-ui-express');
 const swaggerDocumentation = require('./swagger.json');
 const cors = require('cors');
 
@@ -41,10 +41,10 @@ const limiterPublico = rateLimit({
     legacyHeaders: false,
     message: { error: 'Demasiados intentos. Por favor espera 15 minutos e intenta de nuevo.' }
 });
-app.use('/api/login',           limiterPublico);
-app.use('/api/registro',        limiterPublico);
+app.use('/api/login', limiterPublico);
+app.use('/api/registro', limiterPublico);
 app.use('/api/forgot-password', limiterPublico);
-app.use('/api/reset-password',  limiterPublico);
+app.use('/api/reset-password', limiterPublico);
 
 // Health check para monitoreo de disponibilidad
 app.get('/api/health', (req, res) => {
