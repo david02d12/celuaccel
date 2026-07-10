@@ -62,10 +62,13 @@ class ChatListActivity : AppCompatActivity() {
                     if (idServicioIntent != -1) {
                         val chatExistente = chats.find { it.idServicio == idServicioIntent }
                         if (chatExistente != null) {
+                            idServicioIntent = -1
                             abrirDetalleChat(chatExistente)
                             return
                         } else if (userRole == 2) {
-                            crearChat(idServicioIntent)
+                            val servicioId = idServicioIntent
+                            idServicioIntent = -1
+                            crearChat(servicioId)
                             return
                         }
                     }

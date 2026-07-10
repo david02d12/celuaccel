@@ -39,7 +39,15 @@ const findByServicio = (ID_Servicio) => {
 
 const create = (ID_Usuario, ID_Servicio) => {
     if (ID_Servicio !== null && ID_Servicio !== undefined) {
-        return query('INSERT INTO Chat (ID_Usuario, ID_Servicio) VALUES (?, ?)', [ID_Usuario, ID_Servicio]);
+        // Inserción atómica: solo inserta si no existe ya un chat para este servicio
+        // Esto previene duplicados por condiciones de carrera
+        return query(
+            `INSERT INTO Chat (ID_Usuario, ID_Servicio)
+             SELECT ?, ?
+             FROM DUAL
+             WHERE NOT EXISTS (SELECT 1 FROM Chat WHERE ID_Servicio = ?)`,
+            [ID_Usuario, ID_Servicio, ID_Servicio]
+        );
     }
     // Chat de consulta de catálogo: sin servicio asociado
     return query('INSERT INTO Chat (ID_Usuario) VALUES (?)', [ID_Usuario]);

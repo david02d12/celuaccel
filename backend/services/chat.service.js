@@ -23,13 +23,17 @@ const agregar = async ({ ID_Usuario, ID_Servicio }) => {
         const result = await chatDao.create(ID_Usuario, null);
         return { message: 'Chat de consulta creado correctamente.', id: result.insertId, existente: false };
     }
-    // Chats de servicio: evitar duplicados
+    // Chats de servicio: la inserción atómica en el DAO previene duplicados
+    const result = await chatDao.create(ID_Usuario, ID_Servicio);
+    if (result.affectedRows > 0) {
+        return { message: 'Chat creado correctamente.', id: result.insertId, existente: false };
+    }
+    // Si no insertó, es porque ya existe un chat para este servicio
     const existing = await chatDao.findByServicio(ID_Servicio);
     if (existing.length > 0) {
         return { message: 'Ya existe un chat para este servicio.', id: existing[0].Codigo_Chat, existente: true };
     }
-    const result = await chatDao.create(ID_Usuario, ID_Servicio);
-    return { message: 'Chat creado correctamente.', id: result.insertId, existente: false };
+    throw new AppError('Error inesperado al crear el chat.', 500);
 };
 
 const actualizar = async (data) => {
