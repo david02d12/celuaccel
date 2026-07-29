@@ -20,6 +20,7 @@ const getIniciales = (nombre = '') => {
 };
 
 const Usuarios = ({ cerrarSesion, setVista }) => {
+  const miUsuario = localStorage.getItem('user');
   const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
@@ -139,6 +140,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
                 value={form.Clave} onChange={e => setForm({...form, Clave: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Rol</label>
               <select className="form-select mb-3" style={inputStyle} value={form.Codigo_Rol}
+                disabled={enEdicion && String(form.ID_Usuario) === String(miUsuario)}
                 onChange={e => setForm({...form, Codigo_Rol: Number(e.target.value)})}>
                 <option value={1}>Tecnico</option>
                 <option value={2}>Cliente</option>

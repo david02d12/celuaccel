@@ -18,10 +18,8 @@ const agregar = async ({ ID_Usuario, ID_Servicio }) => {
     if (!ID_Usuario) {
         throw new AppError('El campo ID_Usuario es obligatorio.', 400);
     }
-    // Chats de catálogo (sin servicio asociado): siempre crear uno nuevo
-    if (ID_Servicio === null || ID_Servicio === undefined) {
-        const result = await chatDao.create(ID_Usuario, null);
-        return { message: 'Chat de consulta creado correctamente.', id: result.insertId, existente: false };
+    if (!ID_Servicio) {
+        throw new AppError('Todo chat debe estar asociado obligatoriamente a una orden de servicio (RN-014).', 400);
     }
     // Chats de servicio: la inserción atómica en el DAO previene duplicados
     const result = await chatDao.create(ID_Usuario, ID_Servicio);

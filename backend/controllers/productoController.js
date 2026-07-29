@@ -34,3 +34,12 @@ exports.eliminar = async (req, res) => {
         res.status(200).json({ message: 'Producto eliminado correctamente.' });
     } catch (err) { handleError(res, err); }
 };
+
+/** RN-008: Descuenta stock — rechaza si cantidad actual es 0 */
+exports.descontarStock = async (req, res) => {
+    try {
+        const { cantidad } = req.body;
+        const result = await productoService.descontarStock(req.params.id, Number(cantidad) || 1);
+        res.status(200).json(result);
+    } catch (err) { handleError(res, err); }
+};

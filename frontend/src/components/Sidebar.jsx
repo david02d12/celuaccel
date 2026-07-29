@@ -41,9 +41,6 @@ const Sidebar = ({ setVista }) => {
             <SectionLabel>Tienda</SectionLabel>
             <Btn label="Catálogo"            vista="catalogo" />
             <Btn label="Comentarios"         vista="comentarios" />
-
-            <SectionLabel>Cuenta</SectionLabel>
-            <Btn label="Mi Perfil"           vista="perfil" />
           </>
         )}
 
@@ -74,6 +71,10 @@ const Sidebar = ({ setVista }) => {
             <Btn label="Roles"                  vista="roles" />
           </>
         )}
+
+        {/* ══ CUENTA (Todos los roles) ══ */}
+        <SectionLabel>Cuenta</SectionLabel>
+        <Btn label="Mi Perfil"           vista="perfil" />
 
       </div>
     </div>

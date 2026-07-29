@@ -1,4 +1,4 @@
-﻿const servicioService = require('../services/servicio.service');
+const servicioService = require('../services/servicio.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
@@ -19,6 +19,26 @@ exports.listarMios = async (req, res) => {
     try {
         const data = await servicioService.misServicios(req.userId, req.userId);
         res.status(200).json(data);
+    } catch (err) { handleError(res, err); }
+};
+
+/** RF-014: Técnico ve los servicios que le han asignado */
+exports.listarMisTecnico = async (req, res) => {
+    try {
+        const data = await servicioService.listarMisTecnico(req.userId);
+        res.status(200).json(data);
+    } catch (err) { handleError(res, err); }
+};
+
+/** RF-014: Admin asigna un técnico a una orden */
+exports.asignarTecnico = async (req, res) => {
+    try {
+        const result = await servicioService.asignarTecnico(
+            req.params.id,
+            req.body.ID_Tecnico,
+            req.userId
+        );
+        res.status(200).json(result);
     } catch (err) { handleError(res, err); }
 };
 

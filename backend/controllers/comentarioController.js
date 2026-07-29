@@ -1,10 +1,15 @@
-﻿const comentarioService = require('../services/comentario.service');
+const comentarioService = require('../services/comentario.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
 
 exports.listar = async (req, res) => {
     try { res.status(200).json(await comentarioService.listar()); }
+    catch (err) { handleError(res, err); }
+};
+
+exports.promedio = async (req, res) => {
+    try { res.status(200).json(await comentarioService.promedio()); }
     catch (err) { handleError(res, err); }
 };
 

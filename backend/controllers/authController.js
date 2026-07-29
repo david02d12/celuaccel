@@ -28,7 +28,7 @@ exports.listar = async (req, res) => {
 
 exports.actualizar = async (req, res) => {
     try {
-        await authService.actualizar(req.body);
+        await authService.actualizar(req.body, req.userId);
         res.status(200).json({ message: 'Usuario actualizado correctamente.' });
     } catch (err) { handleError(res, err); }
 };

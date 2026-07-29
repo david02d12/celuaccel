@@ -1,8 +1,26 @@
 const AppError = require('../config/AppError');
 const comentarioDao = require('../dao/comentario.dao');
 const usuarioDao = require('../dao/usuario.dao');
+const servicioDao = require('../dao/servicio.dao');
 
 const listar = () => comentarioDao.getAll();
+
+/** Devuelve el promedio de estrellas, total de reseñas y distribución por puntuación */
+const promedio = async () => {
+    const rows = await comentarioDao.getPromedio();
+    const r = rows[0];
+    return {
+        promedio:     r.promedio !== null ? Number(r.promedio) : null,
+        total:        Number(r.total),
+        distribucion: {
+            cinco:  Number(r.cinco),
+            cuatro: Number(r.cuatro),
+            tres:   Number(r.tres),
+            dos:    Number(r.dos),
+            uno:    Number(r.uno),
+        },
+    };
+};
 
 const agregar = async ({ ID_Usuario, Comentario, Fecha_Comentario, Estrellas }, userId) => {
     if (!ID_Usuario || !Comentario) {
@@ -13,6 +31,18 @@ const agregar = async ({ ID_Usuario, Comentario, Fecha_Comentario, Estrellas }, 
     if (String(ID_Usuario).trim() !== String(userId).trim() && miRol === 2) {
         throw new AppError('Acceso denegado: no puedes publicar comentarios en nombre de otro usuario.', 403);
     }
+
+    // Clientes (rol 2) deben tener al menos un servicio activo (no cancelado) para comentar
+    if (miRol === 2) {
+        const serviciosActivos = await servicioDao.getActivosByUsuario(String(ID_Usuario).trim());
+        if (serviciosActivos.length === 0) {
+            throw new AppError(
+                'Debes haber realizado al menos un servicio para poder publicar un comentario.',
+                403
+            );
+        }
+    }
+
     const fecha = Fecha_Comentario || new Date().toISOString().split('T')[0];
     const estrellas = (Estrellas >= 1 && Estrellas <= 5) ? Number(Estrellas) : 5;
     const result = await comentarioDao.create({ ID_Usuario, Comentario, Fecha_Comentario: fecha, Estrellas: estrellas });
@@ -45,4 +75,4 @@ const eliminar = async (id, userId) => {
     await comentarioDao.remove(id);
 };
 
-module.exports = { listar, agregar, actualizar, eliminar };
+module.exports = { listar, promedio, agregar, actualizar, eliminar };

@@ -51,6 +51,7 @@ const MENSAJES_RAPIDOS = [
 ];
 
 const Servicios = ({ cerrarSesion, setVista }) => {
+  const userRole = Number(localStorage.getItem('role')) || 1;
   const [servicios, setServicios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
@@ -162,13 +163,13 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Servicio' : 'Nuevo Registro'}</h5>
               </div>
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema" onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} type="number" value={formServicio.Precio} placeholder="Precio ($)" onChange={e => setFormServicio({...formServicio, Precio: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo del Movil" onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica" onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo del Movil" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha de ingreso</label>
-              <input className="form-control mb-2" style={inputStyle} type="date" value={formServicio.Fecha} onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} type="date" value={formServicio.Fecha} disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Etapa</label>
               <select className="form-select mb-3" style={inputStyle} value={formServicio.Etapa} onChange={e => setFormServicio({...formServicio, Etapa: e.target.value})}>
                 {ETAPAS.map(e => <option key={e.valor} value={e.valor}>{e.label}</option>)}

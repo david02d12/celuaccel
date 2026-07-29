@@ -36,8 +36,21 @@ const login = async (user, password) => {
 
 const listar = () => usuarioDao.getAll();
 
-const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Clave, Codigo_Rol, ID_Usuario }) => {
+const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Clave, Codigo_Rol, ID_Usuario }, userId) => {
     if (!ID_Usuario) throw new AppError('El campo ID_Usuario es obligatorio para actualizar.', 400);
+
+    // RN-006: Un administrador no puede cambiar su propio rol
+    if (Codigo_Rol !== undefined && String(ID_Usuario).trim() === String(userId).trim()) {
+        const rolRes = await usuarioDao.getRol(userId);
+        const rolActual = rolRes[0]?.Codigo_Rol;
+        if (Number(Codigo_Rol) !== Number(rolActual)) {
+            throw new AppError(
+                'No puedes modificar tu propio rol. Solicita a otro administrador que realice este cambio (RN-006).',
+                403
+            );
+        }
+    }
+
     let hashedClave = null;
     if (Clave) hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
     const result = await usuarioDao.update({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, hashedClave, Codigo_Rol, ID_Usuario });
