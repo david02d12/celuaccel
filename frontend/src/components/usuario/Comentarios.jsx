@@ -14,6 +14,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
   const [comentarios, setComentarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
+  const [puedeComentarCliente, setPuedeComentarCliente] = useState(null); // null = cargando
   const [form, setForm] = useState({
     Codigo_Comentario: '',
     ID_Usuario: miUsuario,
@@ -36,9 +37,20 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
   }, [miRol, miUsuario]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     listar();
-  }, [listar]);
+    // Clientes: verificar si tienen al menos un servicio terminado o cancelado
+    if (miRol === 2 && miUsuario) {
+      api.get(`/servicios/mis-servicios/${miUsuario}`)
+        .then(res => {
+          const habilitado = res.data.some(s => Number(s.Etapa) === 100 || Number(s.Etapa) === -1);
+          setPuedeComentarCliente(habilitado);
+        })
+        .catch(() => setPuedeComentarCliente(false));
+    } else {
+      // Técnicos y admins siempre pueden
+      setPuedeComentarCliente(true);
+    }
+  }, [listar, miRol, miUsuario]);
 
   const guardar = async () => {
     try {
@@ -137,49 +149,78 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
         <div className="row">
           {/* PANEL DE FORMULARIO LATERAL */}
           <div className="col-md-4 mb-4">
-            <div className="card p-4 shadow-sm border-0 position-sticky" style={{ top: '20px' }}>
-              <h5 className="fw-bold mb-3">{enEdicion ? "Editar Reseña" : "Dejar un Testimonio"}</h5>
-              <div className="text-muted small mb-3">
-                Tu opinión es vital. Comparte tu experiencia con nosotros para ayudar a la comunidad Celuaccel.
+            {puedeComentarCliente === null ? (
+              /* Cargando verificación */
+              <div className="card p-4 shadow-sm border-0 text-center">
+                <div className="spinner-border mx-auto mb-3" style={{ color: 'var(--color-primary)' }} role="status" />
+                <p className="text-muted small mb-0">Verificando acceso...</p>
               </div>
-              
-              <input 
-                className="form-control mb-3" 
-                placeholder="ID Usuario" 
-                value={form.ID_Usuario} 
-                disabled={enEdicion || miRol === 2}
-                onChange={e => setForm({...form, ID_Usuario: e.target.value})} 
-                style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
-              />
-              <textarea 
-                className="form-control mb-3" 
-                placeholder="Escribe tu testimonio aquí..." 
-                value={form.Comentario} 
-                onChange={e => setForm({...form, Comentario: e.target.value})}
-                rows="4"
-                style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
-              />
-              
-              {EstrellasInput()}
-
-              {miRol !== 2 && (
+            ) : !puedeComentarCliente ? (
+              /* Bloqueado: cliente sin servicios finalizados/cancelados */
+              <div className="card p-4 shadow-sm border-0">
+                <div className="text-center mb-3">
+                  <div style={{ fontSize: '3rem' }}>🔒</div>
+                  <h5 className="fw-bold mt-2" style={{ color: 'var(--color-primary)' }}>
+                    Sección Bloqueada
+                  </h5>
+                </div>
+                <p className="text-muted small text-center mb-3">
+                  Solo puedes escribir una reseña después de haber finalizado o cancelado al menos un servicio.
+                </p>
+                <div className="alert alert-warning small mb-3 py-2" role="alert">
+                  <strong>¿Cómo desbloquear?</strong><br />
+                  Solicita una reparación y espera a que el técnico la <strong>complete</strong>, o <strong>cancela</strong> una solicitud existente.
+                </div>
+                <button className="btn btn-primary w-100" onClick={() => setVista('miServicio')}>
+                  Ver mis servicios
+                </button>
+              </div>
+            ) : (
+              /* Habilitado: mostrar formulario */
+              <div className="card p-4 shadow-sm border-0 position-sticky" style={{ top: '20px' }}>
+                <h5 className="fw-bold mb-3">{enEdicion ? "Editar Reseña" : "Dejar un Testimonio"}</h5>
+                <div className="text-muted small mb-3">
+                  Tu opinión es vital. Comparte tu experiencia con nosotros para ayudar a la comunidad Celuaccel.
+                </div>
+                
                 <input 
                   className="form-control mb-3" 
-                  type="date" 
-                  title="Fecha Comentario"
-                  value={form.Fecha_Comentario} 
-                  onChange={e => setForm({...form, Fecha_Comentario: e.target.value})} 
+                  placeholder="ID Usuario" 
+                  value={form.ID_Usuario} 
+                  disabled={enEdicion || miRol === 2}
+                  onChange={e => setForm({...form, ID_Usuario: e.target.value})} 
                   style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
                 />
-              )}
-              
-              <button className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
-                {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
-              </button>
-              {enEdicion && (
-                <button className="btn btn-outline-secondary w-100 mt-2" onClick={limpiar}>Cancelar Edición</button>
-              )}
-            </div>
+                <textarea 
+                  className="form-control mb-3" 
+                  placeholder="Escribe tu testimonio aquí..." 
+                  value={form.Comentario} 
+                  onChange={e => setForm({...form, Comentario: e.target.value})}
+                  rows="4"
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                />
+                
+                {EstrellasInput()}
+
+                {miRol !== 2 && (
+                  <input 
+                    className="form-control mb-3" 
+                    type="date" 
+                    title="Fecha Comentario"
+                    value={form.Fecha_Comentario} 
+                    onChange={e => setForm({...form, Fecha_Comentario: e.target.value})} 
+                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                  />
+                )}
+                
+                <button className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
+                  {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
+                </button>
+                {enEdicion && (
+                  <button className="btn btn-outline-secondary w-100 mt-2" onClick={limpiar}>Cancelar Edición</button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* MURO DE TARJETAS */}

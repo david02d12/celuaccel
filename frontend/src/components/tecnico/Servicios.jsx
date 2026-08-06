@@ -250,11 +250,21 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                           </select>
 
                           <div className="d-flex gap-1">
-                            <button className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                              style={{ fontSize: '0.77rem' }}
-                              onClick={() => { localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
-                              <IconChat /> Chat
-                            </button>
+                            {Number(s.Etapa) === -1 ? (
+                              <button
+                                className="btn btn-sm btn-secondary d-flex align-items-center gap-1"
+                                style={{ fontSize: '0.77rem', opacity: 0.5, cursor: 'not-allowed' }}
+                                disabled
+                                title="Chat no disponible — servicio cancelado">
+                                <IconChat /> Chat
+                              </button>
+                            ) : (
+                              <button className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                                style={{ fontSize: '0.77rem' }}
+                                onClick={() => { localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
+                                <IconChat /> Chat
+                              </button>
+                            )}
                             <button className="btn btn-sm btn-outline-success d-flex align-items-center gap-1"
                               style={{ fontSize: '0.77rem' }}
                               onClick={() => { setModalNotif({ ID_Usuario: s.ID_Usuario, ID_Servicio: s.ID_Servicio }); setMensajeNotif(''); }}>

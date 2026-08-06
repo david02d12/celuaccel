@@ -7,7 +7,7 @@ const findById = (id) =>
     query('SELECT ID_Usuario, Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Codigo_Rol FROM Usuario WHERE ID_Usuario = ?', [id]);
 
 const findByUsername = (user) =>
-    query('SELECT * FROM Usuario WHERE TRIM(ID_Usuario) = ?', [user]);
+    query('SELECT * FROM Usuario WHERE TRIM(ID_Usuario) = ? OR TRIM(Correo) = ?', [user, user]);
 
 const getRol = (id) =>
     query('SELECT Codigo_Rol FROM Usuario WHERE ID_Usuario = ?', [id]);

@@ -7,6 +7,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
   const miUsuario = localStorage.getItem('user') || '';
+  const miRol = Number(localStorage.getItem('role')) || 2;
+  const esAdmin = miRol === 3;
 
   // Si viene perfilObjetivoId (técnico viendo cliente), cargamos ese perfil
   // Si no, cargamos el perfil propio
@@ -131,16 +133,64 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
                   style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }} />
               </div>
               <div className="col-md-6">
-                <label className="small fw-bold text-muted mb-1">Fecha de Nacimiento</label>
-                <input className="form-control" type="date" value={form.Fecha_Nacimiento}
-                  onChange={e => setForm({...form, Fecha_Nacimiento: e.target.value})}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }} />
+                <label className="small fw-bold text-muted mb-1">
+                  Fecha de Nacimiento
+                  {!esAdmin && (
+                    <span className="ms-2 text-warning" title="Solo el administrador puede cambiar la fecha de nacimiento">
+                      🔒
+                    </span>
+                  )}
+                </label>
+                <input
+                  className="form-control"
+                  type="date"
+                  value={form.Fecha_Nacimiento}
+                  onChange={e => esAdmin && setForm({...form, Fecha_Nacimiento: e.target.value})}
+                  disabled={!esAdmin}
+                  title={!esAdmin ? 'Solo el administrador puede modificar la fecha de nacimiento' : ''}
+                  style={{
+                    backgroundColor: esAdmin ? 'var(--color-bg)' : 'var(--color-surfaceAlt)',
+                    color: esAdmin ? 'var(--color-text)' : 'var(--color-muted, #888)',
+                    borderColor: 'var(--color-border)',
+                    cursor: esAdmin ? 'text' : 'not-allowed',
+                    opacity: esAdmin ? 1 : 0.7
+                  }}
+                />
+                {!esAdmin && (
+                  <small className="text-muted mt-1 d-block">
+                    La fecha de nacimiento solo puede ser modificada por el administrador.
+                  </small>
+                )}
               </div>
               <div className="col-md-6">
-                <label className="small fw-bold text-muted mb-1">Correo Electrónico *</label>
-                <input className="form-control" type="email" value={form.Correo}
-                  onChange={e => setForm({...form, Correo: e.target.value})}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }} />
+                <label className="small fw-bold text-muted mb-1">
+                  Correo Electrónico *
+                  {!esAdmin && (
+                    <span className="ms-2 text-warning" title="Solo el administrador puede cambiar el correo">
+                      🔒
+                    </span>
+                  )}
+                </label>
+                <input
+                  className="form-control"
+                  type="email"
+                  value={form.Correo}
+                  onChange={e => esAdmin && setForm({...form, Correo: e.target.value})}
+                  disabled={!esAdmin}
+                  title={!esAdmin ? 'Solo el administrador puede modificar el correo electrónico' : ''}
+                  style={{
+                    backgroundColor: esAdmin ? 'var(--color-bg)' : 'var(--color-surfaceAlt)',
+                    color: esAdmin ? 'var(--color-text)' : 'var(--color-muted, #888)',
+                    borderColor: 'var(--color-border)',
+                    cursor: esAdmin ? 'text' : 'not-allowed',
+                    opacity: esAdmin ? 1 : 0.7
+                  }}
+                />
+                {!esAdmin && (
+                  <small className="text-muted mt-1 d-block">
+                    El correo solo puede ser modificado por el administrador.
+                  </small>
+                )}
               </div>
               <div className="col-md-6">
                 <label className="small fw-bold text-muted mb-1">Teléfono</label>

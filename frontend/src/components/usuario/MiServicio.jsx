@@ -247,13 +247,19 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                       )}
 
                       <div className="d-flex gap-2 mt-3">
-                        <button className="btn btn-sm btn-outline-secondary"
-                          onClick={() => {
-                            localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
-                            setVista('chatVista');
-                          }}>
-                            Chat con Asesor
-                        </button>
+                        {Number(s.Etapa) !== -1 ? (
+                          <button className="btn btn-sm btn-outline-secondary"
+                            onClick={() => {
+                              localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
+                              setVista('chatVista');
+                            }}>
+                              Chat con Asesor
+                          </button>
+                        ) : (
+                          <span className="badge bg-secondary px-3 py-2" style={{ fontSize: '0.75rem' }}>
+                            🚫 Chat no disponible — Servicio cancelado
+                          </span>
+                        )}
                         {cancelable && (
                           <button className="btn btn-sm btn-outline-danger"
                             onClick={() => cancelarServicio(s.ID_Servicio)}>
