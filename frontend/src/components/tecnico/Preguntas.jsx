@@ -4,6 +4,7 @@ import Sidebar from '../Sidebar';
 import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
+import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -18,6 +19,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
+  const { minDate, maxDate } = getLimitesGeneralesFecha();
   const [form, setForm] = useState({ ID_Consulta: '', ID_Usuario: '', Codigo_Producto: '', Pregunta: '', Fecha: '', Respuesta: '' });
 
   const mostrarToast = (msg, ok = true) => {
@@ -29,7 +31,9 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
     String(p.ID_Consulta).includes(busqueda) ||
     String(p.ID_Usuario || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     String(p.Codigo_Producto || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-    String(p.Pregunta || '').toLowerCase().includes(busqueda.toLowerCase())
+    String(p.Pregunta || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(p.Respuesta || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(p.Fecha || '').includes(busqueda)
   );
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(preguntasFiltradas, 7);
 
@@ -119,6 +123,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                 onChange={e => setForm({...form, Pregunta: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha</label>
               <input className="form-control mb-2" style={inputStyle} type="date"
+                min={minDate} max={maxDate}
                 value={form.Fecha}
                 onChange={e => setForm({...form, Fecha: e.target.value})} />
               {/* C5 FIX: Campo Respuesta — solo visible en modo edición */}
@@ -144,10 +149,9 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="card border-0 shadow-sm overflow-hidden">
               <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
-                <input type="text" className="form-control"
-                  placeholder=" Buscar por usuario, producto o pregunta..."
-                  value={busqueda} onChange={e => setBusqueda(e.target.value)}
-                  style={inputStyle} />
+                <input type="text" className="form-control" style={inputStyle}
+                  placeholder="Buscar por usuario, producto, pregunta, respuesta o fecha..."
+                  value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
               </div>
               <div className="table-responsive">
                 <table className="table table-hover mb-0">

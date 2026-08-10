@@ -6,19 +6,16 @@ const usuarioDao = require('../dao/usuario.dao');
 
 /** Formatea una fila de BD al shape que espera el frontend */
 const formatear = (n) => ({
-    Codigo_Notificaciones: n.Codigo_Notificaciones,
+    ID_Notificacion:       n.ID_Notificacion,
+    Codigo_Notificaciones: n.ID_Notificacion, // Mantenido para retrocompatibilidad frontend
     ID_Usuario:            n.ID_Usuario_Destino    ?? null,
     ID_Usuario_Destino:    n.ID_Usuario_Destino    ?? null,
     ID_Servicio:           n.ID_Servicio            ?? null,
-    Tipo_Notificacion:     n.Tipo_Notificacion      ?? null,
-    Titulo:                n.Titulo                 ?? n.Tipo_Notificacion ?? null,
-    Mensaje:               n.Mensaje                ?? n.Tipo_Notificacion ?? null,
+    Mensaje:               n.Mensaje                ?? null,
+    Titulo:                n.Titulo                 ?? n.Mensaje ?? null,
     Leida:                 n.Leida ?? 0,
-    Fecha_Notificacion:    n.Fecha_Notificacion
-        ? new Date(n.Fecha_Notificacion).toISOString()
-        : null,
-    Fecha:                 n.Fecha_Notificacion
-        ? new Date(n.Fecha_Notificacion).toISOString()
+    Fecha:                 n.Fecha
+        ? new Date(n.Fecha).toISOString()
         : null,
 });
 
@@ -48,7 +45,7 @@ const enviar = async ({ ID_Usuario_Destino, ID_Servicio, Mensaje }, userId) => {
         ID_Usuario_Destino: String(ID_Usuario_Destino).trim(),
         ID_Usuario_Origen:  String(userId).trim(),
         ID_Servicio:        ID_Servicio || null,
-        Tipo_Notificacion:  Mensaje,
+        Mensaje:            Mensaje,
     });
 
     return { message: 'Notificación enviada al cliente.', id: result.insertId };
@@ -119,12 +116,12 @@ const marcarTodasLeidas = async (idUsuario) => {
  * Crea una notificación de plantilla/global (CRUD admin).
  * No tiene destinatario específico.
  */
-const agregar = async ({ Tipo_Notificacion }) => {
-    if (!Tipo_Notificacion) {
-        throw new AppError('El campo Tipo_Notificacion es obligatorio.', 400);
+const agregar = async ({ Mensaje }) => {
+    if (!Mensaje) {
+        throw new AppError('El campo Mensaje es obligatorio.', 400);
     }
     try {
-        await notificacionDao.create({ Tipo_Notificacion });
+        await notificacionDao.create({ Mensaje });
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') throw new AppError('La notificación ya existe.', 409);
         throw err;
@@ -132,11 +129,11 @@ const agregar = async ({ Tipo_Notificacion }) => {
 };
 
 /** Actualiza el texto de una notificación (CRUD admin) */
-const actualizar = async ({ Tipo_Notificacion, Codigo_Notificaciones }) => {
-    if (!Codigo_Notificaciones) {
-        throw new AppError('El campo Codigo_Notificaciones es obligatorio para actualizar.', 400);
+const actualizar = async ({ Mensaje, ID_Notificacion }) => {
+    if (!ID_Notificacion) {
+        throw new AppError('El campo ID_Notificacion es obligatorio para actualizar.', 400);
     }
-    const result = await notificacionDao.update({ Tipo_Notificacion, Codigo_Notificaciones });
+    const result = await notificacionDao.update({ Mensaje, ID_Notificacion });
     if (result.affectedRows === 0) throw new AppError('Notificación no encontrada.', 404);
 };
 

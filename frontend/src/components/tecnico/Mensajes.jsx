@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -9,6 +10,8 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
   const [mensajes, setMensajes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
+  const { minDate, maxDate } = getLimitesGeneralesFecha();
+  const miUsuario = localStorage.getItem('user');
   const [form, setForm] = useState({
     Codigo_Mensaje: '',
     Codigo_Chat: '',
@@ -112,6 +115,7 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                 className="form-control mb-2"
                 style={inputStyle}
                 type="date"
+                min={minDate} max={maxDate}
                 value={form.Fecha_Mensaje}
                 onChange={e => setForm({...form, Fecha_Mensaje: e.target.value})}
               />
@@ -138,10 +142,9 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="card border-0 shadow-sm overflow-hidden">
               <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
-                <input type="text" className="form-control"
-                  placeholder=" Buscar por chat, usuario o contenido..."
-                  value={busqueda} onChange={e => setBusqueda(e.target.value)}
-                  style={inputStyle} />
+                <input type="text" className="form-control" style={inputStyle}
+                  placeholder="Buscar por ID mensaje, ID chat, fecha, usuario o contenido..."
+                  value={busqueda} onChange={e => setBusqueda(e.target.value)} />
               </div>
               <div className="table-responsive">
                 <table className="table table-hover mb-0">
@@ -156,7 +159,9 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                   </thead>
                   <tbody>
                     {mensajes.filter(m =>
+                      String(m.Codigo_Mensaje).includes(busqueda) ||
                       String(m.Codigo_Chat).includes(busqueda) ||
+                      String(m.Fecha_Mensaje || '').includes(busqueda) ||
                       String(m.ID_Usuario || '').toLowerCase().includes(busqueda.toLowerCase()) ||
                       String(m.Mensaje || '').toLowerCase().includes(busqueda.toLowerCase())
                     ).map(m => (
@@ -170,14 +175,20 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                           </span>
                         </td>
                         <td>
-                          <button className="btn btn-sm btn-outline-secondary me-1"
-                            onClick={() => { setForm(m); setEnEdicion(true); }}>
-                            Editar
-                          </button>
-                          <button className="btn btn-sm btn-outline-danger"
-                            onClick={() => eliminar(m.Codigo_Mensaje)}>
-                            Borrar
-                          </button>
+                          {String(m.ID_Usuario) === String(miUsuario) ? (
+                            <>
+                              <button className="btn btn-sm btn-outline-secondary me-1"
+                                onClick={() => { setForm(m); setEnEdicion(true); }}>
+                                Editar
+                              </button>
+                              <button className="btn btn-sm btn-outline-danger"
+                                onClick={() => eliminar(m.Codigo_Mensaje)}>
+                                Borrar
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-muted small">Solo lectura (Cliente)</span>
+                          )}
                         </td>
                       </tr>
                     ))}

@@ -19,17 +19,17 @@ const getActivosByUsuario = (idUsuario) =>
 const findById = (id) =>
     query('SELECT * FROM Servicio WHERE ID_Servicio = ?', [id]);
 
-const create = ({ Descripcion, ID_Usuario, Precio, Movil_Nombre, Movil_Especificacion, Fecha, Etapa }) =>
+const create = ({ Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra, Movil_Nombre, Movil_Especificacion, Fecha, Etapa }) =>
     query(
-        `INSERT INTO Servicio (Descripcion, ID_Usuario, Precio, Movil_Nombre, Movil_Especificacion, Fecha, Etapa)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [Descripcion, ID_Usuario, Precio, Movil_Nombre, Movil_Especificacion, Fecha, Etapa ?? 0]
+        `INSERT INTO Servicio (Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra, Movil_Nombre, Movil_Especificacion, Fecha, Etapa)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra, Movil_Nombre, Movil_Especificacion, Fecha, Etapa ?? 0]
     );
 
-const update = ({ Descripcion, ID_Usuario, Precio, Movil_Nombre, Movil_Especificacion, Fecha, Etapa, ID_Servicio }) =>
+const update = ({ Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra, Movil_Nombre, Movil_Especificacion, Fecha, Etapa, ID_Servicio }) =>
     query(
-        `UPDATE Servicio SET Descripcion=?, ID_Usuario=?, Precio=?, Movil_Nombre=?, Movil_Especificacion=?, Fecha=?, Etapa=? WHERE ID_Servicio=?`,
-        [Descripcion, ID_Usuario, Precio, Movil_Nombre, Movil_Especificacion, Fecha, Etapa, ID_Servicio]
+        `UPDATE Servicio SET Descripcion=?, ID_Usuario=?, Precio=?, Precio_Repuestos=?, Precio_Mano_Obra=?, Movil_Nombre=?, Movil_Especificacion=?, Fecha=?, Etapa=? WHERE ID_Servicio=?`,
+        [Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra, Movil_Nombre, Movil_Especificacion, Fecha, Etapa, ID_Servicio]
     );
 
 const cancelar = (id) =>

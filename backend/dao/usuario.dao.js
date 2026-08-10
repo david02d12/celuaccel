@@ -58,6 +58,11 @@ const updateMiPerfil = ({ Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo,
 const findByEmail = (email) =>
     query('SELECT * FROM Usuario WHERE TRIM(Correo) = ?', [email]);
 
+const countAdmins = async () => {
+    const res = await query('SELECT COUNT(*) as count FROM Usuario WHERE Codigo_Rol = 3');
+    return res[0].count;
+};
+
 const updatePassword = (id, hashedClave) =>
     query('UPDATE Usuario SET Contraseña = ? WHERE ID_Usuario = ?', [hashedClave, id]);
 
@@ -90,5 +95,5 @@ const remove = async (id) => {
 };
 
 
-module.exports = { getAll, findById, findByUsername, getRol, create, update, updateMiPerfil, findByEmail, updatePassword, remove };
+module.exports = { getAll, findById, findByUsername, getRol, create, update, updateMiPerfil, findByEmail, updatePassword, remove, countAdmins };
 

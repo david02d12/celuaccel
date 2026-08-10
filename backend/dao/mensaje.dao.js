@@ -29,7 +29,11 @@ const remove = (id) =>
 
 const getByChat = (codigoChat) =>
     query(
-        'SELECT * FROM Mensajes WHERE Codigo_Chat = ? ORDER BY Codigo_Mensaje ASC',
+        `SELECT m.*, u.Nombre AS Nombre_Usuario
+         FROM Mensajes m
+         LEFT JOIN Usuario u ON m.ID_Usuario = u.ID_Usuario
+         WHERE m.Codigo_Chat = ?
+         ORDER BY m.Codigo_Mensaje ASC`,
         [codigoChat]
     );
 

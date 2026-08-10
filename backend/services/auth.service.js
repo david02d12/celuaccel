@@ -39,15 +39,20 @@ const listar = () => usuarioDao.getAll();
 const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Clave, Codigo_Rol, ID_Usuario }, userId) => {
     if (!ID_Usuario) throw new AppError('El campo ID_Usuario es obligatorio para actualizar.', 400);
 
-    // RN-006: Un administrador no puede cambiar su propio rol
-    if (Codigo_Rol !== undefined && String(ID_Usuario).trim() === String(userId).trim()) {
-        const rolRes = await usuarioDao.getRol(userId);
-        const rolActual = rolRes[0]?.Codigo_Rol;
-        if (Number(Codigo_Rol) !== Number(rolActual)) {
-            throw new AppError(
-                'No puedes modificar tu propio rol. Solicita a otro administrador que realice este cambio (RN-006).',
-                403
-            );
+    if (Codigo_Rol !== undefined) {
+        const rolRes = await usuarioDao.getRol(ID_Usuario);
+        if (rolRes.length > 0) {
+            const rolActual = Number(rolRes[0].Codigo_Rol);
+            // Si el usuario actual es administrador y se le está quitando el rol
+            if (rolActual === 3 && Number(Codigo_Rol) !== 3) {
+                const adminsCount = await usuarioDao.countAdmins();
+                if (adminsCount < 2) {
+                    throw new AppError(
+                        'No puedes quitar el rol de administrador porque debe haber al menos un administrador en el sistema.',
+                        403
+                    );
+                }
+            }
         }
     }
 
@@ -59,6 +64,13 @@ const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccio
 
 const eliminar = async (id) => {
     if (!id) throw new AppError('El ID del usuario es obligatorio.', 400);
+    const rolRes = await usuarioDao.getRol(id);
+    if (rolRes.length > 0 && Number(rolRes[0].Codigo_Rol) === 3) {
+        const adminsCount = await usuarioDao.countAdmins();
+        if (adminsCount < 2) {
+            throw new AppError('No puedes eliminar a este usuario porque es el único administrador en el sistema.', 403);
+        }
+    }
     const result = await usuarioDao.remove(id);
     if (result.affectedRows === 0) throw new AppError('Usuario no encontrado.', 404);
 };

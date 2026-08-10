@@ -4,6 +4,7 @@ import Sidebar from '../Sidebar';
 import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
+import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -75,6 +76,9 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
   const [puedeComentarCliente, setPuedeComentarCliente] = useState(null); // null = cargando
+  const [toast, setToast] = useState({ visible: false, msg: '', type: 'success' });
+  const { minDate, maxDate } = getLimitesGeneralesFecha();
+  
   const [form, setForm] = useState({
     Codigo_Comentario: '',
     ID_Usuario: miUsuario,
@@ -281,6 +285,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                     className="form-control mb-3" 
                     type="date" 
                     title="Fecha Comentario"
+                    min={minDate} max={maxDate}
                     value={form.Fecha_Comentario} 
                     onChange={e => setForm({...form, Fecha_Comentario: e.target.value})} 
                     style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}

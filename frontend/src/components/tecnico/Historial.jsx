@@ -4,6 +4,7 @@ import Sidebar from '../Sidebar';
 import api from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -23,6 +24,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
+  const { minDate, maxDate } = getLimitesGeneralesFecha();
   const [enEdicion, setEnEdicion] = useState(false);
   const [form, setForm] = useState({
     ID_Historial: '', ID_Servicio: '', Fecha_Evento: '', Descripcion_Evento: '', Estado: '1'
@@ -67,31 +69,50 @@ const Historial = ({ cerrarSesion, setVista }) => {
   };
 
   const exportarPDF = () => {
+    if (filtrados.length === 0) return mostrarToast('No hay eventos para exportar.', 'danger');
     const doc = new jsPDF();
+    const usuario = localStorage.getItem('user') || 'Usuario';
+    const userRole = localStorage.getItem('role') || 'N/A';
+
     doc.setFillColor(219, 0, 0);
-    doc.rect(0, 0, 210, 28, 'F');
+    doc.rect(0, 0, 210, 30, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
-    doc.text('CELUACCEL — Historial de Eventos', 14, 12);
+    doc.text('CELUACCEL', 14, 15);
+    
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')}`, 14, 22);
+    doc.text('Reporte de Auditoría y Trazabilidad', 14, 23);
+    
+    doc.setFontSize(9);
+    doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 195, 15, { align: 'right' });
+    doc.text(`Generado por: ${usuario} (Rol: ${userRole})`, 195, 22, { align: 'right' });
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Resumen de la vista actual:`, 14, 42);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Total de eventos registrados en este reporte: ${filtrados.length}`, 14, 48);
+
     autoTable(doc, {
-      startY: 35,
-      head: [['ID', 'Servicio', 'Fecha', 'Descripcion', 'Estado']],
-      body: datos.map(d => [
+      startY: 55,
+      head: [['ID Auditoría', 'ID Servicio', 'Fecha del Evento', 'Descripción de la Acción', 'Estado']],
+      body: filtrados.map(d => [
         d.ID_Historial, d.ID_Servicio,
-        d.Fecha_Evento ? String(d.Fecha_Evento).split('T')[0] : '',
+        d.Fecha_Evento ? String(d.Fecha_Evento).replace('T', ' ').substring(0, 19) : '',
         d.Descripcion_Evento,
-        d.Estado === '1' || d.Estado === 1 ? 'Activo' : 'Inactivo'
+        d.Estado === '1' || d.Estado === 1 ? 'Activo' : 'Anulado'
       ]),
       headStyles: { fillColor: [219, 0, 0], textColor: [255, 255, 255], fontStyle: 'bold' },
       alternateRowStyles: { fillColor: [248, 249, 250] },
-      styles: { fontSize: 9, cellPadding: 3 }
+      styles: { fontSize: 8, cellPadding: 4, overflow: 'linebreak' },
+      columnStyles: { 3: { cellWidth: 70 } } // Ensanchar columna descripción
     });
-    doc.save(`historial_celuaccel_${new Date().toISOString().split('T')[0]}.pdf`);
-    mostrarToast('PDF exportado correctamente.');
+
+    doc.save(`auditoria_celuaccel_${new Date().toISOString().split('T')[0]}.pdf`);
+    mostrarToast('PDF exportado correctamente.', 'success');
   };
 
   const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
@@ -100,6 +121,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
     const matchBusqueda =
       String(d.ID_Historial).includes(busqueda) ||
       String(d.ID_Servicio).includes(busqueda) ||
+      String(d.Fecha_Evento || '').includes(busqueda) ||
       String(d.Descripcion_Evento || '').toLowerCase().includes(busqueda.toLowerCase());
     const matchEstado = filtroEstado === 'todos'
       ? true
@@ -155,6 +177,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
                 placeholder="ID del Servicio asociado" onChange={e => setForm({...form, ID_Servicio: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha del evento</label>
               <input className="form-control mb-2" style={inputStyle} type="date" value={form.Fecha_Evento}
+                min={minDate} max={maxDate}
                 onChange={e => setForm({...form, Fecha_Evento: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} value={form.Descripcion_Evento}
                 placeholder="Descripcion del evento tecnico" onChange={e => setForm({...form, Descripcion_Evento: e.target.value})} />
@@ -176,7 +199,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
             {/* Buscador + filtros */}
             <div className="d-flex gap-2 mb-3 flex-wrap">
               <input type="text" className="form-control flex-grow-1" style={inputStyle}
-                placeholder="Buscar por ID, servicio o descripcion..."
+                placeholder="Buscar por ID, servicio, descripción o fecha..."
                 value={busqueda} onChange={e => setBusqueda(e.target.value)} />
               <select className="form-select" style={{ ...inputStyle, width: 'auto' }}
                 value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}>

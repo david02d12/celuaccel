@@ -120,7 +120,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
                 <input 
                   type="text" 
                   className="form-control"
-                  placeholder="Buscar por código, usuario o servicio..."
+                  placeholder="Buscar por código, usuario, servicio o estado..."
                   value={busqueda} 
                   onChange={e => setBusqueda(e.target.value)}
                   style={inputStyle}
@@ -140,7 +140,8 @@ const Chats = ({ cerrarSesion, setVista }) => {
                     {chats.filter(c =>
                       String(c.Codigo_Chat).includes(busqueda) ||
                       String(c.ID_Usuario || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-                      String(c.ID_Servicio ?? '').includes(busqueda)
+                      String(c.ID_Servicio ?? '').includes(busqueda) ||
+                      String(c.Estado_Chat || '').toLowerCase().includes(busqueda.toLowerCase())
                     ).map(c => (
                       <tr key={c.Codigo_Chat} className="stagger-item">
                         <td>{c.Codigo_Chat}</td>

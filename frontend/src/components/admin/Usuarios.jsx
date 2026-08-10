@@ -4,13 +4,14 @@ import Sidebar from '../Sidebar';
 import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
+import { calcFechaLimites } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const ROL_INFO = {
-  1: { label: 'Tecnico',       color: '#0d6efd' },
-  2: { label: 'Cliente',       color: '#6c757d' },
-  3: { label: 'Administrador', color: '#DB0000' },
+  1: { color: '#0d6efd' },
+  2: { color: '#6c757d' },
+  3: { color: '#DB0000' },
 };
 
 const getIniciales = (nombre = '') => {
@@ -22,7 +23,9 @@ const getIniciales = (nombre = '') => {
 const Usuarios = ({ cerrarSesion, setVista }) => {
   const miUsuario = localStorage.getItem('user');
   const [usuarios, setUsuarios] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [busqueda, setBusqueda] = useState('');
+  const { minDate, maxDate } = calcFechaLimites();
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
   const [enEdicion, setEnEdicion] = useState(false);
   const [form, setForm] = useState({
@@ -35,13 +38,20 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
     setTimeout(() => setToast({ visible: false, msg: '', ok: true }), 3500);
   };
 
-  useEffect(() => { listar(); }, []);
+  useEffect(() => { listar(); listarRoles(); }, []);
 
   const listar = async () => {
     try {
       const res = await api.get('/usuarios/listar');
       setUsuarios(res.data);
     } catch { console.error('Error al listar usuarios'); }
+  };
+
+  const listarRoles = async () => {
+    try {
+      const res = await api.get('/roles/listar');
+      setRoles(res.data);
+    } catch { console.error('Error al listar roles'); }
   };
 
   const guardar = async () => {
@@ -78,6 +88,8 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
     String(u.ID_Usuario).toLowerCase().includes(busqueda.toLowerCase()) ||
     String(u.Nombre || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     String(u.Correo || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(u.Telefono || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(u.Direccion || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     (ROL_INFO[u.Codigo_Rol]?.label || '').toLowerCase().includes(busqueda.toLowerCase())
   );
 
@@ -128,6 +140,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
                 value={form.Nombre} onChange={e => setForm({...form, Nombre: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha de Nacimiento</label>
               <input className="form-control mb-2" style={inputStyle} type="date"
+                min={minDate} max={maxDate}
                 value={form.Fecha_Nacimiento} onChange={e => setForm({...form, Fecha_Nacimiento: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} placeholder="Direccion"
                 value={form.Direccion} onChange={e => setForm({...form, Direccion: e.target.value})} />
@@ -142,9 +155,9 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
               <select className="form-select mb-3" style={inputStyle} value={form.Codigo_Rol}
                 disabled={enEdicion && String(form.ID_Usuario) === String(miUsuario)}
                 onChange={e => setForm({...form, Codigo_Rol: Number(e.target.value)})}>
-                <option value={1}>Tecnico</option>
-                <option value={2}>Cliente</option>
-                <option value={3}>Administrador</option>
+                {roles.map(r => (
+                  <option key={r.Codigo_Rol} value={r.Codigo_Rol}>{r.Nombre_Rol}</option>
+                ))}
               </select>
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar Datos' : 'Registrar'}
@@ -157,13 +170,16 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="mb-3">
               <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por ID, nombre, correo o rol..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+                placeholder="Buscar por ID, nombre, correo, teléfono, dirección o rol..."
+                value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
 
             <div className="d-flex flex-column gap-2">
               {datosPagina.map(u => {
-                const info = ROL_INFO[u.Codigo_Rol] || { label: `Rol ${u.Codigo_Rol}`, color: '#6c757d' };
+                const rolDB = roles.find(r => r.Codigo_Rol === u.Codigo_Rol);
+                const rolNombre = rolDB ? rolDB.Nombre_Rol : `Rol ${u.Codigo_Rol}`;
+                const info = ROL_INFO[u.Codigo_Rol] || { color: '#6c757d' };
+                info.label = rolNombre;
                 const iniciales = getIniciales(u.Nombre || u.ID_Usuario);
                 return (
                   <div key={u.ID_Usuario} className="card border-0 shadow-sm fade-in"

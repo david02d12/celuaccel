@@ -82,7 +82,9 @@ const Productos = ({ cerrarSesion, setVista }) => {
   const filtrados = productos.filter(p =>
     String(p.Codigo_Producto).toLowerCase().includes(busqueda.toLowerCase()) ||
     String(p.Nombre || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-    String(p.Descripcion || '').toLowerCase().includes(busqueda.toLowerCase())
+    String(p.Descripcion || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(p.Precio || '').includes(busqueda) ||
+    String(p.Codigo_Categoria || '').includes(busqueda)
   );
 
   const totalActivos = productos.filter(p => p.Activo_Catalogo === 1 || p.Activo_Catalogo === '1').length;
@@ -163,10 +165,10 @@ const Productos = ({ cerrarSesion, setVista }) => {
 
           {/* CARDS DE PRODUCTOS */}
           <div className="col-lg-8 col-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por codigo, nombre o descripcion..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+            <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
+              <input type="text" className="form-control"
+                placeholder=" Buscar por código, nombre, descripción, precio o categoría..."
+                value={busqueda} onChange={e => { setBusqueda(e.target.value); }} style={inputStyle} />
             </div>
 
             {filtrados.length === 0 ? (

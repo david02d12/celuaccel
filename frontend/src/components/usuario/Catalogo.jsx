@@ -73,7 +73,8 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
       setVista('chatVista');
     } catch (err) {
       console.error(err);
-      alert('Error al enviar la pregunta. Intenta de nuevo.');
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al enviar la pregunta. Intenta de nuevo.';
+      alert(errorMsg);
     } finally {
       setEnviandoPregunta(false);
     }

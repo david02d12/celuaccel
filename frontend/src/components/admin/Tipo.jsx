@@ -107,9 +107,9 @@ const Tipo = ({ cerrarSesion, setVista }) => {
           {/* CARDS */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
-              <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por codigo o nombre..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+                <input type="text" className="form-control" style={inputStyle}
+                  placeholder="Buscar por código o nombre..."
+                  value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
 
             <div className="d-flex flex-column gap-2">

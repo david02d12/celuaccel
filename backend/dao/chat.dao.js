@@ -8,7 +8,15 @@ const CHAT_SELECT = `
         c.ID_Servicio,
         u.Nombre            AS Nombre_Usuario,
         m.Mensaje           AS Ultimo_Mensaje,
-        m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje
+        m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje,
+        (
+            SELECT u2.Nombre
+            FROM Mensajes m2
+            JOIN Usuario u2 ON m2.ID_Usuario = u2.ID_Usuario
+            WHERE m2.Codigo_Chat = c.Codigo_Chat AND u2.Codigo_Rol IN (1, 3)
+            ORDER BY m2.Codigo_Mensaje ASC
+            LIMIT 1
+        ) AS Nombre_Tecnico
     FROM Chat c
     LEFT JOIN Usuario u  ON TRIM(u.ID_Usuario) = TRIM(c.ID_Usuario)
     LEFT JOIN Mensajes m ON m.Codigo_Mensaje = (

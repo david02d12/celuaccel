@@ -127,9 +127,9 @@ const Roles = ({ cerrarSesion, setVista }) => {
           {/* CARDS DE ROLES */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
-              <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por codigo o descripcion..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+                <input type="text" className="form-control" style={inputStyle}
+                  placeholder="Buscar por código o descripción..."
+                  value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
 
             <div className="d-flex flex-column gap-2">

@@ -7,7 +7,7 @@ const getAll = () =>
     query(`
         SELECT *
         FROM   Notificaciones
-        ORDER  BY Fecha_Notificacion DESC
+        ORDER  BY Fecha DESC
     `);
 
 /** Notificaciones para un usuario específico, opcionalmente solo las no leídas */
@@ -15,10 +15,10 @@ const getByUsuario = (idUsuario, soloNoLeidas = false) => {
     const sql = soloNoLeidas
         ? `SELECT * FROM Notificaciones
            WHERE ID_Usuario_Destino = ? AND Leida = 0
-           ORDER BY Fecha_Notificacion DESC`
+           ORDER BY Fecha DESC`
         : `SELECT * FROM Notificaciones
            WHERE ID_Usuario_Destino = ?
-           ORDER BY Fecha_Notificacion DESC`;
+           ORDER BY Fecha DESC`;
     return query(sql, [idUsuario]);
 };
 
@@ -34,7 +34,7 @@ const contarNoLeidas = (idUsuario) =>
 /** Busca una notificación por ID devolviendo todos los campos */
 const findById = (id) =>
     query(
-        'SELECT * FROM Notificaciones WHERE Codigo_Notificaciones = ?',
+        'SELECT * FROM Notificaciones WHERE ID_Notificacion = ?',
         [id]
     );
 
@@ -48,37 +48,37 @@ const findById = (id) =>
  * @param {number|null} data.ID_Servicio         - Servicio relacionado (opcional).
  * @param {string}      data.Tipo_Notificacion   - Texto del mensaje.
  */
-const crearDirigida = ({ ID_Usuario_Destino, ID_Usuario_Origen = null, ID_Servicio = null, Tipo_Notificacion }) =>
+const crearDirigida = ({ ID_Usuario_Destino, ID_Usuario_Origen = null, ID_Servicio = null, Mensaje }) =>
     query(
         `INSERT INTO Notificaciones
-            (ID_Usuario_Destino, ID_Usuario_Origen, ID_Servicio, Tipo_Notificacion, Leida)
+            (ID_Usuario_Destino, ID_Usuario_Origen, ID_Servicio, Mensaje, Leida)
          VALUES (?, ?, ?, ?, 0)`,
-        [ID_Usuario_Destino, ID_Usuario_Origen, ID_Servicio, Tipo_Notificacion]
+        [ID_Usuario_Destino, ID_Usuario_Origen, ID_Servicio, Mensaje]
     );
 
 /**
  * Crea una notificación de plantilla/global (sin destinatario específico).
  * Usada para las notificaciones de catálogo del CRUD de administración.
  */
-const create = ({ Tipo_Notificacion }) =>
+const create = ({ Mensaje }) =>
     query(
-        `INSERT INTO Notificaciones (Tipo_Notificacion) VALUES (?)`,
-        [Tipo_Notificacion]
+        `INSERT INTO Notificaciones (Mensaje) VALUES (?)`,
+        [Mensaje]
     );
 
 /** Actualiza el texto de una notificación */
-const update = ({ Tipo_Notificacion, Codigo_Notificaciones }) =>
+const update = ({ Mensaje, ID_Notificacion }) =>
     query(
         `UPDATE Notificaciones
-         SET    Tipo_Notificacion = ?
-         WHERE  Codigo_Notificaciones = ?`,
-        [Tipo_Notificacion, Codigo_Notificaciones]
+         SET    Mensaje = ?
+         WHERE  ID_Notificacion = ?`,
+        [Mensaje, ID_Notificacion]
     );
 
 /** Marca una notificación como leída */
 const marcarLeida = (id) =>
     query(
-        `UPDATE Notificaciones SET Leida = 1 WHERE Codigo_Notificaciones = ?`,
+        `UPDATE Notificaciones SET Leida = 1 WHERE ID_Notificacion = ?`,
         [id]
     );
 
@@ -90,7 +90,7 @@ const marcarTodasLeidas = (idUsuario) =>
     );
 
 const remove = (id) =>
-    query('DELETE FROM Notificaciones WHERE Codigo_Notificaciones = ?', [id]);
+    query('DELETE FROM Notificaciones WHERE ID_Notificacion = ?', [id]);
 
 module.exports = {
     getAll,

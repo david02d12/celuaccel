@@ -57,6 +57,15 @@ export const calcFechaLimites = () => {
   return { minDate, maxDate };
 };
 
+export const getLimitesGeneralesFecha = () => {
+  const hoy = new Date();
+  const maxDate = new Date(hoy.getFullYear() + 80, hoy.getMonth(), hoy.getDate())
+    .toISOString().split('T')[0];
+  const minDate = new Date(hoy.getFullYear() - 80, hoy.getMonth(), hoy.getDate())
+    .toISOString().split('T')[0];
+  return { minDate, maxDate };
+};
+
 // ── Indicador de fuerza de contraseña ────────────────────────────────────────
 export const fuerzaClave = (clave) => {
   if (!clave) return { nivel: 0, texto: '', color: '' };
