@@ -8,8 +8,8 @@ router.post  ('/notificaciones/agregar',           validarToken, validarRol(1, 3
 router.put   ('/notificaciones/actualizar',        validarToken, validarRol(1, 3), notificacionController.actualizar);
 router.delete('/notificaciones/eliminar/:id',      validarToken, validarRol(1, 3), notificacionController.eliminar);
 
-// ─── Envío de notificaciones dirigidas (técnico/admin) ───────────────────────
-router.post  ('/notificaciones/enviar',            validarToken, validarRol(1, 3), notificacionController.enviar);
+/** RF-040: Envía una notificación dirigida a un usuario (técnico/admin) */
+router.post  ('/notificaciones/dirigida',          validarToken, validarRol(1, 3), notificacionController.enviar);
 
 // ─── Notificaciones del usuario autenticado ──────────────────────────────────
 // ?noLeidas=true → solo devuelve las no leídas

@@ -129,7 +129,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
         await api.put('/notificaciones/actualizar', { Codigo_Notificaciones: form.Codigo_Notificaciones, Tipo_Notificacion: form.Mensaje });
         mostrarToast('Notificación actualizada.');
       } else {
-        await api.post('/notificaciones/enviar', { ID_Usuario_Destino: form.ID_Usuario_Destino, ID_Servicio: form.ID_Servicio || null, Mensaje: form.Mensaje });
+        await api.post('/notificaciones/dirigida', { ID_Usuario_Destino: form.ID_Usuario_Destino, ID_Servicio: form.ID_Servicio || null, Mensaje: form.Mensaje });
         mostrarToast('Notificación enviada.');
       }
       listar(); limpiar();

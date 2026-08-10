@@ -18,11 +18,11 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
-  const [form, setForm] = useState({ Codigo_Documento: '', Nombre_Documento: '' });
+  const [form, setForm] = useState({ Codigo_Documento: '', Tipo_Documento: '' });
 
   const tiposFiltrados = datos.filter(d =>
     String(d.Codigo_Documento).includes(busqueda) ||
-    String(d.Nombre_Documento || '').toLowerCase().includes(busqueda.toLowerCase())
+    String(d.Tipo_Documento || '').toLowerCase().includes(busqueda.toLowerCase())
   );
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(tiposFiltrados, 8);
 
@@ -59,7 +59,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
     }
   };
 
-  const limpiar = () => { setForm({ Codigo_Documento: '', Nombre_Documento: '' }); setEnEdicion(false); };
+  const limpiar = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); };
 
   const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
 
@@ -95,8 +95,8 @@ const Tipo = ({ cerrarSesion, setVista }) => {
                 value={form.Codigo_Documento} placeholder="Codigo del Documento"
                 onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
               <input className="form-control mb-3" style={inputStyle}
-                value={form.Nombre_Documento} placeholder="Nombre del Documento"
-                onChange={e => setForm({...form, Nombre_Documento: e.target.value})} />
+                value={form.Tipo_Documento} placeholder="Tipo de Documento"
+                onChange={e => setForm({...form, Tipo_Documento: e.target.value})} />
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar' : 'Guardar Tipo'}
               </button>
@@ -123,7 +123,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
                     </div>
                     <div className="flex-grow-1">
                       <div className="d-flex align-items-center gap-2">
-                        <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Nombre_Documento}</span>
+                        <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Tipo_Documento}</span>
                         <span className="badge bg-primary" style={{ fontSize: '0.7rem' }}>#{d.Codigo_Documento}</span>
                       </div>
                     </div>

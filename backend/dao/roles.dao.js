@@ -1,15 +1,23 @@
-﻿const { queryPromise: query } = require('../config/db');
+const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
     query('SELECT * FROM Roles');
 
-const create = (Codigo_Rol, Descripcion_Rol) =>
-    query('INSERT INTO Roles (Codigo_Rol, Descripcion_Rol) VALUES (?, ?)', [Codigo_Rol, Descripcion_Rol]);
+const findById = (id) =>
+    query('SELECT 1 FROM Roles WHERE Codigo_Rol = ? LIMIT 1', [id]);
 
-const update = (Codigo_Rol, Descripcion_Rol) =>
-    query('UPDATE Roles SET Descripcion_Rol=? WHERE Codigo_Rol=?', [Descripcion_Rol, Codigo_Rol]);
+/** Verifica si el rol está asignado a algún usuario */
+const isEnUso = (id) =>
+    query('SELECT 1 FROM Usuario WHERE Codigo_Rol = ? LIMIT 1', [id]);
+
+const create = (Codigo_Rol, Nombre_Rol) =>
+    query('INSERT INTO Roles (Codigo_Rol, Nombre_Rol) VALUES (?, ?)', [Codigo_Rol, Nombre_Rol]);
+
+const update = (Codigo_Rol, Nombre_Rol) =>
+    query('UPDATE Roles SET Nombre_Rol=? WHERE Codigo_Rol=?', [Nombre_Rol, Codigo_Rol]);
 
 const remove = (id) =>
     query('DELETE FROM Roles WHERE Codigo_Rol = ?', [id]);
 
-module.exports = { getAll, create, update, remove };
+module.exports = { getAll, findById, isEnUso, create, update, remove };
+

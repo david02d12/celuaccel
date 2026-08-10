@@ -326,8 +326,8 @@ interface ApiService {
     @GET("notificaciones/listar")
     fun getNotificaciones(@Header("Authorization") token: String): Call<List<Notificacion>>
 
-    /** Enviar notificación a usuario (Admin/Técnico) */
-    @POST("notificaciones/enviar")
+    /** RF-040: Enviar notificación dirigida a usuario (Admin/Técnico) */
+    @POST("notificaciones/dirigida")
     fun enviarNotificacion(
         @Header("Authorization") token: String,
         @Body notificacion: Notificacion

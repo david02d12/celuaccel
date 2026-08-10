@@ -1,21 +1,26 @@
-﻿const { queryPromise: query } = require('../config/db');
+const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
     query('SELECT * FROM Tipo_Documento');
 
-const create = (Codigo_Documento, Nombre_Documento) =>
+/** Verifica si el tipo de documento está asignado a algún usuario */
+const isEnUso = (id) =>
+    query('SELECT 1 FROM Usuario WHERE Codigo_Documento = ? LIMIT 1', [id]);
+
+const create = (Codigo_Documento, Tipo_Documento) =>
     query(
-        'INSERT INTO Tipo_Documento (Codigo_Documento, Nombre_Documento) VALUES (?, ?)',
-        [Codigo_Documento, Nombre_Documento]
+        'INSERT INTO Tipo_Documento (Codigo_Documento, Tipo_Documento) VALUES (?, ?)',
+        [Codigo_Documento, Tipo_Documento]
     );
 
-const update = (Codigo_Documento, Nombre_Documento) =>
+const update = (Codigo_Documento, Tipo_Documento) =>
     query(
-        'UPDATE Tipo_Documento SET Nombre_Documento=? WHERE Codigo_Documento=?',
-        [Nombre_Documento, Codigo_Documento]
+        'UPDATE Tipo_Documento SET Tipo_Documento=? WHERE Codigo_Documento=?',
+        [Tipo_Documento, Codigo_Documento]
     );
 
 const remove = (id) =>
     query('DELETE FROM Tipo_Documento WHERE Codigo_Documento = ?', [id]);
 
-module.exports = { getAll, create, update, remove };
+module.exports = { getAll, isEnUso, create, update, remove };
+

@@ -22,26 +22,6 @@ exports.listarMios = async (req, res) => {
     } catch (err) { handleError(res, err); }
 };
 
-/** RF-014: Técnico ve los servicios que le han asignado */
-exports.listarMisTecnico = async (req, res) => {
-    try {
-        const data = await servicioService.listarMisTecnico(req.userId);
-        res.status(200).json(data);
-    } catch (err) { handleError(res, err); }
-};
-
-/** RF-014: Admin asigna un técnico a una orden */
-exports.asignarTecnico = async (req, res) => {
-    try {
-        const result = await servicioService.asignarTecnico(
-            req.params.id,
-            req.body.ID_Tecnico,
-            req.userId
-        );
-        res.status(200).json(result);
-    } catch (err) { handleError(res, err); }
-};
-
 exports.agregar = async (req, res) => {
     try {
         const result = await servicioService.agregar(req.body, req.userId);

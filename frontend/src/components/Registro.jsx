@@ -82,11 +82,11 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
   useEffect(() => {
     setTiposDoc([
-      { Codigo_Documento: 1, Nombre_Documento: 'Cédula' },
-      { Codigo_Documento: 2, Nombre_Documento: 'Tarjeta de Identidad' },
-      { Codigo_Documento: 3, Nombre_Documento: 'Cédula de Extranjería' },
-      { Codigo_Documento: 4, Nombre_Documento: 'Pasaporte' },
-      { Codigo_Documento: 5, Nombre_Documento: 'PEP' },
+      { Codigo_Documento: 1, Tipo_Documento: 'Cédula de Ciudadanía' },
+      { Codigo_Documento: 2, Tipo_Documento: 'Tarjeta de Identidad' },
+      { Codigo_Documento: 3, Tipo_Documento: 'Cédula de Extranjería' },
+      { Codigo_Documento: 4, Tipo_Documento: 'Pasaporte' },
+      { Codigo_Documento: 5, Tipo_Documento: 'PEP' },
     ]);
   }, []);
 
@@ -241,7 +241,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
             onChange={e => actualizar('Codigo_Documento', e.target.value)}>
             <option value="">Seleccione un tipo...</option>
             {tiposDoc.map(t => (
-              <option key={t.Codigo_Documento} value={t.Codigo_Documento}>{t.Nombre_Documento}</option>
+              <option key={t.Codigo_Documento} value={t.Codigo_Documento}>{t.Tipo_Documento}</option>
             ))}
           </select>
         </div>

@@ -69,7 +69,7 @@ const perfilPublico = async (id, userId) => {
     const rolRes = await usuarioDao.getRol(userId);
     if (rolRes.length === 0) throw new AppError('No autorizado.', 403);
     const rol = rolRes[0].Codigo_Rol;
-    if (userId !== id && rol !== 1 && rol !== 3) {
+    if (String(userId) !== String(id) && rol !== 1 && rol !== 3) {
         throw new AppError('No tienes permiso para ver este perfil.', 403);
     }
     const results = await usuarioDao.findById(id);

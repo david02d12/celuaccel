@@ -83,9 +83,12 @@ const remove = async (id) => {
     await query('DELETE FROM Comentarios WHERE ID_Usuario = ?', [id]);
     // 6. Pregunta depende de Usuario
     await query('DELETE FROM Pregunta WHERE ID_Usuario = ?', [id]);
-    // 7. Finalmente eliminar el usuario
+    // 7. Notificaciones donde el usuario es destinatario u origen (RNF-009)
+    await query('DELETE FROM Notificaciones WHERE ID_Usuario_Destino = ? OR ID_Usuario_Origen = ?', [id, id]);
+    // 8. Finalmente eliminar el usuario
     return query('DELETE FROM Usuario WHERE ID_Usuario = ?', [id]);
 };
+
 
 module.exports = { getAll, findById, findByUsername, getRol, create, update, updateMiPerfil, findByEmail, updatePassword, remove };
 

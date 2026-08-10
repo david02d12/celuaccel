@@ -2,6 +2,7 @@ const AppError = require('../config/AppError');
 const comentarioDao = require('../dao/comentario.dao');
 const usuarioDao = require('../dao/usuario.dao');
 const servicioDao = require('../dao/servicio.dao');
+const { detectarMalasPalabras } = require('../config/profanity');
 
 const listar = () => comentarioDao.getAll();
 
@@ -26,6 +27,16 @@ const agregar = async ({ ID_Usuario, Comentario, Fecha_Comentario, Estrellas }, 
     if (!ID_Usuario || !Comentario) {
         throw new AppError('Los campos ID_Usuario y Comentario son obligatorios.', 400);
     }
+
+    // Filtro de malas palabras
+    const malasPalabras = detectarMalasPalabras(Comentario);
+    if (malasPalabras.length > 0) {
+        throw new AppError(
+            `Tu comentario contiene lenguaje inapropiado: ${malasPalabras.join(', ')}. Por favor, modifícalo.`,
+            400
+        );
+    }
+
     const rolRes = await usuarioDao.getRol(userId);
     const miRol = rolRes.length > 0 ? Number(rolRes[0].Codigo_Rol) : 2;
     if (String(ID_Usuario).trim() !== String(userId).trim() && miRol === 2) {
@@ -63,6 +74,18 @@ const _verificarPropiedad = async (codigoComentario, userId) => {
 
 const actualizar = async ({ Comentario, Fecha_Comentario, Estrellas, Codigo_Comentario }, userId) => {
     if (!Codigo_Comentario) throw new AppError('El campo Codigo_Comentario es obligatorio.', 400);
+
+    // Filtro de malas palabras
+    if (Comentario) {
+        const malasPalabras = detectarMalasPalabras(Comentario);
+        if (malasPalabras.length > 0) {
+            throw new AppError(
+                `Tu comentario contiene lenguaje inapropiado: ${malasPalabras.join(', ')}. Por favor, modifícalo.`,
+                400
+            );
+        }
+    }
+
     await _verificarPropiedad(Codigo_Comentario, userId);
     const fecha = Fecha_Comentario || new Date().toISOString().split('T')[0];
     const estrellas = (Estrellas >= 1 && Estrellas <= 5) ? Number(Estrellas) : 5;

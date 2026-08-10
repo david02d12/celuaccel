@@ -35,7 +35,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
     doc.setFont('helvetica', 'normal');
     doc.text(`Cliente: ${usuario}    Generado: ${new Date().toLocaleDateString('es-CO')}`, 14, 22);
 
-    const ETAPAS_MAP = { '0': 'Recibido', '25': 'En Diagnóstico', '50': 'En Reparación', '75': 'Control de Calidad', '100': 'Listo', '-1': 'Cancelado' };
+    const ETAPAS_MAP = { '0': 'Pendiente', '1': 'En proceso', '2': 'Terminado', '-1': 'Cancelado' };
 
     autoTable(doc, {
       startY: 35,
@@ -112,13 +112,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
 
   const etapaInfo = (etapa) => {
     const e = Number(etapa);
-    if (e === -1) return { texto: 'Cancelado',          color: '#6c757d', porcentaje: 0  };
-    if (e === 0)  return { texto: 'Recibido',            color: '#0d6efd', porcentaje: 10 };
-    if (e <= 25)  return { texto: 'En Diagnóstico',      color: '#0dcaf0', porcentaje: 25 };
-    if (e <= 50)  return { texto: 'En Reparación',       color: '#ffc107', porcentaje: 50 };
-    if (e <= 75)  return { texto: 'Control de Calidad',  color: '#fd7e14', porcentaje: 75 };
-    if (e === 100) return { texto: 'Listo para Retirar', color: '#198754', porcentaje: 100 };
-    return { texto: `En proceso (${e}%)`, color: '#6c757d', porcentaje: e };
+    if (e === -1) return { texto: 'Cancelado',    color: '#6c757d', porcentaje: 0   };
+    if (e === 0)  return { texto: 'Pendiente',     color: '#6c757d', porcentaje: 10  };
+    if (e === 1)  return { texto: 'En proceso',    color: '#0d6efd', porcentaje: 50  };
+    if (e === 2)  return { texto: 'Terminado',     color: '#198754', porcentaje: 100 };
+    return { texto: `Etapa ${e}`, color: '#6c757d', porcentaje: 0 };
   };
 
   return (
@@ -210,7 +208,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
           <div className="row g-4">
             {servicios.map(s => {
               const info = etapaInfo(s.Etapa);
-              const cancelable = Number(s.Etapa) !== 100 && Number(s.Etapa) !== -1;
+              const cancelable = Number(s.Etapa) !== 2 && Number(s.Etapa) !== -1;
               return (
                 <div key={s.ID_Servicio} className="col-md-6 stagger-item">
                   <div className="card border-0 shadow-sm h-100">

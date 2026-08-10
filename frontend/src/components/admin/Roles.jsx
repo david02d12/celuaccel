@@ -13,6 +13,10 @@ const COLORES_ROL = {
   3: { bg: '#DB0000', label: 'Administrador' },
 };
 
+// Roles reservados del sistema — no se pueden crear, editar ni eliminar
+const ROLES_SISTEMA = [1, 2, 3];
+const esRolSistema = (codigo) => ROLES_SISTEMA.includes(Number(codigo));
+
 const IconShield = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -24,11 +28,11 @@ const Roles = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
-  const [form, setForm] = useState({ Codigo_Rol: '', Descripcion_Rol: '' });
+  const [form, setForm] = useState({ Codigo_Rol: '', Nombre_Rol: '' });
 
   const rolesFiltrados = datos.filter(d =>
     String(d.Codigo_Rol).includes(busqueda) ||
-    String(d.Descripcion_Rol || '').toLowerCase().includes(busqueda.toLowerCase())
+    String(d.Nombre_Rol || '').toLowerCase().includes(busqueda.toLowerCase())
   );
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(rolesFiltrados, 8);
 
@@ -48,6 +52,11 @@ const Roles = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
+      // Validar que no sea un rol reservado del sistema
+      if (ROLES_SISTEMA.includes(Number(form.Codigo_Rol))) {
+        mostrarToast('No puedes crear ni modificar roles del sistema (Técnico, Cliente, Administrador).', false);
+        return;
+      }
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
       await api[metodo](`/roles/${url}`, form);
@@ -57,6 +66,11 @@ const Roles = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
+    // Validar que no sea un rol reservado del sistema
+    if (ROLES_SISTEMA.includes(Number(id))) {
+      mostrarToast('No puedes eliminar roles del sistema (Técnico, Cliente, Administrador).', false);
+      return;
+    }
     if (window.confirm('¿Eliminar este rol?')) {
       try {
         await api.delete(`/roles/eliminar/${id}`);
@@ -65,7 +79,7 @@ const Roles = ({ cerrarSesion, setVista }) => {
     }
   };
 
-  const limpiar = () => { setForm({ Codigo_Rol: '', Descripcion_Rol: '' }); setEnEdicion(false); };
+  const limpiar = () => { setForm({ Codigo_Rol: '', Nombre_Rol: '' }); setEnEdicion(false); };
 
   const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
 
@@ -100,9 +114,9 @@ const Roles = ({ cerrarSesion, setVista }) => {
               <input className="form-control mb-2" style={inputStyle} type="number" disabled={enEdicion}
                 value={form.Codigo_Rol} placeholder="Codigo del Rol"
                 onChange={e => setForm({...form, Codigo_Rol: e.target.value})} />
-              <input className="form-control mb-3" style={inputStyle} value={form.Descripcion_Rol}
-                placeholder="Descripcion del Rol"
-                onChange={e => setForm({...form, Descripcion_Rol: e.target.value})} />
+              <input className="form-control mb-3" style={inputStyle} value={form.Nombre_Rol}
+                placeholder="Nombre del Rol"
+                onChange={e => setForm({...form, Nombre_Rol: e.target.value})} />
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar' : 'Guardar Rol'}
               </button>
@@ -131,21 +145,34 @@ const Roles = ({ cerrarSesion, setVista }) => {
                       </div>
                       <div className="flex-grow-1">
                         <div className="d-flex align-items-center gap-2">
-                          <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Descripcion_Rol}</span>
+                          <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Nombre_Rol}</span>
                           <span className="badge" style={{ backgroundColor: info.bg, fontSize: '0.7rem' }}>
                             #{d.Codigo_Rol}
                           </span>
                         </div>
                       </div>
-                      <div className="d-flex gap-1">
-                        <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
-                          onClick={() => { setEnEdicion(true); setForm(d); }}>
-                          Editar
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
-                          onClick={() => eliminar(d.Codigo_Rol)}>
-                          Borrar
-                        </button>
+                      <div className="d-flex gap-1 align-items-center">
+                        {esRolSistema(d.Codigo_Rol) ? (
+                          // Rol del sistema: sin botones, solo indicador visual
+                          <span
+                            className="badge d-flex align-items-center gap-1 px-2 py-1"
+                            style={{ background: 'var(--color-border, #444)', color: 'var(--color-text-muted, #aaa)', fontSize: '0.72rem', fontWeight: 500, borderRadius: 6, cursor: 'default' }}
+                            title="Rol del sistema protegido. No se puede editar ni eliminar."
+                          >
+                            🔒 Protegido
+                          </span>
+                        ) : (
+                          <>
+                            <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
+                              onClick={() => { setEnEdicion(true); setForm(d); }}>
+                              Editar
+                            </button>
+                            <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+                              onClick={() => eliminar(d.Codigo_Rol)}>
+                              Borrar
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -314,7 +314,7 @@
           "Auth"
         ],
         "summary": "Actualizar mi perfil",
-        "description": "Permite al usuario autenticado actualizar sus propios datos de perfil.",
+        "description": "Permite al usuario autenticado actualizar sus propios datos de perfil. Los campos usan PascalCase como en la BD. Nombre y Correo son obligatorios. Si se envía Clave, debe tener mínimo 6 caracteres.",
         "security": [
           {
             "BearerAuth": []
@@ -324,20 +324,42 @@
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "Nombre",
+                "Correo"
+              ],
               "properties": {
-                "nombre": {
+                "Nombre": {
                   "type": "string",
-                  "example": "Juan Actualizado"
+                  "example": "Juan Pérez"
                 },
-                "telefono": {
+                "Correo": {
                   "type": "string",
-                  "example": "3009876543"
+                  "example": "juan@gmail.com"
                 },
-                "direccion": {
+                "Telefono": {
                   "type": "string",
-                  "example": "Calle 123 #45-67"
+                  "example": "3009876543",
+                  "description": "Celular colombiano (10 dígitos, inicia en 3) o fijo (7 dígitos). Opcional."
+                },
+                "Direccion": {
+                  "type": "string",
+                  "example": "Calle 45 #12-30",
+                  "description": "Mínimo 8 caracteres. Opcional."
+                },
+                "Fecha_Nacimiento": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "1995-06-15",
+                  "description": "Formato YYYY-MM-DD. El usuario debe tener entre 10 y 80 años. Opcional."
+                },
+                "Clave": {
+                  "type": "string",
+                  "example": "NuevaClave123!",
+                  "description": "Nueva contraseña. Mínimo 6 caracteres. Dejar vacío para no cambiarla."
                 }
               }
             }
@@ -347,11 +369,14 @@
           "200": {
             "description": "Perfil actualizado correctamente"
           },
+          "400": {
+            "description": "Nombre o Correo faltantes, o Clave menor a 6 caracteres"
+          },
           "401": {
             "description": "No autenticado"
           },
-          "403": {
-            "description": "Sin permisos"
+          "404": {
+            "description": "Usuario no encontrado"
           }
         }
       }
@@ -2018,6 +2043,44 @@
         }
       }
     },
+    "/comentarios/promedio": {
+      "get": {
+        "tags": [
+          "Comentarios"
+        ],
+        "summary": "Promedio de calificaciones (público)",
+        "description": "Devuelve el promedio de estrellas, total de reseñas y distribución por puntuación. No requiere autenticación.",
+        "responses": {
+          "200": {
+            "description": "Estadísticas de calificaciones",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "promedio": {
+                  "type": "number",
+                  "example": 4.3,
+                  "description": "Promedio de estrellas (null si no hay comentarios)"
+                },
+                "total": {
+                  "type": "integer",
+                  "example": 28
+                },
+                "distribucion": {
+                  "type": "object",
+                  "properties": {
+                    "cinco":  { "type": "integer", "example": 12 },
+                    "cuatro": { "type": "integer", "example": 8  },
+                    "tres":   { "type": "integer", "example": 5  },
+                    "dos":    { "type": "integer", "example": 2  },
+                    "uno":    { "type": "integer", "example": 1  }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/comentarios/listar": {
       "get": {
         "tags": [
@@ -2049,7 +2112,7 @@
           "Comentarios"
         ],
         "summary": "Agregar comentario",
-        "description": "Crea un nuevo comentario o valoración sobre un servicio.",
+        "description": "Publica un comentario con calificación de estrellas. El campo Comentario es filtrado por lenguaje inapropiado. Los clientes (rol 2) deben tener al menos un servicio activo para poder comentar. Un cliente no puede publicar en nombre de otro usuario.",
         "security": [
           {
             "BearerAuth": []
@@ -2063,22 +2126,30 @@
             "schema": {
               "type": "object",
               "required": [
-                "idServicio",
-                "comentario"
+                "ID_Usuario",
+                "Comentario"
               ],
               "properties": {
-                "idServicio": {
-                  "type": "integer",
-                  "example": 10
-                },
-                "comentario": {
+                "ID_Usuario": {
                   "type": "string",
-                  "example": "Excelente servicio, muy profesional"
+                  "example": "12345678",
+                  "description": "ID del usuario que publica el comentario"
                 },
-                "calificacion": {
+                "Comentario": {
+                  "type": "string",
+                  "example": "Excelente servicio, muy profesional",
+                  "description": "Texto del comentario. No puede contener lenguaje inapropiado."
+                },
+                "Estrellas": {
                   "type": "integer",
                   "example": 5,
-                  "description": "Calificación del 1 al 5"
+                  "description": "Calificación del 1 al 5. Si no se envía o está fuera de rango, se asigna 5."
+                },
+                "Fecha_Comentario": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "2026-08-07",
+                  "description": "Fecha del comentario (YYYY-MM-DD). Opcional, usa fecha actual si no se envía."
                 }
               }
             }
@@ -2086,13 +2157,16 @@
         ],
         "responses": {
           "201": {
-            "description": "Comentario agregado"
+            "description": "Comentario publicado correctamente"
+          },
+          "400": {
+            "description": "Campos obligatorios faltantes o Comentario contiene lenguaje inapropiado"
           },
           "401": {
             "description": "No autenticado"
           },
           "403": {
-            "description": "Sin permisos"
+            "description": "Sin permisos: el cliente no puede comentar en nombre de otro o no tiene servicios activos"
           }
         }
       }
@@ -2103,7 +2177,7 @@
           "Comentarios"
         ],
         "summary": "Actualizar comentario",
-        "description": "Modifica un comentario existente.",
+        "description": "Modifica un comentario existente. Solo el dueño del comentario, técnicos (rol 1) o administradores (rol 3) pueden modificarlo. El texto es filtrado por lenguaje inapropiado.",
         "security": [
           {
             "BearerAuth": []
@@ -2113,16 +2187,33 @@
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "Codigo_Comentario"
+              ],
               "properties": {
-                "id": {
+                "Codigo_Comentario": {
                   "type": "integer",
-                  "example": 2
+                  "example": 2,
+                  "description": "ID del comentario a actualizar (obligatorio)"
                 },
-                "comentario": {
+                "Comentario": {
                   "type": "string",
-                  "example": "Actualizo mi comentario: muy buen servicio"
+                  "example": "Actualizo mi comentario: muy buen servicio",
+                  "description": "Nuevo texto. No puede contener lenguaje inapropiado."
+                },
+                "Estrellas": {
+                  "type": "integer",
+                  "example": 4,
+                  "description": "Nueva calificación del 1 al 5"
+                },
+                "Fecha_Comentario": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "2026-08-07",
+                  "description": "Fecha del comentario (YYYY-MM-DD). Opcional."
                 }
               }
             }
@@ -2130,13 +2221,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Comentario actualizado"
+            "description": "Comentario actualizado correctamente"
+          },
+          "400": {
+            "description": "Codigo_Comentario faltante o Comentario contiene lenguaje inapropiado"
           },
           "401": {
             "description": "No autenticado"
           },
           "403": {
-            "description": "Sin permisos"
+            "description": "No puedes modificar comentarios de otros usuarios"
+          },
+          "404": {
+            "description": "Comentario no encontrado"
           }
         }
       }

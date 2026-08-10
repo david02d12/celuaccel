@@ -7,6 +7,66 @@ import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+// ─── Lista de palabras inapropiadas ───
+// Equivalente al diccionario es+en de @2toad/profanity (npm)
+// El backend usa la librería real; aquí se usa una lista curada para feedback inmediato
+const LISTA_PALABRAS = [
+  // ── Español general ──
+  'mierda', 'puta', 'puto', 'putas', 'putos',
+  'marica', 'maricon', 'maricón', 'maricones',
+  'hijueputa', 'hijodeputa', 'hijo de puta', 'hija de puta',
+  'idiota', 'idiotas', 'imbecil', 'imbécil', 'imbéciles',
+  'estupido', 'estúpido', 'estupida', 'estúpida', 'estupidos', 'estúpidos',
+  'pendejo', 'pendeja', 'pendejos', 'pendejas',
+  'cabron', 'cabrón', 'cabrona', 'cabrones', 'cabronas',
+  'verga', 'vergas', 'polla', 'pollas',
+  'coño', 'cono', 'conos', 'coños',
+  'culo', 'culos', 'culero', 'culera', 'culeros', 'culeras',
+  'gilipollas', 'gilipolla',
+  'zorra', 'zorras', 'perra', 'perras',
+  'bastardo', 'bastarda', 'bastardos', 'bastardas',
+  'maldito', 'maldita', 'malditos', 'malditas',
+  'malparido', 'malparida', 'malparidos',
+  'gonorrea', 'hp', 'hdp',
+  'joder', 'cojonudo', 'cojonuda',
+  'pelotudo', 'pelotuda', 'boludo', 'boluda', 'boludos', 'boluदas',
+  'conchuda', 'conchudo',
+  'mamada', 'mamadas', 'mamadas',
+  'chinga', 'chingada', 'chingado', 'chingados',
+  'pinche', 'pinches', 'guey', 'buey', 'wey', 'weys',
+  'putada', 'puñeta', 'hostia',
+  'huevon', 'huevona', 'huevones',
+  'desgraciado', 'desgraciada', 'desgraciados',
+  'animal', 'animales',
+  // ── Inglés (diccionario @2toad/profanity en) ──
+  'fuck', 'fucker', 'fucking', 'fucked', 'fucks',
+  'shit', 'shits', 'shitty',
+  'bitch', 'bitches',
+  'asshole', 'assholes',
+  'bastard', 'bastards',
+  'cunt', 'cunts',
+  'damn', 'damned',
+  'piss', 'pissed',
+  'crap', 'crappy',
+  'slut', 'sluts',
+  'whore', 'whores',
+  'dick', 'dicks',
+  'cock', 'cocks',
+  'ass', 'asses',
+  'nigga', 'niggas', 'nigger',
+  'retard', 'retards',
+  'faggot', 'fag', 'fags',
+];
+
+const detectarMalasPalabras = (texto) => {
+  if (!texto) return [];
+  const textoNorm = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return LISTA_PALABRAS.filter(p => {
+    const pNorm = p.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return new RegExp(`\\b${pNorm}\\b`, 'i').test(textoNorm);
+  });
+};
+
 const Comentarios = ({ cerrarSesion, setVista }) => {
   const miUsuario = localStorage.getItem('user') || '';
   const miRol = Number(localStorage.getItem('role')) || 2;
@@ -42,7 +102,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
     if (miRol === 2 && miUsuario) {
       api.get(`/servicios/mis-servicios/${miUsuario}`)
         .then(res => {
-          const habilitado = res.data.some(s => Number(s.Etapa) === 100 || Number(s.Etapa) === -1);
+          const habilitado = res.data.some(s => Number(s.Etapa) === 2 || Number(s.Etapa) === -1);
           setPuedeComentarCliente(habilitado);
         })
         .catch(() => setPuedeComentarCliente(false));
@@ -54,7 +114,19 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
-      if(!form.Comentario.trim()) return alert("El comentario no puede ir vacío.");
+      if (!form.Comentario.trim()) return alert("El comentario no puede ir vacío.");
+
+      // ── Validación de malas palabras en el cliente ──
+      const malasPalabras = detectarMalasPalabras(form.Comentario);
+      if (malasPalabras.length > 0) {
+        alert(
+          `⚠️ Tu comentario contiene lenguaje inapropiado:\n\n` +
+          `• ${malasPalabras.join('\n• ')}\n\n` +
+          `Por favor, modifica tu texto antes de publicar.`
+        );
+        return;
+      }
+
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
       const datosFinales = { ...form, Fecha_Comentario: form.Fecha_Comentario || new Date().toISOString().split('T')[0] };
@@ -62,8 +134,10 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
       
       listar();
       limpiar();
-    } catch {
-      alert("Error al procesar el comentario");
+    } catch (err) {
+      // Mostrar el mensaje de error del servidor si viene (incluye malas palabras detectadas en el backend)
+      const mensajeServidor = err?.response?.data?.error;
+      alert(mensajeServidor || "Error al procesar el comentario");
     }
   };
 

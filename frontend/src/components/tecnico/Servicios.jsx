@@ -6,16 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const ETAPAS = [
-  { valor: '0',   label: 'Recibido',           color: '#6c757d', pct: 0   },
-  { valor: '25',  label: 'En Diagnóstico',      color: '#0d6efd', pct: 25  },
-  { valor: '40',  label: 'En Diagnóstico',      color: '#0d6efd', pct: 40  },
-  { valor: '50',  label: 'En Reparación',       color: '#f59e0b', pct: 50  },
-  { valor: '60',  label: 'En Reparación',       color: '#f59e0b', pct: 60  },
-  { valor: '70',  label: 'Control de Calidad',  color: '#8b5cf6', pct: 70  },
-  { valor: '75',  label: 'Control de Calidad',  color: '#8b5cf6', pct: 75  },
-  { valor: '80',  label: 'Control de Calidad',  color: '#8b5cf6', pct: 80  },
-  { valor: '100', label: 'Listo para Retirar',  color: '#198754', pct: 100 },
-  { valor: '-1',  label: 'Cancelado',           color: '#DB0000', pct: 0   },
+  { valor: '0',  label: 'Pendiente',   color: '#6c757d', pct: 10  },
+  { valor: '1',  label: 'En proceso',  color: '#0d6efd', pct: 50  },
+  { valor: '2',  label: 'Terminado',   color: '#198754', pct: 100 },
+  { valor: '-1', label: 'Cancelado',   color: '#DB0000', pct: 0   },
 ];
 
 const etapaInfo = (val) => ETAPAS.find(e => e.valor === String(val)) || ETAPAS[0];
@@ -115,7 +109,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     if (!mensajeNotif.trim() || !modalNotif) return;
     setEnviandoNotif(true);
     try {
-      await api.post('/notificaciones/enviar', {
+      await api.post('/notificaciones/dirigida', {
         ID_Usuario_Destino: modalNotif.ID_Usuario,
         ID_Servicio: modalNotif.ID_Servicio,
         Mensaje: mensajeNotif.trim()

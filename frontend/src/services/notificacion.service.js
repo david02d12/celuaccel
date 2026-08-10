@@ -30,7 +30,7 @@ export const contarNoLeidas = async () => {
  * @param {{ ID_Usuario_Destino: string, ID_Servicio?: number, Mensaje: string }} payload
  */
 export const enviar = async (payload) => {
-    const { data } = await api.post('/notificaciones/enviar', payload);
+    const { data } = await api.post('/notificaciones/dirigida', payload);
     return data;
 };
 
