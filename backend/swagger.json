@@ -599,6 +599,24 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Descripcion": { "type": "string" },
+                "ID_Usuario": { "type": "string" },
+                "Precio": { "type": "number" },
+                "Precio_Repuestos": { "type": "number" },
+                "Precio_Mano_Obra": { "type": "number" },
+                "Movil_Nombre": { "type": "string" },
+                "Movil_Especificacion": { "type": "string" },
+                "Fecha": { "type": "string" },
+                "Etapa": { "type": "number" }
+              }
+            }
           }
         ],
         "responses": {
@@ -622,6 +640,25 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ID_Servicio": { "type": "integer" },
+                "Descripcion": { "type": "string" },
+                "ID_Usuario": { "type": "string" },
+                "Precio": { "type": "number" },
+                "Precio_Repuestos": { "type": "number" },
+                "Precio_Mano_Obra": { "type": "number" },
+                "Movil_Nombre": { "type": "string" },
+                "Movil_Especificacion": { "type": "string" },
+                "Fecha": { "type": "string" },
+                "Etapa": { "type": "number" }
+              }
+            }
           }
         ],
         "responses": {
