@@ -48,7 +48,7 @@ const MENSAJES_RAPIDOS = [
 ];
 
 const Servicios = ({ cerrarSesion, setVista }) => {
-  const userRole = Number(localStorage.getItem('role')) || 1;
+  const userRole = Number(sessionStorage.getItem('role')) || 1;
   const [servicios, setServicios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
@@ -335,7 +335,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                             ) : (
                               <button className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
                                 style={{ fontSize: '0.77rem' }}
-                                onClick={() => { localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
+                                onClick={() => { sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
                                 <IconChat /> Chat
                               </button>
                             )}

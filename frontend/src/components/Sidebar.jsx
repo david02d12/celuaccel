@@ -1,8 +1,8 @@
 import React from 'react';
 
 const Sidebar = ({ setVista }) => {
-  const role = Number(localStorage.getItem('role')) || 2;
-  const currentVista = localStorage.getItem('ultimaVista') || 'home';
+  const role = Number(sessionStorage.getItem('role')) || 2;
+  const currentVista = sessionStorage.getItem('ultimaVista') || 'home';
 
   const Btn = ({ label, vista }) => {
     const isActive = vista === currentVista;

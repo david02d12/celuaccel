@@ -69,8 +69,8 @@ const detectarMalasPalabras = (texto) => {
 };
 
 const Comentarios = ({ cerrarSesion, setVista }) => {
-  const miUsuario = localStorage.getItem('user') || '';
-  const miRol = Number(localStorage.getItem('role')) || 2;
+  const miUsuario = sessionStorage.getItem('user') || '';
+  const miRol = Number(sessionStorage.getItem('role')) || 2;
 
   const [comentarios, setComentarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');

@@ -20,7 +20,7 @@ const api = axios.create({
 // Interceptor de request: agrega el token JWT si existe
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) config.headers.Authorization = `Bearer ${token}`;
         return config;
     },
@@ -34,9 +34,9 @@ api.interceptors.response.use(
         if (error.response?.status === 401) {
             // Solo cerrar sesión si había un token guardado (usuario autenticado)
             // Evita el bucle infinito cuando rutas públicas devuelven 401
-            const teniaToken = !!localStorage.getItem('token');
+            const teniaToken = !!sessionStorage.getItem('token');
             if (teniaToken) {
-                localStorage.clear();
+                sessionStorage.clear();
                 // Despacha evento personalizado para que App.jsx maneje el logout
                 // sin hacer window.location.reload() (que causaba el bucle)
                 window.dispatchEvent(new CustomEvent('sessionExpired'));

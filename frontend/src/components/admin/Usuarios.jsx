@@ -21,7 +21,7 @@ const getIniciales = (nombre = '') => {
 };
 
 const Usuarios = ({ cerrarSesion, setVista }) => {
-  const miUsuario = localStorage.getItem('user');
+  const miUsuario = sessionStorage.getItem('user');
   const [usuarios, setUsuarios] = useState([]);
   const [roles, setRoles] = useState([]);
   const [busqueda, setBusqueda] = useState('');
@@ -55,6 +55,9 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
   };
 
   const guardar = async () => {
+    if (form.Clave && form.Clave.trim().length < 6) {
+      return mostrarToast('La contraseña debe tener al menos 6 caracteres.', false);
+    }
     try {
       const url = enEdicion ? 'usuarios/actualizar' : 'registro';
       const metodo = enEdicion ? 'put' : 'post';

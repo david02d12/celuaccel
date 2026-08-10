@@ -73,4 +73,4 @@ exports.changePassword = async (req, res) => {
         await authService.changePassword(req.userId, req.body.oldPassword, req.body.newPassword);
         res.status(200).json({ message: 'Contraseña cambiada correctamente.' });
     } catch (err) { handleError(res, err); }
-};
+};

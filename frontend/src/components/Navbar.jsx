@@ -3,9 +3,9 @@ import { useTheme } from '../context/ThemeContext';
 
 const Navbar = ({ titulo, cerrarSesion, children }) => {
   const { isDark, toggleTheme } = useTheme();
-  const usuario  = localStorage.getItem('user') || '';
-  const nombre   = localStorage.getItem('nombre') || usuario; // nombre del usuario, fallback al ID
-  const rolNum   = Number(localStorage.getItem('role'));
+  const usuario  = sessionStorage.getItem('user') || '';
+  const nombre   = sessionStorage.getItem('nombre') || usuario; // nombre del usuario, fallback al ID
+  const rolNum   = Number(sessionStorage.getItem('role'));
 
   let rolNombre = '';
   if (rolNum === 1) rolNombre = 'Técnico';

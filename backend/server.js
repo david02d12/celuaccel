@@ -1,10 +1,10 @@
 require('dotenv').config();
-const http         = require('http');
-const express      = require('express');
-const { Server }   = require('socket.io');
-const helmet       = require('helmet');
-const rateLimit    = require('express-rate-limit');
-const swaggerUI    = require('swagger-ui-express');
+const http = require('http');
+const express = require('express');
+const { Server } = require('socket.io');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const swaggerUI = require('swagger-ui-express');
 const swaggerDocumentation = require('./swagger.json');
 const cors = require('cors');
 const { registrarEventos } = require('./config/socket.handler');
@@ -21,6 +21,8 @@ const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     'http://localhost:5174',  // puerto alternativo de Vite
     'http://127.0.0.1:5173',
+    'http://localhost:3000',
+    'http://localhost:3000/doc',
 ];
 app.use(cors({
     origin: (origin, callback) => {
@@ -89,7 +91,7 @@ const io = new Server(server, {
         methods: ['GET', 'POST'],
         credentials: true,
     },
-    pingTimeout:  60000,
+    pingTimeout: 60000,
     pingInterval: 25000,
 });
 

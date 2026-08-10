@@ -21,10 +21,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
     try {
       const res = await api.post('/login', { user: u, password: p });
       if (res.data.auth) {
-        localStorage.setItem('token',  res.data.token);
-        localStorage.setItem('user',   res.data.user);
-        localStorage.setItem('role',   res.data.role);
-        localStorage.setItem('nombre', res.data.nombre);
+        sessionStorage.setItem('token',  res.data.token);
+        sessionStorage.setItem('user',   res.data.user);
+        sessionStorage.setItem('role',   res.data.role);
+        sessionStorage.setItem('nombre', res.data.nombre);
         setLogueado(true);
       }
     } catch {

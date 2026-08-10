@@ -10,6 +10,9 @@ const registro = async ({ ID_Usuario, Codigo_Documento, Nombre, Fecha_Nacimiento
     if (!ID_Usuario || !Nombre || !Correo || !Clave) {
         throw new AppError('Los campos ID_Usuario, Nombre, Correo y Clave son obligatorios.', 400);
     }
+    if (Clave && Clave.trim().length < 6) {
+        throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
+    }
     const hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
     const rolAsignado = Codigo_Rol || 2;
     try {
@@ -57,7 +60,10 @@ const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccio
     }
 
     let hashedClave = null;
-    if (Clave) hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
+    if (Clave) {
+        if (Clave.trim().length < 6) throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
+        hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
+    }
     const result = await usuarioDao.update({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, hashedClave, Codigo_Rol, ID_Usuario });
     if (result.affectedRows === 0) throw new AppError('Usuario no encontrado.', 404);
 };
@@ -92,7 +98,10 @@ const perfilPublico = async (id, userId) => {
 const actualizarMiPerfil = async (idSolicitante, { Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Clave }) => {
     if (!Nombre || !Correo) throw new AppError('Nombre y correo son obligatorios.', 400);
     let hashedClave = null;
-    if (Clave && Clave.trim()) hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
+    if (Clave && Clave.trim()) {
+        if (Clave.trim().length < 6) throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
+        hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
+    }
     const result = await usuarioDao.updateMiPerfil({ Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, hashedClave, ID_Usuario: idSolicitante });
     if (result.affectedRows === 0) throw new AppError('Usuario no encontrado.', 404);
 };
@@ -166,6 +175,7 @@ const resetPassword = async (token, newPassword) => {
     }
 
     // Paso 4: Actualizar la contraseña
+    if (newPassword.trim().length < 6) throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
     const hashedClave = await bcrypt.hash(newPassword.trim(), SALT_ROUNDS);
     await usuarioDao.updatePassword(user.ID_Usuario, hashedClave);
 };
@@ -182,6 +192,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
     const match = await bcrypt.compare(oldPassword.trim(), user.Contraseña);
     if (!match) throw new AppError('La contraseña actual es incorrecta.', 400);
 
+    if (newPassword.trim().length < 6) throw new AppError('La nueva contraseña debe tener al menos 6 caracteres.', 400);
     const hashedClave = await bcrypt.hash(newPassword.trim(), SALT_ROUNDS);
     await usuarioDao.updatePassword(userId, hashedClave);
 };

@@ -26,9 +26,9 @@ const SidebarMenu = ({ setVista }) => (
 );
 
 const ChatVista = ({ cerrarSesion, setVista }) => {
-  const usuario = localStorage.getItem('user') || 'Usuario';
-  const nombre = localStorage.getItem('nombre') || usuario;
-  const role = Number(localStorage.getItem('role')) || 2;
+  const usuario = sessionStorage.getItem('user') || 'Usuario';
+  const nombre = sessionStorage.getItem('nombre') || usuario;
+  const role = Number(sessionStorage.getItem('role')) || 2;
 
   const chatProps = useChatView(role, usuario);
 

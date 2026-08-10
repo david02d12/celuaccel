@@ -113,7 +113,7 @@ const VistaPerfil = ({ perfil, esPropioPeril, nombreRol }) => {
 };
 
 const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
-  const miUsuario     = localStorage.getItem('user') || '';
+  const miUsuario     = sessionStorage.getItem('user') || '';
   const idAcargar     = perfilObjetivoId || miUsuario;
   const esPropioPeril = idAcargar === miUsuario;
 

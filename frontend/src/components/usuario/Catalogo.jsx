@@ -34,7 +34,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
 
   const enviarPregunta = async () => {
     if (!nuevaPregunta.trim()) return alert('Por favor escribe tu pregunta.');
-    const usuario = localStorage.getItem('user') || '';
+    const usuario = sessionStorage.getItem('user') || '';
     if (!usuario) return alert('Error de sesión. Reconecta tu cuenta.');
 
     setEnviandoPregunta(true);
@@ -64,7 +64,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
       });
 
       // 4. Guardar referencia del chat para que ChatVista lo abra automáticamente
-      localStorage.setItem('chatInfo', JSON.stringify({ Codigo_Chat: codigoChat }));
+      sessionStorage.setItem('chatInfo', JSON.stringify({ Codigo_Chat: codigoChat }));
 
       // 5. Redirigir al chat en tiempo real con el técnico
       setHaciendoPregunta(false);

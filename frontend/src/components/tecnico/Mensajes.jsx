@@ -11,7 +11,7 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
   const { minDate, maxDate } = getLimitesGeneralesFecha();
-  const miUsuario = localStorage.getItem('user');
+  const miUsuario = sessionStorage.getItem('user');
   const [form, setForm] = useState({
     Codigo_Mensaje: '',
     Codigo_Chat: '',

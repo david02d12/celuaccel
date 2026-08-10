@@ -71,8 +71,8 @@ const Historial = ({ cerrarSesion, setVista }) => {
   const exportarPDF = () => {
     if (filtrados.length === 0) return mostrarToast('No hay eventos para exportar.', 'danger');
     const doc = new jsPDF();
-    const usuario = localStorage.getItem('user') || 'Usuario';
-    const userRole = localStorage.getItem('role') || 'N/A';
+    const usuario = sessionStorage.getItem('user') || 'Usuario';
+    const userRole = sessionStorage.getItem('role') || 'N/A';
 
     doc.setFillColor(219, 0, 0);
     doc.rect(0, 0, 210, 30, 'F');

@@ -30,162 +30,692 @@ import MisPreguntas from './components/usuario/MisPreguntas';
 const INACTIVIDAD_MS = 15 * 60 * 1000;
 
 function App() {
-  const [logueado, setLogueado] = useState(false);
-  const [modoRegistro, setModoRegistro] = useState(false);
-  // Si hay token guardado el usuario ya estaba autenticado → ir a su última vista o 'home'
-  // Si no hay token → mostrar el catálogo público como landing
+  /*
+   * ============================================================
+   * VISTA INICIAL
+   * ============================================================
+   */
+
   const [vista, setVista] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has('token')) return 'resetPassword';
-    const token = localStorage.getItem('token');
-    if (token) return localStorage.getItem('ultimaVista') || 'home';
-    return 'catalogoPublico';
+
+    // Si viene un token en la URL, mostrar recuperación de contraseña
+    if (params.has('token')) {
+      return 'resetPassword';
+    }
+
+    const token = sessionStorage.getItem('token');
+
+    // Si existe sesión, recuperar última vista
+    if (token) {
+      return sessionStorage.getItem('ultimaVista') || 'home';
+    }
+
+    // Si no existe sesión, mandar a loguearse
+    return 'login';
   });
+
+  const [logueado, setLogueado] = useState(() => {
+    return !!sessionStorage.getItem('token');
+  });
+
+  const [modoRegistro, setModoRegistro] = useState(false);
+
   const [perfilTarget, setPerfilTarget] = useState(null);
 
+  /*
+   * ============================================================
+   * SINCRONIZAR ESTADO DE SESIÓN
+   * ============================================================
+   */
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) setLogueado(true);
-    // resetPassword se maneja en el inicializador de useState arriba
+    const token = sessionStorage.getItem('token');
+
+    if (token) {
+      setLogueado(true);
+    } else {
+      setLogueado(false);
+    }
   }, []);
 
-  // Cierre automático por inactividad de 15 minutos
+  /*
+   * ============================================================
+   * DESTRUIR SESIÓN AL RECARGAR O SALIR
+   * ============================================================
+   */
+  useEffect(() => {
+    const destruirSesionAlSalir = () => {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('role');
+      sessionStorage.removeItem('ultimaVista');
+    };
+
+    window.addEventListener('beforeunload', destruirSesionAlSalir);
+    
+    return () => {
+      window.removeEventListener('beforeunload', destruirSesionAlSalir);
+    };
+  }, []);
+
+  /*
+   * ============================================================
+   * INICIALIZAR HISTORIAL DEL NAVEGADOR
+   *
+   * Esto permite que el botón Atrás del navegador conozca
+   * qué vista está mostrando React.
+   * ============================================================
+   */
+
+  useEffect(() => {
+    const estadoActual = window.history.state;
+
+    if (!estadoActual?.vista) {
+      window.history.replaceState(
+        {
+          vista,
+          perfilId: perfilTarget || null
+        },
+        '',
+        window.location.href
+      );
+    }
+  }, []);
+
+  /*
+   * ============================================================
+   * CAMBIAR VISTA
+   *
+   * agregarHistorial = true:
+   *   crea una nueva entrada en el navegador.
+   *
+   * agregarHistorial = false:
+   *   solamente cambia React cuando el usuario pulsa Atrás/Adelante.
+   * ============================================================
+   */
+
+  const cambiarVista = useCallback(
+    (nuevaVista, extra = null, agregarHistorial = true) => {
+      setVista(nuevaVista);
+
+      // Guardamos la última vista solamente si hay sesión
+      if (sessionStorage.getItem('token')) {
+        sessionStorage.setItem('ultimaVista', nuevaVista);
+      }
+
+      if (nuevaVista !== 'registro') {
+        setModoRegistro(false);
+      }
+
+      // Guardar ID del perfil si corresponde
+      if (nuevaVista === 'perfil' && extra?.perfilId) {
+        setPerfilTarget(extra.perfilId);
+      } else if (nuevaVista !== 'perfil') {
+        setPerfilTarget(null);
+      }
+
+      /*
+       * Crear entrada en el historial del navegador.
+       */
+      if (agregarHistorial) {
+        window.history.pushState(
+          {
+            vista: nuevaVista,
+            perfilId: extra?.perfilId || null
+          },
+          '',
+          window.location.href
+        );
+      }
+    },
+    []
+  );
+
+  /*
+   * ============================================================
+   * BOTÓN ATRÁS / ADELANTE DEL NAVEGADOR
+   * ============================================================
+   */
+
+  useEffect(() => {
+    const manejarHistorial = (event) => {
+      const estado = event.state;
+      const token = sessionStorage.getItem('token');
+      const role = Number(sessionStorage.getItem('role')) || 2;
+
+      /*
+       * SEGURIDAD 1: Si no hay token (cerró sesión), 
+       * pero intenta retroceder a una vista privada del historial.
+       */
+      if (!token) {
+        setLogueado(false);
+        setVista('login');
+        
+        // Bloqueamos que sigan retrocediendo limpiando el estado actual
+        window.history.replaceState({ vista: 'login', perfilId: null }, '', window.location.href);
+        return;
+      }
+
+      /*
+       * SEGURIDAD 2: El usuario sí tiene sesión, validamos 
+       * hacia dónde intenta retroceder.
+       */
+      if (estado?.vista) {
+        const vistaDeseada = estado.vista;
+
+        // Validar permisos según rol antes de asignar la vista
+        const vistasAdmin = ['usuarios', 'roles', 'tipo'];
+        const vistasTecnicoAdmin = ['servicios', 'historial', 'productos', 'categorias', 'preguntas', 'chats', 'mensajes', 'notificaciones'];
+
+        let vistaPermitida = vistaDeseada;
+
+        if (vistasAdmin.includes(vistaDeseada) && role !== 3) {
+          vistaPermitida = 'home'; // Intenta ir a vista de admin siendo cliente/técnico
+        } else if (vistasTecnicoAdmin.includes(vistaDeseada) && role !== 1 && role !== 3) {
+          vistaPermitida = 'home'; // Intenta ir a vista de técnico siendo cliente
+        }
+
+        // Aplicamos la vista validada
+        setVista(vistaPermitida);
+
+        if (vistaPermitida === 'perfil' && estado.perfilId) {
+          setPerfilTarget(estado.perfilId);
+        } else {
+          setPerfilTarget(null);
+        }
+
+        sessionStorage.setItem('ultimaVista', vistaPermitida);
+        return;
+      }
+
+      // Si por alguna razón vuelve a un historial sin estado pero hay sesión activa
+      setLogueado(true);
+      const ultimaVista = sessionStorage.getItem('ultimaVista') || 'home';
+      setVista(ultimaVista);
+      
+      window.history.replaceState({ vista: ultimaVista, perfilId: null }, '', window.location.href);
+    };
+
+    window.addEventListener('popstate', manejarHistorial);
+
+    return () => {
+      window.removeEventListener('popstate', manejarHistorial);
+    };
+  }, []);
+
+  /*
+   * ============================================================
+   * CERRAR SESIÓN POR INACTIVIDAD
+   * ============================================================
+   */
+
   const cerrarSesion = useCallback(() => {
-    localStorage.clear();
+    /*
+     * NO usamos sessionStorage.clear()
+     * porque podría borrar otros datos de la aplicación.
+     */
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('ultimaVista');
+
     setLogueado(false);
     setModoRegistro(false);
-    setVista('catalogoPublico'); // Al cerrar sesión vuelve al landing público
+    setPerfilTarget(null);
+    setVista('login');
+
+    /*
+     * Reemplazamos la entrada actual para evitar que al pulsar
+     * Atrás se vuelva inmediatamente a una pantalla autenticada.
+     */
+    window.history.replaceState(
+      {
+        vista: 'login',
+        perfilId: null
+      },
+      '',
+      window.location.href
+    );
   }, []);
+
+  /*
+   * ============================================================
+   * CIERRE AUTOMÁTICO POR INACTIVIDAD
+   * ============================================================
+   */
 
   useEffect(() => {
     if (!logueado) return;
 
-    let timer = setTimeout(() => {
-      alert('Tu sesión ha expirado por inactividad (15 minutos). Por favor inicia sesión nuevamente.');
+    let timer;
+
+    const ejecutarCierre = () => {
+      alert(
+        'Tu sesión ha expirado por inactividad (15 minutos). Por favor inicia sesión nuevamente.'
+      );
+
       cerrarSesion();
-    }, INACTIVIDAD_MS);
+    };
 
     const resetTimer = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        alert('Tu sesión ha expirado por inactividad (15 minutos). Por favor inicia sesión nuevamente.');
-        cerrarSesion();
-      }, INACTIVIDAD_MS);
+
+      timer = setTimeout(
+        ejecutarCierre,
+        INACTIVIDAD_MS
+      );
     };
 
-    const eventos = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-    eventos.forEach(e => window.addEventListener(e, resetTimer));
+    const eventos = [
+      'mousemove',
+      'keydown',
+      'click',
+      'scroll',
+      'touchstart'
+    ];
+
+    eventos.forEach((evento) => {
+      window.addEventListener(evento, resetTimer);
+    });
+
+    // Iniciar contador
+    resetTimer();
 
     return () => {
       clearTimeout(timer);
-      eventos.forEach(e => window.removeEventListener(e, resetTimer));
+
+      eventos.forEach((evento) => {
+        window.removeEventListener(evento, resetTimer);
+      });
     };
   }, [logueado, cerrarSesion]);
 
-  const cambiarVista = (nuevaVista, extra) => {
-    setVista(nuevaVista);
-    localStorage.setItem('ultimaVista', nuevaVista);
-    if (nuevaVista !== 'registro') {
-      setModoRegistro(false);
-    }
-    // Si se navega a 'perfil' con un ID específico, guardarlo
-    if (nuevaVista === 'perfil' && extra?.perfilId) {
-      setPerfilTarget(extra.perfilId);
-    } else if (nuevaVista !== 'perfil') {
-      setPerfilTarget(null);
-    }
-  };
+  /*
+   * ============================================================
+   * ANTENA RECEPTORA GLOBAL PARA EL LOGOTIPO
+   * ============================================================
+   */
 
-  // Antena Receptora global para atajo del Logotipo
   useEffect(() => {
-    const irAlInicio = () => cambiarVista('home');
-    window.addEventListener('navigateHome', irAlInicio);
-    return () => window.removeEventListener('navigateHome', irAlInicio);
-  }, []);
+    const irAlInicio = () => {
+      cambiarVista('home');
+    };
 
-  // Escucha el evento de sesión expirada disparado por el interceptor de api.js
+    window.addEventListener(
+      'navigateHome',
+      irAlInicio
+    );
+
+    return () => {
+      window.removeEventListener(
+        'navigateHome',
+        irAlInicio
+      );
+    };
+  }, [cambiarVista]);
+
+  /*
+   * ============================================================
+   * SESIÓN EXPIRADA DESDE api.js
+   * ============================================================
+   */
+
   useEffect(() => {
     const manejarSesionExpirada = () => {
+      /*
+       * Eliminamos únicamente los datos relacionados
+       * con la autenticación.
+       */
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('role');
+      sessionStorage.removeItem('ultimaVista');
+
       setLogueado(false);
       setModoRegistro(false);
-      setVista('catalogoPublico');
+      setPerfilTarget(null);
+      setVista('login');
+
+      window.history.replaceState(
+        {
+          vista: 'login',
+          perfilId: null
+        },
+        '',
+        window.location.href
+      );
     };
-    window.addEventListener('sessionExpired', manejarSesionExpirada);
-    return () => window.removeEventListener('sessionExpired', manejarSesionExpirada);
+
+    window.addEventListener(
+      'sessionExpired',
+      manejarSesionExpirada
+    );
+
+    return () => {
+      window.removeEventListener(
+        'sessionExpired',
+        manejarSesionExpirada
+      );
+    };
   }, []);
+
+  /*
+   * ============================================================
+   * USUARIO NO AUTENTICADO
+   * ============================================================
+   */
 
   if (!logueado) {
     if (vista === 'catalogoPublico') {
-      return <CatalogoPublico setVista={cambiarVista} />;
+      return (
+        <CatalogoPublico
+          setVista={cambiarVista}
+        />
+      );
     }
-    if (vista === 'registro' || modoRegistro) {
-      return <Registro setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
+
+    if (
+      vista === 'registro' ||
+      modoRegistro
+    ) {
+      return (
+        <Registro
+          setModoRegistro={setModoRegistro}
+          setVista={cambiarVista}
+        />
+      );
     }
+
     if (vista === 'forgotPassword') {
-      return <ForgotPassword setVista={cambiarVista} />;
+      return (
+        <ForgotPassword
+          setVista={cambiarVista}
+        />
+      );
     }
+
     if (vista === 'resetPassword') {
-      return <ResetPassword setVista={cambiarVista} />;
+      return (
+        <ResetPassword
+          setVista={cambiarVista}
+        />
+      );
     }
-    // 'login' o cualquier otra vista no reconocida
-    return <Login setLogueado={setLogueado} setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
+
+    // Login por defecto
+    return (
+      <Login
+        setLogueado={setLogueado}
+        setModoRegistro={setModoRegistro}
+        setVista={cambiarVista}
+      />
+    );
   }
 
-  // SWITCH PARA LAS VISTAS
-  const role = Number(localStorage.getItem('role')) || 2;
+  /*
+   * ============================================================
+   * USUARIO AUTENTICADO
+   * ============================================================
+   */
+
+  const role =
+    Number(sessionStorage.getItem('role')) || 2;
+
+  /*
+   * ============================================================
+   * SWITCH DE VISTAS
+   * ============================================================
+   */
 
   switch (vista) {
-    // Si por alguna razon llega una vista publica estando autenticado → home
+    /*
+     * ----------------------------------------------------------
+     * VISTAS GENERALES
+     * ----------------------------------------------------------
+     */
+
     case 'catalogoPublico':
     case 'login':
     case 'registro':
     case 'home':
-      return <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
 
-    // CLIENTE / USUARIO PUBLICO (Cualquier rol accede)
+    /*
+     * ----------------------------------------------------------
+     * CLIENTE / USUARIO
+     * ----------------------------------------------------------
+     */
+
     case 'miServicio':
-      return <MiServicio cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <MiServicio
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'catalogo':
-      return <Catalogo cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <Catalogo
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'chatVista':
-      return <ChatVista cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <ChatVista
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'comentarios':
-      return <Comentarios cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <Comentarios
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'perfil':
-      return <Perfil cerrarSesion={cerrarSesion} setVista={cambiarVista} perfilObjetivoId={perfilTarget} />;
+      return (
+        <Perfil
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+          perfilObjetivoId={perfilTarget}
+        />
+      );
+
     case 'misNotificaciones':
-      return <MisNotificaciones cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <MisNotificaciones
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'misPreguntas':
-      return <MisPreguntas cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <MisPreguntas
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
 
-    // TECNICO Y ADMINISTRADOR (Roles 1 y 3)
+    /*
+     * ----------------------------------------------------------
+     * TÉCNICO Y ADMINISTRADOR
+     * ROLES 1 Y 3
+     * ----------------------------------------------------------
+     */
+
     case 'servicios':
-      return (role === 1 || role === 3) ? <Servicios cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'historial':
-      return (role === 1 || role === 3) ? <Historial cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'productos':
-      return (role === 1 || role === 3) ? <Productos cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'categorias':
-      return (role === 1 || role === 3) ? <Categorias cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'preguntas':
-      return (role === 1 || role === 3) ? <Preguntas cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'chats':
-      return (role === 1 || role === 3) ? <Chats cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'mensajes':
-      return (role === 1 || role === 3) ? <Mensajes cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
-    case 'notificaciones':
-      return (role === 1 || role === 3) ? <Notificaciones cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? (
+        <Servicios
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
 
-    // EXCLUSIVO ADMINISTRADOR (Rol 3)
+    case 'historial':
+      return role === 1 || role === 3 ? (
+        <Historial
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    case 'productos':
+      return role === 1 || role === 3 ? (
+        <Productos
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    case 'categorias':
+      return role === 1 || role === 3 ? (
+        <Categorias
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    case 'preguntas':
+      return role === 1 || role === 3 ? (
+        <Preguntas
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    case 'chats':
+      return role === 1 || role === 3 ? (
+        <Chats
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    case 'mensajes':
+      return role === 1 || role === 3 ? (
+        <Mensajes
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    case 'notificaciones':
+      return role === 1 || role === 3 ? (
+        <Notificaciones
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    /*
+     * ----------------------------------------------------------
+     * ADMINISTRADOR
+     * ROL 3
+     * ----------------------------------------------------------
+     */
+
     case 'usuarios':
-      return (role === 3) ? <Usuarios cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 3 ? (
+        <Usuarios
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'roles':
-      return (role === 3) ? <Roles cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 3 ? (
+        <Roles
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
     case 'tipo':
-      return (role === 3) ? <Tipo cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 3 ? (
+        <Tipo
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      ) : (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
+
+    /*
+     * ----------------------------------------------------------
+     * VISTA POR DEFECTO
+     * ----------------------------------------------------------
+     */
 
     default:
-      return <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return (
+        <Home
+          cerrarSesion={cerrarSesion}
+          setVista={cambiarVista}
+        />
+      );
   }
 }
 

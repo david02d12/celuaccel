@@ -49,7 +49,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
   const guardar = async () => {
     try {
       if (enEdicion) {
-        const tecnico = localStorage.getItem('userId') || localStorage.getItem('user');
+        const tecnico = sessionStorage.getItem('userId') || sessionStorage.getItem('user');
         await api.put('/preguntas/actualizar', {
           ...form,
           ID_Tecnico_Responde: tecnico,

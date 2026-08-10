@@ -10,9 +10,9 @@ const Home = ({ cerrarSesion, setVista }) => {
     servicios: 0, usuarios: 0, productos: 0, historial: 0
   });
   const [serviciosRecientes, setServiciosRecientes] = useState([]);
-  const usuario = localStorage.getItem('user') || 'Usuario';
-  const nombre  = localStorage.getItem('nombre') || usuario; // nombre real, fallback al ID
-  const role = Number(localStorage.getItem('role')) || 2;
+  const usuario = sessionStorage.getItem('user') || 'Usuario';
+  const nombre  = sessionStorage.getItem('nombre') || usuario; // nombre real, fallback al ID
+  const role = Number(sessionStorage.getItem('role')) || 2;
 
   useEffect(() => {
     const cargarDatos = async () => {

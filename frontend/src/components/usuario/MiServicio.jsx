@@ -14,7 +14,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [formNuevo, setFormNuevo] = useState({ Descripcion: '', Movil_Nombre: '', Movil_Especificacion: '' });
   
-  const usuario = localStorage.getItem('user') || '';
+  const usuario = sessionStorage.getItem('user') || '';
 
   const mostrarToast = (mensaje, tipo = 'success') => {
     setToast({ visible: true, mensaje, tipo });
@@ -322,7 +322,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                         {Number(s.Etapa) !== -1 ? (
                           <button className="btn btn-sm btn-outline-secondary"
                             onClick={() => {
-                              localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
+                              sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
                               setVista('chatVista');
                             }}>
                               Chat con Asesor

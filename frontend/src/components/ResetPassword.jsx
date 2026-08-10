@@ -33,6 +33,9 @@ export default function ResetPassword({ setVista }) {
     if (!password.trim()) {
       return mostrarToast('Por favor, ingresa una nueva contraseña.', false);
     }
+    if (password.trim().length < 6) {
+      return mostrarToast('La contraseña debe tener al menos 6 caracteres.', false);
+    }
 
     setCargando(true);
     setMessage('');

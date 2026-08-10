@@ -43,7 +43,7 @@ export const useChatView = (role, usuario) => {
         if (chatExistente) setChatSel(chatExistente);
       }
     }
-    localStorage.removeItem('chatInfo');
+    sessionStorage.removeItem('chatInfo');
     return chatsCargados;
   };
 
@@ -54,7 +54,7 @@ export const useChatView = (role, usuario) => {
       const res = await api.get(url);
       let chatsCargados = res.data;
 
-      const chatInfoRaw = localStorage.getItem('chatInfo');
+      const chatInfoRaw = sessionStorage.getItem('chatInfo');
       if (chatInfoRaw) {
         chatsCargados = await procesarEnlaceAutomatico(JSON.parse(chatInfoRaw), chatsCargados, url);
       }
