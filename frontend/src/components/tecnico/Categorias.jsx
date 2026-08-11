@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -51,7 +52,7 @@ const Categorias = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar esta categoria?')) {
+    if (await confirmar('¿Eliminar esta categoria?')) {
       try {
         await api.delete(`/categorias/eliminar/${id}`);
         mostrarToast('Categoria eliminada.'); listar();

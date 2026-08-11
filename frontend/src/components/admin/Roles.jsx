@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -71,7 +72,7 @@ const Roles = ({ cerrarSesion, setVista }) => {
       mostrarToast('No puedes eliminar roles del sistema (Técnico, Cliente, Administrador).', false);
       return;
     }
-    if (window.confirm('¿Eliminar este rol?')) {
+    if (await confirmar('¿Eliminar este rol?')) {
       try {
         await api.delete(`/roles/eliminar/${id}`);
         mostrarToast('Rol eliminado.'); listar();

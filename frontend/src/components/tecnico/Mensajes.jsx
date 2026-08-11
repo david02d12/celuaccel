@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { mostrarAlerta, confirmar } from '../../utils/alerts';
 import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -42,17 +43,17 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
       listar();
       limpiar();
     } catch (err) {
-      alert('Error al procesar el mensaje');
+      await mostrarAlerta('Error al procesar el mensaje', 'error');
     }
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar este mensaje?')) {
+    if (await confirmar('¿Eliminar este mensaje?')) {
       try {
         await api.delete(`/mensajes/eliminar/${id}`);
         listar();
       } catch (err) {
-        alert('Error al eliminar el mensaje');
+        await mostrarAlerta('Error al eliminar el mensaje', 'error');
       }
     }
   };

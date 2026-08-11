@@ -36,6 +36,9 @@ export default function ResetPassword({ setVista }) {
     if (password.trim().length < 6) {
       return mostrarToast('La contraseña debe tener al menos 6 caracteres.', false);
     }
+    if (password.trim().length > 15) {
+      return mostrarToast('La contraseña no puede exceder los 15 caracteres.', false);
+    }
 
     setCargando(true);
     setMessage('');
@@ -93,6 +96,7 @@ export default function ResetPassword({ setVista }) {
             type="password"
             className="form-control mb-3"
             placeholder="Ingresa tu nueva contraseña"
+            maxLength="15"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={cargando || !token}

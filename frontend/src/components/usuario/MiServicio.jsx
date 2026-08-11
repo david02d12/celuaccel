@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -134,7 +135,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   };
 
   const cancelarServicio = async (id) => {
-    if (!window.confirm('¿Estás seguro de cancelar este servicio? Esta acción no se puede deshacer.')) return;
+    if (!await confirmar('¿Estás seguro de cancelar este servicio? Esta acción no se puede deshacer.')) return;
     try {
       await api.patch(`/servicios/cancelar/${id}`, {});
       mostrarToast('Servicio cancelado correctamente.', 'warning');

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -94,7 +95,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminarServicio = async (id) => {
-    if (window.confirm('¿Eliminar este servicio?')) {
+    if (await confirmar('¿Eliminar este servicio?')) {
       try {
         await api.delete(`/servicios/eliminar/${id}`);
         mostrarToast('Servicio eliminado.'); listar();

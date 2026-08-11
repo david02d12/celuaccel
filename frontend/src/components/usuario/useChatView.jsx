@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../../services/api';
+import { mostrarAlerta, confirmar } from '../../utils/alerts';
 
 export const useChatView = (role, usuario) => {
   const [chats, setChats] = useState([]);
@@ -84,7 +85,7 @@ export const useChatView = (role, usuario) => {
       }
       if (chatExistente) setChatSel(chatExistente);
     } catch (err) {
-      alert('Error al iniciar el chat. Intenta de nuevo.');
+      await mostrarAlerta('Error al iniciar el chat. Intenta de nuevo.', 'error');
     } finally {
       setIniciandoChat(null);
     }
@@ -117,17 +118,17 @@ export const useChatView = (role, usuario) => {
       setNuevoMensaje('');
       cargarMensajes(chatSel.Codigo_Chat);
     } catch (err) {
-      alert('Error al enviar el mensaje. Verifica que los campos sean correctos.');
+      await mostrarAlerta('Error al enviar el mensaje. Verifica que los campos sean correctos.', 'error');
     }
   };
 
   const eliminarMensaje = async (id) => {
-    if (!window.confirm('¿Eliminar este mensaje?')) return;
+    if (!await confirmar('¿Eliminar este mensaje?')) return;
     try {
       await api.delete(`/mensajes/eliminar/${id}`);
       cargarMensajes(chatSel.Codigo_Chat);
     } catch (err) {
-      alert('Error al eliminar el mensaje.');
+      await mostrarAlerta('Error al eliminar el mensaje.', 'error');
     }
   };
 

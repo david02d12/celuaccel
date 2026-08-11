@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import { getLimitesGeneralesFecha } from '../../utils/validaciones';
@@ -64,7 +65,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar pregunta?')) {
+    if (await confirmar('¿Eliminar pregunta?')) {
       try {
         await api.delete(`/preguntas/eliminar/${id}`);
         mostrarToast('Pregunta eliminada.'); listar();

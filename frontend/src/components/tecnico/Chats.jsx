@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { mostrarAlerta, confirmar } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -36,17 +37,17 @@ const Chats = ({ cerrarSesion, setVista }) => {
       listar();
       limpiar();
     } catch (err) {
-      alert('Error al procesar el chat');
+      await mostrarAlerta('Error al procesar el chat', 'error');
     }
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar chat?')) {
+    if (await confirmar('¿Eliminar chat?')) {
       try {
         await api.delete(`/chats/eliminar/${id}`);
         listar();
       } catch (err) {
-        alert('Error al eliminar chat');
+        await mostrarAlerta('Error al eliminar chat', 'error');
       }
     }
   };

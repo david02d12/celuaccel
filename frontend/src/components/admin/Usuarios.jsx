@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import { calcFechaLimites } from '../../utils/validaciones';
@@ -55,8 +56,9 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
   };
 
   const guardar = async () => {
-    if (form.Clave && form.Clave.trim().length < 6) {
-      return mostrarToast('La contraseña debe tener al menos 6 caracteres.', false);
+    if (form.Clave) {
+      if (form.Clave.trim().length < 6) return mostrarToast('La contraseña debe tener al menos 6 caracteres.', false);
+      if (form.Clave.trim().length > 15) return mostrarToast('La contraseña no puede exceder los 15 caracteres.', false);
     }
     try {
       const url = enEdicion ? 'usuarios/actualizar' : 'registro';
@@ -68,7 +70,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm(`Eliminar al usuario ${id}?`)) {
+    if (await confirmar(`Eliminar al usuario ${id}?`)) {
       try {
         await api.delete(`/usuarios/eliminar/${id}`);
         mostrarToast('Usuario eliminado del sistema.'); listar();
@@ -152,7 +154,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
               <input className="form-control mb-2" style={inputStyle} type="email" placeholder="Correo Electronico"
                 value={form.Correo} onChange={e => setForm({...form, Correo: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} type="password"
-                placeholder={enEdicion ? 'Nueva Clave (opcional)' : 'Contrasena'}
+                placeholder={enEdicion ? 'Nueva Clave (opcional)' : 'Contrasena'} maxLength="15"
                 value={form.Clave} onChange={e => setForm({...form, Clave: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Rol</label>
               <select className="form-select mb-3" style={inputStyle} value={form.Codigo_Rol}

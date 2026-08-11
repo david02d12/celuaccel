@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { getLimitesGeneralesFecha } from '../../utils/validaciones';
@@ -55,7 +56,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar este registro del historial?')) {
+    if (await confirmar('¿Eliminar este registro del historial?')) {
       try {
         await api.delete(`/historial/eliminar/${id}`);
         mostrarToast('Evento eliminado.'); listar();

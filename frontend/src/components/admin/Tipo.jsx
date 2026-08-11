@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -51,7 +52,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar este tipo de documento?')) {
+    if (await confirmar('¿Eliminar este tipo de documento?')) {
       try {
         await api.delete(`/tipodocumento/eliminar/${id}`);
         mostrarToast('Tipo eliminado.'); listar();

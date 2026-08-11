@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { mostrarAlerta } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -33,9 +34,9 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
   }, []);
 
   const enviarPregunta = async () => {
-    if (!nuevaPregunta.trim()) return alert('Por favor escribe tu pregunta.');
+    if (!nuevaPregunta.trim()) { await mostrarAlerta('Por favor escribe tu pregunta.', 'warning'); return; }
     const usuario = sessionStorage.getItem('user') || '';
-    if (!usuario) return alert('Error de sesión. Reconecta tu cuenta.');
+    if (!usuario) { await mostrarAlerta('Error de sesión. Reconecta tu cuenta.', 'error'); return; }
 
     setEnviandoPregunta(true);
     try {
@@ -74,7 +75,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
     } catch (err) {
       console.error(err);
       const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al enviar la pregunta. Intenta de nuevo.';
-      alert(errorMsg);
+      await mostrarAlerta(errorMsg, 'error');
     } finally {
       setEnviandoPregunta(false);
     }

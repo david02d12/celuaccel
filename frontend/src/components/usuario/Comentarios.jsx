@@ -5,6 +5,7 @@ import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import { getLimitesGeneralesFecha } from '../../utils/validaciones';
+import { mostrarAlerta, confirmar } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -118,15 +119,19 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
-      if (!form.Comentario.trim()) return alert("El comentario no puede ir vacío.");
+      if (!form.Comentario.trim()) {
+        await mostrarAlerta("El comentario no puede ir vacío.", 'warning');
+        return;
+      }
 
       // ── Validación de malas palabras en el cliente ──
       const malasPalabras = detectarMalasPalabras(form.Comentario);
       if (malasPalabras.length > 0) {
-        alert(
+        await mostrarAlerta(
           `⚠️ Tu comentario contiene lenguaje inapropiado:\n\n` +
           `• ${malasPalabras.join('\n• ')}\n\n` +
-          `Por favor, modifica tu texto antes de publicar.`
+          `Por favor, modifica tu texto antes de publicar.`,
+          'warning'
         );
         return;
       }
@@ -141,17 +146,17 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
     } catch (err) {
       // Mostrar el mensaje de error del servidor si viene (incluye malas palabras detectadas en el backend)
       const mensajeServidor = err?.response?.data?.error;
-      alert(mensajeServidor || "Error al procesar el comentario");
+      await mostrarAlerta(mensajeServidor || "Error al procesar el comentario", 'error');
     }
   };
 
   const eliminar = async (id) => {
-    if (window.confirm("¿Estás seguro de eliminar este comentario?")) {
+    if (await confirmar("¿Estás seguro de eliminar este comentario?")) {
       try {
         await api.delete(`/comentarios/eliminar/${id}`);
         listar();
       } catch (err) {
-        alert("Error al eliminar comentario: " + err.response?.data?.error || "Desconocido");
+        await mostrarAlerta("Error al eliminar comentario: " + (err.response?.data?.error || "Desconocido"), 'error');
       }
     }
   };

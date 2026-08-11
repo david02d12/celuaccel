@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -61,7 +62,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar este producto del inventario?')) {
+    if (await confirmar('¿Eliminar este producto del inventario?')) {
       try {
         await api.delete(`/productos/eliminar/${id}`);
         mostrarToast('Producto eliminado.'); listar();

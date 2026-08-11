@@ -66,7 +66,7 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
         {/* ── Nueva contraseña ── */}
         <div className="col-12">
           <label className="small fw-bold text-muted mb-1">Nueva contraseña <span className="text-muted fw-normal">(dejar vacío para no cambiar)</span></label>
-          <input className={`form-control ${errores.Clave ? 'is-invalid' : ''}`} type="password" placeholder="Mínimo 6 caracteres..." value={form.Clave} style={iStyle('Clave')} onChange={onChange('Clave')} />
+          <input className={`form-control ${errores.Clave ? 'is-invalid' : ''}`} type="password" placeholder="Mínimo 6 caracteres..." maxLength="15" value={form.Clave} style={iStyle('Clave')} onChange={onChange('Clave')} />
           <CampoError mensaje={errores.Clave} />
           <FuerzaClave clave={form.Clave} />
         </div>
@@ -158,7 +158,7 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
       Nombre:    validarNombre(form.Nombre),
       Telefono:  validarTelefono(form.Telefono),
       Direccion: validarDireccion(form.Direccion),
-      Clave:     form.Clave && form.Clave.length < 6 ? 'La contraseña debe tener al menos 6 caracteres.' : '',
+      Clave:     form.Clave && form.Clave.length < 6 ? 'La contraseña debe tener al menos 6 caracteres.' : (form.Clave && form.Clave.length > 15 ? 'La contraseña no puede exceder los 15 caracteres.' : ''),
     };
     setErrores(nuevosErrores);
     if (Object.values(nuevosErrores).some(e => e !== '')) {
