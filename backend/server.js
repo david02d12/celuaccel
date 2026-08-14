@@ -1,10 +1,13 @@
 require('dotenv').config();
-const express    = require('express');
-const helmet     = require('helmet');
-const rateLimit  = require('express-rate-limit');
-const swaggerUI  = require('swagger-ui-express');
+const http = require('http');
+const express = require('express');
+const { Server } = require('socket.io');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const swaggerUI = require('swagger-ui-express');
 const swaggerDocumentation = require('./swagger.json');
 const cors = require('cors');
+const { registrarEventos } = require('./config/socket.handler');
 
 const app = express();
 
@@ -18,6 +21,8 @@ const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     'http://localhost:5174',  // puerto alternativo de Vite
     'http://127.0.0.1:5173',
+    'http://localhost:3000',
+    'http://localhost:3000/doc',
 ];
 app.use(cors({
     origin: (origin, callback) => {
@@ -41,15 +46,18 @@ const limiterPublico = rateLimit({
     legacyHeaders: false,
     message: { error: 'Demasiados intentos. Por favor espera 15 minutos e intenta de nuevo.' }
 });
-app.use('/api/login',           limiterPublico);
-app.use('/api/registro',        limiterPublico);
+app.use('/api/login', limiterPublico);
+app.use('/api/registro', limiterPublico);
 app.use('/api/forgot-password', limiterPublico);
-app.use('/api/reset-password',  limiterPublico);
+app.use('/api/reset-password', limiterPublico);
 
 // Health check para monitoreo de disponibilidad
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// EP-005: Servir archivos subidos (adjuntos de chat) como estáticos
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
 // Documentacion Swagger
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocumentation));
@@ -74,9 +82,29 @@ process.on('uncaughtException', (err) => {
     console.error('Excepcion no capturada:', err.message);
 });
 
+// ─── Servidor HTTP + Socket.IO ──────────────────────────────────────────────
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigins,
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+    pingTimeout: 60000,
+    pingInterval: 25000,
+});
+
+// Registrar eventos del chat en tiempo real (EP-005)
+registrarEventos(io);
+
+// Exponer io globalmente para que otros módulos puedan emitir eventos
+app.set('io', io);
+
 // Arrancar servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     console.log(`Documentacion: http://localhost:${PORT}/doc`);
+    console.log(`Socket.IO activo en ws://localhost:${PORT}`);
 });

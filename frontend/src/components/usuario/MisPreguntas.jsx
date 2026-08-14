@@ -40,7 +40,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
     Pregunta: '',
   });
 
-  const userId = localStorage.getItem('userId') || localStorage.getItem('user') || '';
+  const userId = sessionStorage.getItem('userId') || sessionStorage.getItem('user') || '';
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });

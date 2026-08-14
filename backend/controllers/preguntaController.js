@@ -33,3 +33,14 @@ exports.eliminar = async (req, res) => {
         res.status(200).json({ message: 'Pregunta eliminada correctamente.' });
     } catch (err) { handleError(res, err); }
 };
+
+/** RF-031: Técnico responde una pregunta */
+exports.responder = async (req, res) => {
+    try {
+        await preguntaService.responder(
+            { ID_Consulta: req.params.id, Respuesta: req.body.Respuesta },
+            req.userId
+        );
+        res.status(200).json({ message: 'Respuesta registrada correctamente.' });
+    } catch (err) { handleError(res, err); }
+};

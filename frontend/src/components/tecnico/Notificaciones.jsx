@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -129,7 +130,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
         await api.put('/notificaciones/actualizar', { Codigo_Notificaciones: form.Codigo_Notificaciones, Tipo_Notificacion: form.Mensaje });
         mostrarToast('Notificación actualizada.');
       } else {
-        await api.post('/notificaciones/enviar', { ID_Usuario_Destino: form.ID_Usuario_Destino, ID_Servicio: form.ID_Servicio || null, Mensaje: form.Mensaje });
+        await api.post('/notificaciones/dirigida', { ID_Usuario_Destino: form.ID_Usuario_Destino, ID_Servicio: form.ID_Servicio || null, Mensaje: form.Mensaje });
         mostrarToast('Notificación enviada.');
       }
       listar(); limpiar();
@@ -138,7 +139,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (!window.confirm('¿Eliminar esta notificación?')) return;
+    if (!await confirmar('¿Eliminar esta notificación?')) return;
     try { await api.delete(`/notificaciones/eliminar/${id}`); mostrarToast('Eliminada.'); listar(); }
     catch { mostrarToast('Error al eliminar.', 'danger'); }
   };

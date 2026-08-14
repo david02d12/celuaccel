@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { useSessionGuard } from './hooks/useSessionGuard';
+import { useCustomRouter } from './hooks/useCustomRouter';
 
 import Login from './components/Login';
 import Registro from './components/Registro';
@@ -26,123 +29,27 @@ import ResetPassword from './components/ResetPassword';
 import CatalogoPublico from './components/publico/CatalogoPublico';
 import MisPreguntas from './components/usuario/MisPreguntas';
 
-// Tiempo de inactividad antes del cierre automático de sesión (15 min)
-const INACTIVIDAD_MS = 15 * 60 * 1000;
-
 function App() {
-  const [logueado, setLogueado] = useState(false);
-  const [modoRegistro, setModoRegistro] = useState(false);
-  // Si hay token guardado el usuario ya estaba autenticado → ir a su última vista o 'home'
-  // Si no hay token → mostrar el catálogo público como landing
-  const [vista, setVista] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('token')) return 'resetPassword';
-    const token = localStorage.getItem('token');
-    if (token) return localStorage.getItem('ultimaVista') || 'home';
-    return 'catalogoPublico';
-  });
-  const [perfilTarget, setPerfilTarget] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) setLogueado(true);
-    // resetPassword se maneja en el inicializador de useState arriba
-  }, []);
-
-  // Cierre automático por inactividad de 15 minutos
-  const cerrarSesion = useCallback(() => {
-    localStorage.clear();
-    setLogueado(false);
-    setModoRegistro(false);
-    setVista('catalogoPublico'); // Al cerrar sesión vuelve al landing público
-  }, []);
-
-  useEffect(() => {
-    if (!logueado) return;
-
-    let timer = setTimeout(() => {
-      alert('Tu sesión ha expirado por inactividad (15 minutos). Por favor inicia sesión nuevamente.');
-      cerrarSesion();
-    }, INACTIVIDAD_MS);
-
-    const resetTimer = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        alert('Tu sesión ha expirado por inactividad (15 minutos). Por favor inicia sesión nuevamente.');
-        cerrarSesion();
-      }, INACTIVIDAD_MS);
-    };
-
-    const eventos = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-    eventos.forEach(e => window.addEventListener(e, resetTimer));
-
-    return () => {
-      clearTimeout(timer);
-      eventos.forEach(e => window.removeEventListener(e, resetTimer));
-    };
-  }, [logueado, cerrarSesion]);
-
-  const cambiarVista = (nuevaVista, extra) => {
-    setVista(nuevaVista);
-    localStorage.setItem('ultimaVista', nuevaVista);
-    if (nuevaVista !== 'registro') {
-      setModoRegistro(false);
-    }
-    // Si se navega a 'perfil' con un ID específico, guardarlo
-    if (nuevaVista === 'perfil' && extra?.perfilId) {
-      setPerfilTarget(extra.perfilId);
-    } else if (nuevaVista !== 'perfil') {
-      setPerfilTarget(null);
-    }
-  };
-
-  // Antena Receptora global para atajo del Logotipo
-  useEffect(() => {
-    const irAlInicio = () => cambiarVista('home');
-    window.addEventListener('navigateHome', irAlInicio);
-    return () => window.removeEventListener('navigateHome', irAlInicio);
-  }, []);
-
-  // Escucha el evento de sesión expirada disparado por el interceptor de api.js
-  useEffect(() => {
-    const manejarSesionExpirada = () => {
-      setLogueado(false);
-      setModoRegistro(false);
-      setVista('catalogoPublico');
-    };
-    window.addEventListener('sessionExpired', manejarSesionExpirada);
-    return () => window.removeEventListener('sessionExpired', manejarSesionExpirada);
-  }, []);
+  const { logueado, setLogueado, cerrarSesionInterno } = useSessionGuard();
+  const { vista, modoRegistro, setModoRegistro, perfilTarget, cambiarVista, cerrarSesion } = useCustomRouter(logueado, setLogueado, cerrarSesionInterno);
 
   if (!logueado) {
-    if (vista === 'catalogoPublico') {
-      return <CatalogoPublico setVista={cambiarVista} />;
-    }
-    if (vista === 'registro' || modoRegistro) {
-      return <Registro setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
-    }
-    if (vista === 'forgotPassword') {
-      return <ForgotPassword setVista={cambiarVista} />;
-    }
-    if (vista === 'resetPassword') {
-      return <ResetPassword setVista={cambiarVista} />;
-    }
-    // 'login' o cualquier otra vista no reconocida
+    if (vista === 'catalogoPublico') return <CatalogoPublico setVista={cambiarVista} />;
+    if (vista === 'registro' || modoRegistro) return <Registro setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
+    if (vista === 'forgotPassword') return <ForgotPassword setVista={cambiarVista} />;
+    if (vista === 'resetPassword') return <ResetPassword setVista={cambiarVista} />;
     return <Login setLogueado={setLogueado} setModoRegistro={setModoRegistro} setVista={cambiarVista} />;
   }
 
-  // SWITCH PARA LAS VISTAS
-  const role = Number(localStorage.getItem('role')) || 2;
+  const role = Number(sessionStorage.getItem('role')) || 2;
 
   switch (vista) {
-    // Si por alguna razon llega una vista publica estando autenticado → home
     case 'catalogoPublico':
     case 'login':
     case 'registro':
     case 'home':
       return <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
 
-    // CLIENTE / USUARIO PUBLICO (Cualquier rol accede)
     case 'miServicio':
       return <MiServicio cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'catalogo':
@@ -158,31 +65,29 @@ function App() {
     case 'misPreguntas':
       return <MisPreguntas cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
 
-    // TECNICO Y ADMINISTRADOR (Roles 1 y 3)
     case 'servicios':
-      return (role === 1 || role === 3) ? <Servicios cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Servicios cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'historial':
-      return (role === 1 || role === 3) ? <Historial cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Historial cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'productos':
-      return (role === 1 || role === 3) ? <Productos cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Productos cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'categorias':
-      return (role === 1 || role === 3) ? <Categorias cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Categorias cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'preguntas':
-      return (role === 1 || role === 3) ? <Preguntas cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Preguntas cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'chats':
-      return (role === 1 || role === 3) ? <Chats cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Chats cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'mensajes':
-      return (role === 1 || role === 3) ? <Mensajes cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Mensajes cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'notificaciones':
-      return (role === 1 || role === 3) ? <Notificaciones cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 1 || role === 3 ? <Notificaciones cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
 
-    // EXCLUSIVO ADMINISTRADOR (Rol 3)
     case 'usuarios':
-      return (role === 3) ? <Usuarios cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 3 ? <Usuarios cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'roles':
-      return (role === 3) ? <Roles cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 3 ? <Roles cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
     case 'tipo':
-      return (role === 3) ? <Tipo cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
+      return role === 3 ? <Tipo cerrarSesion={cerrarSesion} setVista={cambiarVista} /> : <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;
 
     default:
       return <Home cerrarSesion={cerrarSesion} setVista={cambiarVista} />;

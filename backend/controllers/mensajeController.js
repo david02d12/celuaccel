@@ -34,3 +34,20 @@ exports.listarPorChat = async (req, res) => {
         res.status(200).json(await mensajeService.listarPorChat(req.params.id));
     } catch (err) { handleError(res, err); }
 };
+
+/** EP-005: Procesa adjuntos subidos con Multer y retorna sus URLs pública */
+exports.subirAdjunto = (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'No se recibieron archivos.' });
+        }
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        const archivos = req.files.map(f => ({
+            nombre:   f.originalname,
+            url:      `${baseUrl}/uploads/chat/${f.filename}`,
+            tipo:     f.mimetype,
+            tamano:   f.size,
+        }));
+        res.status(201).json({ message: 'Archivo(s) subido(s) correctamente.', archivos });
+    } catch (err) { handleError(res, err); }
+};

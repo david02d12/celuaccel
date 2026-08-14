@@ -100,7 +100,7 @@ const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('celuaccel-theme');
+    const saved = sessionStorage.getItem('celuaccel-theme');
     if (saved) return saved === 'dark';
     // Respeta la preferencia del sistema operativo si no hay preferencia guardada
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
@@ -110,7 +110,7 @@ export const ThemeProvider = ({ children }) => {
     const root = document.documentElement;
     root.setAttribute('data-theme',    isDark ? 'dark' : 'light');
     root.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
-    localStorage.setItem('celuaccel-theme', isDark ? 'dark' : 'light');
+    sessionStorage.setItem('celuaccel-theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
   const toggleTheme = () => setIsDark(v => !v);

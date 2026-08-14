@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -51,7 +52,7 @@ const Categorias = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar esta categoria?')) {
+    if (await confirmar('¿Eliminar esta categoria?')) {
       try {
         await api.delete(`/categorias/eliminar/${id}`);
         mostrarToast('Categoria eliminada.'); listar();
@@ -110,8 +111,8 @@ const Categorias = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="mb-3">
               <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por ID o nombre..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+                placeholder="Buscar por código, nombre o descripción..."
+                value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
 
             <div className="d-flex flex-column gap-2">

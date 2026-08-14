@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Cliente
-import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -86,7 +85,7 @@ class ListaClienteActivity : AppCompatActivity() {
                     }
                 } else {
                     Log.d("API_ERROR", "Error en respuesta: ${response.code()} | ${response.errorBody()?.string()}")
-                    Toast.makeText(this@ListaClienteActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@ListaClienteActivity, "Error de autenticación o del servidor (${response.code()})", Toast.LENGTH_LONG).show()
                 }
             }
 

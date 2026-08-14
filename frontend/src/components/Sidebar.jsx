@@ -1,8 +1,8 @@
 import React from 'react';
 
 const Sidebar = ({ setVista }) => {
-  const role = Number(localStorage.getItem('role')) || 2;
-  const currentVista = localStorage.getItem('ultimaVista') || 'home';
+  const role = Number(sessionStorage.getItem('role')) || 2;
+  const currentVista = sessionStorage.getItem('ultimaVista') || 'home';
 
   const Btn = ({ label, vista }) => {
     const isActive = vista === currentVista;
@@ -41,9 +41,6 @@ const Sidebar = ({ setVista }) => {
             <SectionLabel>Tienda</SectionLabel>
             <Btn label="Catálogo"            vista="catalogo" />
             <Btn label="Comentarios"         vista="comentarios" />
-
-            <SectionLabel>Cuenta</SectionLabel>
-            <Btn label="Mi Perfil"           vista="perfil" />
           </>
         )}
 
@@ -74,6 +71,10 @@ const Sidebar = ({ setVista }) => {
             <Btn label="Roles"                  vista="roles" />
           </>
         )}
+
+        {/* ══ CUENTA (Todos los roles) ══ */}
+        <SectionLabel>Cuenta</SectionLabel>
+        <Btn label="Mi Perfil"           vista="perfil" />
 
       </div>
     </div>

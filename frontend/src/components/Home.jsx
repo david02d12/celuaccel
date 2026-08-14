@@ -10,8 +10,9 @@ const Home = ({ cerrarSesion, setVista }) => {
     servicios: 0, usuarios: 0, productos: 0, historial: 0
   });
   const [serviciosRecientes, setServiciosRecientes] = useState([]);
-  const usuario = localStorage.getItem('user') || 'Usuario';
-  const role = Number(localStorage.getItem('role')) || 2;
+  const usuario = sessionStorage.getItem('user') || 'Usuario';
+  const nombre  = sessionStorage.getItem('nombre') || usuario; // nombre real, fallback al ID
+  const role = Number(sessionStorage.getItem('role')) || 2;
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -88,7 +89,7 @@ const Home = ({ cerrarSesion, setVista }) => {
       <div className="container mt-4">
         {/* BIENVENIDA */}
         <div className="mb-4 text-center module-banner">
-          <h4 className="fw-bold mb-1">Bienvenido, {usuario}</h4>
+          <h4 className="fw-bold mb-1">Bienvenido, {nombre}</h4>
           <p className="mb-0 opacity-75">Este es tu panel del sistema Celuaccel.</p>
         </div>
 

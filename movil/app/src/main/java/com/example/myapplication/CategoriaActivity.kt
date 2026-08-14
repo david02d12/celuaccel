@@ -17,7 +17,6 @@ import android.widget.TextView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Categoria
-import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -102,7 +101,7 @@ class CategoriaActivity : AppCompatActivity() {
 
                     filtrarLista(etBusqueda.text.toString())
                 } else {
-                    Toast.makeText(this@CategoriaActivity, "Error al cargar categorías: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CategoriaActivity, "Error al cargar categorías (${response.code()})", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Categoria>>, t: Throwable) {
@@ -156,7 +155,7 @@ class CategoriaActivity : AppCompatActivity() {
                     categoriaEnEdicion = null
                     cargar()
                 } else {
-                    Toast.makeText(this@CategoriaActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@CategoriaActivity, "Error: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -187,7 +186,7 @@ class CategoriaActivity : AppCompatActivity() {
                                 Toast.makeText(this@CategoriaActivity, "Categoría eliminada", Toast.LENGTH_SHORT).show()
                                 cargar()
                             } else {
-                                Toast.makeText(this@CategoriaActivity, "Error al eliminar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@CategoriaActivity, "Error al eliminar: ${response.code()}", Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {

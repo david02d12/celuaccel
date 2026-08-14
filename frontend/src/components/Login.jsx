@@ -21,9 +21,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
     try {
       const res = await api.post('/login', { user: u, password: p });
       if (res.data.auth) {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user',  res.data.user);
-        localStorage.setItem('role',  res.data.role);
+        sessionStorage.setItem('token',  res.data.token);
+        sessionStorage.setItem('user',   res.data.user);
+        sessionStorage.setItem('role',   res.data.role);
+        sessionStorage.setItem('nombre', res.data.nombre);
         setLogueado(true);
       }
     } catch {
@@ -129,11 +130,11 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
                 display: 'block', fontSize: '0.78rem', fontWeight: 700,
                 color: 'var(--color-text-muted)', marginBottom: '7px', textTransform: 'uppercase', letterSpacing: '0.05em',
               }}>
-                Número de Documento
+                Documento o Correo Electrónico
               </label>
               <input
                 type="text"
-                placeholder="Ej: 1001234567"
+                placeholder="Ej: 1001234567 o correo@ejemplo.com"
                 value={loginUser}
                 onChange={e => setLoginUser(e.target.value)}
                 onKeyDown={handleKeyDown}

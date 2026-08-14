@@ -1,4 +1,4 @@
-﻿const rolesService = require('../services/roles.service');
+const rolesService = require('../services/roles.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
@@ -10,14 +10,14 @@ exports.listarRoles = async (req, res) => {
 
 exports.agregarRol = async (req, res) => {
     try {
-        await rolesService.crear(req.body.Codigo_Rol, req.body.Descripcion_Rol);
+        await rolesService.crear(req.body.Codigo_Rol, req.body.Nombre_Rol);
         res.status(201).json({ message: 'Rol creado correctamente.' });
     } catch (err) { handleError(res, err); }
 };
 
 exports.actualizarRol = async (req, res) => {
     try {
-        await rolesService.actualizar(req.body.Codigo_Rol, req.body.Descripcion_Rol);
+        await rolesService.actualizar(req.body.Codigo_Rol, req.body.Nombre_Rol);
         res.status(200).json({ message: 'Rol actualizado correctamente.' });
     } catch (err) { handleError(res, err); }
 };

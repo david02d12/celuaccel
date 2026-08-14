@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.ForgotPasswordRequest
-import com.example.myapplication.util.mensajeErrorHttp
 import com.example.myapplication.model.LoginRequest
 import com.example.myapplication.model.LoginResponse
 import retrofit2.Call
@@ -51,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-
+        // ── Recuperar contraseña (visible y accesible) ──────────────────────
         val tvOlvideContrasena = findViewById<TextView>(R.id.tvOlvideContrasena)
         tvOlvideContrasena.setOnClickListener {
             mostrarDialogoRecuperacion()
@@ -103,11 +102,8 @@ class LoginActivity : AppCompatActivity() {
 
                     val codigoError = response.code()
                     val cuerpoError = response.errorBody()?.string()
-                    val mensajeServer = try {
-                        org.json.JSONObject(cuerpoError ?: "").optString("message", mensajeErrorHttp(codigoError))
-                    } catch (_: Exception) { mensajeErrorHttp(codigoError) }
 
-                    mostrarError(tvMessage, "Error: $codigoError $mensajeServer")
+                    mostrarError(tvMessage, "Error: $codigoError | Resp: $cuerpoError")
                 }
             }
 

@@ -1,4 +1,4 @@
-﻿const servicioService = require('../services/servicio.service');
+const servicioService = require('../services/servicio.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });

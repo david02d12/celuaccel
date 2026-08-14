@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -61,7 +62,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar este producto del inventario?')) {
+    if (await confirmar('¿Eliminar este producto del inventario?')) {
       try {
         await api.delete(`/productos/eliminar/${id}`);
         mostrarToast('Producto eliminado.'); listar();
@@ -82,7 +83,9 @@ const Productos = ({ cerrarSesion, setVista }) => {
   const filtrados = productos.filter(p =>
     String(p.Codigo_Producto).toLowerCase().includes(busqueda.toLowerCase()) ||
     String(p.Nombre || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-    String(p.Descripcion || '').toLowerCase().includes(busqueda.toLowerCase())
+    String(p.Descripcion || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(p.Precio || '').includes(busqueda) ||
+    String(p.Codigo_Categoria || '').includes(busqueda)
   );
 
   const totalActivos = productos.filter(p => p.Activo_Catalogo === 1 || p.Activo_Catalogo === '1').length;
@@ -163,10 +166,10 @@ const Productos = ({ cerrarSesion, setVista }) => {
 
           {/* CARDS DE PRODUCTOS */}
           <div className="col-lg-8 col-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por codigo, nombre o descripcion..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+            <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
+              <input type="text" className="form-control"
+                placeholder=" Buscar por código, nombre, descripción, precio o categoría..."
+                value={busqueda} onChange={e => { setBusqueda(e.target.value); }} style={inputStyle} />
             </div>
 
             {filtrados.length === 0 ? (

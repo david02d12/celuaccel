@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,11 +19,11 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
-  const [form, setForm] = useState({ Codigo_Documento: '', Nombre_Documento: '' });
+  const [form, setForm] = useState({ Codigo_Documento: '', Tipo_Documento: '' });
 
   const tiposFiltrados = datos.filter(d =>
     String(d.Codigo_Documento).includes(busqueda) ||
-    String(d.Nombre_Documento || '').toLowerCase().includes(busqueda.toLowerCase())
+    String(d.Tipo_Documento || '').toLowerCase().includes(busqueda.toLowerCase())
   );
   const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(tiposFiltrados, 8);
 
@@ -51,7 +52,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar este tipo de documento?')) {
+    if (await confirmar('¿Eliminar este tipo de documento?')) {
       try {
         await api.delete(`/tipodocumento/eliminar/${id}`);
         mostrarToast('Tipo eliminado.'); listar();
@@ -59,7 +60,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
     }
   };
 
-  const limpiar = () => { setForm({ Codigo_Documento: '', Nombre_Documento: '' }); setEnEdicion(false); };
+  const limpiar = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); };
 
   const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
 
@@ -95,8 +96,8 @@ const Tipo = ({ cerrarSesion, setVista }) => {
                 value={form.Codigo_Documento} placeholder="Codigo del Documento"
                 onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
               <input className="form-control mb-3" style={inputStyle}
-                value={form.Nombre_Documento} placeholder="Nombre del Documento"
-                onChange={e => setForm({...form, Nombre_Documento: e.target.value})} />
+                value={form.Tipo_Documento} placeholder="Tipo de Documento"
+                onChange={e => setForm({...form, Tipo_Documento: e.target.value})} />
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar' : 'Guardar Tipo'}
               </button>
@@ -107,9 +108,9 @@ const Tipo = ({ cerrarSesion, setVista }) => {
           {/* CARDS */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
-              <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por codigo o nombre..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+                <input type="text" className="form-control" style={inputStyle}
+                  placeholder="Buscar por código o nombre..."
+                  value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
 
             <div className="d-flex flex-column gap-2">
@@ -123,7 +124,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
                     </div>
                     <div className="flex-grow-1">
                       <div className="d-flex align-items-center gap-2">
-                        <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Nombre_Documento}</span>
+                        <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Tipo_Documento}</span>
                         <span className="badge bg-primary" style={{ fontSize: '0.7rem' }}>#{d.Codigo_Documento}</span>
                       </div>
                     </div>

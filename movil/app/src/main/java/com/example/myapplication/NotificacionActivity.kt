@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Notificacion
-import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -116,7 +115,7 @@ class NotificacionActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this@NotificacionActivity,
-                        "Error al cargar notificaciones: ${mensajeErrorHttp(response.code())}",
+                        "Error al cargar notificaciones (${response.code()})",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -308,7 +307,7 @@ class NotificacionActivity : AppCompatActivity() {
                     Toast.makeText(this@NotificacionActivity, "Notificación eliminada", Toast.LENGTH_SHORT).show()
                     cargarNotificaciones()
                 } else {
-                    Toast.makeText(this@NotificacionActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NotificacionActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -357,7 +356,7 @@ class NotificacionActivity : AppCompatActivity() {
                         dialog.dismiss()
                         cargarNotificaciones()
                     } else {
-                        Toast.makeText(this@NotificacionActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@NotificacionActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {

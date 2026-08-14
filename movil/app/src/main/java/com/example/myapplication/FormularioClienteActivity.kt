@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Cliente
-import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,7 +79,7 @@ class FormularioClienteActivity : AppCompatActivity() {
                         Toast.makeText(this@FormularioClienteActivity, "Cliente registrado con éxito.", Toast.LENGTH_SHORT).show()
                         finish()
                     } else {
-                        Toast.makeText(this@FormularioClienteActivity, "Error al guardar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@FormularioClienteActivity, "Error al guardar: ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -101,7 +100,7 @@ class FormularioClienteActivity : AppCompatActivity() {
                         Toast.makeText(this@FormularioClienteActivity, "Información actualizada.", Toast.LENGTH_SHORT).show()
                         finish()
                     } else {
-                        Toast.makeText(this@FormularioClienteActivity, "Error al actualizar: ${mensajeErrorHttp(response.code())}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@FormularioClienteActivity, "Error al actualizar (${response.code()})", Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {

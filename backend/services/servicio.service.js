@@ -29,6 +29,18 @@ const agregar = async (data, userId) => {
 
 const actualizar = async (data) => {
     if (!data.ID_Servicio) throw new AppError('El campo ID_Servicio es obligatorio para actualizar.', 400);
+
+    // RN-014: Etapa=2 = Terminado. Para completar una orden se requiere descripción final.
+    if (Number(data.Etapa) === 2) {
+        const descripcion = data.Descripcion ? String(data.Descripcion).trim() : '';
+        if (!descripcion) {
+            throw new AppError(
+                'Para completar el servicio (Etapa 2 = Terminado) es obligatorio registrar un diagnóstico final en el campo Descripcion.',
+                400
+            );
+        }
+    }
+
     const result = await servicioDao.update(data);
     if (result.affectedRows === 0) throw new AppError('Servicio no encontrado.', 404);
 };
@@ -39,8 +51,9 @@ const cancelar = async (id, userId) => {
     if (rows.length === 0) throw new AppError('Servicio no encontrado.', 404);
 
     const { Etapa, ID_Usuario } = rows[0];
-    if (Number(Etapa) === 100) throw new AppError('No se puede cancelar un servicio ya completado.', 409);
-    if (Number(Etapa) === -1)  throw new AppError('El servicio ya fue cancelado.', 409);
+    // RN-014: Etapa=2 = Terminado, Etapa=-1 = Cancelado
+    if (Number(Etapa) === 2)  throw new AppError('No se puede cancelar un servicio ya terminado.', 409);
+    if (Number(Etapa) === -1) throw new AppError('El servicio ya fue cancelado.', 409);
 
     const rolRes = await usuarioDao.getRol(userId);
     const rolUsuario = rolRes[0]?.Codigo_Rol;
@@ -58,3 +71,4 @@ const eliminar = async (id) => {
 };
 
 module.exports = { listar, misServicios, agregar, actualizar, cancelar, eliminar };
+

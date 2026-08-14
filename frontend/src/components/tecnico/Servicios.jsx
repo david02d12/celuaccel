@@ -2,20 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
+import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const ETAPAS = [
-  { valor: '0',   label: 'Recibido',           color: '#6c757d', pct: 0   },
-  { valor: '25',  label: 'En Diagnóstico',      color: '#0d6efd', pct: 25  },
-  { valor: '40',  label: 'En Diagnóstico',      color: '#0d6efd', pct: 40  },
-  { valor: '50',  label: 'En Reparación',       color: '#f59e0b', pct: 50  },
-  { valor: '60',  label: 'En Reparación',       color: '#f59e0b', pct: 60  },
-  { valor: '70',  label: 'Control de Calidad',  color: '#8b5cf6', pct: 70  },
-  { valor: '75',  label: 'Control de Calidad',  color: '#8b5cf6', pct: 75  },
-  { valor: '80',  label: 'Control de Calidad',  color: '#8b5cf6', pct: 80  },
-  { valor: '100', label: 'Listo para Retirar',  color: '#198754', pct: 100 },
-  { valor: '-1',  label: 'Cancelado',           color: '#DB0000', pct: 0   },
+  { valor: '0',  label: 'Pendiente',   color: '#6c757d', pct: 10  },
+  { valor: '1',  label: 'En proceso',  color: '#0d6efd', pct: 50  },
+  { valor: '2',  label: 'Terminado',   color: '#198754', pct: 100 },
+  { valor: '-1', label: 'Cancelado',   color: '#DB0000', pct: 0   },
 ];
 
 const etapaInfo = (val) => ETAPAS.find(e => e.valor === String(val)) || ETAPAS[0];
@@ -51,13 +49,15 @@ const MENSAJES_RAPIDOS = [
 ];
 
 const Servicios = ({ cerrarSesion, setVista }) => {
+  const userRole = Number(sessionStorage.getItem('role')) || 1;
   const [servicios, setServicios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
+  const { minDate, maxDate } = getLimitesGeneralesFecha();
   const [enEdicion, setEnEdicion] = useState(false);
   const [idServicioSel, setIdServicioSel] = useState(null);
   const [formServicio, setFormServicio] = useState({
-    Descripcion: '', ID_Usuario: '', Precio: '', Movil_Nombre: '',
+    Descripcion: '', ID_Usuario: '', Precio: '', Precio_Repuestos: '', Precio_Mano_Obra: '', Movil_Nombre: '',
     Movil_Especificacion: '', Fecha: '', Etapa: '0'
   });
   const [modalNotif, setModalNotif] = useState(null);
@@ -82,7 +82,12 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     try {
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
-      const data = enEdicion ? { ...formServicio, ID_Servicio: idServicioSel } : formServicio;
+      const data = enEdicion ? { ...formServicio, ID_Servicio: idServicioSel } : { ...formServicio };
+      const rep = Number(data.Precio_Repuestos) || 0;
+      const mano = Number(data.Precio_Mano_Obra) || 0;
+      if (data.Precio_Repuestos || data.Precio_Mano_Obra) {
+        data.Precio = rep + mano;
+      }
       await api[metodo](`/servicios/${url}`, data);
       mostrarToast(enEdicion ? 'Servicio actualizado.' : 'Nuevo servicio registrado.');
       listar(); limpiarServicio();
@@ -90,7 +95,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminarServicio = async (id) => {
-    if (window.confirm('¿Eliminar este servicio?')) {
+    if (await confirmar('¿Eliminar este servicio?')) {
       try {
         await api.delete(`/servicios/eliminar/${id}`);
         mostrarToast('Servicio eliminado.'); listar();
@@ -99,7 +104,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   };
 
   const limpiarServicio = () => {
-    setFormServicio({ Descripcion: '', ID_Usuario: '', Precio: '', Movil_Nombre: '', Movil_Especificacion: '', Fecha: '', Etapa: '0' });
+    setFormServicio({ Descripcion: '', ID_Usuario: '', Precio: '', Precio_Repuestos: '', Precio_Mano_Obra: '', Movil_Nombre: '', Movil_Especificacion: '', Fecha: '', Etapa: '0' });
     setEnEdicion(false); setIdServicioSel(null);
   };
 
@@ -114,7 +119,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     if (!mensajeNotif.trim() || !modalNotif) return;
     setEnviandoNotif(true);
     try {
-      await api.post('/notificaciones/enviar', {
+      await api.post('/notificaciones/dirigida', {
         ID_Usuario_Destino: modalNotif.ID_Usuario,
         ID_Servicio: modalNotif.ID_Servicio,
         Mensaje: mensajeNotif.trim()
@@ -125,12 +130,68 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     finally { setEnviandoNotif(false); }
   };
 
+  const generarPDF = () => {
+    if (filtrados.length === 0) return mostrarToast('No hay servicios en la vista para exportar.', false);
+    const doc = new jsPDF();
+    
+    // Encabezado
+    doc.setFillColor(219, 0, 0);
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CELUACCEL', 14, 15);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Reporte Operativo de Servicios Técnicos', 14, 23);
+    
+    doc.setFontSize(9);
+    doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 195, 15, { align: 'right' });
+    doc.text(`Usuario que exporta: Rol ${userRole}`, 195, 22, { align: 'right' });
+
+    // Resumen métricas
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    const pendientes = filtrados.filter(s => String(s.Etapa) === '0').length;
+    const enProceso = filtrados.filter(s => String(s.Etapa) === '1').length;
+    const terminados = filtrados.filter(s => String(s.Etapa) === '2').length;
+    const cancelados = filtrados.filter(s => String(s.Etapa) === '-1').length;
+
+    doc.text(`Métricas de la vista actual:`, 14, 42);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Total: ${filtrados.length} | Pendientes: ${pendientes} | En Proceso: ${enProceso} | Terminados: ${terminados} | Cancelados: ${cancelados}`, 14, 48);
+
+    autoTable(doc, {
+      startY: 55,
+      head: [['ID', 'Cliente', 'Equipo', 'Falla', 'Estado', 'Precio', 'Fecha']],
+      body: filtrados.map(s => [
+        s.ID_Servicio,
+        s.ID_Usuario || '—',
+        `${s.Movil_Nombre || ''} ${s.Movil_Especificacion || ''}`.trim() || '—',
+        s.Descripcion || '—',
+        etapaInfo(s.Etapa).label,
+        s.Precio ? `$${s.Precio}` : '—',
+        s.Fecha ? String(s.Fecha).split('T')[0] : '—',
+      ]),
+      headStyles: { fillColor: [219, 0, 0], textColor: [255, 255, 255], fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 249, 250] },
+      styles: { fontSize: 8, cellPadding: 3, overflow: 'linebreak' },
+      columnStyles: { 3: { cellWidth: 50 } } // Dar más espacio a la descripción
+    });
+
+    doc.save(`Reporte_Servicios_${new Date().toISOString().split('T')[0]}.pdf`);
+    mostrarToast('Reporte PDF descargado.', true);
+  };
+
   const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
 
   const filtrados = servicios.filter(s =>
     String(s.Descripcion || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     String(s.Movil_Nombre || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     String(s.ID_Usuario || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(s.Precio || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(s.Movil_Especificacion || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     String(s.ID_Servicio).includes(busqueda)
   );
 
@@ -151,7 +212,15 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Gestion de Reparaciones</h4>
             <p className="mb-0 opacity-75">Registra y actualiza el seguimiento de cada servicio tecnico</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{servicios.length} servicios</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge bg-white text-danger fw-bold fs-6">{servicios.length} servicios</span>
+            <button className="btn btn-sm btn-light text-danger fw-bold d-flex align-items-center gap-1" onClick={generarPDF}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+              </svg>
+              PDF
+            </button>
+          </div>
         </div>
 
         <div className="row">
@@ -162,13 +231,20 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Servicio' : 'Nuevo Registro'}</h5>
               </div>
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema" onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} type="number" value={formServicio.Precio} placeholder="Precio ($)" onChange={e => setFormServicio({...formServicio, Precio: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo del Movil" onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica" onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
+              
+              <div className="d-flex gap-2 mb-2">
+                <input className="form-control" style={inputStyle} type="number" value={formServicio.Precio_Repuestos} placeholder="Repuestos ($)" onChange={e => setFormServicio({...formServicio, Precio_Repuestos: e.target.value})} />
+                <input className="form-control" style={inputStyle} type="number" value={formServicio.Precio_Mano_Obra} placeholder="Mano Obra ($)" onChange={e => setFormServicio({...formServicio, Precio_Mano_Obra: e.target.value})} />
+              </div>
+              <div className="mb-2 p-2 rounded text-center fw-bold" style={{ backgroundColor: 'var(--color-surfaceAlt)', color: 'var(--color-primary)' }}>
+                Total: ${ (Number(formServicio.Precio_Repuestos) || 0) + (Number(formServicio.Precio_Mano_Obra) || 0) }
+              </div>
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo del Movil" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha de ingreso</label>
-              <input className="form-control mb-2" style={inputStyle} type="date" value={formServicio.Fecha} onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
+              <input className="form-control mb-2" style={inputStyle} type="date" value={formServicio.Fecha} min={minDate} max={maxDate} disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Etapa</label>
               <select className="form-select mb-3" style={inputStyle} value={formServicio.Etapa} onChange={e => setFormServicio({...formServicio, Etapa: e.target.value})}>
                 {ETAPAS.map(e => <option key={e.valor} value={e.valor}>{e.label}</option>)}
@@ -183,7 +259,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
           {/* CARDS DE SERVICIOS */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
-              <input type="text" className="form-control" placeholder="Buscar por descripcion, movil, cliente o ID..."
+              <input type="text" className="form-control" placeholder="Buscar por ID, descripción, cliente, móvil, precio o especificación..."
                 value={busqueda} onChange={e => setBusqueda(e.target.value)} style={inputStyle} />
             </div>
 
@@ -249,11 +325,21 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                           </select>
 
                           <div className="d-flex gap-1">
-                            <button className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                              style={{ fontSize: '0.77rem' }}
-                              onClick={() => { localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
-                              <IconChat /> Chat
-                            </button>
+                            {Number(s.Etapa) === -1 ? (
+                              <button
+                                className="btn btn-sm btn-secondary d-flex align-items-center gap-1"
+                                style={{ fontSize: '0.77rem', opacity: 0.5, cursor: 'not-allowed' }}
+                                disabled
+                                title="Chat no disponible — servicio cancelado">
+                                <IconChat /> Chat
+                              </button>
+                            ) : (
+                              <button className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                                style={{ fontSize: '0.77rem' }}
+                                onClick={() => { sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
+                                <IconChat /> Chat
+                              </button>
+                            )}
                             <button className="btn btn-sm btn-outline-success d-flex align-items-center gap-1"
                               style={{ fontSize: '0.77rem' }}
                               onClick={() => { setModalNotif({ ID_Usuario: s.ID_Usuario, ID_Servicio: s.ID_Servicio }); setMensajeNotif(''); }}>

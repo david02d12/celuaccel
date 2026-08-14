@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Servicio
-import com.example.myapplication.util.formatearPrecio
 class ServicioAdapter(
     private val servicios: List<Servicio>,
     private val esCliente: Boolean = true,
@@ -28,14 +27,12 @@ class ServicioAdapter(
     )
 
     private fun etapaInfo(etapa: Int?): EtapaInfo = when {
-        etapa == null -> EtapaInfo("Sin etapa",            R.drawable.bg_badge_recibido,     R.color.etapa_recibido_text,     0,   R.color.etapa_recibido_border)
-        etapa == -1  -> EtapaInfo("Cancelado",            R.drawable.bg_badge_cancelado,    R.color.etapa_cancelado_text,    0,   R.color.etapa_cancelado_border)
-        etapa == 0   -> EtapaInfo("Recibido",             R.drawable.bg_badge_recibido,     R.color.etapa_recibido_text,     5,   R.color.etapa_recibido_border)
-        etapa <= 25  -> EtapaInfo("En Diagnóstico",       R.drawable.bg_badge_diagnostico,  R.color.etapa_diagnostico_text,  25,  R.color.etapa_diagnostico_border)
-        etapa <= 50  -> EtapaInfo("En Reparación",        R.drawable.bg_badge_reparacion,   R.color.etapa_reparacion_text,   50,  R.color.etapa_reparacion_border)
-        etapa <= 75  -> EtapaInfo("Control de Calidad",   R.drawable.bg_badge_calidad,      R.color.etapa_calidad_text,      75,  R.color.etapa_calidad_border)
-        etapa == 100 -> EtapaInfo("Listo para Retirar",   R.drawable.bg_badge_listo,        R.color.etapa_listo_text,        100, R.color.etapa_listo_border)
-        else         -> EtapaInfo("En proceso ($etapa%)", R.drawable.bg_badge_reparacion,   R.color.etapa_reparacion_text,   etapa, R.color.etapa_reparacion_border)
+        etapa == null -> EtapaInfo("Sin etapa",   R.drawable.bg_badge_recibido,   R.color.etapa_recibido_text,   0,   R.color.etapa_recibido_border)
+        etapa == -1   -> EtapaInfo("Cancelado",   R.drawable.bg_badge_cancelado,  R.color.etapa_cancelado_text,  0,   R.color.etapa_cancelado_border)
+        etapa == 0    -> EtapaInfo("Pendiente",   R.drawable.bg_badge_recibido,   R.color.etapa_recibido_text,   10,  R.color.etapa_recibido_border)
+        etapa == 1    -> EtapaInfo("En proceso",  R.drawable.bg_badge_reparacion, R.color.etapa_reparacion_text, 50,  R.color.etapa_reparacion_border)
+        etapa == 2    -> EtapaInfo("Terminado",   R.drawable.bg_badge_listo,      R.color.etapa_listo_text,      100, R.color.etapa_listo_border)
+        else          -> EtapaInfo("Etapa $etapa", R.drawable.bg_badge_recibido,  R.color.etapa_recibido_text,   0,   R.color.etapa_recibido_border)
     }
 
 
@@ -91,7 +88,7 @@ class ServicioAdapter(
 
 
         val precio = s.precio ?: 0.0
-        holder.tvPrecio.text = if (precio > 0) "$${precio.formatearPrecio()}" else "Por definir"
+        holder.tvPrecio.text = if (precio > 0) "$${"%.0f".format(precio)}" else "Por definir"
 
         holder.itemView.setOnClickListener { onClick?.invoke(s) }
         holder.itemView.setOnLongClickListener {

@@ -3,16 +3,17 @@ import { useTheme } from '../context/ThemeContext';
 
 const Navbar = ({ titulo, cerrarSesion, children }) => {
   const { isDark, toggleTheme } = useTheme();
-  const usuario  = localStorage.getItem('user') || '';
-  const rolNum   = Number(localStorage.getItem('role'));
+  const usuario  = sessionStorage.getItem('user') || '';
+  const nombre   = sessionStorage.getItem('nombre') || usuario; // nombre del usuario, fallback al ID
+  const rolNum   = Number(sessionStorage.getItem('role'));
 
   let rolNombre = '';
   if (rolNum === 1) rolNombre = 'Técnico';
   else if (rolNum === 2) rolNombre = 'Cliente';
   else if (rolNum === 3) rolNombre = 'Administrador';
 
-  // Inicial del usuario para el avatar
-  const inicial = usuario ? usuario.charAt(0).toUpperCase() : '?';
+  // Inicial del usuario para el avatar (usa nombre, no el ID)
+  const inicial = nombre ? nombre.charAt(0).toUpperCase() : '?';
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark p-3 shadow-sm">
@@ -62,10 +63,10 @@ const Navbar = ({ titulo, cerrarSesion, children }) => {
 
           {/* Avatar + info de usuario */}
           {usuario && (
-            <div className="d-flex align-items-center gap-2" title={`${usuario} · ${rolNombre}`}>
+            <div className="d-flex align-items-center gap-2" title={`${nombre} · ${rolNombre}`}>
               {/* Info texto (solo desktop) */}
               <div className="text-white text-end lh-1 d-none d-md-block">
-                <div className="fw-bold" style={{ fontSize: '0.88rem' }}>{usuario}</div>
+                <div className="fw-bold" style={{ fontSize: '0.88rem' }}>{nombre}</div>
                 <small className="text-light" style={{ fontSize: '0.75rem', opacity: 0.85 }}>{rolNombre}</small>
               </div>
               {/* Avatar circular */}

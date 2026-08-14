@@ -1,75 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import { useCatalogoPublico } from '../../hooks/useCatalogoPublico';
+import { FiltrosCatalogo } from './FiltrosCatalogo';
+import { ProductoCard } from './ProductoCard';
 
-/* ─────────────────────────────────────────────────────────
-   Catálogo público — visible SIN iniciar sesión
-   Usa fetch directo (sin interceptor) para evitar el bucle 401
-───────────────────────────────────────────────────────── */
 const CatalogoPublico = ({ setVista }) => {
-  const [productos,       setProductos]       = useState([]);
-  const [categorias,      setCategorias]      = useState([]);
-  const [busqueda,        setBusqueda]        = useState('');
-  const [categoriaFiltro, setCategoriaFiltro] = useState('');
-  const [cargando,        setCargando]        = useState(true);
-  const [modalVisible,    setModalVisible]    = useState(false);
-  const [prodHover,       setProdHover]       = useState(null);
-  const [error,           setError]           = useState(null);
+  const {
+    productos, categorias, busqueda, setBusqueda,
+    categoriaFiltro, setCategoriaFiltro, cargando, error,
+    filtrados, nombreCat
+  } = useCatalogoPublico();
 
-  useEffect(() => {
-    const cargar = async () => {
-      try {
-        // Usamos axios directo SIN el interceptor de api.js para no disparar
-        // el ciclo de reload al recibir 401 en rutas protegidas
-        const [pRes, cRes] = await Promise.all([
-          axios.get(`${BASE_URL}/productos/publico`),
-          axios.get(`${BASE_URL}/categorias/publico`),
-        ]);
-        const activos = (pRes.data || []).filter(
-          p => Number(p.Activo_Catalogo) === 1 && Number(p.Cantidad) > 0
-        );
-        setProductos(activos);
-        setCategorias(cRes.data || []);
-        setError(null);
-      } catch (err) {
-        console.warn('Catálogo público: backend no disponible', err.message);
-        setError('No se pudo conectar al servidor. Intenta más tarde.');
-      } finally {
-        setCargando(false);
-      }
-    };
-    cargar();
-  }, []);
-
-  const filtrados = productos.filter(p => {
-    const ok = p.Nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-               p.Descripcion?.toLowerCase().includes(busqueda.toLowerCase());
-    const cat = !categoriaFiltro || String(p.ID_Categoria) === categoriaFiltro;
-    return ok && cat;
-  });
-
-  const nombreCat = id => {
-    const c = categorias.find(c => String(c.ID_Categoria) === String(id));
-    return c?.Nombre_Categoria ?? 'General';
-  };
-
-  /* ── helpers de estilo ── */
-  const pill = (bg, color) => ({
-    display: 'inline-flex', alignItems: 'center',
-    padding: '3px 12px', borderRadius: '99px',
-    fontSize: '0.72rem', fontWeight: 700,
-    letterSpacing: '0.03em', whiteSpace: 'nowrap',
-    backgroundColor: bg, color,
-  });
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f0f2f5', fontFamily: "'Inter', sans-serif" }}>
 
-      {/* ══════════════════════════════════════════════════════════
-          NAVBAR
-      ══════════════════════════════════════════════════════════ */}
       <nav style={{
         position: 'sticky', top: 0, zIndex: 200,
         background: 'linear-gradient(135deg,#c00000 0%,#8a0000 100%)',
@@ -118,15 +65,11 @@ const CatalogoPublico = ({ setVista }) => {
         </div>
       </nav>
 
-      {/* ══════════════════════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════════════════════ */}
       <div style={{
         background: 'linear-gradient(160deg,#b80000 0%,#6b0000 60%,#3a0000 100%)',
         padding: '60px 0 80px',
         position: 'relative', overflow: 'hidden',
       }}>
-        {/* Decoración de fondo */}
         <div style={{
           position: 'absolute', right: '-60px', top: '-60px',
           width: '400px', height: '400px', borderRadius: '50%',
@@ -156,56 +99,15 @@ const CatalogoPublico = ({ setVista }) => {
             Explora nuestra seleccion de dispositivos moviles y accesorios. Inicia sesion para hacer consultas y solicitar servicios.
           </p>
 
-          {/* Barra de busqueda */}
-          <div style={{
-            display: 'flex', gap: '10px', flexWrap: 'wrap', maxWidth: '620px',
-          }}>
-            <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
-              <svg
-                style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }}
-                width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round"
-              >
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input
-                type="text"
-                placeholder="Buscar producto..."
-                value={busqueda}
-                onChange={e => setBusqueda(e.target.value)}
-                style={{
-                  width: '100%', padding: '13px 14px 13px 42px',
-                  borderRadius: '10px', border: 'none', outline: 'none',
-                  fontSize: '0.9rem', boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-            <select
-              value={categoriaFiltro}
-              onChange={e => setCategoriaFiltro(e.target.value)}
-              style={{
-                padding: '13px 16px', borderRadius: '10px', border: 'none', outline: 'none',
-                fontSize: '0.88rem', fontFamily: 'inherit', minWidth: '180px',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.18)', cursor: 'pointer',
-              }}
-            >
-              <option value="">Todas las categorias</option>
-              {categorias.map(c => (
-                <option key={c.ID_Categoria} value={String(c.ID_Categoria)}>
-                  {c.Nombre_Categoria}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FiltrosCatalogo
+            busqueda={busqueda} setBusqueda={setBusqueda}
+            categoriaFiltro={categoriaFiltro} setCategoriaFiltro={setCategoriaFiltro}
+            categorias={categorias}
+          />
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════════════════════
-          CONTENIDO PRINCIPAL
-      ══════════════════════════════════════════════════════════ */}
       <div className="container py-5">
-
-        {/* Barra de estado */}
         {!cargando && !error && (
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -226,7 +128,6 @@ const CatalogoPublico = ({ setVista }) => {
           </div>
         )}
 
-        {/* Estado: cargando */}
         {cargando && (
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
             <div style={{
@@ -239,7 +140,6 @@ const CatalogoPublico = ({ setVista }) => {
           </div>
         )}
 
-        {/* Estado: error de conexión */}
         {error && !cargando && (
           <div style={{
             textAlign: 'center', padding: '60px 20px',
@@ -272,7 +172,6 @@ const CatalogoPublico = ({ setVista }) => {
           </div>
         )}
 
-        {/* Estado: sin resultados */}
         {!cargando && !error && filtrados.length === 0 && productos.length === 0 && (
           <div style={{ textAlign: 'center', padding: '80px 20px' }}>
             <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ddd" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
@@ -297,125 +196,20 @@ const CatalogoPublico = ({ setVista }) => {
           </div>
         )}
 
-        {/* Grid de productos */}
         {!cargando && !error && filtrados.length > 0 && (
           <div className="row g-4">
             {filtrados.map(p => (
-              <div key={p.Codigo_Producto} className="col-6 col-md-4 col-lg-3">
-                <div
-                  style={{
-                    background: '#fff',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(0,0,0,0.07)',
-                    boxShadow: prodHover === p.Codigo_Producto
-                      ? '0 16px 40px rgba(180,0,0,0.14)'
-                      : '0 2px 10px rgba(0,0,0,0.06)',
-                    transform: prodHover === p.Codigo_Producto ? 'translateY(-6px)' : 'translateY(0)',
-                    transition: 'all 0.22s cubic-bezier(.4,0,.2,1)',
-                    cursor: 'pointer',
-                    overflow: 'hidden',
-                    display: 'flex', flexDirection: 'column', height: '100%',
-                    position: 'relative',
-                  }}
-                  onMouseEnter={() => setProdHover(p.Codigo_Producto)}
-                  onMouseLeave={() => setProdHover(null)}
-                  onClick={() => setModalVisible(true)}
-                >
-                  {/* Imagen o placeholder */}
-                  <div style={{ position: 'relative', height: '180px', flexShrink: 0 }}>
-                    {p.Imagen ? (
-                      <img
-                        src={p.Imagen} alt={p.Nombre}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                      />
-                    ) : null}
-                    <div style={{
-                      display: p.Imagen ? 'none' : 'flex',
-                      width: '100%', height: '100%',
-                      background: 'linear-gradient(135deg,#f5f5f5,#ebebeb)',
-                      alignItems: 'center', justifyContent: 'center',
-                      flexDirection: 'column', gap: '6px',
-                    }}>
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round">
-                        <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/>
-                      </svg>
-                      <span style={{ fontSize: '0.7rem', color: '#ccc', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Sin imagen</span>
-                    </div>
-
-                    {/* Overlay de hover — candado */}
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      background: 'rgba(180,0,0,0.78)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      flexDirection: 'column', gap: '8px',
-                      opacity: prodHover === p.Codigo_Producto ? 1 : 0,
-                      transition: 'opacity 0.2s ease',
-                    }}>
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                      </svg>
-                      <span style={{ color: '#fff', fontWeight: 700, fontSize: '0.78rem', letterSpacing: '0.04em' }}>
-                        Ver detalles
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Contenido de la card */}
-                  <div style={{ padding: '14px 16px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <span style={pill('rgba(192,0,0,0.09)', '#9a0000')}>
-                      {nombreCat(p.ID_Categoria)}
-                    </span>
-                    <h6 style={{ fontWeight: 700, margin: 0, fontSize: '0.95rem', color: '#1a1a1a', lineHeight: 1.3 }}>
-                      {p.Nombre}
-                    </h6>
-                    <p style={{
-                      color: '#888', fontSize: '0.8rem', margin: 0, flexGrow: 1,
-                      display: '-webkit-box', WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                    }}>
-                      {p.Descripcion}
-                    </p>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                      <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#c00000' }}>
-                        ${Number(p.Precio).toLocaleString()}
-                      </span>
-                      <span style={pill(
-                        p.Cantidad > 0 ? 'rgba(25,135,84,0.09)' : 'rgba(108,117,125,0.09)',
-                        p.Cantidad > 0 ? '#146c43' : '#6c757d'
-                      )}>
-                        {p.Cantidad > 0 ? `Stock ${p.Cantidad}` : 'Sin stock'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Botón */}
-                  <div style={{ padding: '0 16px 16px' }}>
-                    <button
-                      onClick={e => { e.stopPropagation(); setModalVisible(true); }}
-                      style={{
-                        width: '100%', padding: '9px',
-                        background: 'linear-gradient(135deg,#1a1a1a,#2e2e2e)',
-                        color: '#fff', border: 'none', borderRadius: '9px',
-                        fontWeight: 700, fontSize: '0.83rem', cursor: 'pointer',
-                        transition: 'opacity .2s',
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                      onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-                    >
-                      Ver detalles
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductoCard
+                key={p.Codigo_Producto}
+                p={p}
+                nombreCat={nombreCat}
+                setModalVisible={setModalVisible}
+              />
             ))}
           </div>
         )}
       </div>
 
-      {/* ══════════════════════════════════════════════════════════
-          CTA INFERIOR
-      ══════════════════════════════════════════════════════════ */}
       {!cargando && !error && productos.length > 0 && (
         <div style={{
           background: 'linear-gradient(135deg,#111,#1e1e1e)',
@@ -461,9 +255,6 @@ const CatalogoPublico = ({ setVista }) => {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════
-          MODAL DE LOGIN
-      ══════════════════════════════════════════════════════════ */}
       {modalVisible && (
         <div
           onClick={() => setModalVisible(false)}
@@ -490,7 +281,6 @@ const CatalogoPublico = ({ setVista }) => {
               animation: 'slideUp .28s cubic-bezier(.4,0,.2,1)',
             }}
           >
-            {/* Icono candado */}
             <div style={{
               width: '68px', height: '68px', borderRadius: '50%',
               background: 'rgba(192,0,0,0.07)',

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { mostrarAlerta, confirmar } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -36,17 +37,17 @@ const Chats = ({ cerrarSesion, setVista }) => {
       listar();
       limpiar();
     } catch (err) {
-      alert('Error al procesar el chat');
+      await mostrarAlerta('Error al procesar el chat', 'error');
     }
   };
 
   const eliminar = async (id) => {
-    if (window.confirm('¿Eliminar chat?')) {
+    if (await confirmar('¿Eliminar chat?')) {
       try {
         await api.delete(`/chats/eliminar/${id}`);
         listar();
       } catch (err) {
-        alert('Error al eliminar chat');
+        await mostrarAlerta('Error al eliminar chat', 'error');
       }
     }
   };
@@ -120,7 +121,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
                 <input 
                   type="text" 
                   className="form-control"
-                  placeholder="Buscar por código, usuario o servicio..."
+                  placeholder="Buscar por código, usuario, servicio o estado..."
                   value={busqueda} 
                   onChange={e => setBusqueda(e.target.value)}
                   style={inputStyle}
@@ -140,7 +141,8 @@ const Chats = ({ cerrarSesion, setVista }) => {
                     {chats.filter(c =>
                       String(c.Codigo_Chat).includes(busqueda) ||
                       String(c.ID_Usuario || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-                      String(c.ID_Servicio ?? '').includes(busqueda)
+                      String(c.ID_Servicio ?? '').includes(busqueda) ||
+                      String(c.Estado_Chat || '').toLowerCase().includes(busqueda.toLowerCase())
                     ).map(c => (
                       <tr key={c.Codigo_Chat} className="stagger-item">
                         <td>{c.Codigo_Chat}</td>

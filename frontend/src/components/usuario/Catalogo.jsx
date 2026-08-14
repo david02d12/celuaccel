@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { mostrarAlerta } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -33,9 +34,9 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
   }, []);
 
   const enviarPregunta = async () => {
-    if (!nuevaPregunta.trim()) return alert('Por favor escribe tu pregunta.');
-    const usuario = localStorage.getItem('user') || '';
-    if (!usuario) return alert('Error de sesión. Reconecta tu cuenta.');
+    if (!nuevaPregunta.trim()) { await mostrarAlerta('Por favor escribe tu pregunta.', 'warning'); return; }
+    const usuario = sessionStorage.getItem('user') || '';
+    if (!usuario) { await mostrarAlerta('Error de sesión. Reconecta tu cuenta.', 'error'); return; }
 
     setEnviandoPregunta(true);
     try {
@@ -64,7 +65,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
       });
 
       // 4. Guardar referencia del chat para que ChatVista lo abra automáticamente
-      localStorage.setItem('chatInfo', JSON.stringify({ Codigo_Chat: codigoChat }));
+      sessionStorage.setItem('chatInfo', JSON.stringify({ Codigo_Chat: codigoChat }));
 
       // 5. Redirigir al chat en tiempo real con el técnico
       setHaciendoPregunta(false);
@@ -73,7 +74,8 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
       setVista('chatVista');
     } catch (err) {
       console.error(err);
-      alert('Error al enviar la pregunta. Intenta de nuevo.');
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al enviar la pregunta. Intenta de nuevo.';
+      await mostrarAlerta(errorMsg, 'error');
     } finally {
       setEnviandoPregunta(false);
     }

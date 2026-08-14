@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Servicio
-import com.example.myapplication.util.formatearPrecio
-import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -99,7 +97,7 @@ class ListaServicioActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this@ListaServicioActivity,
-                        "Error al obtener servicios: ${mensajeErrorHttp(response.code())}",
+                        "Error al obtener servicios (${response.code()})",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -125,7 +123,7 @@ class ListaServicioActivity : AppCompatActivity() {
                                 val msg = when (response.code()) {
                                     403  -> "No puedes cancelar este servicio."
                                     404  -> "Servicio no encontrado."
-                                    else -> "Error al cancelar: ${mensajeErrorHttp(response.code())}."
+                                    else -> "Error al cancelar (${response.code()})."
                                 }
                                 Toast.makeText(this@ListaServicioActivity, msg, Toast.LENGTH_LONG).show()
                             }
@@ -229,7 +227,7 @@ class ListaServicioActivity : AppCompatActivity() {
                 }
                 canvas.drawText(estadoTxt, 400f, yPosition, paint)
                 
-                canvas.drawText("$${(item.precio ?: 0.0).formatearPrecio()}", 480f, yPosition, paint)
+                canvas.drawText("$${item.precio ?: 0.0}", 480f, yPosition, paint)
 
                 yPosition += 20f
             }

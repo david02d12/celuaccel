@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,7 +15,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [formNuevo, setFormNuevo] = useState({ Descripcion: '', Movil_Nombre: '', Movil_Especificacion: '' });
   
-  const usuario = localStorage.getItem('user') || '';
+  const usuario = sessionStorage.getItem('user') || '';
 
   const mostrarToast = (mensaje, tipo = 'success') => {
     setToast({ visible: true, mensaje, tipo });
@@ -24,38 +25,96 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   const generarPDF = () => {
     if (servicios.length === 0) return mostrarToast('No tienes servicios para exportar.', 'danger');
     const doc = new jsPDF();
-
-    doc.setFillColor(219, 0, 0);
-    doc.rect(0, 0, 210, 28, 'F');
+    
+    // Configuración del encabezado
+    doc.setFillColor(219, 0, 0); // Rojo Celuaccel
+    doc.rect(0, 0, 210, 35, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('CELUACCEL — Mi Historial de Servicios', 14, 12);
+    doc.text('CELUACCEL', 14, 18);
+    
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Cliente: ${usuario}    Generado: ${new Date().toLocaleDateString('es-CO')}`, 14, 22);
+    doc.text('Centro Especializado en Reparación de Dispositivos Móviles', 14, 26);
+    
+    // Info lateral del encabezado
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`COMPROBANTE DE SERVICIOS`, 195, 18, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-CO')}`, 195, 26, { align: 'right' });
 
-    const ETAPAS_MAP = { '0': 'Recibido', '25': 'En Diagnóstico', '50': 'En Reparación', '75': 'Control de Calidad', '100': 'Listo', '-1': 'Cancelado' };
+    // Bloque de datos del cliente
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('DATOS DEL CLIENTE', 14, 45);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Identificación / Usuario: ${usuario}`, 14, 52);
+    doc.text(`Total de equipos registrados: ${servicios.length}`, 14, 58);
 
-    autoTable(doc, {
-      startY: 35,
-      head: [['ID', 'Móvil', 'Descripción', 'Especificación', 'Estado', 'Precio', 'Fecha']],
-      body: servicios.map(s => [
-        s.ID_Servicio,
-        s.Movil_Nombre || '—',
-        s.Descripcion || '—',
-        s.Movil_Especificacion || '—',
-        ETAPAS_MAP[String(s.Etapa)] || `Etapa ${s.Etapa}`,
-        s.Precio ? `$${s.Precio}` : '—',
-        s.Fecha ? String(s.Fecha).split('T')[0] : '—',
-      ]),
-      headStyles: { fillColor: [219, 0, 0], textColor: [255, 255, 255], fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [245, 245, 245] },
-      styles: { fontSize: 9, cellPadding: 3 },
+    doc.setDrawColor(200, 200, 200);
+    doc.line(14, 62, 195, 62);
+
+    const ETAPAS_MAP = { '0': 'Pendiente', '1': 'En proceso', '2': 'Terminado', '-1': 'Cancelado' };
+
+    let currentY = 70;
+
+    servicios.forEach((s, index) => {
+      // Si nos pasamos del límite de la página, creamos una nueva
+      if (currentY > 260) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      // Caja de Servicio
+      doc.setFillColor(248, 249, 250);
+      doc.setDrawColor(220, 220, 220);
+      doc.roundedRect(14, currentY, 181, 55, 3, 3, 'FD');
+
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(219, 0, 0);
+      doc.text(`Servicio Técnico #${s.ID_Servicio}`, 18, currentY + 8);
+      
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Estado actual: ${ETAPAS_MAP[String(s.Etapa)] || 'Desconocido'}`, 140, currentY + 8);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Equipo: ${s.Movil_Nombre || 'No especificado'} - ${s.Movil_Especificacion || ''}`, 18, currentY + 16);
+      doc.text(`Fecha de Ingreso: ${s.Fecha ? String(s.Fecha).split('T')[0] : 'N/A'}`, 140, currentY + 16);
+      
+      doc.text(`Falla reportada:`, 18, currentY + 26);
+      doc.setFont('helvetica', 'italic');
+      
+      // Manejar descripción larga
+      const splitDesc = doc.splitTextToSize(s.Descripcion || 'Sin detalles', 170);
+      doc.text(splitDesc, 18, currentY + 32);
+
+      // Desglose de cobro
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Repuestos: ${s.Precio_Repuestos ? `$${s.Precio_Repuestos}` : 'N/A'}`, 100, currentY + 44);
+      doc.text(`Mano de Obra: ${s.Precio_Mano_Obra ? `$${s.Precio_Mano_Obra}` : 'N/A'}`, 100, currentY + 50);
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Total Reparación: ${s.Precio ? `$${s.Precio}` : 'Pendiente'}`, 150, currentY + 50);
+
+      currentY += 62;
     });
 
-    doc.save(`historial_servicios_${usuario}_${new Date().toISOString().split('T')[0]}.pdf`);
-    mostrarToast('PDF generado y descargado.');
+    // Pie de página
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(150, 150, 150);
+    doc.text('Este documento sirve como constancia del estado de sus reparaciones en Celuaccel.', 105, 290, { align: 'center' });
+
+    doc.save(`Comprobante_Celuaccel_${usuario}.pdf`);
+    mostrarToast('Comprobante generado y descargado.', 'success');
   };
 
   useEffect(() => {
@@ -76,7 +135,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
   };
 
   const cancelarServicio = async (id) => {
-    if (!window.confirm('¿Estás seguro de cancelar este servicio? Esta acción no se puede deshacer.')) return;
+    if (!await confirmar('¿Estás seguro de cancelar este servicio? Esta acción no se puede deshacer.')) return;
     try {
       await api.patch(`/servicios/cancelar/${id}`, {});
       mostrarToast('Servicio cancelado correctamente.', 'warning');
@@ -112,13 +171,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
 
   const etapaInfo = (etapa) => {
     const e = Number(etapa);
-    if (e === -1) return { texto: 'Cancelado',          color: '#6c757d', porcentaje: 0  };
-    if (e === 0)  return { texto: 'Recibido',            color: '#0d6efd', porcentaje: 10 };
-    if (e <= 25)  return { texto: 'En Diagnóstico',      color: '#0dcaf0', porcentaje: 25 };
-    if (e <= 50)  return { texto: 'En Reparación',       color: '#ffc107', porcentaje: 50 };
-    if (e <= 75)  return { texto: 'Control de Calidad',  color: '#fd7e14', porcentaje: 75 };
-    if (e === 100) return { texto: 'Listo para Retirar', color: '#198754', porcentaje: 100 };
-    return { texto: `En proceso (${e}%)`, color: '#6c757d', porcentaje: e };
+    if (e === -1) return { texto: 'Cancelado',    color: '#6c757d', porcentaje: 0   };
+    if (e === 0)  return { texto: 'Pendiente',     color: '#6c757d', porcentaje: 10  };
+    if (e === 1)  return { texto: 'En proceso',    color: '#0d6efd', porcentaje: 50  };
+    if (e === 2)  return { texto: 'Terminado',     color: '#198754', porcentaje: 100 };
+    return { texto: `Etapa ${e}`, color: '#6c757d', porcentaje: 0 };
   };
 
   return (
@@ -210,7 +267,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
           <div className="row g-4">
             {servicios.map(s => {
               const info = etapaInfo(s.Etapa);
-              const cancelable = Number(s.Etapa) !== 100 && Number(s.Etapa) !== -1;
+              const cancelable = Number(s.Etapa) !== 2 && Number(s.Etapa) !== -1;
               return (
                 <div key={s.ID_Servicio} className="col-md-6 stagger-item">
                   <div className="card border-0 shadow-sm h-100">
@@ -222,7 +279,23 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                       <p className="mb-1"><strong>Dispositivo:</strong> {s.Movil_Nombre}</p>
                       <p className="mb-1"><strong>Descripción:</strong> {s.Descripcion}</p>
                       <p className="mb-1"><strong>Especificación:</strong> {s.Movil_Especificacion}</p>
-                      <p className="mb-1"><strong>Costo Actual:</strong> ${s.Precio}</p>
+                      
+                      <div className="bg-light p-2 rounded mb-2 mt-2" style={{ border: '1px solid var(--color-border)' }}>
+                        <div className="d-flex justify-content-between small mb-1">
+                          <span>Repuestos:</span>
+                          <span className="fw-bold">{s.Precio_Repuestos ? `$${s.Precio_Repuestos}` : 'N/A'}</span>
+                        </div>
+                        <div className="d-flex justify-content-between small mb-1">
+                          <span>Mano de Obra:</span>
+                          <span className="fw-bold">{s.Precio_Mano_Obra ? `$${s.Precio_Mano_Obra}` : 'N/A'}</span>
+                        </div>
+                        <hr className="my-1" />
+                        <div className="d-flex justify-content-between">
+                          <strong>Total a Pagar:</strong>
+                          <strong className="text-danger">{s.Precio ? `$${s.Precio}` : 'Pendiente'}</strong>
+                        </div>
+                      </div>
+
                       <p className="mb-3"><strong>Fecha de Entrada:</strong> {s.Fecha ? String(s.Fecha).split('T')[0] : '—'}</p>
 
                       {Number(s.Etapa) !== -1 && (
@@ -247,13 +320,19 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                       )}
 
                       <div className="d-flex gap-2 mt-3">
-                        <button className="btn btn-sm btn-outline-secondary"
-                          onClick={() => {
-                            localStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
-                            setVista('chatVista');
-                          }}>
-                            Chat con Asesor
-                        </button>
+                        {Number(s.Etapa) !== -1 ? (
+                          <button className="btn btn-sm btn-outline-secondary"
+                            onClick={() => {
+                              sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
+                              setVista('chatVista');
+                            }}>
+                              Chat con Asesor
+                          </button>
+                        ) : (
+                          <span className="badge bg-secondary px-3 py-2" style={{ fontSize: '0.75rem' }}>
+                            🚫 Chat no disponible — Servicio cancelado
+                          </span>
+                        )}
                         {cancelable && (
                           <button className="btn btn-sm btn-outline-danger"
                             onClick={() => cancelarServicio(s.ID_Servicio)}>

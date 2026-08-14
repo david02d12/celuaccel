@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.model.Producto
-import com.example.myapplication.util.formatearPrecio
 
 class ProductoAdapter(
     private val productos: MutableList<Producto>,
@@ -30,7 +29,7 @@ class ProductoAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val prod = productos[position]
         holder.tvNombre.text    = prod.nombre
-        holder.tvPrecio.text    = "$${prod.precio.formatearPrecio()}"
+        holder.tvPrecio.text    = "$${"%.0f".format(prod.precio)}"
         holder.tvCategoria.text = "Stock: ${prod.cantidad}"
 
 

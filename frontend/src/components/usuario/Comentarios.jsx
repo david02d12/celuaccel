@@ -4,16 +4,82 @@ import Sidebar from '../Sidebar';
 import api from '../../services/api';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
+import { getLimitesGeneralesFecha } from '../../utils/validaciones';
+import { mostrarAlerta, confirmar } from '../../utils/alerts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+// ─── Lista de palabras inapropiadas ───
+// Equivalente al diccionario es+en de @2toad/profanity (npm)
+// El backend usa la librería real; aquí se usa una lista curada para feedback inmediato
+const LISTA_PALABRAS = [
+  // ── Español general ──
+  'mierda', 'puta', 'puto', 'putas', 'putos',
+  'marica', 'maricon', 'maricón', 'maricones',
+  'hijueputa', 'hijodeputa', 'hijo de puta', 'hija de puta',
+  'idiota', 'idiotas', 'imbecil', 'imbécil', 'imbéciles',
+  'estupido', 'estúpido', 'estupida', 'estúpida', 'estupidos', 'estúpidos',
+  'pendejo', 'pendeja', 'pendejos', 'pendejas',
+  'cabron', 'cabrón', 'cabrona', 'cabrones', 'cabronas',
+  'verga', 'vergas', 'polla', 'pollas',
+  'coño', 'cono', 'conos', 'coños',
+  'culo', 'culos', 'culero', 'culera', 'culeros', 'culeras',
+  'gilipollas', 'gilipolla',
+  'zorra', 'zorras', 'perra', 'perras',
+  'bastardo', 'bastarda', 'bastardos', 'bastardas',
+  'maldito', 'maldita', 'malditos', 'malditas',
+  'malparido', 'malparida', 'malparidos',
+  'gonorrea', 'hp', 'hdp',
+  'joder', 'cojonudo', 'cojonuda',
+  'pelotudo', 'pelotuda', 'boludo', 'boluda', 'boludos', 'boluदas',
+  'conchuda', 'conchudo',
+  'mamada', 'mamadas', 'mamadas',
+  'chinga', 'chingada', 'chingado', 'chingados',
+  'pinche', 'pinches', 'guey', 'buey', 'wey', 'weys',
+  'putada', 'puñeta', 'hostia',
+  'huevon', 'huevona', 'huevones',
+  'desgraciado', 'desgraciada', 'desgraciados',
+  'animal', 'animales',
+  // ── Inglés (diccionario @2toad/profanity en) ──
+  'fuck', 'fucker', 'fucking', 'fucked', 'fucks',
+  'shit', 'shits', 'shitty',
+  'bitch', 'bitches',
+  'asshole', 'assholes',
+  'bastard', 'bastards',
+  'cunt', 'cunts',
+  'damn', 'damned',
+  'piss', 'pissed',
+  'crap', 'crappy',
+  'slut', 'sluts',
+  'whore', 'whores',
+  'dick', 'dicks',
+  'cock', 'cocks',
+  'ass', 'asses',
+  'nigga', 'niggas', 'nigger',
+  'retard', 'retards',
+  'faggot', 'fag', 'fags',
+];
+
+const detectarMalasPalabras = (texto) => {
+  if (!texto) return [];
+  const textoNorm = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return LISTA_PALABRAS.filter(p => {
+    const pNorm = p.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return new RegExp(`\\b${pNorm}\\b`, 'i').test(textoNorm);
+  });
+};
+
 const Comentarios = ({ cerrarSesion, setVista }) => {
-  const miUsuario = localStorage.getItem('user') || '';
-  const miRol = Number(localStorage.getItem('role')) || 2;
+  const miUsuario = sessionStorage.getItem('user') || '';
+  const miRol = Number(sessionStorage.getItem('role')) || 2;
 
   const [comentarios, setComentarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
+  const [puedeComentarCliente, setPuedeComentarCliente] = useState(null); // null = cargando
+  const [toast, setToast] = useState({ visible: false, msg: '', type: 'success' });
+  const { minDate, maxDate } = getLimitesGeneralesFecha();
+  
   const [form, setForm] = useState({
     Codigo_Comentario: '',
     ID_Usuario: miUsuario,
@@ -36,13 +102,40 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
   }, [miRol, miUsuario]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     listar();
-  }, [listar]);
+    // Clientes: verificar si tienen al menos un servicio terminado o cancelado
+    if (miRol === 2 && miUsuario) {
+      api.get(`/servicios/mis-servicios/${miUsuario}`)
+        .then(res => {
+          const habilitado = res.data.some(s => Number(s.Etapa) === 2 || Number(s.Etapa) === -1);
+          setPuedeComentarCliente(habilitado);
+        })
+        .catch(() => setPuedeComentarCliente(false));
+    } else {
+      // Técnicos y admins siempre pueden
+      setPuedeComentarCliente(true);
+    }
+  }, [listar, miRol, miUsuario]);
 
   const guardar = async () => {
     try {
-      if(!form.Comentario.trim()) return alert("El comentario no puede ir vacío.");
+      if (!form.Comentario.trim()) {
+        await mostrarAlerta("El comentario no puede ir vacío.", 'warning');
+        return;
+      }
+
+      // ── Validación de malas palabras en el cliente ──
+      const malasPalabras = detectarMalasPalabras(form.Comentario);
+      if (malasPalabras.length > 0) {
+        await mostrarAlerta(
+          `⚠️ Tu comentario contiene lenguaje inapropiado:\n\n` +
+          `• ${malasPalabras.join('\n• ')}\n\n` +
+          `Por favor, modifica tu texto antes de publicar.`,
+          'warning'
+        );
+        return;
+      }
+
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
       const datosFinales = { ...form, Fecha_Comentario: form.Fecha_Comentario || new Date().toISOString().split('T')[0] };
@@ -50,18 +143,20 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
       
       listar();
       limpiar();
-    } catch {
-      alert("Error al procesar el comentario");
+    } catch (err) {
+      // Mostrar el mensaje de error del servidor si viene (incluye malas palabras detectadas en el backend)
+      const mensajeServidor = err?.response?.data?.error;
+      await mostrarAlerta(mensajeServidor || "Error al procesar el comentario", 'error');
     }
   };
 
   const eliminar = async (id) => {
-    if (window.confirm("¿Estás seguro de eliminar este comentario?")) {
+    if (await confirmar("¿Estás seguro de eliminar este comentario?")) {
       try {
         await api.delete(`/comentarios/eliminar/${id}`);
         listar();
       } catch (err) {
-        alert("Error al eliminar comentario: " + err.response?.data?.error || "Desconocido");
+        await mostrarAlerta("Error al eliminar comentario: " + (err.response?.data?.error || "Desconocido"), 'error');
       }
     }
   };
@@ -137,49 +232,79 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
         <div className="row">
           {/* PANEL DE FORMULARIO LATERAL */}
           <div className="col-md-4 mb-4">
-            <div className="card p-4 shadow-sm border-0 position-sticky" style={{ top: '20px' }}>
-              <h5 className="fw-bold mb-3">{enEdicion ? "Editar Reseña" : "Dejar un Testimonio"}</h5>
-              <div className="text-muted small mb-3">
-                Tu opinión es vital. Comparte tu experiencia con nosotros para ayudar a la comunidad Celuaccel.
+            {puedeComentarCliente === null ? (
+              /* Cargando verificación */
+              <div className="card p-4 shadow-sm border-0 text-center">
+                <div className="spinner-border mx-auto mb-3" style={{ color: 'var(--color-primary)' }} role="status" />
+                <p className="text-muted small mb-0">Verificando acceso...</p>
               </div>
-              
-              <input 
-                className="form-control mb-3" 
-                placeholder="ID Usuario" 
-                value={form.ID_Usuario} 
-                disabled={enEdicion || miRol === 2}
-                onChange={e => setForm({...form, ID_Usuario: e.target.value})} 
-                style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
-              />
-              <textarea 
-                className="form-control mb-3" 
-                placeholder="Escribe tu testimonio aquí..." 
-                value={form.Comentario} 
-                onChange={e => setForm({...form, Comentario: e.target.value})}
-                rows="4"
-                style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
-              />
-              
-              {EstrellasInput()}
-
-              {miRol !== 2 && (
+            ) : !puedeComentarCliente ? (
+              /* Bloqueado: cliente sin servicios finalizados/cancelados */
+              <div className="card p-4 shadow-sm border-0">
+                <div className="text-center mb-3">
+                  <div style={{ fontSize: '3rem' }}>🔒</div>
+                  <h5 className="fw-bold mt-2" style={{ color: 'var(--color-primary)' }}>
+                    Sección Bloqueada
+                  </h5>
+                </div>
+                <p className="text-muted small text-center mb-3">
+                  Solo puedes escribir una reseña después de haber finalizado o cancelado al menos un servicio.
+                </p>
+                <div className="alert alert-warning small mb-3 py-2" role="alert">
+                  <strong>¿Cómo desbloquear?</strong><br />
+                  Solicita una reparación y espera a que el técnico la <strong>complete</strong>, o <strong>cancela</strong> una solicitud existente.
+                </div>
+                <button className="btn btn-primary w-100" onClick={() => setVista('miServicio')}>
+                  Ver mis servicios
+                </button>
+              </div>
+            ) : (
+              /* Habilitado: mostrar formulario */
+              <div className="card p-4 shadow-sm border-0 position-sticky" style={{ top: '20px' }}>
+                <h5 className="fw-bold mb-3">{enEdicion ? "Editar Reseña" : "Dejar un Testimonio"}</h5>
+                <div className="text-muted small mb-3">
+                  Tu opinión es vital. Comparte tu experiencia con nosotros para ayudar a la comunidad Celuaccel.
+                </div>
+                
                 <input 
                   className="form-control mb-3" 
-                  type="date" 
-                  title="Fecha Comentario"
-                  value={form.Fecha_Comentario} 
-                  onChange={e => setForm({...form, Fecha_Comentario: e.target.value})} 
+                  placeholder="ID Usuario" 
+                  value={form.ID_Usuario} 
+                  disabled={enEdicion || miRol === 2}
+                  onChange={e => setForm({...form, ID_Usuario: e.target.value})} 
                   style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
                 />
-              )}
-              
-              <button className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
-                {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
-              </button>
-              {enEdicion && (
-                <button className="btn btn-outline-secondary w-100 mt-2" onClick={limpiar}>Cancelar Edición</button>
-              )}
-            </div>
+                <textarea 
+                  className="form-control mb-3" 
+                  placeholder="Escribe tu testimonio aquí..." 
+                  value={form.Comentario} 
+                  onChange={e => setForm({...form, Comentario: e.target.value})}
+                  rows="4"
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                />
+                
+                {EstrellasInput()}
+
+                {miRol !== 2 && (
+                  <input 
+                    className="form-control mb-3" 
+                    type="date" 
+                    title="Fecha Comentario"
+                    min={minDate} max={maxDate}
+                    value={form.Fecha_Comentario} 
+                    onChange={e => setForm({...form, Fecha_Comentario: e.target.value})} 
+                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                  />
+                )}
+                
+                <button className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
+                  {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
+                </button>
+                {enEdicion && (
+                  <button className="btn btn-outline-secondary w-100 mt-2" onClick={limpiar}>Cancelar Edición</button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* MURO DE TARJETAS */}

@@ -38,4 +38,17 @@ const listarMias = async (userId) => {
     return preguntaDao.getByUsuario(userId);
 };
 
-module.exports = { listar, listarMias, agregar, actualizar, eliminar };
+/** RF-031: El técnico registra la respuesta a una pregunta del catálogo */
+const responder = async ({ ID_Consulta, Respuesta }, userId) => {
+    if (!ID_Consulta || !Respuesta || !Respuesta.trim()) {
+        throw new AppError('Los campos ID_Consulta y Respuesta son obligatorios.', 400);
+    }
+    const result = await preguntaDao.responder({
+        ID_Consulta,
+        Respuesta: Respuesta.trim(),
+        ID_Tecnico_Responde: userId
+    });
+    if (result.affectedRows === 0) throw new AppError('Pregunta no encontrada.', 404);
+};
+
+module.exports = { listar, listarMias, agregar, actualizar, responder, eliminar };

@@ -27,11 +27,9 @@ class ServicioActivity : AppCompatActivity() {
 
     data class Etapa(val valor: String, val label: String)
     private val ETAPAS_MOSTRAR = listOf(
-        Etapa("0", "Recibido"),
-        Etapa("25", "En Diagnóstico"),
-        Etapa("50", "En Reparación"),
-        Etapa("70", "Control de Calidad"),
-        Etapa("100", "Listo para Retirar"),
+        Etapa("0",  "Pendiente"),
+        Etapa("1",  "En proceso"),
+        Etapa("2",  "Terminado"),
         Etapa("-1", "Cancelado")
     )
 

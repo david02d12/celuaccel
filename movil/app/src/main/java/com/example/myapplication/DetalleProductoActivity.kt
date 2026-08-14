@@ -18,8 +18,6 @@ import com.example.myapplication.model.Pregunta
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.myapplication.util.formatearPrecio
-import com.example.myapplication.util.mensajeErrorHttp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,7 +53,7 @@ class DetalleProductoActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tvNombreDetalle).text   = nombre
         findViewById<TextView>(R.id.tvCategoriaDetalle).text= categoriaNombre
-        findViewById<TextView>(R.id.tvPrecioDetalle).text   = "$${precio.formatearPrecio()}"
+        findViewById<TextView>(R.id.tvPrecioDetalle).text   = "$${"%.0f".format(precio)}"
         findViewById<TextView>(R.id.tvDescripcionDetalle).text = desc.ifEmpty { "Sin descripción" }
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
@@ -106,7 +104,7 @@ class DetalleProductoActivity : AppCompatActivity() {
                                 Toast.makeText(this@DetalleProductoActivity, "¡Pregunta enviada!", Toast.LENGTH_SHORT).show()
                             }
                         } else {
-                            Toast.makeText(this@DetalleProductoActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@DetalleProductoActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                         }
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {

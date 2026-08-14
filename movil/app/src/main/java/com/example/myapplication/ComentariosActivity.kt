@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.ApiClient
 import com.example.myapplication.api.ApiService
 import com.example.myapplication.model.Comentario
-import com.example.myapplication.util.mensajeErrorHttp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -97,7 +96,7 @@ class ComentariosActivity : AppCompatActivity() {
                         cancelarEdicion()
                         cargarComentarios()
                     } else {
-                        Toast.makeText(this@ComentariosActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@ComentariosActivity, "Error ${response.code()}", Toast.LENGTH_LONG).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -118,7 +117,7 @@ class ComentariosActivity : AppCompatActivity() {
                         setRating(5)
                         cargarComentarios()
                     } else {
-                        Toast.makeText(this@ComentariosActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@ComentariosActivity, "Error ${response.code()}", Toast.LENGTH_LONG).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -144,7 +143,7 @@ class ComentariosActivity : AppCompatActivity() {
                         onEdit = { c -> iniciarEdicion(c) }
                     )
                 } else {
-                    Toast.makeText(this@ComentariosActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ComentariosActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<Comentario>>, t: Throwable) {
@@ -183,7 +182,7 @@ class ComentariosActivity : AppCompatActivity() {
                                 Toast.makeText(this@ComentariosActivity, "Comentario eliminado", Toast.LENGTH_SHORT).show()
                                 cargarComentarios()
                             } else {
-                                Toast.makeText(this@ComentariosActivity, mensajeErrorHttp(response.code()), Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@ComentariosActivity, "Error ${response.code()}", Toast.LENGTH_LONG).show()
                             }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
