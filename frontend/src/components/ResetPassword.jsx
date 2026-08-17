@@ -93,6 +93,10 @@ export default function ResetPassword({ setVista }) {
             Nueva Contraseña
           </label>
           <input
+<<<<<<< HEAD
+=======
+            id="reset-input-nueva-clave"
+>>>>>>> 809efa1 (Commit de inicio)
             type="password"
             className="form-control mb-3"
             placeholder="Ingresa tu nueva contraseña"
@@ -105,6 +109,10 @@ export default function ResetPassword({ setVista }) {
           />
 
           <button
+<<<<<<< HEAD
+=======
+            id="reset-btn-guardar-clave"
+>>>>>>> 809efa1 (Commit de inicio)
             type="submit"
             className="btn w-100 btn-primary py-2 mb-2"
             disabled={cargando || !token}
@@ -121,6 +129,10 @@ export default function ResetPassword({ setVista }) {
         </form>
 
         <button
+<<<<<<< HEAD
+=======
+          id="reset-btn-ir-login"
+>>>>>>> 809efa1 (Commit de inicio)
           className="btn w-100 btn-outline-secondary"
           onClick={() => {
             window.history.replaceState({}, document.title, window.location.pathname);

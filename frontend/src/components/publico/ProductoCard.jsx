@@ -98,6 +98,10 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
 
         <div style={{ padding: '0 16px 16px' }}>
           <button
+<<<<<<< HEAD
+=======
+            id={`producto-card-btn-detalles-${p.Codigo_Producto}`}
+>>>>>>> 809efa1 (Commit de inicio)
             onClick={e => { e.stopPropagation(); setModalVisible(true); }}
             style={{
               width: '100%', padding: '9px',

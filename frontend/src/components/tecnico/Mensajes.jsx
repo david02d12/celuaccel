@@ -89,6 +89,10 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
             <div className="card p-3 shadow-sm">
               <h5 className="fw-bold mb-3">{enEdicion ? 'Editar Mensaje' : 'Nuevo Mensaje'}</h5>
               <input
+<<<<<<< HEAD
+=======
+                id="mensajes-input-chat"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 type="number"
@@ -97,6 +101,10 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                 onChange={e => setForm({...form, Codigo_Chat: e.target.value})}
               />
               <input
+<<<<<<< HEAD
+=======
+                id="mensajes-input-usuario"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 placeholder="ID Usuario"
@@ -104,6 +112,10 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                 onChange={e => setForm({...form, ID_Usuario: e.target.value})}
               />
               <textarea
+<<<<<<< HEAD
+=======
+                id="mensajes-input-mensaje"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 placeholder="Escribe el mensaje..."
@@ -113,6 +125,10 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
               />
               <label className="small text-muted fw-bold mb-1">Fecha</label>
               <input
+<<<<<<< HEAD
+=======
+                id="mensajes-input-fecha"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 type="date"
@@ -122,6 +138,10 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
               />
               <label className="small text-muted fw-bold mb-1">Estado</label>
               <select
+<<<<<<< HEAD
+=======
+                id="mensajes-select-estado"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-select mb-3"
                 style={inputStyle}
                 value={form.Estado}
@@ -130,11 +150,19 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                 <option value="0">No leído</option>
                 <option value="1">Leído</option>
               </select>
+<<<<<<< HEAD
               <button className="btn w-100 btn-primary" onClick={guardar}>
                 {enEdicion ? 'Actualizar' : 'Enviar'}
               </button>
               {enEdicion && (
                 <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
+=======
+              <button id="mensajes-btn-enviar" className="btn w-100 btn-primary" onClick={guardar}>
+                {enEdicion ? 'Actualizar' : 'Enviar'}
+              </button>
+              {enEdicion && (
+                <button id="mensajes-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
+>>>>>>> 809efa1 (Commit de inicio)
               )}
             </div>
           </div>
@@ -143,7 +171,11 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="card border-0 shadow-sm overflow-hidden">
               <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
+<<<<<<< HEAD
                 <input type="text" className="form-control" style={inputStyle}
+=======
+                <input id="mensajes-input-buscar" type="text" className="form-control" style={inputStyle}
+>>>>>>> 809efa1 (Commit de inicio)
                   placeholder="Buscar por ID mensaje, ID chat, fecha, usuario o contenido..."
                   value={busqueda} onChange={e => setBusqueda(e.target.value)} />
               </div>
@@ -178,11 +210,19 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                         <td>
                           {String(m.ID_Usuario) === String(miUsuario) ? (
                             <>
+<<<<<<< HEAD
                               <button className="btn btn-sm btn-outline-secondary me-1"
                                 onClick={() => { setForm(m); setEnEdicion(true); }}>
                                 Editar
                               </button>
                               <button className="btn btn-sm btn-outline-danger"
+=======
+                              <button id={`mensajes-btn-editar-${m.Codigo_Mensaje}`} className="btn btn-sm btn-outline-secondary me-1"
+                                onClick={() => { setForm(m); setEnEdicion(true); }}>
+                                Editar
+                              </button>
+                              <button id={`mensajes-btn-borrar-${m.Codigo_Mensaje}`} className="btn btn-sm btn-outline-danger"
+>>>>>>> 809efa1 (Commit de inicio)
                                 onClick={() => eliminar(m.Codigo_Mensaje)}>
                                 Borrar
                               </button>
@@ -205,7 +245,11 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="mensajes-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

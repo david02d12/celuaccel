@@ -45,35 +45,56 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
         {/* ── Nombre ── */}
         <div className="col-md-6">
           <label className="small fw-bold text-muted mb-1">Nombre Completo *</label>
+<<<<<<< HEAD
           <input className={`form-control ${errores.Nombre ? 'is-invalid' : ''}`} value={form.Nombre} placeholder="Ej: Juan Pérez" style={iStyle('Nombre')} onChange={onChange('Nombre')} />
+=======
+          <input id="perfil-input-nombre" className={`form-control ${errores.Nombre ? 'is-invalid' : ''}`} value={form.Nombre} placeholder="Ej: Juan Pérez" style={iStyle('Nombre')} onChange={onChange('Nombre')} />
+>>>>>>> 809efa1 (Commit de inicio)
           <CampoError mensaje={errores.Nombre} />
         </div>
 
         {/* ── Teléfono ── */}
         <div className="col-md-6">
           <label className="small fw-bold text-muted mb-1">Teléfono <span className="text-muted fw-normal">(opcional)</span></label>
+<<<<<<< HEAD
           <input className={`form-control ${errores.Telefono ? 'is-invalid' : ''}`} value={form.Telefono} placeholder="Ej: 3001234567" maxLength={10} style={iStyle('Telefono')} onChange={onChange('Telefono')} />
+=======
+          <input id="perfil-input-telefono" className={`form-control ${errores.Telefono ? 'is-invalid' : ''}`} value={form.Telefono} placeholder="Ej: 3001234567" maxLength={10} style={iStyle('Telefono')} onChange={onChange('Telefono')} />
+>>>>>>> 809efa1 (Commit de inicio)
           {errores.Telefono ? <CampoError mensaje={errores.Telefono} /> : <small className="text-muted mt-1 d-block">Celular: 10 dígitos iniciando en 3. Fijo: 7 dígitos.</small>}
         </div>
 
         {/* ── Dirección ── */}
         <div className="col-12">
           <label className="small fw-bold text-muted mb-1">Dirección <span className="text-muted fw-normal">(opcional)</span></label>
+<<<<<<< HEAD
           <input className={`form-control ${errores.Direccion ? 'is-invalid' : ''}`} value={form.Direccion} placeholder="Ej: Calle 45 #12-30" style={iStyle('Direccion')} onChange={onChange('Direccion')} />
+=======
+          <input id="perfil-input-direccion" className={`form-control ${errores.Direccion ? 'is-invalid' : ''}`} value={form.Direccion} placeholder="Ej: Calle 45 #12-30" style={iStyle('Direccion')} onChange={onChange('Direccion')} />
+>>>>>>> 809efa1 (Commit de inicio)
           <CampoError mensaje={errores.Direccion} />
         </div>
 
         {/* ── Nueva contraseña ── */}
         <div className="col-12">
           <label className="small fw-bold text-muted mb-1">Nueva contraseña <span className="text-muted fw-normal">(dejar vacío para no cambiar)</span></label>
+<<<<<<< HEAD
           <input className={`form-control ${errores.Clave ? 'is-invalid' : ''}`} type="password" placeholder="Mínimo 6 caracteres..." maxLength="15" value={form.Clave} style={iStyle('Clave')} onChange={onChange('Clave')} />
+=======
+          <input id="perfil-input-clave" className={`form-control ${errores.Clave ? 'is-invalid' : ''}`} type="password" placeholder="Mínimo 6 caracteres..." maxLength="15" value={form.Clave} style={iStyle('Clave')} onChange={onChange('Clave')} />
+>>>>>>> 809efa1 (Commit de inicio)
           <CampoError mensaje={errores.Clave} />
           <FuerzaClave clave={form.Clave} />
         </div>
 
         <div className="col-12 d-flex gap-2 justify-content-end mt-2">
+<<<<<<< HEAD
           <button className="btn btn-secondary fw-bold" onClick={() => setModoEdicion(false)}>Cancelar</button>
           <button className="btn btn-primary fw-bold px-5" onClick={guardarCambios}>Guardar Cambios</button>
+=======
+          <button id="perfil-btn-cancelar" className="btn btn-secondary fw-bold" onClick={() => setModoEdicion(false)}>Cancelar</button>
+          <button id="perfil-btn-guardar" className="btn btn-primary fw-bold px-5" onClick={guardarCambios}>Guardar Cambios</button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
       </div>
     </div>
@@ -228,7 +249,11 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
           </div>
           {esPropioPeril && !modoEdicion && (
             <div className="ms-auto">
+<<<<<<< HEAD
               <button className="btn btn-light fw-bold text-danger px-4" onClick={() => setModoEdicion(true)}>Editar Perfil</button>
+=======
+              <button id="perfil-btn-editar" className="btn btn-light fw-bold text-danger px-4" onClick={() => setModoEdicion(true)}>Editar Perfil</button>
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           )}
         </div>
@@ -236,7 +261,11 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
         {renderContenido()}
 
         <div className="mt-4">
+<<<<<<< HEAD
           <button className="btn btn-outline-secondary fw-bold" onClick={() => setVista(perfilObjetivoId ? 'servicios' : 'home')}>
+=======
+          <button id="perfil-btn-volver" className="btn btn-outline-secondary fw-bold" onClick={() => setVista(perfilObjetivoId ? 'servicios' : 'home')}>
+>>>>>>> 809efa1 (Commit de inicio)
             ← Volver
           </button>
         </div>
@@ -245,7 +274,11 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="perfil-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

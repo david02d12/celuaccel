@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+<<<<<<< HEAD
     "test": "jest --detectOpenHandles"
+=======
+    "test": "echo \"Error: no test specified\" && exit 1"
+>>>>>>> 809efa1 (Commit de inicio)
   },
   "keywords": [],
   "author": "",
@@ -29,9 +33,13 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2",
+=======
+    "nodemon": "^3.1.14",
+>>>>>>> 809efa1 (Commit de inicio)
     "swagger-autogen": "^2.23.7"
   }
 }

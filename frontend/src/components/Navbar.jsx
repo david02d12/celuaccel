@@ -20,6 +20,10 @@ const Navbar = ({ titulo, cerrarSesion, children }) => {
       <div className="container">
         {/* Botón menú lateral */}
         <button
+<<<<<<< HEAD
+=======
+          id="navbar-btn-menu"
+>>>>>>> 809efa1 (Commit de inicio)
           className="btn btn-outline-light fw-bold"
           type="button"
           data-bs-toggle="offcanvas"
@@ -45,6 +49,10 @@ const Navbar = ({ titulo, cerrarSesion, children }) => {
 
           {/* Toggle de Modo Claro/Oscuro */}
           <button
+<<<<<<< HEAD
+=======
+            id="navbar-btn-tema"
+>>>>>>> 809efa1 (Commit de inicio)
             className="btn btn-link text-white p-2"
             onClick={toggleTheme}
             title={isDark ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}
@@ -77,6 +85,10 @@ const Navbar = ({ titulo, cerrarSesion, children }) => {
           {/* Botón cerrar sesión */}
           {cerrarSesion && (
             <button
+<<<<<<< HEAD
+=======
+              id="navbar-btn-cerrar-sesion"
+>>>>>>> 809efa1 (Commit de inicio)
               className="btn btn-sm btn-outline-light fw-bold ms-1"
               onClick={cerrarSesion}
               title="Cerrar Sesión"

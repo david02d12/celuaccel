@@ -152,7 +152,11 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
                     <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{sinLeer}</span>
                     <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem' }} className="ms-1">sin leer</span>
                   </div>
+<<<<<<< HEAD
                   <button className="btn btn-sm btn-outline-light fw-semibold" style={{ borderRadius: 8 }} onClick={marcarTodasLeidas}>
+=======
+                  <button id="mis-notificaciones-btn-marcar-todas" className="btn btn-sm btn-outline-light fw-semibold" style={{ borderRadius: 8 }} onClick={marcarTodasLeidas}>
+>>>>>>> 809efa1 (Commit de inicio)
                     Marcar todas leídas
                   </button>
                 </>
@@ -163,9 +167,15 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
 
         {/* ── Filtros ── */}
         <div className="d-flex gap-2 mb-4 flex-wrap">
+<<<<<<< HEAD
           <button style={pillStyle('todas')}  onClick={() => setFiltro('todas')}>Todas ({total})</button>
           <button style={pillStyle('nuevas')} onClick={() => setFiltro('nuevas')}>Sin leer ({sinLeer})</button>
           <button style={pillStyle('leidas')} onClick={() => setFiltro('leidas')}>Leídas ({total - sinLeer})</button>
+=======
+          <button id="mis-notificaciones-btn-filtro-todas" style={pillStyle('todas')}  onClick={() => setFiltro('todas')}>Todas ({total})</button>
+          <button id="mis-notificaciones-btn-filtro-nuevas" style={pillStyle('nuevas')} onClick={() => setFiltro('nuevas')}>Sin leer ({sinLeer})</button>
+          <button id="mis-notificaciones-btn-filtro-leidas" style={pillStyle('leidas')} onClick={() => setFiltro('leidas')}>Leídas ({total - sinLeer})</button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
 
         {/* ── Contenido ── */}
@@ -189,7 +199,11 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
             <p className="small mb-4" style={{ color: 'var(--color-text-muted)', maxWidth: 360, margin: '0 auto 16px' }}>
               Cuando tu asesor actualice el estado de tu servicio, aparecerá aquí.
             </p>
+<<<<<<< HEAD
             <button className="btn btn-primary mx-auto" style={{ maxWidth: 200 }} onClick={() => setVista('miServicio')}>
+=======
+            <button id="mis-notificaciones-btn-mis-servicios" className="btn btn-primary mx-auto" style={{ maxWidth: 200 }} onClick={() => setVista('miServicio')}>
+>>>>>>> 809efa1 (Commit de inicio)
               Ver Mis Servicios
             </button>
           </div>
@@ -234,13 +248,21 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
                     {/* Acciones */}
                     <div className="d-flex flex-column gap-2 flex-shrink-0">
                       {serv && (
+<<<<<<< HEAD
                         <button className="btn btn-sm" style={{ borderRadius: 8, border: '1.5px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', fontSize: '0.75rem', padding: '4px 10px' }}
+=======
+                        <button id={`mis-notificaciones-btn-ver-servicio-${n.Codigo_Notificaciones}`} className="btn btn-sm" style={{ borderRadius: 8, border: '1.5px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', fontSize: '0.75rem', padding: '4px 10px' }}
+>>>>>>> 809efa1 (Commit de inicio)
                           onClick={(e) => { e.stopPropagation(); setVista('miServicio'); }}>
                           Ver servicio
                         </button>
                       )}
                       {!leida && (
+<<<<<<< HEAD
                         <button className="btn btn-sm" style={{ borderRadius: 8, border: `1.5px solid ${icono.color}55`, background: icono.bg, color: icono.color, fontSize: '0.75rem', padding: '4px 10px', fontWeight: 700 }}
+=======
+                        <button id={`mis-notificaciones-btn-marcar-leida-${n.Codigo_Notificaciones}`} className="btn btn-sm" style={{ borderRadius: 8, border: `1.5px solid ${icono.color}55`, background: icono.bg, color: icono.color, fontSize: '0.75rem', padding: '4px 10px', fontWeight: 700 }}
+>>>>>>> 809efa1 (Commit de inicio)
                           onClick={(e) => { e.stopPropagation(); marcarLeida(n.Codigo_Notificaciones); }}>
                           Marcar leída
                         </button>
@@ -258,7 +280,11 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="mis-notificaciones-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

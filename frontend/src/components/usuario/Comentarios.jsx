@@ -254,7 +254,11 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                   <strong>¿Cómo desbloquear?</strong><br />
                   Solicita una reparación y espera a que el técnico la <strong>complete</strong>, o <strong>cancela</strong> una solicitud existente.
                 </div>
+<<<<<<< HEAD
                 <button className="btn btn-primary w-100" onClick={() => setVista('miServicio')}>
+=======
+                <button id="comentarios-btn-mis-servicios" className="btn btn-primary w-100" onClick={() => setVista('miServicio')}>
+>>>>>>> 809efa1 (Commit de inicio)
                   Ver mis servicios
                 </button>
               </div>
@@ -267,6 +271,10 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                 </div>
                 
                 <input 
+<<<<<<< HEAD
+=======
+                  id="comentarios-input-usuario"
+>>>>>>> 809efa1 (Commit de inicio)
                   className="form-control mb-3" 
                   placeholder="ID Usuario" 
                   value={form.ID_Usuario} 
@@ -275,6 +283,10 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                   style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
                 />
                 <textarea 
+<<<<<<< HEAD
+=======
+                  id="comentarios-input-comentario"
+>>>>>>> 809efa1 (Commit de inicio)
                   className="form-control mb-3" 
                   placeholder="Escribe tu testimonio aquí..." 
                   value={form.Comentario} 
@@ -287,6 +299,10 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
 
                 {miRol !== 2 && (
                   <input 
+<<<<<<< HEAD
+=======
+                    id="comentarios-input-fecha"
+>>>>>>> 809efa1 (Commit de inicio)
                     className="form-control mb-3" 
                     type="date" 
                     title="Fecha Comentario"
@@ -297,11 +313,19 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                   />
                 )}
                 
+<<<<<<< HEAD
                 <button className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
                   {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
                 </button>
                 {enEdicion && (
                   <button className="btn btn-outline-secondary w-100 mt-2" onClick={limpiar}>Cancelar Edición</button>
+=======
+                <button id="comentarios-btn-publicar" className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
+                  {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
+                </button>
+                {enEdicion && (
+                  <button id="comentarios-btn-cancelar" className="btn btn-outline-secondary w-100 mt-2" onClick={limpiar}>Cancelar Edición</button>
+>>>>>>> 809efa1 (Commit de inicio)
                 )}
               </div>
             )}
@@ -312,6 +336,10 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
             <div className="card border-0 bg-transparent shadow-none">
               <div className="mb-4">
                 <input 
+<<<<<<< HEAD
+=======
+                  id="comentarios-input-buscar"
+>>>>>>> 809efa1 (Commit de inicio)
                   type="text" 
                   className="form-control form-control-lg shadow-sm"
                   placeholder="Buscar palabras, referencias o un nombre de cliente..."
@@ -348,10 +376,17 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                           <div className="d-flex gap-2">
                             {(miRol === 3 || c.ID_Usuario === miUsuario) && (
                               <>
+<<<<<<< HEAD
                                 <button className="btn btn-sm btn-outline-secondary" onClick={() => { setForm(c); setEnEdicion(true); }}>
                                   Editar
                                 </button>
                                 <button className="btn btn-sm btn-outline-danger" onClick={() => eliminar(c.Codigo_Comentario)}>
+=======
+                                <button id={`comentarios-btn-editar-${c.Codigo_Comentario}`} className="btn btn-sm btn-outline-secondary" onClick={() => { setForm(c); setEnEdicion(true); }}>
+                                  Editar
+                                </button>
+                                <button id={`comentarios-btn-borrar-${c.Codigo_Comentario}`} className="btn btn-sm btn-outline-danger" onClick={() => eliminar(c.Codigo_Comentario)}>
+>>>>>>> 809efa1 (Commit de inicio)
                                   Borrar
                                 </button>
                               </>
@@ -369,7 +404,11 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                 </div>
               )}
               
+<<<<<<< HEAD
               <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+=======
+              <Paginacion idBase="comentarios" pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
         </div>
@@ -379,7 +418,11 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="comentarios-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

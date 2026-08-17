@@ -123,7 +123,7 @@ const Home = ({ cerrarSesion, setVista }) => {
               <div className="card-body">
                 <div className="d-flex flex-wrap gap-2">
                   {menuAccesoFiltro.map((acc, i) => (
-                    <button key={i} className={`btn fw-bold ${i % 2 === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    <button key={i} id={`home-btn-acceso-${acc.vista}`} className={`btn fw-bold ${i % 2 === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
                       onClick={() => setVista(acc.vista)}>
                       {acc.label}
                     </button>
@@ -140,7 +140,7 @@ const Home = ({ cerrarSesion, setVista }) => {
             <div className="card-header bg-transparent border-bottom fw-bold d-flex justify-content-between align-items-center"
               style={{ borderColor: 'var(--color-border)' }}>
               <span> Servicios Generales Recientes</span>
-              <button className="btn btn-sm btn-primary fw-bold"
+              <button id="home-btn-ver-todos" className="btn btn-sm btn-primary fw-bold"
                 onClick={() => setVista('servicios')}>Ver todos</button>
             </div>
             <div className="card-body p-0 table-responsive">
@@ -194,7 +194,7 @@ const Home = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+          <button id="home-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <Sidebar setVista={setVista} />
       </div>

@@ -115,6 +115,10 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                 </svg>
               </span>
               <input
+<<<<<<< HEAD
+=======
+                id="usuario-catalogo-input-buscar"
+>>>>>>> 809efa1 (Commit de inicio)
                 type="text"
                 className="form-control border-start-0"
                 style={{ borderColor: 'var(--color-border)' }}
@@ -126,6 +130,10 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
           </div>
           <div className="col-md-4">
             <select 
+<<<<<<< HEAD
+=======
+              id="usuario-catalogo-select-categoria"
+>>>>>>> 809efa1 (Commit de inicio)
               className="form-select" 
               style={{ borderColor: 'var(--color-border)' }}
               value={categoriaFiltro} 
@@ -197,6 +205,10 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
 
                   <div className="card-footer bg-transparent border-0 pt-0">
                     <button
+<<<<<<< HEAD
+=======
+                      id={`usuario-catalogo-btn-detalles-${p.Codigo_Producto}`}
+>>>>>>> 809efa1 (Commit de inicio)
                       className="btn w-100 btn-primary"
                       onClick={e => { e.stopPropagation(); setProductoSel(p); }}
                     >
@@ -217,7 +229,11 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
             <div className="modal-content border-0 shadow">
               <div className="modal-header bg-primary">
                 <h5 className="modal-title text-white fw-bold">{productoSel.Nombre}</h5>
+<<<<<<< HEAD
                 <button type="button" className="btn-close btn-close-white" onClick={() => { setProductoSel(null); setHaciendoPregunta(false); }}></button>
+=======
+                <button id="usuario-catalogo-btn-cerrar-modal" type="button" className="btn-close btn-close-white" onClick={() => { setProductoSel(null); setHaciendoPregunta(false); }}></button>
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
               <div className="modal-body">
                 <table className="table table-borderless mb-0">
@@ -249,6 +265,10 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                       Tu pregunta abrirá un chat directo con el técnico.
                     </div>
                     <textarea 
+<<<<<<< HEAD
+=======
+                      id="usuario-catalogo-input-pregunta"
+>>>>>>> 809efa1 (Commit de inicio)
                       className="form-control mb-3 shadow-sm" 
                       rows="3" 
                       placeholder="Escribe tu duda técnica sobre este producto..."
@@ -258,10 +278,17 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                       autoFocus
                     />
                     <div className="d-flex gap-2 justify-content-end">
+<<<<<<< HEAD
                       <button className="btn btn-secondary fw-bold" disabled={enviandoPregunta} onClick={() => { setHaciendoPregunta(false); setNuevaPregunta(''); }}>
                         Cancelar
                       </button>
                       <button className="btn btn-primary fw-bold px-4" onClick={enviarPregunta} disabled={enviandoPregunta}>
+=======
+                      <button id="usuario-catalogo-btn-cancelar-pregunta" className="btn btn-secondary fw-bold" disabled={enviandoPregunta} onClick={() => { setHaciendoPregunta(false); setNuevaPregunta(''); }}>
+                        Cancelar
+                      </button>
+                      <button id="usuario-catalogo-btn-chatear" className="btn btn-primary fw-bold px-4" onClick={enviarPregunta} disabled={enviandoPregunta}>
+>>>>>>> 809efa1 (Commit de inicio)
                         {enviandoPregunta
                           ? (<><span className="spinner-border spinner-border-sm me-2" />Conectando con técnico...</>)
                           : 'Chatear con el Técnico'
@@ -271,8 +298,13 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                   </div>
                 ) : (
                   <div className="w-100 d-flex justify-content-between">
+<<<<<<< HEAD
                     <button className="btn btn-light fw-bold text-secondary" onClick={() => setProductoSel(null)}>Cerrar</button>
                     <button className="btn btn-primary fw-bold px-4" onClick={() => setHaciendoPregunta(true)}>
+=======
+                    <button id="usuario-catalogo-btn-cerrar" className="btn btn-light fw-bold text-secondary" onClick={() => setProductoSel(null)}>Cerrar</button>
+                    <button id="usuario-catalogo-btn-preguntar" className="btn btn-primary fw-bold px-4" onClick={() => setHaciendoPregunta(true)}>
+>>>>>>> 809efa1 (Commit de inicio)
                       Preguntar al Técnico
                     </button>
                   </div>
@@ -287,7 +319,11 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="usuario-catalogo-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

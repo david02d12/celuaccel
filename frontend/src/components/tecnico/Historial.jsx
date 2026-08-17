@@ -157,7 +157,11 @@ const Historial = ({ cerrarSesion, setVista }) => {
             <span className="badge fw-bold" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
               {totalActivos} activos
             </span>
+<<<<<<< HEAD
             <button className="btn btn-sm btn-outline-light fw-bold px-3" onClick={exportarPDF}>
+=======
+            <button id="historial-btn-exportar-pdf" className="btn btn-sm btn-outline-light fw-bold px-3" onClick={exportarPDF}>
+>>>>>>> 809efa1 (Commit de inicio)
               Exportar PDF
             </button>
           </div>
@@ -172,6 +176,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Evento' : 'Nuevo Evento'}</h5>
               </div>
               {enEdicion && (
+<<<<<<< HEAD
                 <input className="form-control mb-2" style={inputStyle} disabled value={form.ID_Historial} placeholder="ID Historial (auto)" />
               )}
               <input className="form-control mb-2" style={inputStyle} type="number" value={form.ID_Servicio}
@@ -184,14 +189,35 @@ const Historial = ({ cerrarSesion, setVista }) => {
                 placeholder="Descripcion del evento tecnico" onChange={e => setForm({...form, Descripcion_Evento: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Estado</label>
               <select className="form-select mb-3" style={inputStyle} value={form.Estado}
+=======
+                <input id="historial-input-id" className="form-control mb-2" style={inputStyle} disabled value={form.ID_Historial} placeholder="ID Historial (auto)" />
+              )}
+              <input id="historial-input-servicio" className="form-control mb-2" style={inputStyle} type="number" value={form.ID_Servicio}
+                placeholder="ID del Servicio asociado" onChange={e => setForm({...form, ID_Servicio: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Fecha del evento</label>
+              <input id="historial-input-fecha" className="form-control mb-2" style={inputStyle} type="date" value={form.Fecha_Evento}
+                min={minDate} max={maxDate}
+                onChange={e => setForm({...form, Fecha_Evento: e.target.value})} />
+              <input id="historial-input-descripcion" className="form-control mb-2" style={inputStyle} value={form.Descripcion_Evento}
+                placeholder="Descripcion del evento tecnico" onChange={e => setForm({...form, Descripcion_Evento: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Estado</label>
+              <select id="historial-select-estado" className="form-select mb-3" style={inputStyle} value={form.Estado}
+>>>>>>> 809efa1 (Commit de inicio)
                 onChange={e => setForm({...form, Estado: e.target.value})}>
                 <option value="1">Activo</option>
                 <option value="0">Inactivo</option>
               </select>
+<<<<<<< HEAD
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar Evento' : 'Guardar Evento'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+=======
+              <button id="historial-btn-guardar" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
+                {enEdicion ? 'Actualizar Evento' : 'Guardar Evento'}
+              </button>
+              {enEdicion && <button id="historial-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
 
@@ -199,10 +225,17 @@ const Historial = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             {/* Buscador + filtros */}
             <div className="d-flex gap-2 mb-3 flex-wrap">
+<<<<<<< HEAD
               <input type="text" className="form-control flex-grow-1" style={inputStyle}
                 placeholder="Buscar por ID, servicio, descripción o fecha..."
                 value={busqueda} onChange={e => setBusqueda(e.target.value)} />
               <select className="form-select" style={{ ...inputStyle, width: 'auto' }}
+=======
+              <input id="historial-input-buscar" type="text" className="form-control flex-grow-1" style={inputStyle}
+                placeholder="Buscar por ID, servicio, descripción o fecha..."
+                value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+              <select id="historial-select-filtro-estado" className="form-select" style={{ ...inputStyle, width: 'auto' }}
+>>>>>>> 809efa1 (Commit de inicio)
                 value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}>
                 <option value="todos">Todos</option>
                 <option value="activo">Activos</option>
@@ -252,7 +285,11 @@ const Historial = ({ cerrarSesion, setVista }) => {
                         </div>
 
                         <div className="d-flex gap-2 justify-content-end">
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-secondary"
+=======
+                          <button id={`historial-btn-editar-${d.ID_Historial}`} className="btn btn-sm btn-outline-secondary"
+>>>>>>> 809efa1 (Commit de inicio)
                             style={{ fontSize: '0.77rem' }}
                             onClick={() => {
                               setEnEdicion(true);
@@ -260,7 +297,11 @@ const Historial = ({ cerrarSesion, setVista }) => {
                             }}>
                             Editar
                           </button>
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-danger"
+=======
+                          <button id={`historial-btn-eliminar-${d.ID_Historial}`} className="btn btn-sm btn-outline-danger"
+>>>>>>> 809efa1 (Commit de inicio)
                             style={{ fontSize: '0.77rem' }}
                             onClick={() => eliminar(d.ID_Historial)}>
                             Eliminar
@@ -279,7 +320,11 @@ const Historial = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="historial-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

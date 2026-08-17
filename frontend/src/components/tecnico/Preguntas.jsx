@@ -110,6 +110,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-4 col-12 mb-4">
             <div className="card p-3 shadow-sm">
               <h5 className="fw-bold mb-3">{enEdicion ? 'Editar Consulta' : 'Nueva Consulta'}</h5>
+<<<<<<< HEAD
               <input className="form-control mb-2" style={inputStyle} type="number" placeholder="ID Consulta"
                 value={form.ID_Consulta} disabled={enEdicion}
                 onChange={e => setForm({...form, ID_Consulta: e.target.value})} />
@@ -124,6 +125,22 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                 onChange={e => setForm({...form, Pregunta: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha</label>
               <input className="form-control mb-2" style={inputStyle} type="date"
+=======
+              <input id="preguntas-input-consulta" className="form-control mb-2" style={inputStyle} type="number" placeholder="ID Consulta"
+                value={form.ID_Consulta} disabled={enEdicion}
+                onChange={e => setForm({...form, ID_Consulta: e.target.value})} />
+              <input id="preguntas-input-usuario" className="form-control mb-2" style={inputStyle} placeholder="ID Usuario"
+                value={form.ID_Usuario}
+                onChange={e => setForm({...form, ID_Usuario: e.target.value})} />
+              <input id="preguntas-input-producto" className="form-control mb-2" style={inputStyle} placeholder="Cód. Producto"
+                value={form.Codigo_Producto}
+                onChange={e => setForm({...form, Codigo_Producto: e.target.value})} />
+              <textarea id="preguntas-input-pregunta" className="form-control mb-2" style={inputStyle} placeholder="Pregunta"
+                value={form.Pregunta}
+                onChange={e => setForm({...form, Pregunta: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Fecha</label>
+              <input id="preguntas-input-fecha" className="form-control mb-2" style={inputStyle} type="date"
+>>>>>>> 809efa1 (Commit de inicio)
                 min={minDate} max={maxDate}
                 value={form.Fecha}
                 onChange={e => setForm({...form, Fecha: e.target.value})} />
@@ -131,17 +148,29 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
               {enEdicion && (
                 <>
                   <label className="small fw-bold text-muted mb-1 mt-2">Respuesta del Técnico</label>
+<<<<<<< HEAD
                   <textarea className="form-control mb-2" style={inputStyle} rows={3}
+=======
+                  <textarea id="preguntas-input-respuesta" className="form-control mb-2" style={inputStyle} rows={3}
+>>>>>>> 809efa1 (Commit de inicio)
                     placeholder="Escribe tu respuesta al cliente..."
                     value={form.Respuesta}
                     onChange={e => setForm({...form, Respuesta: e.target.value})} />
                 </>
               )}
+<<<<<<< HEAD
               <button className="btn w-100 btn-primary mt-2" onClick={guardar}>
                 {enEdicion ? 'Guardar Respuesta' : 'Guardar'}
               </button>
               {enEdicion && (
                 <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
+=======
+              <button id="preguntas-btn-guardar" className="btn w-100 btn-primary mt-2" onClick={guardar}>
+                {enEdicion ? 'Guardar Respuesta' : 'Guardar'}
+              </button>
+              {enEdicion && (
+                <button id="preguntas-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
+>>>>>>> 809efa1 (Commit de inicio)
               )}
             </div>
           </div>
@@ -150,7 +179,11 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="card border-0 shadow-sm overflow-hidden">
               <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
+<<<<<<< HEAD
                 <input type="text" className="form-control" style={inputStyle}
+=======
+                <input id="preguntas-input-buscar" type="text" className="form-control" style={inputStyle}
+>>>>>>> 809efa1 (Commit de inicio)
                   placeholder="Buscar por usuario, producto, pregunta, respuesta o fecha..."
                   value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
               </div>
@@ -185,9 +218,15 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                           <span className={`badge ${p.Respuesta ? 'bg-success' : 'bg-secondary'} mb-1 d-block`} style={{ fontSize: '0.7rem' }}>
                             {p.Respuesta ? 'Respondida' : 'Sin responder'}
                           </span>
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-secondary me-1"
                             onClick={() => { setForm({...p, Fecha: p.Fecha ? p.Fecha.split('T')[0] : '', Respuesta: p.Respuesta || ''}); setEnEdicion(true); }}>Responder</button>
                           <button className="btn btn-sm btn-outline-danger"
+=======
+                          <button id={`preguntas-btn-responder-${p.ID_Consulta}`} className="btn btn-sm btn-outline-secondary me-1"
+                            onClick={() => { setForm({...p, Fecha: p.Fecha ? p.Fecha.split('T')[0] : '', Respuesta: p.Respuesta || ''}); setEnEdicion(true); }}>Responder</button>
+                          <button id={`preguntas-btn-borrar-${p.ID_Consulta}`} className="btn btn-sm btn-outline-danger"
+>>>>>>> 809efa1 (Commit de inicio)
                             onClick={() => eliminar(p.ID_Consulta)}>Borrar</button>
                         </td>
                       </tr>
@@ -196,7 +235,11 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                 </table>
               </div>
               <div className="p-3">
+<<<<<<< HEAD
                 <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+=======
+                <Paginacion idBase="preguntas" pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
             </div>
           </div>
@@ -207,7 +250,11 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="preguntas-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

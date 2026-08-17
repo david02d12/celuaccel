@@ -60,6 +60,10 @@ export default function ForgotPassword({ setVista }) {
             Correo Electrónico
           </label>
           <input
+<<<<<<< HEAD
+=======
+            id="forgot-input-correo"
+>>>>>>> 809efa1 (Commit de inicio)
             type="email"
             className="form-control mb-3"
             placeholder="Ingresa tu correo registrado"
@@ -71,6 +75,10 @@ export default function ForgotPassword({ setVista }) {
           />
 
           <button
+<<<<<<< HEAD
+=======
+            id="forgot-btn-enviar"
+>>>>>>> 809efa1 (Commit de inicio)
             type="submit"
             className="btn w-100 btn-primary py-2 mb-2"
             disabled={cargando}
@@ -87,6 +95,10 @@ export default function ForgotPassword({ setVista }) {
         </form>
 
         <button
+<<<<<<< HEAD
+=======
+          id="forgot-btn-volver-login"
+>>>>>>> 809efa1 (Commit de inicio)
           className="btn w-100 btn-outline-secondary"
           onClick={() => setVista('login')}
           disabled={cargando}

@@ -112,6 +112,7 @@ const Roles = ({ cerrarSesion, setVista }) => {
                 <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Rol' : 'Nuevo Rol'}</h5>
               </div>
+<<<<<<< HEAD
               <input className="form-control mb-2" style={inputStyle} type="number" disabled={enEdicion}
                 value={form.Codigo_Rol} placeholder="Codigo del Rol"
                 onChange={e => setForm({...form, Codigo_Rol: e.target.value})} />
@@ -122,13 +123,29 @@ const Roles = ({ cerrarSesion, setVista }) => {
                 {enEdicion ? 'Actualizar' : 'Guardar Rol'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+=======
+              <input id="roles-input-codigo" className="form-control mb-2" style={inputStyle} type="number" disabled={enEdicion}
+                value={form.Codigo_Rol} placeholder="Codigo del Rol"
+                onChange={e => setForm({...form, Codigo_Rol: e.target.value})} />
+              <input id="roles-input-nombre" className="form-control mb-3" style={inputStyle} value={form.Nombre_Rol}
+                placeholder="Nombre del Rol"
+                onChange={e => setForm({...form, Nombre_Rol: e.target.value})} />
+              <button id="roles-btn-guardar" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
+                {enEdicion ? 'Actualizar' : 'Guardar Rol'}
+              </button>
+              {enEdicion && <button id="roles-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
 
           {/* CARDS DE ROLES */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
+<<<<<<< HEAD
                 <input type="text" className="form-control" style={inputStyle}
+=======
+                <input id="roles-input-buscar" type="text" className="form-control" style={inputStyle}
+>>>>>>> 809efa1 (Commit de inicio)
                   placeholder="Buscar por código o descripción..."
                   value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
@@ -164,11 +181,19 @@ const Roles = ({ cerrarSesion, setVista }) => {
                           </span>
                         ) : (
                           <>
+<<<<<<< HEAD
                             <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
                               onClick={() => { setEnEdicion(true); setForm(d); }}>
                               Editar
                             </button>
                             <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+=======
+                            <button id={`roles-btn-editar-${d.Codigo_Rol}`} className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
+                              onClick={() => { setEnEdicion(true); setForm(d); }}>
+                              Editar
+                            </button>
+                            <button id={`roles-btn-borrar-${d.Codigo_Rol}`} className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+>>>>>>> 809efa1 (Commit de inicio)
                               onClick={() => eliminar(d.Codigo_Rol)}>
                               Borrar
                             </button>
@@ -183,7 +208,11 @@ const Roles = ({ cerrarSesion, setVista }) => {
 
             {totalPaginas > 1 && (
               <div className="mt-3">
+<<<<<<< HEAD
                 <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+=======
+                <Paginacion idBase="roles" pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
             )}
           </div>
@@ -193,7 +222,11 @@ const Roles = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="roles-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

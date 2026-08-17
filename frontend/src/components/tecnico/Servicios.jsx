@@ -214,7 +214,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
           </div>
           <div className="d-flex align-items-center gap-2">
             <span className="badge bg-white text-danger fw-bold fs-6">{servicios.length} servicios</span>
+<<<<<<< HEAD
             <button className="btn btn-sm btn-light text-danger fw-bold d-flex align-items-center gap-1" onClick={generarPDF}>
+=======
+            <button id="servicios-btn-pdf" className="btn btn-sm btn-light text-danger fw-bold d-flex align-items-center gap-1" onClick={generarPDF}>
+>>>>>>> 809efa1 (Commit de inicio)
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
               </svg>
@@ -231,16 +235,26 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Servicio' : 'Nuevo Registro'}</h5>
               </div>
+<<<<<<< HEAD
               <input className="form-control mb-2" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
               
               <div className="d-flex gap-2 mb-2">
                 <input className="form-control" style={inputStyle} type="number" value={formServicio.Precio_Repuestos} placeholder="Repuestos ($)" onChange={e => setFormServicio({...formServicio, Precio_Repuestos: e.target.value})} />
                 <input className="form-control" style={inputStyle} type="number" value={formServicio.Precio_Mano_Obra} placeholder="Mano Obra ($)" onChange={e => setFormServicio({...formServicio, Precio_Mano_Obra: e.target.value})} />
+=======
+              <input id="servicios-input-descripcion" className="form-control mb-2" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
+              <input id="servicios-input-cliente" className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
+              
+              <div className="d-flex gap-2 mb-2">
+                <input id="servicios-input-repuestos" className="form-control" style={inputStyle} type="number" value={formServicio.Precio_Repuestos} placeholder="Repuestos ($)" onChange={e => setFormServicio({...formServicio, Precio_Repuestos: e.target.value})} />
+                <input id="servicios-input-mano-obra" className="form-control" style={inputStyle} type="number" value={formServicio.Precio_Mano_Obra} placeholder="Mano Obra ($)" onChange={e => setFormServicio({...formServicio, Precio_Mano_Obra: e.target.value})} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
               <div className="mb-2 p-2 rounded text-center fw-bold" style={{ backgroundColor: 'var(--color-surfaceAlt)', color: 'var(--color-primary)' }}>
                 Total: ${ (Number(formServicio.Precio_Repuestos) || 0) + (Number(formServicio.Precio_Mano_Obra) || 0) }
               </div>
+<<<<<<< HEAD
               <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo del Movil" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Fecha de ingreso</label>
@@ -253,13 +267,31 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 {enEdicion ? 'Actualizar Servicio' : 'Guardar Servicio'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiarServicio}>Cancelar</button>}
+=======
+              <input id="servicios-input-movil-nombre" className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo del Movil" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
+              <input id="servicios-input-movil-especificacion" className="form-control mb-2" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Fecha de ingreso</label>
+              <input id="servicios-input-fecha" className="form-control mb-2" style={inputStyle} type="date" value={formServicio.Fecha} min={minDate} max={maxDate} disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Etapa</label>
+              <select id="servicios-select-etapa" className="form-select mb-3" style={inputStyle} value={formServicio.Etapa} onChange={e => setFormServicio({...formServicio, Etapa: e.target.value})}>
+                {ETAPAS.map(e => <option key={e.valor} value={e.valor}>{e.label}</option>)}
+              </select>
+              <button id="servicios-btn-guardar" className="btn w-100 btn-primary fw-bold" onClick={guardarServicio}>
+                {enEdicion ? 'Actualizar Servicio' : 'Guardar Servicio'}
+              </button>
+              {enEdicion && <button id="servicios-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiarServicio}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
 
           {/* CARDS DE SERVICIOS */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
+<<<<<<< HEAD
               <input type="text" className="form-control" placeholder="Buscar por ID, descripción, cliente, móvil, precio o especificación..."
+=======
+              <input id="servicios-input-buscar" type="text" className="form-control" placeholder="Buscar por ID, descripción, cliente, móvil, precio o especificación..."
+>>>>>>> 809efa1 (Commit de inicio)
                 value={busqueda} onChange={e => setBusqueda(e.target.value)} style={inputStyle} />
             </div>
 
@@ -294,7 +326,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                           </div>
                           <div className="col-6">
                             <span className="text-muted">Cliente</span><br/>
+<<<<<<< HEAD
                             <button className="btn btn-link p-0 fw-bold"
+=======
+                            <button id={`servicios-btn-perfil-${s.ID_Servicio}`} className="btn btn-link p-0 fw-bold"
+>>>>>>> 809efa1 (Commit de inicio)
                               style={{ color: 'var(--color-primary)', fontSize: '0.84rem' }}
                               onClick={() => setVista('perfil', { perfilId: s.ID_Usuario })}>
                               {s.ID_Usuario}
@@ -317,7 +353,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                         )}
 
                         <div className="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+<<<<<<< HEAD
                           <select className="form-select form-select-sm"
+=======
+                          <select id={`servicios-select-etapa-${s.ID_Servicio}`} className="form-select form-select-sm"
+>>>>>>> 809efa1 (Commit de inicio)
                             value={String(s.Etapa)}
                             style={{ width: 'auto', minWidth: 160, fontSize: '0.77rem', fontWeight: 600, ...inputStyle }}
                             onChange={e => actualizarEtapa(s, e.target.value)}>
@@ -327,6 +367,10 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                           <div className="d-flex gap-1">
                             {Number(s.Etapa) === -1 ? (
                               <button
+<<<<<<< HEAD
+=======
+                                id={`servicios-btn-chat-${s.ID_Servicio}`}
+>>>>>>> 809efa1 (Commit de inicio)
                                 className="btn btn-sm btn-secondary d-flex align-items-center gap-1"
                                 style={{ fontSize: '0.77rem', opacity: 0.5, cursor: 'not-allowed' }}
                                 disabled
@@ -334,23 +378,39 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                                 <IconChat /> Chat
                               </button>
                             ) : (
+<<<<<<< HEAD
                               <button className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+=======
+                              <button id={`servicios-btn-chat-${s.ID_Servicio}`} className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+>>>>>>> 809efa1 (Commit de inicio)
                                 style={{ fontSize: '0.77rem' }}
                                 onClick={() => { sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio })); setVista('chatVista'); }}>
                                 <IconChat /> Chat
                               </button>
                             )}
+<<<<<<< HEAD
                             <button className="btn btn-sm btn-outline-success d-flex align-items-center gap-1"
+=======
+                            <button id={`servicios-btn-notificar-${s.ID_Servicio}`} className="btn btn-sm btn-outline-success d-flex align-items-center gap-1"
+>>>>>>> 809efa1 (Commit de inicio)
                               style={{ fontSize: '0.77rem' }}
                               onClick={() => { setModalNotif({ ID_Usuario: s.ID_Usuario, ID_Servicio: s.ID_Servicio }); setMensajeNotif(''); }}>
                               <IconBell /> Notificar
                             </button>
+<<<<<<< HEAD
                             <button className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+=======
+                            <button id={`servicios-btn-editar-${s.ID_Servicio}`} className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+>>>>>>> 809efa1 (Commit de inicio)
                               style={{ fontSize: '0.77rem' }}
                               onClick={() => { setEnEdicion(true); setIdServicioSel(s.ID_Servicio); setFormServicio({...s, Fecha: s.Fecha ? s.Fecha.split('T')[0] : '', Etapa: String(s.Etapa)}); }}>
                               <IconWrench /> Editar
                             </button>
+<<<<<<< HEAD
                             <button className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
+=======
+                            <button id={`servicios-btn-borrar-${s.ID_Servicio}`} className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
+>>>>>>> 809efa1 (Commit de inicio)
                               style={{ fontSize: '0.77rem' }}
                               onClick={() => eliminarServicio(s.ID_Servicio)}>
                               <IconTrash />
@@ -370,7 +430,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="servicios-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>
@@ -381,7 +445,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             <div className="modal-content shadow-lg border-0 rounded-4">
               <div className="modal-header text-white" style={{ background: 'linear-gradient(135deg, #DB0000, #8B0000)' }}>
                 <h5 className="modal-title fw-bold">Notificar al Cliente</h5>
+<<<<<<< HEAD
                 <button className="btn-close btn-close-white" onClick={() => setModalNotif(null)} />
+=======
+                <button id="servicios-btn-cerrar-modal" className="btn-close btn-close-white" onClick={() => setModalNotif(null)} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
               <div className="modal-body">
                 <p className="text-muted small mb-3">
@@ -390,6 +458,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 <p className="small fw-bold mb-2">Mensajes rapidos:</p>
                 <div className="d-flex flex-column gap-1 mb-3">
                   {MENSAJES_RAPIDOS.map((m, i) => (
+<<<<<<< HEAD
                     <button key={i} className="btn btn-sm btn-outline-secondary text-start" onClick={() => setMensajeNotif(m)}>{m}</button>
                   ))}
                 </div>
@@ -399,6 +468,17 @@ const Servicios = ({ cerrarSesion, setVista }) => {
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={() => setModalNotif(null)}>Cancelar</button>
                 <button className="btn btn-success fw-bold" disabled={!mensajeNotif.trim() || enviandoNotif} onClick={enviarNotificacion}>
+=======
+                    <button key={i} id={`servicios-btn-mensaje-rapido-${i}`} className="btn btn-sm btn-outline-secondary text-start" onClick={() => setMensajeNotif(m)}>{m}</button>
+                  ))}
+                </div>
+                <textarea id="servicios-input-mensaje-notif" className="form-control" rows={3} placeholder="O escribe un mensaje personalizado..."
+                  value={mensajeNotif} onChange={e => setMensajeNotif(e.target.value)} style={inputStyle} />
+              </div>
+              <div className="modal-footer">
+                <button id="servicios-btn-cancelar-notif" className="btn btn-secondary" onClick={() => setModalNotif(null)}>Cancelar</button>
+                <button id="servicios-btn-enviar-notif" className="btn btn-success fw-bold" disabled={!mensajeNotif.trim() || enviandoNotif} onClick={enviarNotificacion}>
+>>>>>>> 809efa1 (Commit de inicio)
                   {enviandoNotif ? 'Enviando...' : 'Enviar Notificacion'}
                 </button>
               </div>

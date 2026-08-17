@@ -132,11 +132,16 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
               </div>
               <div className="row g-2 mb-2">
                 <div className="col-6">
+<<<<<<< HEAD
                   <input className="form-control" style={inputStyle} placeholder="ID Usuario"
+=======
+                  <input id="usuarios-input-id" className="form-control" style={inputStyle} placeholder="ID Usuario"
+>>>>>>> 809efa1 (Commit de inicio)
                     value={form.ID_Usuario} disabled={enEdicion}
                     onChange={e => setForm({...form, ID_Usuario: e.target.value})} />
                 </div>
                 <div className="col-6">
+<<<<<<< HEAD
                   <input className="form-control" style={inputStyle} type="number" placeholder="Cod. Doc."
                     value={form.Codigo_Documento} onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
                 </div>
@@ -158,23 +163,57 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
                 value={form.Clave} onChange={e => setForm({...form, Clave: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Rol</label>
               <select className="form-select mb-3" style={inputStyle} value={form.Codigo_Rol}
+=======
+                  <input id="usuarios-input-codigo-doc" className="form-control" style={inputStyle} type="number" placeholder="Cod. Doc."
+                    value={form.Codigo_Documento} onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
+                </div>
+              </div>
+              <input id="usuarios-input-nombre" className="form-control mb-2" style={inputStyle} placeholder="Nombre Completo"
+                value={form.Nombre} onChange={e => setForm({...form, Nombre: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Fecha de Nacimiento</label>
+              <input id="usuarios-input-fecha-nacimiento" className="form-control mb-2" style={inputStyle} type="date"
+                min={minDate} max={maxDate}
+                value={form.Fecha_Nacimiento} onChange={e => setForm({...form, Fecha_Nacimiento: e.target.value})} />
+              <input id="usuarios-input-direccion" className="form-control mb-2" style={inputStyle} placeholder="Direccion"
+                value={form.Direccion} onChange={e => setForm({...form, Direccion: e.target.value})} />
+              <input id="usuarios-input-telefono" className="form-control mb-2" style={inputStyle} placeholder="Telefono"
+                value={form.Telefono} onChange={e => setForm({...form, Telefono: e.target.value})} />
+              <input id="usuarios-input-correo" className="form-control mb-2" style={inputStyle} type="email" placeholder="Correo Electronico"
+                value={form.Correo} onChange={e => setForm({...form, Correo: e.target.value})} />
+              <input id="usuarios-input-clave" className="form-control mb-2" style={inputStyle} type="password"
+                placeholder={enEdicion ? 'Nueva Clave (opcional)' : 'Contrasena'} maxLength="15"
+                value={form.Clave} onChange={e => setForm({...form, Clave: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Rol</label>
+              <select id="usuarios-select-rol" className="form-select mb-3" style={inputStyle} value={form.Codigo_Rol}
+>>>>>>> 809efa1 (Commit de inicio)
                 disabled={enEdicion && String(form.ID_Usuario) === String(miUsuario)}
                 onChange={e => setForm({...form, Codigo_Rol: Number(e.target.value)})}>
                 {roles.map(r => (
                   <option key={r.Codigo_Rol} value={r.Codigo_Rol}>{r.Nombre_Rol}</option>
                 ))}
               </select>
+<<<<<<< HEAD
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar Datos' : 'Registrar'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+=======
+              <button id="usuarios-btn-guardar" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
+                {enEdicion ? 'Actualizar Datos' : 'Registrar'}
+              </button>
+              {enEdicion && <button id="usuarios-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
 
           {/* CARDS DE USUARIOS */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
+<<<<<<< HEAD
               <input type="text" className="form-control" style={inputStyle}
+=======
+              <input id="usuarios-input-buscar" type="text" className="form-control" style={inputStyle}
+>>>>>>> 809efa1 (Commit de inicio)
                 placeholder="Buscar por ID, nombre, correo, teléfono, dirección o rol..."
                 value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
@@ -208,11 +247,19 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
                         </div>
                       </div>
                       <div className="d-flex gap-1 flex-shrink-0">
+<<<<<<< HEAD
                         <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
                           onClick={() => prepararEdicion(u)}>
                           Editar
                         </button>
                         <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+=======
+                        <button id={`usuarios-btn-editar-${u.ID_Usuario}`} className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
+                          onClick={() => prepararEdicion(u)}>
+                          Editar
+                        </button>
+                        <button id={`usuarios-btn-borrar-${u.ID_Usuario}`} className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+>>>>>>> 809efa1 (Commit de inicio)
                           onClick={() => eliminar(u.ID_Usuario)}>
                           Borrar
                         </button>
@@ -225,7 +272,11 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
 
             {totalPaginas > 1 && (
               <div className="mt-3">
+<<<<<<< HEAD
                 <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+=======
+                <Paginacion idBase="usuarios" pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
             )}
           </div>
@@ -235,7 +286,11 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="usuarios-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

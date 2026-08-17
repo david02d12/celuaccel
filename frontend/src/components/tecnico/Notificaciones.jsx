@@ -206,6 +206,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
               </div>
               <div className="p-4">
                 <label className="small fw-bold mb-1" style={{ color: 'var(--color-text-muted)' }}>Usuario Destino *</label>
+<<<<<<< HEAD
                 <input className="form-control mb-3" style={{ ...inputStyle, borderRadius: 8 }} placeholder="Documento del cliente" value={form.ID_Usuario_Destino} disabled={enEdicion} onChange={e => setForm({ ...form, ID_Usuario_Destino: e.target.value })} />
 
                 <label className="small fw-bold mb-1" style={{ color: 'var(--color-text-muted)' }}>ID Servicio <span style={{ fontWeight: 400 }}>(opcional)</span></label>
@@ -218,6 +219,20 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                   {enviando ? <><span className="spinner-border spinner-border-sm" />Enviando...</> : <><IconSend size={16} /> {enEdicion ? 'Actualizar' : 'Enviar Notificación'}</>}
                 </button>
                 {enEdicion && <button className="btn w-100" style={{ borderRadius: 8, border: '1.5px solid var(--color-border)', background: 'transparent', color: 'var(--color-text)' }} onClick={limpiar}>Cancelar</button>}
+=======
+                <input id="notificaciones-input-destino" className="form-control mb-3" style={{ ...inputStyle, borderRadius: 8 }} placeholder="Documento del cliente" value={form.ID_Usuario_Destino} disabled={enEdicion} onChange={e => setForm({ ...form, ID_Usuario_Destino: e.target.value })} />
+
+                <label className="small fw-bold mb-1" style={{ color: 'var(--color-text-muted)' }}>ID Servicio <span style={{ fontWeight: 400 }}>(opcional)</span></label>
+                <input id="notificaciones-input-servicio" className="form-control mb-3" style={{ ...inputStyle, borderRadius: 8 }} type="number" placeholder="Número del servicio" value={form.ID_Servicio} disabled={enEdicion} onChange={e => setForm({ ...form, ID_Servicio: e.target.value })} />
+
+                <label className="small fw-bold mb-1" style={{ color: 'var(--color-text-muted)' }}>Mensaje *</label>
+                <textarea id="notificaciones-input-mensaje" className="form-control mb-4" style={{ ...inputStyle, borderRadius: 8, resize: 'vertical', minHeight: 90 }} rows="3" placeholder="Ej: Tu equipo ya está listo para retirar." value={form.Mensaje} onChange={e => setForm({ ...form, Mensaje: e.target.value })} />
+
+                <button id="notificaciones-btn-enviar" className="btn btn-primary w-100 mb-2 d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: 8 }} onClick={guardar} disabled={enviando}>
+                  {enviando ? <><span className="spinner-border spinner-border-sm" />Enviando...</> : <><IconSend size={16} /> {enEdicion ? 'Actualizar' : 'Enviar Notificación'}</>}
+                </button>
+                {enEdicion && <button id="notificaciones-btn-cancelar" className="btn w-100" style={{ borderRadius: 8, border: '1.5px solid var(--color-border)', background: 'transparent', color: 'var(--color-text)' }} onClick={limpiar}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
             </div>
           </div>
@@ -226,7 +241,11 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
           <div className="col-lg-8 col-12">
             <div className="card mb-3">
               <div className="p-3">
+<<<<<<< HEAD
                 <input type="text" className="form-control" style={{ ...inputStyle, borderRadius: 8 }} placeholder="Buscar por código, usuario o mensaje..." value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
+=======
+                <input id="notificaciones-input-buscar" type="text" className="form-control" style={{ ...inputStyle, borderRadius: 8 }} placeholder="Buscar por código, usuario o mensaje..." value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
             </div>
 
@@ -284,11 +303,19 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
 
                           {/* Acciones */}
                           <div className="d-flex flex-column gap-1 flex-shrink-0">
+<<<<<<< HEAD
                             <button style={{ borderRadius: 7, padding: '5px 12px', fontSize: '0.72rem', fontWeight: 600, border: '1.5px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
                               onClick={() => { setForm({ Codigo_Notificaciones: n.Codigo_Notificaciones, ID_Usuario_Destino: dest === 'General' ? '' : dest, ID_Servicio: servicioN(n) || '', Mensaje: textoNotif(n) }); setEnEdicion(true); }}>
                               <IconEdit size={12} /> Editar
                             </button>
                             <button style={{ borderRadius: 7, padding: '5px 12px', fontSize: '0.72rem', fontWeight: 600, border: '1.5px solid rgba(219,0,0,0.3)', background: 'rgba(219,0,0,0.07)', color: 'var(--color-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+=======
+                            <button id={`notificaciones-btn-editar-${n.Codigo_Notificaciones}`} style={{ borderRadius: 7, padding: '5px 12px', fontSize: '0.72rem', fontWeight: 600, border: '1.5px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                              onClick={() => { setForm({ Codigo_Notificaciones: n.Codigo_Notificaciones, ID_Usuario_Destino: dest === 'General' ? '' : dest, ID_Servicio: servicioN(n) || '', Mensaje: textoNotif(n) }); setEnEdicion(true); }}>
+                              <IconEdit size={12} /> Editar
+                            </button>
+                            <button id={`notificaciones-btn-borrar-${n.Codigo_Notificaciones}`} style={{ borderRadius: 7, padding: '5px 12px', fontSize: '0.72rem', fontWeight: 600, border: '1.5px solid rgba(219,0,0,0.3)', background: 'rgba(219,0,0,0.07)', color: 'var(--color-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+>>>>>>> 809efa1 (Commit de inicio)
                               onClick={() => eliminar(n.Codigo_Notificaciones)}>
                               <IconTrash size={12} /> Borrar
                             </button>
@@ -298,7 +325,11 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                     );
                   })}
                 </div>
+<<<<<<< HEAD
                 <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+=======
+                <Paginacion idBase="notificaciones" pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+>>>>>>> 809efa1 (Commit de inicio)
               </>
             )}
           </div>
@@ -308,7 +339,11 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="notificaciones-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

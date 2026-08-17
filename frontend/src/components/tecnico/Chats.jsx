@@ -83,6 +83,10 @@ const Chats = ({ cerrarSesion, setVista }) => {
             <div className="card p-3 shadow-sm">
               <h5 className="fw-bold mb-3">{enEdicion ? 'Editar Chat' : 'Nuevo Chat'}</h5>
               <input
+<<<<<<< HEAD
+=======
+                id="chats-input-codigo"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 placeholder="Código Chat"
@@ -91,6 +95,10 @@ const Chats = ({ cerrarSesion, setVista }) => {
                 readOnly
               />
               <input
+<<<<<<< HEAD
+=======
+                id="chats-input-usuario"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 placeholder="ID Usuario (Email/Username)"
@@ -98,6 +106,10 @@ const Chats = ({ cerrarSesion, setVista }) => {
                 onChange={e => setForm({...form, ID_Usuario: e.target.value})}
               />
               <input
+<<<<<<< HEAD
+=======
+                id="chats-input-servicio"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="form-control mb-2"
                 style={inputStyle}
                 type="number"
@@ -105,11 +117,19 @@ const Chats = ({ cerrarSesion, setVista }) => {
                 value={form.ID_Servicio}
                 onChange={e => setForm({...form, ID_Servicio: e.target.value})}
               />
+<<<<<<< HEAD
               <button className="btn w-100 btn-primary" onClick={guardar}>
                 {enEdicion ? 'Actualizar' : 'Guardar'}
               </button>
               {enEdicion && (
                 <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
+=======
+              <button id="chats-btn-guardar" className="btn w-100 btn-primary" onClick={guardar}>
+                {enEdicion ? 'Actualizar' : 'Guardar'}
+              </button>
+              {enEdicion && (
+                <button id="chats-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
+>>>>>>> 809efa1 (Commit de inicio)
               )}
             </div>
           </div>
@@ -119,6 +139,10 @@ const Chats = ({ cerrarSesion, setVista }) => {
             <div className="card border-0 shadow-sm overflow-hidden">
               <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
                 <input 
+<<<<<<< HEAD
+=======
+                  id="chats-input-buscar"
+>>>>>>> 809efa1 (Commit de inicio)
                   type="text" 
                   className="form-control"
                   placeholder="Buscar por código, usuario, servicio o estado..."
@@ -154,11 +178,19 @@ const Chats = ({ cerrarSesion, setVista }) => {
                           }
                         </td>
                         <td>
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-secondary me-1"
                             onClick={() => { setForm(c); setEnEdicion(true); }}>
                             Editar
                           </button>
                           <button className="btn btn-sm btn-outline-danger"
+=======
+                          <button id={`chats-btn-editar-${c.Codigo_Chat}`} className="btn btn-sm btn-outline-secondary me-1"
+                            onClick={() => { setForm(c); setEnEdicion(true); }}>
+                            Editar
+                          </button>
+                          <button id={`chats-btn-borrar-${c.Codigo_Chat}`} className="btn btn-sm btn-outline-danger"
+>>>>>>> 809efa1 (Commit de inicio)
                             onClick={() => eliminar(c.Codigo_Chat)}>
                             Borrar
                           </button>
@@ -177,7 +209,11 @@ const Chats = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="chats-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

@@ -30,6 +30,10 @@ const ChatLista = ({
           {role === 2 ? 'Mis Conversaciones' : 'Conversaciones Abiertas'}
         </p>
         <input
+<<<<<<< HEAD
+=======
+          id="chat-lista-input-buscar"
+>>>>>>> 809efa1 (Commit de inicio)
           type="text"
           className="form-control form-control-sm"
           placeholder="Buscar chat (ID o Servicio)..."
@@ -57,6 +61,10 @@ const ChatLista = ({
                     <div className="fw-bold mb-1">Servicio #{s.ID_Servicio}</div>
                     <div className="text-muted mb-2">{s.Movil_Nombre || 'Sin dispositivo'}</div>
                     <button
+<<<<<<< HEAD
+=======
+                      id={`chat-lista-btn-iniciar-${s.ID_Servicio}`}
+>>>>>>> 809efa1 (Commit de inicio)
                       className="btn btn-sm btn-primary w-100"
                       disabled={iniciandoChat === s.ID_Servicio}
                       onClick={() => iniciarChatDesdeServicio(s.ID_Servicio)}
@@ -71,6 +79,10 @@ const ChatLista = ({
                 <p className="text-muted small mb-2">No tienes conversaciones activas.</p>
                 {role === 2 && (
                   <button
+<<<<<<< HEAD
+=======
+                    id="chat-lista-btn-mis-servicios"
+>>>>>>> 809efa1 (Commit de inicio)
                     className="btn btn-sm btn-primary"
                     onClick={() => setVista('miServicio')}
                   >

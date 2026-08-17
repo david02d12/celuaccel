@@ -29,6 +29,10 @@ const CatalogoPublico = ({ setVista }) => {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
+<<<<<<< HEAD
+=======
+              id="catalogo-publico-btn-catalogo"
+>>>>>>> 809efa1 (Commit de inicio)
               onClick={() => setVista('catalogoPublico')}
               style={{
                 background: 'none', border: 'none', color: 'rgba(255,255,255,0.8)',
@@ -38,6 +42,10 @@ const CatalogoPublico = ({ setVista }) => {
               Catalogo
             </button>
             <button
+<<<<<<< HEAD
+=======
+              id="catalogo-publico-btn-iniciar-sesion"
+>>>>>>> 809efa1 (Commit de inicio)
               onClick={() => setVista('login')}
               style={{
                 background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)',
@@ -50,6 +58,10 @@ const CatalogoPublico = ({ setVista }) => {
               Iniciar Sesion
             </button>
             <button
+<<<<<<< HEAD
+=======
+              id="catalogo-publico-btn-registrarse"
+>>>>>>> 809efa1 (Commit de inicio)
               onClick={() => setVista('registro')}
               style={{
                 background: '#fff', border: 'none', color: '#c00000',
@@ -160,6 +172,10 @@ const CatalogoPublico = ({ setVista }) => {
             <h6 style={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>No se pudo cargar el catalogo</h6>
             <p style={{ color: '#888', fontSize: '0.88rem', marginBottom: '20px' }}>{error}</p>
             <button
+<<<<<<< HEAD
+=======
+              id="catalogo-publico-btn-reintentar"
+>>>>>>> 809efa1 (Commit de inicio)
               onClick={() => window.location.reload()}
               style={{
                 background: '#c00000', color: '#fff', border: 'none',
@@ -188,7 +204,11 @@ const CatalogoPublico = ({ setVista }) => {
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
             <h6 style={{ color: '#aaa', fontWeight: 600 }}>Sin resultados para "{busqueda}"</h6>
+<<<<<<< HEAD
             <button onClick={() => { setBusqueda(''); setCategoriaFiltro(''); }} style={{
+=======
+            <button id="catalogo-publico-btn-limpiar-filtros" onClick={() => { setBusqueda(''); setCategoriaFiltro(''); }} style={{
+>>>>>>> 809efa1 (Commit de inicio)
               marginTop: '12px', background: 'none', border: '1px solid #ddd',
               padding: '8px 20px', borderRadius: '8px', color: '#888',
               cursor: 'pointer', fontSize: '0.85rem',
@@ -230,6 +250,10 @@ const CatalogoPublico = ({ setVista }) => {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button
+<<<<<<< HEAD
+=======
+                id="catalogo-publico-btn-crear-cuenta"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setVista('registro')}
                 style={{
                   background: '#c00000', color: '#fff', border: 'none',
@@ -240,6 +264,10 @@ const CatalogoPublico = ({ setVista }) => {
                 Crear cuenta gratis
               </button>
               <button
+<<<<<<< HEAD
+=======
+                id="catalogo-publico-btn-ya-tengo-cuenta"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setVista('login')}
                 style={{
                   background: 'transparent', color: 'rgba(255,255,255,0.75)',
@@ -301,6 +329,10 @@ const CatalogoPublico = ({ setVista }) => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
+<<<<<<< HEAD
+=======
+                id="catalogo-publico-btn-modal-iniciar-sesion"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setVista('login')}
                 style={{
                   background: 'linear-gradient(135deg,#c00000,#8a0000)',
@@ -312,6 +344,10 @@ const CatalogoPublico = ({ setVista }) => {
                 Iniciar Sesion
               </button>
               <button
+<<<<<<< HEAD
+=======
+                id="catalogo-publico-btn-modal-crear-cuenta"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setVista('registro')}
                 style={{
                   background: '#f5f5f5', color: '#1a1a1a', border: 'none',
@@ -322,6 +358,10 @@ const CatalogoPublico = ({ setVista }) => {
                 Crear cuenta gratis
               </button>
               <button
+<<<<<<< HEAD
+=======
+                id="catalogo-publico-btn-seguir-explorando"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setModalVisible(false)}
                 style={{
                   background: 'none', color: '#aaa', border: 'none',

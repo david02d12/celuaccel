@@ -197,10 +197,17 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
             <p className="mb-0 opacity-75">Usuario: <strong>{usuario}</strong> — {servicios.length} servicio(s) registrado(s)</p>
           </div>
           <div className="d-flex gap-2 flex-wrap">
+<<<<<<< HEAD
             <button className="btn btn-outline-light fw-bold px-3" onClick={generarPDF} title="Descargar historial en PDF">
               Descargar PDF
             </button>
             <button className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+=======
+            <button id="mi-servicio-btn-descargar-pdf" className="btn btn-outline-light fw-bold px-3" onClick={generarPDF} title="Descargar historial en PDF">
+              Descargar PDF
+            </button>
+            <button id="mi-servicio-btn-nuevo-servicio" className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+>>>>>>> 809efa1 (Commit de inicio)
               {mostrarFormulario ? "Cancelar Solicitud" : "+ Nuevo Servicio"}
             </button>
           </div>
@@ -214,6 +221,10 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
               <div className="col-md-4">
                 <label className="small fw-bold text-muted mb-1">Marca y Modelo</label>
                 <input 
+<<<<<<< HEAD
+=======
+                  id="mi-servicio-input-movil-nombre"
+>>>>>>> 809efa1 (Commit de inicio)
                   className="form-control" 
                   placeholder="Ej: iPhone 13 Pro" 
                   value={formNuevo.Movil_Nombre} 
@@ -224,6 +235,10 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
               <div className="col-md-4">
                 <label className="small fw-bold text-muted mb-1">Detalle Físico Principal</label>
                 <input 
+<<<<<<< HEAD
+=======
+                  id="mi-servicio-input-movil-especificacion"
+>>>>>>> 809efa1 (Commit de inicio)
                   className="form-control" 
                   placeholder="Ej: Pantalla rota / Batería inflamada" 
                   value={formNuevo.Movil_Especificacion} 
@@ -234,6 +249,10 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
               <div className="col-md-4">
                 <label className="small fw-bold text-muted mb-1">Cuentanos la Falla Cortamente</label>
                 <input 
+<<<<<<< HEAD
+=======
+                  id="mi-servicio-input-descripcion"
+>>>>>>> 809efa1 (Commit de inicio)
                   className="form-control" 
                   placeholder="Ej: El teléfono no carga bien desde ayer..." 
                   value={formNuevo.Descripcion} 
@@ -242,7 +261,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                 />
               </div>
               <div className="col-12 mt-3 text-end">
+<<<<<<< HEAD
                 <button className="btn btn-primary fw-bold px-5" onClick={crearServicio}>
+=======
+                <button id="mi-servicio-btn-crear" className="btn btn-primary fw-bold px-5" onClick={crearServicio}>
+>>>>>>> 809efa1 (Commit de inicio)
                   Crear e Ingresar Solicitud
                 </button>
               </div>
@@ -258,7 +281,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
         ) : servicios.length === 0 && !mostrarFormulario ? (
           <div className="text-center py-5">
             <h5 className="text-muted mt-3">No tienes servicios registrados actualmente.</h5>
+<<<<<<< HEAD
             <button className="btn btn-primary fw-bold mt-3"
+=======
+            <button id="mi-servicio-btn-primera-reparacion" className="btn btn-primary fw-bold mt-3"
+>>>>>>> 809efa1 (Commit de inicio)
               onClick={() => setMostrarFormulario(true)}>
               ¡Solicita tu primera reparación aquí!
             </button>
@@ -321,7 +348,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
 
                       <div className="d-flex gap-2 mt-3">
                         {Number(s.Etapa) !== -1 ? (
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-secondary"
+=======
+                          <button id={`mi-servicio-btn-chat-${s.ID_Servicio}`} className="btn btn-sm btn-outline-secondary"
+>>>>>>> 809efa1 (Commit de inicio)
                             onClick={() => {
                               sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: s.ID_Servicio }));
                               setVista('chatVista');
@@ -334,7 +365,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                           </span>
                         )}
                         {cancelable && (
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-danger"
+=======
+                          <button id={`mi-servicio-btn-cancelar-${s.ID_Servicio}`} className="btn btn-sm btn-outline-danger"
+>>>>>>> 809efa1 (Commit de inicio)
                             onClick={() => cancelarServicio(s.ID_Servicio)}>
                             Cancelar Solicitud
                           </button>
@@ -353,7 +388,11 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="mi-servicio-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

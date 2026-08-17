@@ -11,6 +11,10 @@ export const FiltrosCatalogo = ({ busqueda, setBusqueda, categoriaFiltro, setCat
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <input
+<<<<<<< HEAD
+=======
+          id="filtros-input-buscar"
+>>>>>>> 809efa1 (Commit de inicio)
           type="text"
           placeholder="Buscar producto..."
           value={busqueda}
@@ -24,6 +28,10 @@ export const FiltrosCatalogo = ({ busqueda, setBusqueda, categoriaFiltro, setCat
         />
       </div>
       <select
+<<<<<<< HEAD
+=======
+        id="filtros-select-categoria"
+>>>>>>> 809efa1 (Commit de inicio)
         value={categoriaFiltro}
         onChange={e => setCategoriaFiltro(e.target.value)}
         style={{

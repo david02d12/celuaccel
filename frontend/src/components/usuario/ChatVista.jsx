@@ -9,7 +9,11 @@ import { useChatView } from './useChatView';
 
 const MobileHeader = ({ panelAbierto, setPanelAbierto }) => (
   <div className="d-md-none px-3 pt-2 pb-1 border-bottom" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+<<<<<<< HEAD
     <button className="btn btn-sm btn-primary w-100" onClick={() => setPanelAbierto(v => !v)}>
+=======
+    <button id="chat-vista-btn-toggle-panel" className="btn btn-sm btn-primary w-100" onClick={() => setPanelAbierto(v => !v)}>
+>>>>>>> 809efa1 (Commit de inicio)
       {panelAbierto ? 'Cerrar conversaciones' : 'Ver conversaciones'}
     </button>
   </div>
@@ -19,7 +23,11 @@ const SidebarMenu = ({ setVista }) => (
   <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
     <div className="offcanvas-header">
       <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
+<<<<<<< HEAD
       <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+      <button id="chat-vista-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
     </div>
     <Sidebar setVista={setVista} />
   </div>

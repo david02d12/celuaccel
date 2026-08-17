@@ -124,6 +124,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
                 <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Producto' : 'Nuevo Producto'}</h5>
               </div>
+<<<<<<< HEAD
               <input className="form-control mb-2" style={inputStyle} placeholder="Codigo del producto"
                 value={form.Codigo_Producto} disabled={enEdicion}
                 onChange={e => setForm({...form, Codigo_Producto: e.target.value})} />
@@ -145,6 +146,29 @@ const Productos = ({ cerrarSesion, setVista }) => {
                 value={form.Imagen} onChange={e => setForm({...form, Imagen: e.target.value})} />
               <label className="small text-muted fw-bold mb-1">Categoria</label>
               <select className="form-select mb-2" style={inputStyle} value={form.ID_Categoria}
+=======
+              <input id="productos-input-codigo" className="form-control mb-2" style={inputStyle} placeholder="Codigo del producto"
+                value={form.Codigo_Producto} disabled={enEdicion}
+                onChange={e => setForm({...form, Codigo_Producto: e.target.value})} />
+              <input id="productos-input-nombre" className="form-control mb-2" style={inputStyle} placeholder="Nombre del producto"
+                value={form.Nombre} onChange={e => setForm({...form, Nombre: e.target.value})} />
+              <div className="row g-2 mb-2">
+                <div className="col-6">
+                  <input id="productos-input-cantidad" className="form-control" style={inputStyle} type="number" placeholder="Cantidad"
+                    value={form.Cantidad} onChange={e => setForm({...form, Cantidad: e.target.value})} />
+                </div>
+                <div className="col-6">
+                  <input id="productos-input-precio" className="form-control" style={inputStyle} type="number" placeholder="Precio ($)"
+                    value={form.Precio} onChange={e => setForm({...form, Precio: e.target.value})} />
+                </div>
+              </div>
+              <input id="productos-input-descripcion" className="form-control mb-2" style={inputStyle} placeholder="Descripcion del producto"
+                value={form.Descripcion} onChange={e => setForm({...form, Descripcion: e.target.value})} />
+              <input id="productos-input-imagen" className="form-control mb-2" style={inputStyle} placeholder="URL de imagen (opcional)"
+                value={form.Imagen} onChange={e => setForm({...form, Imagen: e.target.value})} />
+              <label className="small text-muted fw-bold mb-1">Categoria</label>
+              <select id="productos-select-categoria" className="form-select mb-2" style={inputStyle} value={form.ID_Categoria}
+>>>>>>> 809efa1 (Commit de inicio)
                 onChange={e => setForm({...form, ID_Categoria: e.target.value})}>
                 <option value="">-- Seleccionar Categoria --</option>
                 {categorias.map(c => (
@@ -152,22 +176,37 @@ const Productos = ({ cerrarSesion, setVista }) => {
                 ))}
               </select>
               <label className="small text-muted fw-bold mb-1">Visibilidad en catalogo</label>
+<<<<<<< HEAD
               <select className="form-select mb-3" style={inputStyle} value={form.Activo_Catalogo}
+=======
+              <select id="productos-select-visibilidad" className="form-select mb-3" style={inputStyle} value={form.Activo_Catalogo}
+>>>>>>> 809efa1 (Commit de inicio)
                 onChange={e => setForm({...form, Activo_Catalogo: Number(e.target.value)})}>
                 <option value={1}>Visible en Catalogo</option>
                 <option value={0}>Oculto del Catalogo</option>
               </select>
+<<<<<<< HEAD
               <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar Producto' : 'Guardar Producto'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+=======
+              <button id="productos-btn-guardar" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
+                {enEdicion ? 'Actualizar Producto' : 'Guardar Producto'}
+              </button>
+              {enEdicion && <button id="productos-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
 
           {/* CARDS DE PRODUCTOS */}
           <div className="col-lg-8 col-12">
             <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
+<<<<<<< HEAD
               <input type="text" className="form-control"
+=======
+              <input id="productos-input-buscar" type="text" className="form-control"
+>>>>>>> 809efa1 (Commit de inicio)
                 placeholder=" Buscar por código, nombre, descripción, precio o categoría..."
                 value={busqueda} onChange={e => { setBusqueda(e.target.value); }} style={inputStyle} />
             </div>
@@ -237,11 +276,19 @@ const Productos = ({ cerrarSesion, setVista }) => {
 
                         {/* Acciones */}
                         <div className="d-flex gap-2 justify-content-end">
+<<<<<<< HEAD
                           <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
                             onClick={() => { setForm({...p, ID_Categoria: String(p.ID_Categoria)}); setEnEdicion(true); }}>
                             Editar
                           </button>
                           <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+=======
+                          <button id={`productos-btn-editar-${p.Codigo_Producto}`} className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
+                            onClick={() => { setForm({...p, ID_Categoria: String(p.ID_Categoria)}); setEnEdicion(true); }}>
+                            Editar
+                          </button>
+                          <button id={`productos-btn-borrar-${p.Codigo_Producto}`} className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+>>>>>>> 809efa1 (Commit de inicio)
                             onClick={() => eliminar(p.Codigo_Producto)}>
                             Borrar
                           </button>
@@ -259,7 +306,11 @@ const Productos = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="productos-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>

@@ -46,6 +46,10 @@ const Registro = ({ setModoRegistro, setVista }) => {
             )}
           </label>
           <input
+<<<<<<< HEAD
+=======
+            id="registro-input-identificacion"
+>>>>>>> 809efa1 (Commit de inicio)
             className={`form-control ${errores.ID_Usuario ? 'is-invalid' : formReg.ID_Usuario && !errores.ID_Usuario ? 'is-valid' : ''}`}
             style={inputStyle}
             placeholder={reglaDoc ? (reglaDoc.soloNumeros ? `Ej: ${'0'.repeat(reglaDoc.min)}` : `Ej: AB${reglaDoc.min}01`) : 'Ej: 1001234567'}
@@ -61,7 +65,11 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Tipo de Documento *</label>
+<<<<<<< HEAD
           <select className="form-select" style={inputStyle} value={formReg.Codigo_Documento}
+=======
+          <select id="registro-select-tipo-documento" className="form-select" style={inputStyle} value={formReg.Codigo_Documento}
+>>>>>>> 809efa1 (Commit de inicio)
             onChange={e => actualizar('Codigo_Documento', e.target.value)}>
             <option value="">Seleccione un tipo...</option>
             {tiposDoc.map(t => (
@@ -72,7 +80,11 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Nombre Completo *</label>
+<<<<<<< HEAD
           <input className={`form-control ${errores.Nombre ? 'is-invalid' : formReg.Nombre && !errores.Nombre ? 'is-valid' : ''}`}
+=======
+          <input id="registro-input-nombre" className={`form-control ${errores.Nombre ? 'is-invalid' : formReg.Nombre && !errores.Nombre ? 'is-valid' : ''}`}
+>>>>>>> 809efa1 (Commit de inicio)
             style={inputStyle} placeholder="Ej: Juan Pérez" value={formReg.Nombre}
             onChange={e => actualizar('Nombre', e.target.value)} />
           {errores.Nombre && <small className="text-danger">{errores.Nombre}</small>}
@@ -80,7 +92,11 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Correo Electrónico *</label>
+<<<<<<< HEAD
           <input type="email" className={`form-control ${errores.Correo ? 'is-invalid' : formReg.Correo && !errores.Correo ? 'is-valid' : ''}`}
+=======
+          <input id="registro-input-correo" type="email" className={`form-control ${errores.Correo ? 'is-invalid' : formReg.Correo && !errores.Correo ? 'is-valid' : ''}`}
+>>>>>>> 809efa1 (Commit de inicio)
             style={inputStyle} placeholder="ejemplo@correo.com" value={formReg.Correo}
             onChange={e => actualizar('Correo', e.target.value)} />
           {errores.Correo && <small className="text-danger">{errores.Correo}</small>}
@@ -90,7 +106,11 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <label className="form-label fw-bold small text-muted">
             Contraseña * <span className="fw-normal text-muted" style={{ fontSize: '0.75rem' }}>(6-15 caracteres)</span>
           </label>
+<<<<<<< HEAD
           <input type="password"
+=======
+          <input id="registro-input-clave" type="password"
+>>>>>>> 809efa1 (Commit de inicio)
             className="form-control"
             style={{ ...inputStyle, borderColor: formReg.Clave ? infoFuerza.color : 'var(--color-border)' }}
             placeholder="Mínimo 6 caracteres" value={formReg.Clave}
@@ -112,14 +132,22 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Fecha de Nacimiento <span className="fw-normal">(Opcional)</span></label>
+<<<<<<< HEAD
           <input type="date" className="form-control" style={inputStyle}
+=======
+          <input id="registro-input-fecha-nacimiento" type="date" className="form-control" style={inputStyle}
+>>>>>>> 809efa1 (Commit de inicio)
             min={minDate} max={maxDate} value={formReg.Fecha_Nacimiento}
             onChange={e => actualizar('Fecha_Nacimiento', e.target.value)} />
         </div>
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Dirección <span className="fw-normal">(Opcional)</span></label>
+<<<<<<< HEAD
           <input className={`form-control ${errores.Direccion ? 'is-invalid' : formReg.Direccion && !errores.Direccion ? 'is-valid' : ''}`}
+=======
+          <input id="registro-input-direccion" className={`form-control ${errores.Direccion ? 'is-invalid' : formReg.Direccion && !errores.Direccion ? 'is-valid' : ''}`}
+>>>>>>> 809efa1 (Commit de inicio)
             style={inputStyle} placeholder="Ej: Calle 45 #12-30" value={formReg.Direccion}
             onChange={e => actualizar('Direccion', e.target.value)} />
           {errores.Direccion && <small className="text-danger">{errores.Direccion}</small>}
@@ -127,13 +155,21 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-4">
           <label className="form-label fw-bold small text-muted">Teléfono <span className="fw-normal">(Opcional)</span></label>
+<<<<<<< HEAD
           <input type="tel" className={`form-control ${errores.Telefono ? 'is-invalid' : formReg.Telefono && !errores.Telefono ? 'is-valid' : ''}`}
+=======
+          <input id="registro-input-telefono" type="tel" className={`form-control ${errores.Telefono ? 'is-invalid' : formReg.Telefono && !errores.Telefono ? 'is-valid' : ''}`}
+>>>>>>> 809efa1 (Commit de inicio)
             style={inputStyle} placeholder="Ej: 3001234567" value={formReg.Telefono}
             onChange={e => { if (!/[^0-9]/.test(e.target.value)) actualizar('Telefono', e.target.value); }} />
           {errores.Telefono && <small className="text-danger">{errores.Telefono}</small>}
         </div>
 
+<<<<<<< HEAD
         <button className="btn btn-primary w-100 fw-bold py-2 mb-3 shadow-sm" onClick={registrarUsuario}>
+=======
+        <button id="registro-btn-crear-cuenta" className="btn btn-primary w-100 fw-bold py-2 mb-3 shadow-sm" onClick={registrarUsuario}>
+>>>>>>> 809efa1 (Commit de inicio)
           <svg width="20" height="20" className="me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
           </svg>
@@ -142,7 +178,11 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="text-center">
           <span className="text-muted small">¿Ya tienes cuenta? </span>
+<<<<<<< HEAD
           <button className="btn btn-link p-0 fw-bold small text-decoration-none"
+=======
+          <button id="registro-btn-iniciar-sesion" className="btn btn-link p-0 fw-bold small text-decoration-none"
+>>>>>>> 809efa1 (Commit de inicio)
             onClick={() => {
               if (setModoRegistro) setModoRegistro(false);
               if (setVista) setVista('login');

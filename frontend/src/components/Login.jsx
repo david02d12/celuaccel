@@ -75,6 +75,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
           CELUACCEL
         </span>
         <button
+<<<<<<< HEAD
+=======
+          id="login-btn-ver-catalogo"
+>>>>>>> 809efa1 (Commit de inicio)
           onClick={() => setVista('catalogoPublico')}
           style={{
             background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
@@ -133,6 +137,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
                 Documento o Correo Electrónico
               </label>
               <input
+<<<<<<< HEAD
+=======
+                id="login-input-usuario"
+>>>>>>> 809efa1 (Commit de inicio)
                 type="text"
                 placeholder="Ej: 1001234567 o correo@ejemplo.com"
                 value={loginUser}
@@ -159,6 +167,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
               </label>
               <div style={{ position: 'relative' }}>
                 <input
+<<<<<<< HEAD
+=======
+                  id="login-input-clave"
+>>>>>>> 809efa1 (Commit de inicio)
                   type={mostrarPass ? 'text' : 'password'}
                   placeholder="Ingresa tu contraseña"
                   value={loginPass}
@@ -174,6 +186,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
                   }}
                 />
                 <button
+<<<<<<< HEAD
+=======
+                  id="login-btn-mostrar-clave"
+>>>>>>> 809efa1 (Commit de inicio)
                   type="button"
                   onClick={() => setMostrarPass(v => !v)}
                   style={{
@@ -193,6 +209,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
 
             {/* Botón principal */}
             <button
+<<<<<<< HEAD
+=======
+              id="login-btn-ingresar"
+>>>>>>> 809efa1 (Commit de inicio)
               onClick={acceder}
               disabled={cargando}
               style={{
@@ -221,12 +241,20 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
             {/* Links secundarios */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
               <button
+<<<<<<< HEAD
+=======
+                id="login-btn-crear-cuenta"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setModoRegistro(true)}
                 style={{ background: 'none', border: '1.5px solid var(--color-border)', color: 'var(--color-text)', padding: '11px', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem', width: '100%' }}
               >
                 Crear cuenta nueva
               </button>
               <button
+<<<<<<< HEAD
+=======
+                id="login-btn-olvide-clave"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setVista('forgotPassword')}
                 style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontWeight: 500, cursor: 'pointer', fontSize: '0.83rem', padding: '4px' }}
               >
@@ -234,6 +262,10 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
               </button>
               <div style={{ width: '100%', height: '1px', background: 'var(--color-border)', margin: '4px 0' }} />
               <button
+<<<<<<< HEAD
+=======
+                id="login-btn-catalogo-sin-sesion"
+>>>>>>> 809efa1 (Commit de inicio)
                 onClick={() => setVista('catalogoPublico')}
                 style={{
                   background: 'var(--color-primary-lt)', border: '1px solid var(--color-primary)',

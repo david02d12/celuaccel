@@ -112,6 +112,10 @@ const ChatMensajes = ({
                         </small>
                         {esMio && (
                           <button 
+<<<<<<< HEAD
+=======
+                            id={`chat-mensajes-btn-eliminar-${m.Codigo_Mensaje}`}
+>>>>>>> 809efa1 (Commit de inicio)
                             className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
                             style={{ fontSize: '0.75rem' }} 
                             onClick={() => eliminarMensaje(m.Codigo_Mensaje)}
@@ -132,6 +136,10 @@ const ChatMensajes = ({
           <div className="p-3 border-top" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
             <div className="d-flex gap-2">
               <input
+<<<<<<< HEAD
+=======
+                id="chat-mensajes-input-mensaje"
+>>>>>>> 809efa1 (Commit de inicio)
                 type="text"
                 className="form-control"
                 placeholder="Escribe un mensaje... (Enter para enviar)"
@@ -141,6 +149,10 @@ const ChatMensajes = ({
                 style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
               />
               <button
+<<<<<<< HEAD
+=======
+                id="chat-mensajes-btn-enviar"
+>>>>>>> 809efa1 (Commit de inicio)
                 className="btn btn-primary px-4"
                 onClick={enviarMensaje}
                 disabled={!nuevoMensaje.trim()}>

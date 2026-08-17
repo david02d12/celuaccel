@@ -113,6 +113,10 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
         <button
           className="btn w-100 text-start d-flex align-items-start gap-2 px-3 py-3"
           style={{ background: 'transparent', border: 'none' }}
+<<<<<<< HEAD
+=======
+          id={`mis-preguntas-btn-expandir-${p.ID_Consulta}`}
+>>>>>>> 809efa1 (Commit de inicio)
           onClick={() => toggleExpandir(p.ID_Consulta)}
         >
           {/* Badge estado */}
@@ -206,7 +210,11 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
               </p>
             </div>
             <button
+<<<<<<< HEAD
               id="btn-nueva-pregunta"
+=======
+              id="mis-preguntas-btn-nueva"
+>>>>>>> 809efa1 (Commit de inicio)
               className="btn btn-sm"
               style={{ background: 'var(--color-primary)', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: 600 }}
               onClick={() => setMostrarForm(f => !f)}
@@ -225,7 +233,11 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                     CÓDIGO DE PRODUCTO (opcional)
                   </label>
                   <input
+<<<<<<< HEAD
                     id="input-codigo-producto"
+=======
+                    id="mis-preguntas-input-codigo-producto"
+>>>>>>> 809efa1 (Commit de inicio)
                     className="form-control"
                     style={{ background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
                     placeholder="Ej: PROD-001"
@@ -238,7 +250,11 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                     TU PREGUNTA *
                   </label>
                   <textarea
+<<<<<<< HEAD
                     id="input-pregunta-texto"
+=======
+                    id="mis-preguntas-input-pregunta"
+>>>>>>> 809efa1 (Commit de inicio)
                     className="form-control"
                     style={{ background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)', minHeight: '90px', resize: 'vertical' }}
                     placeholder="Escribe tu consulta con detalle..."
@@ -248,7 +264,11 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                   />
                 </div>
                 <button
+<<<<<<< HEAD
                   id="btn-enviar-pregunta"
+=======
+                  id="mis-preguntas-btn-enviar"
+>>>>>>> 809efa1 (Commit de inicio)
                   type="submit"
                   className="btn d-flex align-items-center gap-2"
                   style={{ background: 'var(--color-primary)', color: '#fff', fontWeight: 600 }}

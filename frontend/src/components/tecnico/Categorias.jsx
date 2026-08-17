@@ -94,6 +94,7 @@ const Categorias = ({ cerrarSesion, setVista }) => {
                 <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
                 <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Categoria' : 'Nueva Categoria'}</h5>
               </div>
+<<<<<<< HEAD
               <input className="form-control mb-2" style={inputStyle} type="number"
                 placeholder="ID Categoria" value={form.ID_Categoria} disabled={enEdicion}
                 onChange={e => setForm({...form, ID_Categoria: e.target.value})} />
@@ -104,13 +105,29 @@ const Categorias = ({ cerrarSesion, setVista }) => {
                 {enEdicion ? 'Actualizar' : 'Guardar'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+=======
+              <input id="categorias-input-id" className="form-control mb-2" style={inputStyle} type="number"
+                placeholder="ID Categoria" value={form.ID_Categoria} disabled={enEdicion}
+                onChange={e => setForm({...form, ID_Categoria: e.target.value})} />
+              <input id="categorias-input-nombre" className="form-control mb-3" style={inputStyle}
+                placeholder="Nombre de la Categoria" value={form.Nombre_Categoria}
+                onChange={e => setForm({...form, Nombre_Categoria: e.target.value})} />
+              <button id="categorias-btn-guardar" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
+                {enEdicion ? 'Actualizar' : 'Guardar'}
+              </button>
+              {enEdicion && <button id="categorias-btn-cancelar" className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
+>>>>>>> 809efa1 (Commit de inicio)
             </div>
           </div>
 
           {/* CARDS */}
           <div className="col-lg-8 col-12">
             <div className="mb-3">
+<<<<<<< HEAD
               <input type="text" className="form-control" style={inputStyle}
+=======
+              <input id="categorias-input-buscar" type="text" className="form-control" style={inputStyle}
+>>>>>>> 809efa1 (Commit de inicio)
                 placeholder="Buscar por código, nombre o descripción..."
                 value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
             </div>
@@ -133,11 +150,19 @@ const Categorias = ({ cerrarSesion, setVista }) => {
                         </div>
                       </div>
                       <div className="d-flex gap-1">
+<<<<<<< HEAD
                         <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
                           onClick={() => { setForm(c); setEnEdicion(true); }}>
                           Editar
                         </button>
                         <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+=======
+                        <button id={`categorias-btn-editar-${c.ID_Categoria}`} className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
+                          onClick={() => { setForm(c); setEnEdicion(true); }}>
+                          Editar
+                        </button>
+                        <button id={`categorias-btn-borrar-${c.ID_Categoria}`} className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
+>>>>>>> 809efa1 (Commit de inicio)
                           onClick={() => eliminar(c.ID_Categoria)}>
                           Borrar
                         </button>
@@ -150,7 +175,11 @@ const Categorias = ({ cerrarSesion, setVista }) => {
 
             {totalPaginas > 1 && (
               <div className="mt-3">
+<<<<<<< HEAD
                 <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+=======
+                <Paginacion idBase="categorias" pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+>>>>>>> 809efa1 (Commit de inicio)
               </div>
             )}
           </div>
@@ -160,7 +189,11 @@ const Categorias = ({ cerrarSesion, setVista }) => {
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+<<<<<<< HEAD
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+=======
+          <button id="categorias-btn-cerrar-menu" type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+>>>>>>> 809efa1 (Commit de inicio)
         </div>
         <Sidebar setVista={setVista} />
       </div>
