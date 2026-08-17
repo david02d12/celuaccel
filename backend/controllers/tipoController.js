@@ -1,4 +1,21 @@
-﻿const tipoService = require('../services/tipodocumento.service');
+/**
+ * controllers/tipoController.js
+ * Controlador de tipos de documento de identidad en CeluAccel.
+ *
+ * Gestiona los tipos de documento que pueden usar los usuarios al registrarse
+ * (ej: Cédula de Ciudadanía, Tarjeta de Identidad, Pasaporte).
+ * Solo administradores pueden crear, modificar o eliminar tipos.
+ *
+ * Rutas que lo usan: tipodocumento.routes.js
+ * Servicio que consume: tipodocumento.service.js
+ *
+ * Endpoints:
+ *   GET    /tipo-documento/listar        → lista todos los tipos
+ *   POST   /tipo-documento/agregar       → crea un tipo de documento
+ *   PUT    /tipo-documento/actualizar    → actualiza un tipo
+ *   DELETE /tipo-documento/eliminar/:id  → elimina un tipo
+ */
+const tipoService = require('../services/tipodocumento.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });

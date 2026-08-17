@@ -1,22 +1,31 @@
 /**
- * upload.middleware.js
- * EP-005: Middleware Multer para el envío de adjuntos/evidencias en el chat.
- * Acepta imágenes y documentos PDF hasta 5 MB.
+ * middlewares/upload.middleware.js
+ * Middleware Multer para el envío de adjuntos en el chat de CeluAccel.
+ *
+ * Configura el almacenamiento de archivos subidos por los usuarios
+ * (imágenes y documentos PDF) al directorio backend/uploads/chat/.
+ *
+ * Restricciones:
+ *   - Tipos permitidos: JPEG, PNG, WEBP, GIF, PDF
+ *   - Tamaño máximo por archivo: 5 MB
+ *   - Máximo de archivos por envío: 3
+ *
+ * Naming de archivos: {timestamp}_{nombre_saneado}.{ext}
+ * Los archivos quedan accesibles en: GET /uploads/chat/{nombre}
+ *
+ * Uso en una ruta:
+ *   router.post('/mensajes/adjunto', validarToken, upload.array('adjuntos', 3), controller.subirAdjunto);
  */
-
 const multer = require('multer');
 const path   = require('path');
 const fs     = require('fs');
 
-// Directorio de subida: backend/uploads/chat/
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads', 'chat');
 
-// Crea el directorio si no existe
 if (!fs.existsSync(UPLOAD_DIR)) {
     fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
-// ── Configuración de almacenamiento ──────────────────────────────────────────
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
     filename: (_req, file, cb) => {
@@ -29,7 +38,6 @@ const storage = multer.diskStorage({
     },
 });
 
-// ── Filtro de tipos de archivo permitidos ─────────────────────────────────────
 const TIPOS_PERMITIDOS = [
     'image/jpeg',
     'image/jpg',
@@ -50,13 +58,12 @@ const fileFilter = (_req, file, cb) => {
     }
 };
 
-// ── Instancia del middleware ──────────────────────────────────────────────────
 const upload = multer({
     storage,
     fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5 MB máximo
-        files: 3,                  // Máximo 3 archivos por envío
+        fileSize: 5 * 1024 * 1024,
+        files: 3,
     },
 });
 

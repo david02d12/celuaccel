@@ -1,4 +1,4 @@
-const AppError = require('../config/AppError');
+﻿const AppError = require('../config/AppError');
 const preguntaDao = require('../dao/pregunta.dao');
 const usuarioDao = require('../dao/usuario.dao');
 
@@ -38,7 +38,7 @@ const listarMias = async (userId) => {
     return preguntaDao.getByUsuario(userId);
 };
 
-/** RF-031: El técnico registra la respuesta a una pregunta del catálogo */
+/** El técnico registra la respuesta a una pregunta del catálogo */
 const responder = async ({ ID_Consulta, Respuesta }, userId) => {
     if (!ID_Consulta || !Respuesta || !Respuesta.trim()) {
         throw new AppError('Los campos ID_Consulta y Respuesta son obligatorios.', 400);

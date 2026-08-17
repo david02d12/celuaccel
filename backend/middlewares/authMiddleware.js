@@ -1,9 +1,31 @@
+/**
+ * middlewares/authMiddleware.js
+ * Middlewares de autenticación y autorización por roles para CeluAccel.
+ *
+ * Exporta dos middlewares que se usan en las rutas protegidas:
+ *
+ *   validarToken  — verifica que el request tenga un JWT válido en el header
+ *                   Authorization: Bearer <token>
+ *                   Si el token es válido, agrega req.userId con el ID del usuario.
+ *                   Responde 401 si no hay token, 403 si el token es inválido.
+ *
+ *   validarRol    — verifica que el usuario autenticado tenga uno de los roles
+ *                   permitidos consultando la base de datos.
+ *                   Se usa después de validarToken.
+ *                   Roles disponibles: 1 (Técnico), 2 (Usuario), 3 (Administrador)
+ *
+ * Uso en una ruta:
+ *   router.get('/ruta', validarToken, validarRol(1, 3), controller.metodo);
+ */
 const jwt = require('jsonwebtoken');
 const { queryPromise } = require('../config/db');
-const SECRET_KEY = process.env.JWT_SECRET || 'CeluAccel_S3cr3t_K3y_2026!#Secure';
-// 401 → Sin token | 403 → Token inválido o rol insuficiente
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) throw new Error('JWT_SECRET no está definido en las variables de entorno.');
 
-// Valida que el request tenga un token JWT válido
+/**
+ * Valida que el request tenga un token JWT válido.
+ * Agrega req.userId si el token es correcto.
+ */
 const validarToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -17,7 +39,10 @@ const validarToken = (req, res, next) => {
     });
 };
 
-// validarRol usa async/await con queryPromise para consistencia con el resto de la app
+/**
+ * Verifica que el usuario tenga uno de los roles permitidos.
+ * @param {...number} rolesPermitidos - IDs de rol permitidos (ej: 1, 3)
+ */
 const validarRol = (...rolesPermitidos) => {
     return async (req, res, next) => {
         if (!req.userId) return res.status(401).json({ error: 'Usuario no autenticado.' });
@@ -44,5 +69,4 @@ const validarRol = (...rolesPermitidos) => {
     };
 };
 
-// SECRET_KEY no se exporta para no exponerla innecesariamente
 module.exports = { validarToken, validarRol };

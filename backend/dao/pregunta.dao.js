@@ -1,4 +1,4 @@
-const { queryPromise: query } = require('../config/db');
+﻿const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
     query('SELECT * FROM Pregunta');
@@ -17,7 +17,7 @@ const update = ({ ID_Consulta, ID_Usuario, Codigo_Producto, Pregunta, Fecha }) =
         [ID_Usuario, Codigo_Producto, Pregunta, Fecha, ID_Consulta]
     );
 
-/** RF-031: El técnico responde una pregunta del catálogo */
+/** El técnico responde una pregunta del catálogo */
 const responder = ({ ID_Consulta, Respuesta, ID_Tecnico_Responde }) =>
     query(
         `UPDATE Pregunta SET Respuesta=?, ID_Tecnico_Responde=?, Fecha_Respuesta=NOW() WHERE ID_Consulta=?`,

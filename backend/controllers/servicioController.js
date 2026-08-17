@@ -1,3 +1,22 @@
+/**
+ * controllers/servicioController.js
+ * Controlador del módulo de servicios técnicos de CeluAccel.
+ *
+ * Un servicio representa una solicitud de reparación o mantenimiento
+ * creada por un usuario y atendida por un técnico.
+ *
+ * Rutas que lo usan: servicios.routes.js
+ * Servicio que consume: servicio.service.js
+ *
+ * Endpoints:
+ *   GET    /servicios/listar              → todos los servicios (técnico/admin)
+ *   GET    /servicios/mis-servicios/:id   → servicios de un usuario específico
+ *   GET    /servicios/listar-mios         → servicios del usuario autenticado
+ *   POST   /servicios/agregar             → crea un nuevo servicio
+ *   PUT    /servicios/actualizar          → actualiza un servicio existente
+ *   PATCH  /servicios/cancelar/:id        → cancela un servicio (solo el propietario)
+ *   DELETE /servicios/eliminar/:id        → elimina un servicio (admin/técnico)
+ */
 const servicioService = require('../services/servicio.service');
 
 const handleError = (res, err) =>

@@ -1,5 +1,20 @@
+/**
+ * routes/mensajes.routes.js
+ * Rutas del módulo de mensajes del chat de CeluAccel.
+ *
+ * Todas las rutas requieren token JWT.
+ * La ruta de agregar aplica el middleware de moderación (filtrarContenido).
+ * La ruta de adjuntos usa Multer para recibir hasta 3 archivos de hasta 5 MB c/u.
+ *
+ * Endpoints:
+ *   GET    /api/mensajes/listar        → todos los mensajes
+ *   GET    /api/mensajes/por-chat/:id  → mensajes de un chat específico
+ *   POST   /api/mensajes/agregar       → envía un mensaje (pasa por filtro de contenido)
+ *   PUT    /api/mensajes/actualizar    → edita un mensaje
+ *   DELETE /api/mensajes/eliminar/:id  → elimina un mensaje
+ *   POST   /api/mensajes/adjunto       → sube archivos adjuntos al chat
+ */
 const router = require('express').Router();
-const path = require('path');
 const mensajeController = require('../controllers/mensajeController');
 const { validarToken } = require('../middlewares/authMiddleware');
 const filtrarContenido = require('../middlewares/filtrarContenido');
@@ -11,7 +26,6 @@ router.post('/mensajes/agregar',           validarToken, filtrarContenido, mensa
 router.put('/mensajes/actualizar',         validarToken, mensajeController.actualizar);
 router.delete('/mensajes/eliminar/:id',    validarToken, mensajeController.eliminar);
 
-/** EP-005: Subir adjunto/evidencia fotográfica al chat (máx. 3 archivos, 5 MB c/u) */
 router.post(
     '/mensajes/adjunto',
     validarToken,

@@ -1,3 +1,21 @@
+/**
+ * controllers/preguntaController.js
+ * Controlador de preguntas y respuestas frecuentes de CeluAccel.
+ *
+ * Los usuarios pueden enviar consultas sobre servicios o productos,
+ * y los técnicos las responden. El módulo funciona como un FAQ dinámico.
+ *
+ * Rutas que lo usan: preguntas.routes.js
+ * Servicio que consume: pregunta.service.js
+ *
+ * Endpoints:
+ *   GET    /preguntas/listar           → todas las preguntas (técnico/admin)
+ *   GET    /preguntas/mias             → preguntas del usuario autenticado
+ *   POST   /preguntas/agregar          → el usuario envía una pregunta
+ *   PUT    /preguntas/actualizar       → edita una pregunta
+ *   DELETE /preguntas/eliminar/:id     → elimina una pregunta
+ *   PUT    /preguntas/responder/:id    → el técnico registra la respuesta
+ */
 const preguntaService = require('../services/pregunta.service');
 
 const handleError = (res, err) =>
@@ -34,7 +52,7 @@ exports.eliminar = async (req, res) => {
     } catch (err) { handleError(res, err); }
 };
 
-/** RF-031: Técnico responde una pregunta */
+// El técnico registra la respuesta a una pregunta de un usuario
 exports.responder = async (req, res) => {
     try {
         await preguntaService.responder(

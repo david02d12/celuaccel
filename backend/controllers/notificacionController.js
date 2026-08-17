@@ -1,10 +1,32 @@
+/**
+ * controllers/notificacionController.js
+ * Controlador de notificaciones del sistema CeluAccel.
+ *
+ * Gestiona dos flujos diferenciados:
+ *   1. CRUD administrativo: técnicos y administradores pueden crear, editar
+ *      y eliminar notificaciones generales del sistema.
+ *   2. Notificaciones del usuario: cada usuario consulta solo las suyas,
+ *      puede marcarlas como leídas y ver el conteo de no leídas (badge).
+ *
+ * Rutas que lo usan: notificaciones.routes.js
+ * Servicios que consume: notificacion.service.js, notificacionAdmin.service.js
+ *
+ * Endpoints:
+ *   GET    /notificaciones/listar              → todas (admin/técnico)
+ *   POST   /notificaciones/agregar             → crea una notificación (admin/técnico)
+ *   PUT    /notificaciones/actualizar          → edita una notificación (admin/técnico)
+ *   DELETE /notificaciones/eliminar/:id        → elimina una notificación (admin/técnico)
+ *   POST   /notificaciones/dirigida            → envía notificación a un usuario específico
+ *   GET    /notificaciones/mis-notificaciones  → notificaciones del usuario autenticado
+ *   GET    /notificaciones/no-leidas/count     → conteo de no leídas (para badge)
+ *   PUT    /notificaciones/marcar-leida/:id    → marca una como leída
+ *   PUT    /notificaciones/marcar-todas-leidas → marca todas como leídas
+ */
 const notificacionService = require('../services/notificacion.service');
 const notificacionAdminService = require('../services/notificacionAdmin.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
-
-// ─── CRUD admin/técnico ───────────────────────────────────────────────────────
 
 exports.listar = async (req, res) => {
     try { res.status(200).json(await notificacionAdminService.listar()); }
@@ -32,9 +54,7 @@ exports.eliminar = async (req, res) => {
     } catch (err) { handleError(res, err); }
 };
 
-// ─── Notificaciones dirigidas ─────────────────────────────────────────────────
-
-/** Envía una notificación a un usuario (técnico/admin) */
+// Envía una notificación dirigida a un usuario específico
 exports.enviar = async (req, res) => {
     try {
         const result = await notificacionAdminService.enviar(req.body, req.userId);
@@ -42,7 +62,7 @@ exports.enviar = async (req, res) => {
     } catch (err) { handleError(res, err); }
 };
 
-/** Devuelve todas las notificaciones del usuario autenticado */
+// Devuelve las notificaciones del usuario autenticado (?noLeidas=true filtra solo las no leídas)
 exports.misNotificaciones = async (req, res) => {
     try {
         const soloNoLeidas = req.query.noLeidas === 'true';
@@ -50,14 +70,14 @@ exports.misNotificaciones = async (req, res) => {
     } catch (err) { handleError(res, err); }
 };
 
-/** Devuelve el conteo de notificaciones no leídas (para badge) */
+// Devuelve el conteo de notificaciones no leídas para mostrar en el badge del frontend
 exports.contarNoLeidas = async (req, res) => {
     try {
         res.status(200).json(await notificacionService.contarNoLeidas(req.userId));
     } catch (err) { handleError(res, err); }
 };
 
-/** Marca una notificación específica como leída */
+// Marca una notificación específica como leída
 exports.marcarLeida = async (req, res) => {
     try {
         await notificacionService.marcarLeida(req.params.id, req.userId);
@@ -65,7 +85,7 @@ exports.marcarLeida = async (req, res) => {
     } catch (err) { handleError(res, err); }
 };
 
-/** Marca TODAS las notificaciones del usuario como leídas */
+// Marca todas las notificaciones del usuario como leídas
 exports.marcarTodasLeidas = async (req, res) => {
     try {
         await notificacionService.marcarTodasLeidas(req.userId);

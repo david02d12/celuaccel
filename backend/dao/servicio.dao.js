@@ -1,4 +1,4 @@
-const { queryPromise: query } = require('../config/db');
+﻿const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
     query('SELECT * FROM Servicio ORDER BY Fecha DESC');
@@ -7,7 +7,7 @@ const getByUsuario = (idUsuario) =>
     query('SELECT * FROM Servicio WHERE ID_Usuario = ? ORDER BY Fecha DESC', [idUsuario]);
 
 /**
- * RF-045: Retorna un servicio Terminado (2) o Cancelado (-1) del usuario.
+ * Retorna un servicio Terminado (2) o Cancelado (-1) del usuario.
  * Usado para validar si el cliente puede crear un comentario.
  */
 const getActivosByUsuario = (idUsuario) =>
