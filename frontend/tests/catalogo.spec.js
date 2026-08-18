@@ -1,15 +1,6 @@
-/**
- * tests/catalogo.spec.js
- * Pruebas E2E del módulo de catálogo de productos — CeluAccel
- *
- * Cubre: catálogo público sin login, filtro por categoría
- * y catálogo autenticado como usuario normal.
- */
-
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 
-// Helper: login como usuario
 async function loginUsuario() {
   await browser.url('/');
   await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
@@ -27,7 +18,6 @@ describe('Módulo de Catálogo', () => {
     await btnCatalogo.waitForExist({ timeout: 5000 });
     await btnCatalogo.click();
 
-    // Debe mostrar algún elemento del catálogo (título o lista de productos)
     const contenido = await $('h2, h4, .card');
     await contenido.waitForDisplayed({ timeout: 6000 });
     expect(await contenido.isDisplayed()).toBe(true);
@@ -39,7 +29,6 @@ describe('Módulo de Catálogo', () => {
     await btnCatalogo.waitForExist({ timeout: 5000 });
     await btnCatalogo.click();
 
-    // Debe existir un botón para iniciar sesión o volver
     const btnLogin = await $('#btn-ir-login');
     await btnLogin.waitForExist({ timeout: 5000 });
     expect(await btnLogin.isExisting()).toBe(true);
@@ -48,7 +37,6 @@ describe('Módulo de Catálogo', () => {
   it('Usuario autenticado puede acceder al catálogo', async () => {
     await loginUsuario();
 
-    // Navegar al catálogo desde el menú
     const btnCatalogo = await $('#btn-acc-catalogo');
     await btnCatalogo.waitForExist({ timeout: 5000 });
     await btnCatalogo.click();

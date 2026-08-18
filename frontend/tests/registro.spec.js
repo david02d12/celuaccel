@@ -1,9 +1,3 @@
-/**
- * tests/registro.spec.js
- * Pruebas E2E del módulo de registro — CeluAccel
- *
- * Selectores por #id definidos en Registro.jsx.
- */
 import { limpiarUsuarioPrueba } from './utils/db-cleaner.js';
 
 async function irARegistro() {

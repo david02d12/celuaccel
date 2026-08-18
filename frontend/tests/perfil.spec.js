@@ -1,8 +1,3 @@
-/**
- * tests/perfil.spec.js
- * Pruebas E2E del módulo de Perfil de Usuario — CeluAccel
- */
-
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 
@@ -28,7 +23,6 @@ describe('Módulo de Perfil de Usuario', () => {
     await btnPerfil.waitForDisplayed({ timeout: 5000 });
     await btnPerfil.click();
 
-    // Verifica que cargue el nombre o información
     const panelDatos = await $('//*[contains(text(), "Información del Perfil")]');
     await panelDatos.waitForDisplayed({ timeout: 6000 });
     expect(await panelDatos.isDisplayed()).toBe(true);

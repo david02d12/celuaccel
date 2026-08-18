@@ -1,14 +1,3 @@
-/**
- * tests/preguntas.spec.js
- * Pruebas E2E del módulo de preguntas y respuestas — CeluAccel
- *
- * Cubre: usuario envía una pregunta, ve sus preguntas,
- * y el técnico responde una pregunta.
- *
- * ⚠️  Reemplaza las credenciales de técnico antes de ejecutar:
- *      TECNICO_ID   → ID del técnico de prueba
- *      TECNICO_PASS → contraseña del técnico de prueba
- */
 import { limpiarPreguntaPrueba } from './utils/db-cleaner.js';
 
 const USUARIO_ID   = 'maria@correo.com';
@@ -60,21 +49,17 @@ describe('Módulo de Preguntas — Usuario', () => {
     await btnPreguntas.waitForExist({ timeout: 5000 });
     await btnPreguntas.click();
 
-    // Abre el formulario de nueva pregunta
     const btnNueva = await $('#btn-nueva-pregunta');
     await btnNueva.waitForExist({ timeout: 5000 });
     await btnNueva.click();
 
-    // Llena el texto de la pregunta
     const inputPregunta = await $('#input-pregunta-texto');
     await inputPregunta.waitForExist({ timeout: 4000 });
     await inputPregunta.setValue('¿Cuánto tiempo demora una reparación de pantalla?');
 
-    // Envía
     const btnEnviar = await $('#btn-enviar-pregunta');
     await btnEnviar.click();
 
-    // Debe aparecer confirmación o la pregunta en el listado
     const confirmacion = await $('.toast-body, .alert, .fw-bold');
     await confirmacion.waitForDisplayed({ timeout: 5000 });
     expect(await confirmacion.isDisplayed()).toBe(true);

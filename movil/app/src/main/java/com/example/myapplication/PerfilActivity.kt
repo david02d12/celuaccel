@@ -21,6 +21,7 @@ class PerfilActivity : AppCompatActivity() {
     private val api by lazy { ApiClient.retrofit.create(ApiService::class.java) }
 
     private lateinit var etNombre:    EditText
+    private lateinit var etFechaNacimiento: EditText
     private lateinit var etCorreo:    EditText
     private lateinit var etTelefono:  EditText
     private lateinit var etDireccion: EditText
@@ -40,6 +41,7 @@ class PerfilActivity : AppCompatActivity() {
         userId = prefs.getString("user_id", "") ?: ""
 
         etNombre    = findViewById(R.id.etNombrePerfil)
+        etFechaNacimiento = findViewById(R.id.etFechaNacimientoPerfil)
         etCorreo    = findViewById(R.id.etCorreoPerfil)
         etTelefono  = findViewById(R.id.etTelefonoPerfil)
         etDireccion = findViewById(R.id.etDireccionPerfil)
@@ -59,6 +61,7 @@ class PerfilActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     val c = response.body()!!
                     etNombre.setText(c.nombre)
+                    etFechaNacimiento.setText(c.fechaNacimiento?.take(10) ?: "")
                     etCorreo.setText(c.correo)
                     etTelefono.setText(c.telefono)
                     etDireccion.setText(c.direccion)
@@ -77,6 +80,7 @@ class PerfilActivity : AppCompatActivity() {
 
     private fun guardarPerfil() {
         val nombre    = etNombre.text.toString().trim()
+        val fechaNacimiento = etFechaNacimiento.text.toString().trim()
         val correo    = etCorreo.text.toString().trim()
         val telefono  = etTelefono.text.toString().trim()
         val direccion = etDireccion.text.toString().trim()
@@ -85,13 +89,33 @@ class PerfilActivity : AppCompatActivity() {
             etNombre.error = "El nombre es obligatorio"
             return
         }
-        if (correo.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+        val palabrasNombre = nombre.split("\\s+".toRegex()).filter { it.length >= 2 }
+        if (palabrasNombre.size < 2) {
+            etNombre.error = "Ingresa mínimo 1 nombre y 1 apellido"
+            return
+        }
+        if (!nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\\s\\-']+$".toRegex())) {
+            etNombre.error = "Solo letras permitidas"
+            return
+        }
+
+        if (correo.isEmpty() || !correo.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$".toRegex())) {
             etCorreo.error = "Correo electrónico no válido"
             return
         }
+
         if (telefono.isEmpty()) {
             etTelefono.error = "El teléfono es obligatorio"
             return
+        }
+        if (!telefono.matches("^\\d+$".toRegex())) { etTelefono.error = "Solo números"; return }
+        if (telefono.length != 7 && telefono.length != 10) { etTelefono.error = "Debe tener 7 o 10 dígitos"; return }
+        if (telefono.length == 10 && !telefono.startsWith("3")) { etTelefono.error = "Celulares deben iniciar con 3"; return }
+
+        if (direccion.isNotEmpty()) {
+            if (direccion.length < 8) { etDireccion.error = "Mínimo 8 caracteres"; return }
+            if (!direccion.matches(".*[A-Za-zÁÉÍÓÚáéíóúÑñ].*".toRegex())) { etDireccion.error = "Debe contener texto"; return }
+            if (!direccion.matches(".*\\d.*".toRegex())) { etDireccion.error = "Debe contener al menos un número"; return }
         }
 
 
@@ -99,7 +123,7 @@ class PerfilActivity : AppCompatActivity() {
             idUsuario       = userId,
             codigoDocumento = codigoDocumentoOriginal,
             nombre          = nombre,
-            fechaNacimiento = fechaNacimientoOriginal,
+            fechaNacimiento = fechaNacimiento.ifEmpty { fechaNacimientoOriginal },
             direccion       = direccion,
             telefono        = telefono,
             correo          = correo,
@@ -139,8 +163,8 @@ class PerfilActivity : AppCompatActivity() {
             etConfirmPass.error = "Las contraseñas no coinciden"
             return
         }
-        if (newPass.length < 6) {
-            etNewPass.error = "Debe tener al menos 6 caracteres"
+        if (newPass.length < 6 || newPass.length > 15) {
+            etNewPass.error = "Debe tener entre 6 y 15 caracteres"
             return
         }
 

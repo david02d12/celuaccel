@@ -1,15 +1,3 @@
-/**
- * tests/notificaciones.spec.js
- * Pruebas E2E del módulo de notificaciones — CeluAccel
- *
- * Cubre: usuario consulta sus notificaciones, marca una como leída,
- * y el técnico puede crear una notificación dirigida.
- *
- * ⚠️  Reemplaza las credenciales de técnico antes de ejecutar:
- *      TECNICO_ID   → ID del técnico de prueba
- *      TECNICO_PASS → contraseña del técnico de prueba
- */
-
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 const TECNICO_ID   = 'carlos@correo.com';
@@ -55,7 +43,6 @@ describe('Módulo de Notificaciones — Usuario', () => {
     await btnNotif.waitForExist({ timeout: 5000 });
     await btnNotif.click();
 
-    // No debe aparecer un mensaje de error HTTP
     const error = await $('.alert-danger, .text-danger');
     const hayError = await error.isExisting();
     expect(hayError).toBe(false);
@@ -73,16 +60,15 @@ describe('Módulo de Notificaciones — Usuario', () => {
     await btnNotif.waitForExist({ timeout: 5000 });
     await btnNotif.click();
 
-    // Busca el botón "Marcar todas como leídas"
     const btnMarcar = await $('#btn-marcar-leidas');
     if (await btnMarcar.isExisting()) {
       await btnMarcar.click();
-      // Debe aparecer alguna confirmación
+
       const confirmacion = await $('.toast-body, .alert-success');
       await confirmacion.waitForDisplayed({ timeout: 4000 });
       expect(await confirmacion.isDisplayed()).toBe(true);
     } else {
-      // Si no hay botón, no hay notificaciones sin leer — test pasa
+
       expect(true).toBe(true);
     }
   });

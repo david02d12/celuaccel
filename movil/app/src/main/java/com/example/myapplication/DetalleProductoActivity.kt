@@ -50,11 +50,19 @@ class DetalleProductoActivity : AppCompatActivity() {
         val precio = intent.getDoubleExtra("PRECIO", 0.0)
         val stock = intent.getIntExtra("CANTIDAD", 0)
         val categoriaNombre = intent.getStringExtra("CATEGORIANOMBRE") ?: ""
+        val imagenUrl = intent.getStringExtra("IMAGEN") ?: ""
 
         findViewById<TextView>(R.id.tvNombreDetalle).text   = nombre
         findViewById<TextView>(R.id.tvCategoriaDetalle).text= categoriaNombre
         findViewById<TextView>(R.id.tvPrecioDetalle).text   = "$${"%.0f".format(precio)}"
         findViewById<TextView>(R.id.tvDescripcionDetalle).text = desc.ifEmpty { "Sin descripción" }
+
+        val ivProducto = findViewById<android.widget.ImageView>(R.id.ivDetalleProducto)
+        if (imagenUrl.isNotEmpty() && ivProducto != null) {
+            com.bumptech.glide.Glide.with(this)
+                .load(imagenUrl)
+                .into(ivProducto)
+        }
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
 

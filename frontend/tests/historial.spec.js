@@ -1,9 +1,3 @@
-/**
- * tests/historial.spec.js
- * Pruebas E2E del módulo de Historial de Eventos — CeluAccel
- * Solo accesible para Técnicos y Administradores.
- */
-
 const TECNICO_ID   = 'carlos@correo.com';
 const TECNICO_PASS = '123456';
 
@@ -64,8 +58,7 @@ describe('Módulo de Historial de Eventos', () => {
     const btnExportar = await $('button=Exportar PDF');
     await btnExportar.waitForDisplayed({ timeout: 5000 });
     await btnExportar.click();
-    
-    // Debería salir el toast de success si hay eventos, o error si no hay
+
     const toast = await $('.toast-body');
     await toast.waitForDisplayed({ timeout: 5000 });
     const text = await toast.getText();

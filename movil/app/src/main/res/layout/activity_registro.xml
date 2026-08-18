@@ -91,6 +91,18 @@
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
                     android:layout_marginBottom="14dp"/>
 
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="FECHA DE NACIMIENTO" android:textColor="@color/celuaccel_text_muted"
+                    android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
+                    android:layout_marginBottom="6dp"/>
+                <EditText android:id="@+id/etFechaNacimiento"
+                    android:layout_width="match_parent" android:layout_height="50dp"
+                    android:hint="YYYY-MM-DD" android:inputType="date"
+                    android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
+                    android:background="@drawable/bg_input_field" android:textSize="14sp"
+                    android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
+                    android:layout_marginBottom="14dp"/>
+
                 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="CORREO ELECTRÓNICO" android:textColor="@color/celuaccel_text_muted"
@@ -138,6 +150,18 @@
                 <EditText android:id="@+id/etPassword"
                     android:layout_width="match_parent" android:layout_height="50dp"
                     android:hint="Mínimo 6 caracteres" android:inputType="textPassword"
+                    android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
+                    android:background="@drawable/bg_input_field" android:textSize="14sp"
+                    android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
+                    android:layout_marginBottom="14dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="CONFIRMAR CONTRASEÑA" android:textColor="@color/celuaccel_text_muted"
+                    android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
+                    android:layout_marginBottom="6dp"/>
+                <EditText android:id="@+id/etConfirmPassword"
+                    android:layout_width="match_parent" android:layout_height="50dp"
+                    android:hint="Repite tu contraseña" android:inputType="textPassword"
                     android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
                     android:background="@drawable/bg_input_field" android:textSize="14sp"
                     android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"

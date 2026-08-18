@@ -158,9 +158,68 @@ class FormularioClienteActivity : AppCompatActivity() {
         val nombre = etNombre.text.toString().trim()
         val correo = etCorreo.text.toString().trim()
 
-        if (id.isEmpty() || nombre.isEmpty() || correo.isEmpty()) {
-            Toast.makeText(this, "Documento, Nombre y Correo son obligatorios.", Toast.LENGTH_SHORT).show()
+        if (id.isEmpty()) {
+            Toast.makeText(this, "El documento es obligatorio.", Toast.LENGTH_SHORT).show()
             return null
+        }
+        
+        if (nombre.isEmpty()) {
+            Toast.makeText(this, "El nombre es obligatorio.", Toast.LENGTH_SHORT).show()
+            return null
+        }
+        val palabrasNombre = nombre.split("\\s+".toRegex()).filter { it.length >= 2 }
+        if (palabrasNombre.size < 2) {
+            Toast.makeText(this, "Ingresa mínimo 1 nombre y 1 apellido.", Toast.LENGTH_SHORT).show()
+            return null
+        }
+        if (!nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\\s\\-']+$".toRegex())) {
+            Toast.makeText(this, "Solo se permiten letras en el nombre.", Toast.LENGTH_SHORT).show()
+            return null
+        }
+
+        if (correo.isEmpty() || !correo.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$".toRegex())) {
+            Toast.makeText(this, "Correo electrónico no válido.", Toast.LENGTH_SHORT).show()
+            return null
+        }
+
+        val telefonoText = etTelefono.text.toString().trim()
+        if (telefonoText.isNotEmpty()) {
+            if (!telefonoText.matches("^\\d+$".toRegex())) {
+                Toast.makeText(this, "El teléfono solo debe contener números.", Toast.LENGTH_SHORT).show()
+                return null
+            }
+            if (telefonoText.length != 7 && telefonoText.length != 10) {
+                Toast.makeText(this, "El teléfono debe tener 7 o 10 dígitos.", Toast.LENGTH_SHORT).show()
+                return null
+            }
+            if (telefonoText.length == 10 && !telefonoText.startsWith("3")) {
+                Toast.makeText(this, "Los celulares deben iniciar con 3.", Toast.LENGTH_SHORT).show()
+                return null
+            }
+        }
+
+        val direccionText = etDireccion.text.toString().trim()
+        if (direccionText.isNotEmpty()) {
+            if (direccionText.length < 8) {
+                Toast.makeText(this, "La dirección debe tener al menos 8 caracteres.", Toast.LENGTH_SHORT).show()
+                return null
+            }
+            if (!direccionText.matches(".*[A-Za-zÁÉÍÓÚáéíóúÑñ].*".toRegex())) {
+                Toast.makeText(this, "La dirección debe contener texto.", Toast.LENGTH_SHORT).show()
+                return null
+            }
+            if (!direccionText.matches(".*\\d.*".toRegex())) {
+                Toast.makeText(this, "La dirección debe contener al menos un número.", Toast.LENGTH_SHORT).show()
+                return null
+            }
+        }
+
+        val claveText = etClave.text.toString().trim()
+        if (claveText.isNotEmpty()) {
+            if (claveText.length < 6 || claveText.length > 15) {
+                Toast.makeText(this, "La contraseña debe tener entre 6 y 15 caracteres.", Toast.LENGTH_SHORT).show()
+                return null
+            }
         }
 
         return Cliente(

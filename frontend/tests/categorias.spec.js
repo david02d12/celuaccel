@@ -1,9 +1,3 @@
-/**
- * tests/categorias.spec.js
- * Pruebas E2E del módulo de Categorías de Sistema — CeluAccel
- * Solo accesible para Técnicos y Administradores.
- */
-
 const TECNICO_ID   = 'carlos@correo.com';
 const TECNICO_PASS = '123456';
 

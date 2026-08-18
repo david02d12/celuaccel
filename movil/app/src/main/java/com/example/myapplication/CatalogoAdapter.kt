@@ -39,10 +39,18 @@ class CatalogoAdapter(
         val catNombre = categorias.find { it.idCategoria == prod.idCategoria }?.nombreCategoria ?: "Sin categoría"
         holder.tvCategoriaCatalogo.text = catNombre
 
-
-        holder.imgProducto.visibility    = View.GONE
-        holder.placeholderImg.visibility = View.VISIBLE
-
+        val imgUrl = prod.imagen ?: ""
+        if (imgUrl.isNotEmpty()) {
+            com.bumptech.glide.Glide.with(holder.itemView.context)
+                .load(imgUrl)
+                .placeholder(R.color.celuaccel_divider)
+                .into(holder.imgProducto)
+            holder.imgProducto.visibility    = View.VISIBLE
+            holder.placeholderImg.visibility = View.GONE
+        } else {
+            holder.imgProducto.visibility    = View.GONE
+            holder.placeholderImg.visibility = View.VISIBLE
+        }
 
         holder.itemView.setOnClickListener { onDetalleClick(prod) }
     }

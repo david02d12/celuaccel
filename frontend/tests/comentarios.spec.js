@@ -1,10 +1,3 @@
-/**
- * tests/comentarios.spec.js
- * Pruebas E2E del módulo de reseñas y comentarios — CeluAccel
- *
- * Cubre: el usuario deja un comentario con calificación
- * y puede editarlo después.
- */
 import { limpiarComentarioPrueba } from './utils/db-cleaner.js';
 
 const USUARIO_ID   = 'maria@correo.com';
@@ -44,7 +37,6 @@ describe('Módulo de Comentarios — Usuario', () => {
     await loginUsuario();
     await irAComentarios();
 
-    // El formulario/textarea ahora siempre está visible en la vista
     const textarea = await $('#comentario-input');
     await textarea.waitForExist({ timeout: 5000 });
     expect(await textarea.isExisting()).toBe(true);
@@ -54,16 +46,13 @@ describe('Módulo de Comentarios — Usuario', () => {
     await loginUsuario();
     await irAComentarios();
 
-    // Escribe el comentario
     const textarea = await $('#comentario-input');
     await textarea.waitForExist({ timeout: 4000 });
     await textarea.setValue('Excelente servicio, muy rápidos y profesionales.');
 
-    // Envía el formulario
     const btnEnviar = await $('#btn-enviar-comentario');
     await btnEnviar.click();
 
-    // Confirma envío (el formulario se limpia)
     await browser.waitUntil(async () => (await textarea.getValue()) === '', { timeout: 5000 });
   });
 
@@ -71,7 +60,6 @@ describe('Módulo de Comentarios — Usuario', () => {
     await loginUsuario();
     await irAComentarios();
 
-    // La sección debe cargar comentarios (cards o filas de tabla)
     const items = await $$('.card, tr');
     await browser.waitUntil(
       async () => items.length > 0,

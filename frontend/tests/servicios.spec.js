@@ -1,15 +1,3 @@
-/**
- * tests/servicios.spec.js
- * Pruebas E2E del módulo de servicios técnicos — CeluAccel
- *
- * Cubre: solicitud de servicio (usuario), listado de servicios (técnico),
- * actualización de estado (técnico) y cancelación (usuario).
- *
- * ⚠️  Reemplaza las credenciales de técnico antes de ejecutar:
- *      TECNICO_ID   → ID del técnico de prueba
- *      TECNICO_PASS → contraseña del técnico de prueba
- */
-
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 const TECNICO_ID   = 'carlos@correo.com';
@@ -50,12 +38,10 @@ describe('Módulo de Servicios — Usuario', () => {
     await loginComo(USUARIO_ID, USUARIO_PASS);
     await irAVista('#nav-miServicio');
 
-    // Busca el botón para crear/solicitar servicio
     const btnNuevo = await $('#btn-nuevo-servicio');
     await btnNuevo.waitForExist({ timeout: 5000 });
     await btnNuevo.click();
 
-    // Debe aparecer el formulario o modal de creación
     const form = await $('input[placeholder*="iPhone"]');
     await form.waitForDisplayed({ timeout: 5000 });
     expect(await form.isDisplayed()).toBe(true);
@@ -78,7 +64,6 @@ describe('Módulo de Servicios — Técnico', () => {
     await loginComo(TECNICO_ID, TECNICO_PASS);
     await irAVista('#nav-servicios');
 
-    // Espera que la tabla cargue y busca un botón de acción
     const btnAccion = await $('#btn-editar-servicio');
     await btnAccion.waitForExist({ timeout: 6000 });
     expect(await btnAccion.isExisting()).toBe(true);

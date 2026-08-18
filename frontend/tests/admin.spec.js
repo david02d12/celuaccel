@@ -1,15 +1,3 @@
-/**
- * tests/admin.spec.js
- * Pruebas E2E del panel de administrador — CeluAccel
- *
- * Cubre: gestión de usuarios, roles y tipos de documento.
- * Solo accesible con el rol Administrador (3).
- *
- * ⚠️  Reemplaza las credenciales de administrador antes de ejecutar:
- *      ADMIN_ID   → ID del administrador de prueba
- *      ADMIN_PASS → contraseña del administrador de prueba
- */
-
 const ADMIN_ID   = '1022922817';
 const ADMIN_PASS = '1022922817';
 
@@ -67,7 +55,6 @@ describe('Panel de Administrador — Roles', () => {
   it('Admin puede navegar al módulo de roles', async () => {
     await loginAdmin();
 
-    // Si no está en quick access, usamos el del sidebar
     const btnMenu = await $('button[data-bs-target="#menuGlobal"]');
     if (await btnMenu.isDisplayed()) {
       await btnMenu.click();
@@ -128,7 +115,7 @@ describe('Panel de Administrador — Tipos de Documento', () => {
   });
 
   it('Usuarios sin rol admin NO pueden acceder a Tipo Documento', async () => {
-    // Este test usa el usuario normal para verificar que no puede ver el módulo de admin
+
     await browser.url('/');
     await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
     await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue('maria@correo.com');
@@ -136,7 +123,6 @@ describe('Panel de Administrador — Tipos de Documento', () => {
     await $('button=Ingresar al Sistema').click();
     await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
 
-    // El menú de usuario normal no debe tener acceso a Tipo Documento
     const btnTipo = await $('#btn-acc-tipo');
     const existe = await btnTipo.isExisting();
     expect(existe).toBe(false);

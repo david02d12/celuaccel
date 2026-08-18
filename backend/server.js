@@ -112,8 +112,12 @@ registrarEventos(io);
 app.set('io', io);
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    console.log(`Documentacion: http://localhost:${PORT}/doc`);
-    console.log(`Socket.IO activo en ws://localhost:${PORT}`);
-});
+if (require.main === module) {
+    server.listen(PORT, () => {
+        console.log(`Servidor corriendo en http://localhost:${PORT}`);
+        console.log(`Documentacion: http://localhost:${PORT}/doc`);
+        console.log(`Socket.IO activo en ws://localhost:${PORT}`);
+    });
+}
+
+module.exports = { app, server };

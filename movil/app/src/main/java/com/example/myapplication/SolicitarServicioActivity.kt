@@ -34,6 +34,7 @@ class SolicitarServicioActivity : AppCompatActivity() {
         idUsuarioAutenticado = sharedPref.getString("user_id", "") ?: ""
 
         val etDispositivo   = findViewById<EditText>(R.id.etDispositivoSolicitud)
+        val etEspecificacion = findViewById<EditText>(R.id.etEspecificacionSolicitud)
         val etDescripcion   = findViewById<EditText>(R.id.etDescripcionSolicitud)
         val btnEnviar       = findViewById<Button>(R.id.btnEnviarSolicitud)
         val btnRegresar     = findViewById<Button>(R.id.btnRegresar)
@@ -43,9 +44,10 @@ class SolicitarServicioActivity : AppCompatActivity() {
         btnEnviar.setOnClickListener {
             val desc   = etDescripcion.text.toString().trim()
             val marca  = etDispositivo.text.toString().trim()
+            val especificacion = etEspecificacion.text.toString().trim()
 
-            if (desc.isEmpty() || marca.isEmpty()) {
-                Toast.makeText(this, "Por favor, ingresa el problema y el dispositivo.", Toast.LENGTH_SHORT).show()
+            if (desc.isEmpty() || marca.isEmpty() || especificacion.isEmpty()) {
+                Toast.makeText(this, "Por favor, completa todos los campos del formulario.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -61,7 +63,7 @@ class SolicitarServicioActivity : AppCompatActivity() {
                 idUsuario           = idUsuarioAutenticado,
                 precio              = 0.0,
                 movilNombre         = marca,
-                movilEspecificacion = "",
+                movilEspecificacion = especificacion,
                 fecha               = fechaActual,
                 etapa               = 0
             )

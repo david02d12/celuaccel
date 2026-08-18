@@ -3,8 +3,8 @@ package com.example.myapplication.model
 import com.google.gson.annotations.SerializedName
 
 data class Notificacion(
-    @SerializedName("Codigo_Notificaciones") val codigoNotificaciones: Int? = null,
-    @SerializedName("ID_Usuario")            val idUsuario: String? = null,
+    @SerializedName("ID_Notificacion") val codigoNotificaciones: Int? = null,
+    @SerializedName("ID_Usuario_Origen")     val idUsuario: String? = null,
     @SerializedName("ID_Usuario_Destino")    val idUsuarioDestino: String? = null,
     @SerializedName("Tipo_Notificacion")     val tipoNotificacion: String? = null,
     @SerializedName("Titulo")                val titulo: String? = null,

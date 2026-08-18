@@ -1,9 +1,3 @@
-/**
- * tests/productos.spec.js
- * Pruebas E2E del módulo de Gestión de Productos — CeluAccel
- * Solo accesible para Técnicos y Administradores.
- */
-
 const TECNICO_ID   = 'carlos@correo.com';
 const TECNICO_PASS = '123456';
 
@@ -64,8 +58,7 @@ describe('Módulo de Gestión de Productos', () => {
     const inputBusqueda = await $('input[placeholder*="Buscar por código"]');
     await inputBusqueda.waitForDisplayed({ timeout: 5000 });
     await inputBusqueda.setValue('ProductoInexistente12345');
-    
-    // Wait for the empty state message
+
     const emptyMsg = await $('p=No se encontraron productos.');
     await emptyMsg.waitForDisplayed({ timeout: 5000 });
     expect(await emptyMsg.isDisplayed()).toBe(true);

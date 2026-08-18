@@ -1,10 +1,3 @@
-/**
- * tests/auth.spec.js
- * Pruebas E2E del módulo de autenticación — CeluAccel
- *
- * Selectores por #id definidos en Login.jsx.
- */
-
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 

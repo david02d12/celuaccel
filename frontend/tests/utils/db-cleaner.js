@@ -1,7 +1,6 @@
 import { execSync } from 'child_process';
 import path from 'path';
 
-// Ejecuta un script en el contexto del backend donde mysql2 ya está instalado y configurado
 export function runQuery(query) {
   try {
     const script = `
@@ -26,7 +25,7 @@ export function runQuery(query) {
 }
 
 export async function getConexion() {
-  // Mock para que no falle chat.spec.js al iniciar (no se usa conexion directa, sino execSync)
+
   return {
     execute: async (q, params) => {
       let finalQ = q;
