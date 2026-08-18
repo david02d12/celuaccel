@@ -68,7 +68,7 @@ export const fuerzaClave = (clave) => {
 export const useRegistroForm = (setModoRegistro, setVista) => {
   const [formReg, setFormReg] = useState({
     ID_Usuario: '', Codigo_Documento: '', Nombre: '',
-    Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: ''
+    Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: '', ClaveConfirm: ''
   });
   const [tiposDoc, setTiposDoc] = useState([]);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
@@ -133,6 +133,9 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
     }
     if (formReg.Clave.trim().length > 15) {
       mostrarToast('La contraseña no puede exceder los 15 caracteres.', false); return;
+    }
+    if (formReg.Clave.trim() !== formReg.ClaveConfirm.trim()) {
+      mostrarToast('Las contraseñas no coinciden. Verifícalas e intenta de nuevo.', false); return;
     }
     if (formReg.Fecha_Nacimiento) {
       const parts = formReg.Fecha_Nacimiento.split('-');

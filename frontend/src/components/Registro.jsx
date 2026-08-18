@@ -36,6 +36,19 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <p className="text-muted small">Crea tu cuenta para acceder al sistema</p>
         </div>
 
+        {/* Tipo de documento — va primero para que el hint del número cambie dinámicamente */}
+        <div className="mb-3">
+          <label className="form-label fw-bold small text-muted">Tipo de Documento *</label>
+          <select id="reg-tipo-doc" className="form-select" style={inputStyle} value={formReg.Codigo_Documento}
+            onChange={e => actualizar('Codigo_Documento', e.target.value)}>
+            <option value="">Seleccione un tipo...</option>
+            {tiposDoc.map(t => (
+              <option key={t.Codigo_Documento} value={t.Codigo_Documento}>{t.Tipo_Documento}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Número de identificación — el placeholder se adapta al tipo seleccionado */}
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">
             Número de Identificación *
@@ -46,6 +59,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
             )}
           </label>
           <input
+            id="reg-id-usuario"
             className={`form-control ${errores.ID_Usuario ? 'is-invalid' : formReg.ID_Usuario && !errores.ID_Usuario ? 'is-valid' : ''}`}
             style={inputStyle}
             placeholder={reglaDoc ? (reglaDoc.soloNumeros ? `Ej: ${'0'.repeat(reglaDoc.min)}` : `Ej: AB${reglaDoc.min}01`) : 'Ej: 1001234567'}
@@ -60,19 +74,8 @@ const Registro = ({ setModoRegistro, setVista }) => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold small text-muted">Tipo de Documento *</label>
-          <select className="form-select" style={inputStyle} value={formReg.Codigo_Documento}
-            onChange={e => actualizar('Codigo_Documento', e.target.value)}>
-            <option value="">Seleccione un tipo...</option>
-            {tiposDoc.map(t => (
-              <option key={t.Codigo_Documento} value={t.Codigo_Documento}>{t.Tipo_Documento}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Nombre Completo *</label>
-          <input className={`form-control ${errores.Nombre ? 'is-invalid' : formReg.Nombre && !errores.Nombre ? 'is-valid' : ''}`}
+          <input id="reg-nombre" className={`form-control ${errores.Nombre ? 'is-invalid' : formReg.Nombre && !errores.Nombre ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="Ej: Juan Pérez" value={formReg.Nombre}
             onChange={e => actualizar('Nombre', e.target.value)} />
           {errores.Nombre && <small className="text-danger">{errores.Nombre}</small>}
@@ -80,34 +83,10 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Correo Electrónico *</label>
-          <input type="email" className={`form-control ${errores.Correo ? 'is-invalid' : formReg.Correo && !errores.Correo ? 'is-valid' : ''}`}
+          <input id="reg-correo" type="email" className={`form-control ${errores.Correo ? 'is-invalid' : formReg.Correo && !errores.Correo ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="ejemplo@correo.com" value={formReg.Correo}
             onChange={e => actualizar('Correo', e.target.value)} />
           {errores.Correo && <small className="text-danger">{errores.Correo}</small>}
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label fw-bold small text-muted">
-            Contraseña * <span className="fw-normal text-muted" style={{ fontSize: '0.75rem' }}>(6-15 caracteres)</span>
-          </label>
-          <input type="password"
-            className="form-control"
-            style={{ ...inputStyle, borderColor: formReg.Clave ? infoFuerza.color : 'var(--color-border)' }}
-            placeholder="Mínimo 6 caracteres" value={formReg.Clave}
-            onChange={e => actualizar('Clave', e.target.value)} />
-          {formReg.Clave && (
-            <div className="mt-1 d-flex justify-content-between align-items-center">
-              <small style={{ color: infoFuerza.color, fontWeight: 'bold' }}>{infoFuerza.texto}</small>
-              <div style={{ display: 'flex', gap: '3px' }}>
-                {[1, 2, 3].map(n => (
-                  <div key={n} style={{
-                    width: '30px', height: '4px', borderRadius: '2px',
-                    backgroundColor: n <= infoFuerza.nivel ? infoFuerza.color : '#e9ecef'
-                  }} />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="mb-3">
@@ -125,7 +104,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
           {errores.Direccion && <small className="text-danger">{errores.Direccion}</small>}
         </div>
 
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Teléfono <span className="fw-normal">(Opcional)</span></label>
           <input type="tel" className={`form-control ${errores.Telefono ? 'is-invalid' : formReg.Telefono && !errores.Telefono ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="Ej: 3001234567" value={formReg.Telefono}
@@ -133,7 +112,58 @@ const Registro = ({ setModoRegistro, setVista }) => {
           {errores.Telefono && <small className="text-danger">{errores.Telefono}</small>}
         </div>
 
-        <button className="btn btn-primary w-100 fw-bold py-2 mb-3 shadow-sm" onClick={registrarUsuario}>
+        <div className="mb-4">
+          <label className="form-label fw-bold small text-muted">
+            Contraseña * <span className="fw-normal text-muted" style={{ fontSize: '0.75rem' }}>(6-15 caracteres)</span>
+          </label>
+          <input id="reg-clave" type="password"
+            className="form-control"
+            style={{ ...inputStyle, borderColor: formReg.Clave ? infoFuerza.color : 'var(--color-border)' }}
+            placeholder="Mínimo 6 caracteres" value={formReg.Clave}
+            maxLength={15}
+            onChange={e => actualizar('Clave', e.target.value)} />
+          {formReg.Clave && (
+            <div className="mt-1 d-flex justify-content-between align-items-center">
+              <small style={{ color: infoFuerza.color, fontWeight: 'bold' }}>{infoFuerza.texto}</small>
+              <div style={{ display: 'flex', gap: '3px' }}>
+                {[1, 2, 3].map(n => (
+                  <div key={n} style={{
+                    width: '30px', height: '4px', borderRadius: '2px',
+                    backgroundColor: n <= infoFuerza.nivel ? infoFuerza.color : '#e9ecef'
+                  }} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label className="form-label fw-bold small text-muted">
+            Confirmar Contraseña *
+          </label>
+          <input id="reg-clave-confirm" type="password"
+            className={`form-control ${
+              formReg.ClaveConfirm
+                ? formReg.Clave.trim() === formReg.ClaveConfirm.trim()
+                  ? 'is-valid'
+                  : 'is-invalid'
+                : ''
+            }`}
+            style={inputStyle}
+            placeholder="Repite tu contraseña"
+            value={formReg.ClaveConfirm}
+            maxLength={15}
+            onChange={e => actualizar('ClaveConfirm', e.target.value)}
+          />
+          {formReg.ClaveConfirm && formReg.Clave.trim() !== formReg.ClaveConfirm.trim() && (
+            <small className="text-danger">Las contraseñas no coinciden.</small>
+          )}
+          {formReg.ClaveConfirm && formReg.Clave.trim() === formReg.ClaveConfirm.trim() && (
+            <small className="text-success">✓ Las contraseñas coinciden.</small>
+          )}
+        </div>
+
+        <button id="btn-registrar" className="btn btn-primary w-100 fw-bold py-2 mb-3 shadow-sm" onClick={registrarUsuario}>
           <svg width="20" height="20" className="me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
           </svg>
@@ -142,7 +172,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="text-center">
           <span className="text-muted small">¿Ya tienes cuenta? </span>
-          <button className="btn btn-link p-0 fw-bold small text-decoration-none"
+          <button id="btn-ir-login" className="btn btn-link p-0 fw-bold small text-decoration-none"
             onClick={() => {
               if (setModoRegistro) setModoRegistro(false);
               if (setVista) setVista('login');

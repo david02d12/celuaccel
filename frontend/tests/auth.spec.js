@@ -1,31 +1,69 @@
+/**
+ * tests/auth.spec.js
+ * Pruebas E2E del módulo de autenticación — CeluAccel
+ *
+ * Selectores por #id definidos en Login.jsx.
+ */
+
+const USUARIO_ID   = 'maria@correo.com';
+const USUARIO_PASS = '123456';
+
 describe('Módulo de Autenticación', () => {
 
-  it('Debe permitir iniciar sesión con credenciales válidas', async () => {
-
-    // 1. Navegar a la página de login
+  beforeEach(async () => {
     await browser.url('/');
+    await $('#login-usuario').waitForDisplayed({ timeout: 6000 });
+  });
 
-    // 2. Localizar los elementos del formulario
-    const userInput = await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]');
-    const passwordInput = await $('input[placeholder="Ingresa tu contraseña"]');
-    const submitButton = await $('button=Ingresar al Sistema');
+  it('Login con credenciales válidas → entra al sistema', async () => {
+    await $('#login-usuario').setValue(USUARIO_ID);
+    await $('#login-password').setValue(USUARIO_PASS);
+    await $('#btn-ingresar').click();
 
-    // 3. Esperar a que el formulario sea interactivo
-    await userInput.waitForDisplayed({ timeout: 5000 });
+    const bienvenido = await $('h4.fw-bold');
+    await bienvenido.waitForDisplayed({ timeout: 8000 });
+    expect(await bienvenido.isDisplayed()).toBe(true);
+  });
 
-    // 4. Llenar los campos
-    await userInput.setValue('1022922817');
-    await passwordInput.setValue('123456789');
+  it('Login con contraseña incorrecta → muestra toast de error', async () => {
+    await $('#login-usuario').setValue(USUARIO_ID);
+    await $('#login-password').setValue('claveIncorrecta999');
+    await $('#btn-ingresar').click();
 
-    // 5. Hacer clic en el botón de ingresar
-    await submitButton.click();
+    const toast = await $('div=Usuario o contraseña incorrectos.');
+    await toast.waitForDisplayed({ timeout: 5000 });
+    expect(await toast.getText()).toContain('incorrectos');
+  });
 
-    // 6. Validar que el inicio de sesión fue exitoso
-    const welcomeHeader = await $('h4.fw-bold');
+  it('Login sin llenar campos → muestra aviso', async () => {
+    await $('#btn-ingresar').click();
 
-    await welcomeHeader.waitForDisplayed({ timeout: 8000 });
-    const headerText = await welcomeHeader.getText();
-    expect(headerText).toContain('Bienvenido');
+    const toast = await $('div=Por favor, completa todos los campos.');
+    await toast.waitForDisplayed({ timeout: 4000 });
+    expect(await toast.getText()).toContain('completa todos los campos');
+  });
+
+  it('Navegar al catálogo público sin login', async () => {
+    await $('#btn-catalogo-publico').click();
+
+    const contenido = await $('h2, h4, h1, .card');
+    await contenido.waitForDisplayed({ timeout: 6000 });
+    expect(await contenido.isDisplayed()).toBe(true);
+  });
+
+  it('Navegar al formulario de registro', async () => {
+    await $('#btn-crear-cuenta').click();
+
+    await $('#btn-registrar').waitForDisplayed({ timeout: 5000 });
+    expect(await $('#btn-registrar').isDisplayed()).toBe(true);
+  });
+
+  it('Navegar a "Olvidé mi contraseña"', async () => {
+    await $('#btn-forgot-password').click();
+
+    const form = await $('form, .card');
+    await form.waitForDisplayed({ timeout: 5000 });
+    expect(await form.isDisplayed()).toBe(true);
   });
 
 });

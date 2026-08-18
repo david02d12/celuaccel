@@ -200,7 +200,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
             <button className="btn btn-outline-light fw-bold px-3" onClick={generarPDF} title="Descargar historial en PDF">
               Descargar PDF
             </button>
-            <button className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+            <button id="btn-nuevo-servicio" className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
               {mostrarFormulario ? "Cancelar Solicitud" : "+ Nuevo Servicio"}
             </button>
           </div>

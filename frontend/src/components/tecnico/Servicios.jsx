@@ -345,7 +345,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                               onClick={() => { setModalNotif({ ID_Usuario: s.ID_Usuario, ID_Servicio: s.ID_Servicio }); setMensajeNotif(''); }}>
                               <IconBell /> Notificar
                             </button>
-                            <button className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                            <button id="btn-editar-servicio" className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
                               style={{ fontSize: '0.77rem' }}
                               onClick={() => { setEnEdicion(true); setIdServicioSel(s.ID_Servicio); setFormServicio({...s, Fecha: s.Fecha ? s.Fecha.split('T')[0] : '', Etapa: String(s.Etapa)}); }}>
                               <IconWrench /> Editar

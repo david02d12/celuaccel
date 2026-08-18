@@ -132,6 +132,7 @@ const ChatMensajes = ({
           <div className="p-3 border-top" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
             <div className="d-flex gap-2">
               <input
+                id="chat-input-mensaje"
                 type="text"
                 className="form-control"
                 placeholder="Escribe un mensaje... (Enter para enviar)"
@@ -141,6 +142,7 @@ const ChatMensajes = ({
                 style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
               />
               <button
+                id="btn-enviar-mensaje"
                 className="btn btn-primary px-4"
                 onClick={enviarMensaje}
                 disabled={!nuevoMensaje.trim()}>

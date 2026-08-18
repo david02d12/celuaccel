@@ -98,7 +98,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
               <input className="form-control mb-3" style={inputStyle}
                 value={form.Tipo_Documento} placeholder="Tipo de Documento"
                 onChange={e => setForm({...form, Tipo_Documento: e.target.value})} />
-              <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
+              <button id="btn-agregar-tipo" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
                 {enEdicion ? 'Actualizar' : 'Guardar Tipo'}
               </button>
               {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
