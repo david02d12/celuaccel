@@ -200,7 +200,11 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
       return mostrarToast('Corrige los errores antes de guardar.', false);
     }
     try {
-      await api.put('/usuarios/mi-perfil', form);
+      await api.put('/usuarios/mi-perfil', {
+        ...form,
+        Correo: perfil.Correo,
+        Fecha_Nacimiento: perfil.Fecha_Nacimiento
+      });
       mostrarToast('¡Perfil actualizado correctamente!');
       setModoEdicion(false);
       setErrores({});

@@ -162,7 +162,10 @@ const Home = ({ cerrarSesion, setVista }) => {
                       const etapa = Number(s.Etapa) || 0;
                       const label = etapaLabel(etapa);
                       return (
-                        <tr key={s.ID_Servicio} className="stagger-item">
+                        <tr key={s.ID_Servicio} className="stagger-item" style={{ cursor: 'pointer' }} onClick={() => {
+                          sessionStorage.setItem('searchServicio', String(s.ID_Servicio));
+                          setVista('servicios');
+                        }}>
                           <td className="fw-bold">{s.ID_Servicio}</td>
                           <td>{s.Descripcion}</td>
                           <td>{s.Movil_Nombre}</td>

@@ -69,7 +69,14 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     setTimeout(() => setToast({ visible: false, msg: '', ok: true }), 3500);
   };
 
-  useEffect(() => { listar(); }, []);
+  useEffect(() => { 
+    listar(); 
+    const searchId = sessionStorage.getItem('searchServicio');
+    if (searchId) {
+      setBusqueda(searchId);
+      sessionStorage.removeItem('searchServicio');
+    }
+  }, []);
 
   const listar = async () => {
     try {
