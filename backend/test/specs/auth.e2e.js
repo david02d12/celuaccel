@@ -47,4 +47,21 @@ describe('Módulo de Autenticación', () => {
         await toast.waitForDisplayed({ timeout: 6000 });
         await expect(toast).toHaveText(expect.stringContaining('exitosamente'));
     });
+
+    it('debería bloquear la IP después de 5 intentos fallidos consecutivos (Rate Limit)', async () => {
+        // Configuramos en el backend max: 5
+        // Intentamos 5 veces, que pasarán el rate limiter pero darán error de credenciales
+        for (let i = 0; i < 5; i++) {
+            await LoginPage.login('usuario_spam', 'ClaveSpam123');
+            const toast = await LoginPage.toastMessage;
+            await toast.waitForDisplayed({ timeout: 5000 });
+            await expect(toast).toHaveText(expect.stringContaining('incorrectos'));
+        }
+
+        // El sexto intento debe ser bloqueado por la IP
+        await LoginPage.login('usuario_spam', 'ClaveSpam123');
+        const toastRateLimit = await LoginPage.toastMessage;
+        await toastRateLimit.waitForDisplayed({ timeout: 5000 });
+        await expect(toastRateLimit).toHaveText(expect.stringContaining('Demasiados intentos'));
+    });
 });

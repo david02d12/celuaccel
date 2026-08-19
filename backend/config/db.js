@@ -23,7 +23,8 @@ const db = mysql.createPool({
     port:     process.env.DB_PORT     || 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    timezone: '+00:00' // Fuerzo a mysql2 a interpretar las fechas como UTC para arreglar el offset de 5h
 });
 
 db.getConnection((err, connection) => {

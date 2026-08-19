@@ -25,6 +25,7 @@ router.get('/mensajes/por-chat/:id',       validarToken, mensajeController.lista
 router.post('/mensajes/agregar',           validarToken, filtrarContenido, mensajeController.agregar);
 router.put('/mensajes/actualizar',         validarToken, mensajeController.actualizar);
 router.delete('/mensajes/eliminar/:id',    validarToken, mensajeController.eliminar);
+router.put('/mensajes/leidos/:id',         validarToken, mensajeController.marcarLeidos);
 
 router.post(
     '/mensajes/adjunto',

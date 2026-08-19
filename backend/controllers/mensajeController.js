@@ -71,3 +71,10 @@ exports.subirAdjunto = (req, res) => {
         res.status(201).json({ message: 'Archivo(s) subido(s) correctamente.', archivos });
     } catch (err) { handleError(res, err); }
 };
+
+exports.marcarLeidos = async (req, res) => {
+    try {
+        await mensajeService.marcarLeidos(req.params.id, req.userId);
+        res.status(200).json({ message: 'Mensajes marcados como leídos.' });
+    } catch (err) { handleError(res, err); }
+};

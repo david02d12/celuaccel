@@ -54,7 +54,7 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 // Rate limiting en rutas públicas (protección contra fuerza bruta)
 const limiterPublico = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 1000,
+    max: parseInt(process.env.RATE_LIMIT_MAX) || 5, // Límite en 5 para facilitar las pruebas E2E (WDIO)
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: 'Demasiados intentos. Por favor espera 15 minutos e intenta de nuevo.' }

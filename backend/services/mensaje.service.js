@@ -48,4 +48,10 @@ const listarPorChat = async (codigoChat) => {
     return mensajeDao.getByChat(codigoChat);
 };
 
-module.exports = { listar, listarPorChat, agregar, actualizar, eliminar };
+const marcarLeidos = async (codigoChat, userId) => {
+    if (!codigoChat) throw new AppError('El ID del chat es obligatorio.', 400);
+    if (!userId) throw new AppError('El ID del usuario es obligatorio.', 400);
+    return mensajeDao.marcarLeidos(codigoChat, userId);
+};
+
+module.exports = { listar, listarPorChat, agregar, actualizar, eliminar, marcarLeidos };

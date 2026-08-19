@@ -37,4 +37,12 @@ const getByChat = (codigoChat) =>
         [codigoChat]
     );
 
-module.exports = { getAll, create, update, findWithOwnerCheck, remove, getByChat };
+const marcarLeidos = (codigoChat, idUsuarioLector) =>
+    query(
+        `UPDATE Mensajes 
+         SET Estado = 1 
+         WHERE Codigo_Chat = ? AND ID_Usuario != ? AND Estado = 0`,
+        [codigoChat, idUsuarioLector]
+    );
+
+module.exports = { getAll, create, update, findWithOwnerCheck, remove, getByChat, marcarLeidos };
