@@ -1,3 +1,18 @@
+/**
+ * config/db.js
+ * Conexión a la base de datos MySQL de CeluAccel.
+ *
+ * Crea un pool de conexiones usando las variables de entorno:
+ *   DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
+ *
+ * Exporta:
+ *   - db          : pool de mysql2 (para uso directo con callbacks)
+ *   - queryPromise: versión Promise de db.query (para usar con async/await en los DAOs)
+ *
+ * Uso en un DAO:
+ *   const { queryPromise } = require('../config/db');
+ *   const rows = await queryPromise('SELECT * FROM Usuario WHERE ID_Usuario = ?', [id]);
+ */
 const mysql = require('mysql2');
 
 const db = mysql.createPool({
@@ -20,7 +35,6 @@ db.getConnection((err, connection) => {
     connection.release();
 });
 
-// Convierte db.query (callback) en una Promise para poder usar async/await en los DAOs.
 const queryPromise = (sql, params = []) =>
     new Promise((resolve, reject) =>
         db.query(sql, params, (err, results) => (err ? reject(err) : resolve(results)))

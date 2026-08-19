@@ -71,6 +71,33 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
           <FuerzaClave clave={form.Clave} />
         </div>
 
+        {/* ── Confirmar nueva contraseña ── */}
+        {form.Clave && (
+          <div className="col-12">
+            <label className="small fw-bold text-muted mb-1">Confirmar nueva contraseña *</label>
+            <input
+              className={`form-control ${
+                form.ClaveConfirm
+                  ? form.Clave === form.ClaveConfirm ? 'is-valid' : 'is-invalid'
+                  : errores.ClaveConfirm ? 'is-invalid' : ''
+              }`}
+              type="password"
+              placeholder="Repite la nueva contraseña"
+              maxLength="15"
+              value={form.ClaveConfirm}
+              style={iStyle('ClaveConfirm')}
+              onChange={onChange('ClaveConfirm')}
+            />
+            {form.ClaveConfirm && form.Clave !== form.ClaveConfirm && (
+              <small className="text-danger">Las contraseñas no coinciden.</small>
+            )}
+            {form.ClaveConfirm && form.Clave === form.ClaveConfirm && (
+              <small className="text-success">✓ Las contraseñas coinciden.</small>
+            )}
+            <CampoError mensaje={errores.ClaveConfirm} />
+          </div>
+        )}
+
         <div className="col-12 d-flex gap-2 justify-content-end mt-2">
           <button className="btn btn-secondary fw-bold" onClick={() => setModoEdicion(false)}>Cancelar</button>
           <button className="btn btn-primary fw-bold px-5" onClick={guardarCambios}>Guardar Cambios</button>
@@ -123,7 +150,7 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
   const [toast, setToast]             = useState({ visible: false, msg: '', ok: true });
   const [errores, setErrores]         = useState({});
   // Formulario: SIN Correo y SIN Fecha_Nacimiento (no editables)
-  const [form, setForm]               = useState({ Nombre: '', Direccion: '', Telefono: '', Clave: '' });
+  const [form, setForm] = useState({ Nombre: '', Direccion: '', Telefono: '', Clave: '', ClaveConfirm: '' });
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -139,7 +166,8 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
         Nombre:    res.data.Nombre    || '',
         Direccion: res.data.Direccion || '',
         Telefono:  res.data.Telefono  || '',
-        Clave:     ''
+        Clave:     '',
+        ClaveConfirm: ''
       });
     } catch {
       mostrarToast('Error al cargar el perfil. Verifica tu conexión.', false);
@@ -158,7 +186,14 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
       Nombre:    validarNombre(form.Nombre),
       Telefono:  validarTelefono(form.Telefono),
       Direccion: validarDireccion(form.Direccion),
-      Clave:     form.Clave && form.Clave.length < 6 ? 'La contraseña debe tener al menos 6 caracteres.' : (form.Clave && form.Clave.length > 15 ? 'La contraseña no puede exceder los 15 caracteres.' : ''),
+      Clave:     form.Clave && form.Clave.length < 6
+        ? 'La contraseña debe tener al menos 6 caracteres.'
+        : (form.Clave && form.Clave.length > 15
+          ? 'La contraseña no puede exceder los 15 caracteres.'
+          : ''),
+      ClaveConfirm: form.Clave && form.Clave !== form.ClaveConfirm
+        ? 'Las contraseñas no coinciden.'
+        : '',
     };
     setErrores(nuevosErrores);
     if (Object.values(nuevosErrores).some(e => e !== '')) {

@@ -1,4 +1,4 @@
-const AppError = require('../config/AppError');
+﻿const AppError = require('../config/AppError');
 const rolesDao = require('../dao/roles.dao');
 
 const listar = () => rolesDao.getAll();
@@ -23,7 +23,7 @@ const actualizar = async (Codigo_Rol, Nombre_Rol) => {
     if (result.affectedRows === 0) throw new AppError('Rol no encontrado.', 404);
 };
 
-/** RF-011 FA-2: Bloquea la eliminación si el rol está asignado a algún usuario */
+/** FA-2: Bloquea la eliminación si el rol está asignado a algún usuario */
 const eliminar = async (id) => {
     if (!id) throw new AppError('El ID del rol es obligatorio.', 400);
     const enUso = await rolesDao.isEnUso(id);

@@ -185,7 +185,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                           <span className={`badge ${p.Respuesta ? 'bg-success' : 'bg-secondary'} mb-1 d-block`} style={{ fontSize: '0.7rem' }}>
                             {p.Respuesta ? 'Respondida' : 'Sin responder'}
                           </span>
-                          <button className="btn btn-sm btn-outline-secondary me-1"
+                          <button id="btn-responder-pregunta" className="btn btn-sm btn-outline-secondary me-1"
                             onClick={() => { setForm({...p, Fecha: p.Fecha ? p.Fecha.split('T')[0] : '', Respuesta: p.Respuesta || ''}); setEnEdicion(true); }}>Responder</button>
                           <button className="btn btn-sm btn-outline-danger"
                             onClick={() => eliminar(p.ID_Consulta)}>Borrar</button>

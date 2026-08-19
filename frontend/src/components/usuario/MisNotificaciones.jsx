@@ -152,7 +152,7 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
                     <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{sinLeer}</span>
                     <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem' }} className="ms-1">sin leer</span>
                   </div>
-                  <button className="btn btn-sm btn-outline-light fw-semibold" style={{ borderRadius: 8 }} onClick={marcarTodasLeidas}>
+                  <button id="btn-marcar-leidas" className="btn btn-sm btn-outline-light fw-semibold" style={{ borderRadius: 8 }} onClick={marcarTodasLeidas}>
                     Marcar todas leídas
                   </button>
                 </>

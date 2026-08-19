@@ -38,6 +38,7 @@ const CatalogoPublico = ({ setVista }) => {
               Catalogo
             </button>
             <button
+              id="btn-ir-login"
               onClick={() => setVista('login')}
               style={{
                 background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)',

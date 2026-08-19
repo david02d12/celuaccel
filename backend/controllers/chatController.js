@@ -1,4 +1,21 @@
-﻿const chatService = require('../services/chat.service');
+/**
+ * controllers/chatController.js
+ * Controlador del módulo de chat entre usuarios y técnicos.
+ *
+ * Gestiona la creación, consulta y eliminación de salas de chat.
+ * Cada sala corresponde a un servicio técnico activo.
+ *
+ * Rutas que lo usan: chats.routes.js
+ * Servicio que consume: chat.service.js
+ *
+ * Endpoints:
+ *   GET  /chats/listar        → lista todos los chats (técnico/admin)
+ *   GET  /chats/mis-chats     → chats del usuario autenticado
+ *   POST /chats/agregar       → crea o retorna el chat existente para un servicio
+ *   PUT  /chats/actualizar    → actualiza datos del chat
+ *   DELETE /chats/eliminar/:id → elimina un chat
+ */
+const chatService = require('../services/chat.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
@@ -13,6 +30,7 @@ exports.listarMios = async (req, res) => {
     catch (err) { handleError(res, err); }
 };
 
+// Si ya existe un chat para el servicio, lo retorna (status 200); si no, lo crea (status 201)
 exports.agregar = async (req, res) => {
     try {
         const result = await chatService.agregar(req.body);

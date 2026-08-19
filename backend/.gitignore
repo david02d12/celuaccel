@@ -1,3 +1,24 @@
+# Dependencias
 node_modules/
+
+# Variables de entorno — NUNCA subir .env al repositorio
 .env
+.env.local
+.env.production
+# .env.example SÍ se incluye — es la plantilla sin datos reales
+
+# Logs
 *.log
+npm-debug.log*
+nodemon-debug.log*
+
+# Archivos subidos por usuarios
+uploads/*
+!uploads/.gitkeep
+
+# Cobertura de tests
+coverage/
+
+# Caché del SO
+.DS_Store
+Thumbs.db

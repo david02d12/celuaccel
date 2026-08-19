@@ -3,6 +3,7 @@ import api from '../services/api';
 
 export default function ResetPassword({ setVista }) {
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [message, setMessage] = useState('');
   const [token, setToken] = useState('');
   const [cargando, setCargando] = useState(false);
@@ -38,6 +39,9 @@ export default function ResetPassword({ setVista }) {
     }
     if (password.trim().length > 15) {
       return mostrarToast('La contraseña no puede exceder los 15 caracteres.', false);
+    }
+    if (password.trim() !== passwordConfirm.trim()) {
+      return mostrarToast('Las contraseñas no coinciden. Verifícalas e intenta de nuevo.', false);
     }
 
     setCargando(true);
@@ -103,6 +107,30 @@ export default function ResetPassword({ setVista }) {
             required
             style={inputStyle}
           />
+
+          <label className="form-label fw-bold small text-muted mb-1">
+            Confirmar Nueva Contraseña
+          </label>
+          <input
+            type="password"
+            className={`form-control mb-3 ${
+              passwordConfirm
+                ? password.trim() === passwordConfirm.trim() ? 'is-valid' : 'is-invalid'
+                : ''
+            }`}
+            placeholder="Repite tu nueva contraseña"
+            maxLength="15"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            disabled={cargando || !token}
+            style={inputStyle}
+          />
+          {passwordConfirm && password.trim() !== passwordConfirm.trim() && (
+            <small className="text-danger d-block mb-2">Las contraseñas no coinciden.</small>
+          )}
+          {passwordConfirm && password.trim() === passwordConfirm.trim() && (
+            <small className="text-success d-block mb-2">✓ Las contraseñas coinciden.</small>
+          )}
 
           <button
             type="submit"

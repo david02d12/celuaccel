@@ -18,6 +18,8 @@ class ProductoAdapter(
         val tvNombre:    TextView = v.findViewById(R.id.tvNombreCatalogo)
         val tvPrecio:    TextView = v.findViewById(R.id.tvPrecioCatalogo)
         val tvCategoria: TextView = v.findViewById(R.id.tvCategoriaCatalogo)
+        val imgProducto: android.widget.ImageView = v.findViewById(R.id.imgProducto)
+        val placeholderImg: View = v.findViewById(R.id.placeholderImg)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -27,10 +29,22 @@ class ProductoAdapter(
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val prod = productos[position]
         holder.tvNombre.text    = prod.nombre
         holder.tvPrecio.text    = "$${"%.0f".format(prod.precio)}"
         holder.tvCategoria.text = "Stock: ${prod.cantidad}"
+
+        val imgUrl = prod.imagen ?: ""
+        if (imgUrl.isNotEmpty()) {
+            com.bumptech.glide.Glide.with(holder.itemView.context)
+                .load(imgUrl)
+                .placeholder(R.color.celuaccel_divider)
+                .into(holder.imgProducto)
+            holder.imgProducto.visibility    = View.VISIBLE
+            holder.placeholderImg.visibility = View.GONE
+        } else {
+            holder.imgProducto.visibility    = View.GONE
+            holder.placeholderImg.visibility = View.VISIBLE
+        }
 
 
         holder.itemView.setOnClickListener {

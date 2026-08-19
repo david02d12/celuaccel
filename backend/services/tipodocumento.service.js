@@ -1,4 +1,4 @@
-const AppError = require('../config/AppError');
+﻿const AppError = require('../config/AppError');
 const tipoDao = require('../dao/tipodocumento.dao');
 
 const listar = () => tipoDao.getAll();
@@ -23,7 +23,7 @@ const actualizar = async ({ Codigo_Documento, Tipo_Documento }) => {
     if (result.affectedRows === 0) throw new AppError('Tipo de documento no encontrado.', 404);
 };
 
-/** RF-012 FA-2: Bloquea la eliminación si el tipo está asignado a algún usuario */
+/** FA-2: Bloquea la eliminación si el tipo está asignado a algún usuario */
 const eliminar = async (id) => {
     if (!id) throw new AppError('El ID del tipo de documento es obligatorio.', 400);
     const enUso = await tipoDao.isEnUso(id);

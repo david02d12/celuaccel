@@ -1,3 +1,22 @@
+/**
+ * controllers/comentarioController.js
+ * Controlador de comentarios y reseñas de servicios en CeluAccel.
+ *
+ * Los usuarios dejan valoraciones (con puntuación y texto) sobre los
+ * servicios técnicos recibidos. Este controlador gestiona el ciclo
+ * completo de las reseñas.
+ *
+ * Rutas que lo usan: comentarios.routes.js
+ * Servicio que consume: comentario.service.js
+ * Middleware adicional: filtrarContenido (antes de agregar)
+ *
+ * Endpoints:
+ *   GET    /comentarios/listar        → todos los comentarios
+ *   GET    /comentarios/promedio      → promedio de calificaciones
+ *   POST   /comentarios/agregar       → publica un comentario
+ *   PUT    /comentarios/actualizar    → edita un comentario propio
+ *   DELETE /comentarios/eliminar/:id  → elimina un comentario
+ */
 const comentarioService = require('../services/comentario.service');
 
 const handleError = (res, err) =>

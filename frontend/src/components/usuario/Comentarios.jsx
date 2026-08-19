@@ -275,6 +275,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                   style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
                 />
                 <textarea 
+                  id="comentario-input"
                   className="form-control mb-3" 
                   placeholder="Escribe tu testimonio aquí..." 
                   value={form.Comentario} 
@@ -297,7 +298,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                   />
                 )}
                 
-                <button className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
+                <button id="btn-enviar-comentario" className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
                   {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}
                 </button>
                 {enEdicion && (

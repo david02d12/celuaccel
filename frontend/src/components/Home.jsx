@@ -123,7 +123,7 @@ const Home = ({ cerrarSesion, setVista }) => {
               <div className="card-body">
                 <div className="d-flex flex-wrap gap-2">
                   {menuAccesoFiltro.map((acc, i) => (
-                    <button key={i} className={`btn fw-bold ${i % 2 === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    <button key={i} id={`btn-acc-${acc.vista}`} className={`btn fw-bold ${i % 2 === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
                       onClick={() => setVista(acc.vista)}>
                       {acc.label}
                     </button>

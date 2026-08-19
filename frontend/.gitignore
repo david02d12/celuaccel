@@ -24,4 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+.env.local
 .env.production
+# .env.example SÍ se incluye — plantilla sin datos reales

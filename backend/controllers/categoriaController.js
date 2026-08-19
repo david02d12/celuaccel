@@ -1,4 +1,20 @@
-﻿const categoriaService = require('../services/categoria.service');
+/**
+ * controllers/categoriaController.js
+ * Controlador de categorías de productos en CeluAccel.
+ *
+ * Las categorías agrupan los productos del catálogo (ej: Pantallas, Baterías).
+ * Solo técnicos y administradores pueden gestionarlas.
+ *
+ * Rutas que lo usan: categorias.routes.js
+ * Servicio que consume: categoria.service.js
+ *
+ * Endpoints:
+ *   GET    /categorias/listar        → todas las categorías
+ *   POST   /categorias/agregar       → crea una categoría
+ *   PUT    /categorias/actualizar    → actualiza una categoría
+ *   DELETE /categorias/eliminar/:id  → elimina una categoría
+ */
+const categoriaService = require('../services/categoria.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });

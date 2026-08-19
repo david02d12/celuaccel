@@ -1,15 +1,32 @@
 /**
- * socket.handler.js
- * EP-005: Comunicación en tiempo real con Socket.IO
- * Maneja eventos de chat entre clientes, técnicos y administradores.
+ * config/socket.handler.js
+ * Gestión de eventos de Socket.IO para el chat en tiempo real de CeluAccel.
+ *
+ * Cada conexión pasa por un middleware de autenticación JWT antes de
+ * poder unirse a salas o enviar mensajes.
+ *
+ * Eventos que escucha el servidor:
+ *   - unirse_chat    : el cliente se une a la sala del chat (chat_{id})
+ *   - salir_chat     : el cliente abandona la sala
+ *   - enviar_mensaje : el cliente envía un mensaje de texto al chat
+ *   - escribiendo    : indica que el usuario está escribiendo (typing indicator)
+ *   - mensajes_leidos: notifica que los mensajes fueron leídos
+ *
+ * Eventos que emite el servidor:
+ *   - nuevo_mensaje      : distribuye el mensaje a todos en la sala
+ *   - usuario_escribiendo: notifica a los otros participantes del typing indicator
+ *   - mensajes_vistos    : notifica la confirmación de lectura
+ *
+ * Uso: importado en server.js y llamado con registrarEventos(io)
  */
 
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET || 'CeluAccel_S3cr3t_K3y_2026!#Secure';
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) throw new Error('JWT_SECRET no está definido en las variables de entorno.');
 
 /**
  * Middleware de autenticación para Socket.IO.
- * Verifica el token JWT en el handshake antes de permitir la conexión.
+ * Verifica el token JWT del handshake antes de permitir la conexión.
  */
 const autenticarSocket = (socket, next) => {
     const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization?.split(' ')[1];
@@ -31,31 +48,24 @@ const autenticarSocket = (socket, next) => {
  */
 const registrarEventos = (io) => {
 
-    // Middleware de autenticación para todas las conexiones
     io.use(autenticarSocket);
 
     io.on('connection', (socket) => {
         const userId = socket.userId;
         console.log(`[Socket] Usuario conectado: ${userId} (socket: ${socket.id})`);
 
-        // ── Unirse a una sala de chat ─────────────────────────────────────
-        // El cliente envía el Codigo_Chat al conectarse al módulo de mensajería
         socket.on('unirse_chat', (codigoChat) => {
             const sala = `chat_${codigoChat}`;
             socket.join(sala);
             console.log(`[Socket] ${userId} se unió a la sala ${sala}`);
         });
 
-        // ── Abandonar una sala de chat ────────────────────────────────────
         socket.on('salir_chat', (codigoChat) => {
             const sala = `chat_${codigoChat}`;
             socket.leave(sala);
             console.log(`[Socket] ${userId} abandonó la sala ${sala}`);
         });
 
-        // ── Enviar mensaje en tiempo real ─────────────────────────────────
-        // El cliente envía: { Codigo_Chat, Mensaje, Fecha_Mensaje? }
-        // El servidor emite el mensaje a todos en la sala del chat
         socket.on('enviar_mensaje', (data) => {
             const { Codigo_Chat, Mensaje } = data;
             if (!Codigo_Chat || !Mensaje) return;
@@ -69,22 +79,18 @@ const registrarEventos = (io) => {
                 Estado: 0,
             };
 
-            // Emitir a todos los participantes de la sala (incluyendo el emisor)
             io.to(sala).emit('nuevo_mensaje', payload);
             console.log(`[Socket] Mensaje en sala ${sala} de ${userId}`);
         });
 
-        // ── Indicador de escritura ────────────────────────────────────────
         socket.on('escribiendo', ({ Codigo_Chat, escribiendo }) => {
             const sala = `chat_${Codigo_Chat}`;
-            // Emite a todos EXCEPTO al que está escribiendo
             socket.to(sala).emit('usuario_escribiendo', {
                 ID_Usuario: userId,
                 escribiendo: !!escribiendo,
             });
         });
 
-        // ── Marcar mensajes como leídos ───────────────────────────────────
         socket.on('mensajes_leidos', ({ Codigo_Chat }) => {
             const sala = `chat_${Codigo_Chat}`;
             socket.to(sala).emit('mensajes_vistos', {
@@ -93,12 +99,10 @@ const registrarEventos = (io) => {
             });
         });
 
-        // ── Desconexión ───────────────────────────────────────────────────
         socket.on('disconnect', (razon) => {
             console.log(`[Socket] Usuario desconectado: ${userId} — Razón: ${razon}`);
         });
 
-        // ── Error de socket ───────────────────────────────────────────────
         socket.on('error', (err) => {
             console.error(`[Socket] Error en socket ${socket.id}:`, err.message);
         });

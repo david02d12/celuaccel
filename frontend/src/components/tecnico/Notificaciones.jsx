@@ -214,7 +214,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                 <label className="small fw-bold mb-1" style={{ color: 'var(--color-text-muted)' }}>Mensaje *</label>
                 <textarea className="form-control mb-4" style={{ ...inputStyle, borderRadius: 8, resize: 'vertical', minHeight: 90 }} rows="3" placeholder="Ej: Tu equipo ya está listo para retirar." value={form.Mensaje} onChange={e => setForm({ ...form, Mensaje: e.target.value })} />
 
-                <button className="btn btn-primary w-100 mb-2 d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: 8 }} onClick={guardar} disabled={enviando}>
+                <button id="btn-nueva-notificacion" className="btn btn-primary w-100 mb-2 d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: 8 }} onClick={guardar} disabled={enviando}>
                   {enviando ? <><span className="spinner-border spinner-border-sm" />Enviando...</> : <><IconSend size={16} /> {enEdicion ? 'Actualizar' : 'Enviar Notificación'}</>}
                 </button>
                 {enEdicion && <button className="btn w-100" style={{ borderRadius: 8, border: '1.5px solid var(--color-border)', background: 'transparent', color: 'var(--color-text)' }} onClick={limpiar}>Cancelar</button>}

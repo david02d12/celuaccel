@@ -50,8 +50,8 @@ class ResetPasswordActivity : AppCompatActivity() {
                 etConfirmPassword.error = "Las contraseñas no coinciden"
                 return@setOnClickListener
             }
-            if (newPass.length < 6) {
-                etNewPassword.error = "Mínimo 6 caracteres"
+            if (newPass.length < 6 || newPass.length > 15) {
+                etNewPassword.error = "Debe tener entre 6 y 15 caracteres"
                 return@setOnClickListener
             }
 

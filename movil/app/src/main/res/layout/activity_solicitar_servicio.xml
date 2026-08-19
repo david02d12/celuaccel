@@ -151,12 +151,24 @@
                 android:layout_marginBottom="16dp"/>
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="DISPOSITIVO" android:textColor="@color/celuaccel_text_muted"
+                android:text="DISPOSITIVO (MARCA Y MODELO)" android:textColor="@color/celuaccel_text_muted"
                 android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
                 android:layout_marginBottom="6dp"/>
             <EditText android:id="@+id/etDispositivoSolicitud"
                 android:layout_width="match_parent" android:layout_height="50dp"
-                android:hint="Ej: iPhone 13" android:inputType="text"
+                android:hint="Ej: iPhone 13 Pro" android:inputType="text"
+                android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
+                android:background="@drawable/bg_input_field" android:textSize="14sp"
+                android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"
+                android:layout_marginBottom="14dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="DETALLE FÍSICO PRINCIPAL" android:textColor="@color/celuaccel_text_muted"
+                android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
+                android:layout_marginBottom="6dp"/>
+            <EditText android:id="@+id/etEspecificacionSolicitud"
+                android:layout_width="match_parent" android:layout_height="50dp"
+                android:hint="Ej: Pantalla rota / Batería inflamada" android:inputType="text"
                 android:paddingLeft="14dp" android:paddingRight="14dp" android:paddingTop="0dp" android:paddingBottom="0dp"
                 android:background="@drawable/bg_input_field" android:textSize="14sp"
                 android:textColor="@color/celuaccel_text" android:textColorHint="@color/celuaccel_text_light"

@@ -1,4 +1,20 @@
-﻿const historialService = require('../services/historial.service');
+/**
+ * controllers/historialController.js
+ * Controlador del historial de servicios técnicos de CeluAccel.
+ *
+ * El historial registra el seguimiento de cada servicio: cambios de estado,
+ * observaciones técnicas y fechas de cada etapa del proceso de reparación.
+ *
+ * Rutas que lo usan: historial.routes.js
+ * Servicio que consume: historial.service.js
+ *
+ * Endpoints:
+ *   GET    /historial/listar        → todos los registros
+ *   POST   /historial/agregar       → agrega un registro al historial
+ *   PUT    /historial/actualizar    → actualiza un registro
+ *   DELETE /historial/eliminar/:id  → elimina un registro
+ */
+const historialService = require('../services/historial.service');
 
 const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });

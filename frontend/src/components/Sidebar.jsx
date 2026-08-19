@@ -8,6 +8,7 @@ const Sidebar = ({ setVista }) => {
     const isActive = vista === currentVista;
     return (
       <button
+        id={`nav-${vista}`}
         className={`btn text-start sidebar-btn w-100 ${isActive ? 'active' : ''}`}
         onClick={() => setVista(vista)}
         data-bs-dismiss="offcanvas"

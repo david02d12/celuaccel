@@ -1,3 +1,11 @@
+/**
+ * routes/index.js
+ * Registro central de todas las rutas de la API de CeluAccel.
+ *
+ * Monta cada módulo de rutas bajo el prefijo /api (definido en server.js).
+ * El orden de registro no afecta el comportamiento ya que cada módulo
+ * define sus propios paths completos.
+ */
 const router = require('express').Router();
 
 router.use(require('./auth.routes'));

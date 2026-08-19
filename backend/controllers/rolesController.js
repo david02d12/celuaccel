@@ -1,3 +1,19 @@
+/**
+ * controllers/rolesController.js
+ * Controlador de roles de usuario en CeluAccel.
+ *
+ * Gestiona los roles disponibles en el sistema: Técnico (1), Usuario (2),
+ * Administrador (3). Solo los administradores tienen acceso a estos endpoints.
+ *
+ * Rutas que lo usan: roles.routes.js
+ * Servicio que consume: roles.service.js
+ *
+ * Endpoints:
+ *   GET    /roles/listar        → lista todos los roles
+ *   POST   /roles/agregar       → crea un nuevo rol
+ *   PUT    /roles/actualizar    → actualiza un rol
+ *   DELETE /roles/eliminar/:id  → elimina un rol
+ */
 const rolesService = require('../services/roles.service');
 
 const handleError = (res, err) =>

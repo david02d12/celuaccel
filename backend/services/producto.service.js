@@ -1,4 +1,4 @@
-const AppError = require('../config/AppError');
+﻿const AppError = require('../config/AppError');
 const productoDao = require('../dao/producto.dao');
 
 /** Todos los productos (admin/técnico) */
@@ -11,7 +11,7 @@ const agregar = async (data) => {
     if (!data.Codigo_Producto || !data.Nombre || !data.Precio) {
         throw new AppError('Los campos Codigo_Producto, Nombre y Precio son obligatorios.', 400);
     }
-    // RN-008: no se permite registrar con cantidad negativa
+    // no se permite registrar con cantidad negativa
     if (data.Cantidad !== undefined && Number(data.Cantidad) < 0) {
         throw new AppError('La cantidad inicial del producto no puede ser negativa.', 400);
     }
@@ -36,7 +36,7 @@ const eliminar = async (id) => {
 };
 
 /**
- * RN-008: Descuenta stock de un producto. Falla si la cantidad
+ * Descuenta stock de un producto. Falla si la cantidad
  * actual es 0 o si no hay suficiente para el descuento solicitado.
  */
 const descontarStock = async (codigoProducto, cantidad = 1) => {
@@ -50,7 +50,7 @@ const descontarStock = async (codigoProducto, cantidad = 1) => {
     const stockActual = Number(rows[0].Cantidad);
     if (stockActual === 0) {
         throw new AppError(
-            `No se puede realizar la salida: el producto "${rows[0].Nombre}" no tiene stock disponible (RN-008).`,
+            `No se puede realizar la salida: el producto "${rows[0].Nombre}" no tiene stock disponible ().`,
             409
         );
     }

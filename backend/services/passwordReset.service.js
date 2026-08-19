@@ -4,7 +4,8 @@ const AppError = require('../config/AppError');
 const usuarioDao = require('../dao/usuario.dao');
 const sendEmail = require('./email.service');
 
-const SECRET_KEY = process.env.JWT_SECRET || 'CeluAccel_S3cr3t_K3y_2026!#Secure';
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) throw new Error('JWT_SECRET no está definido en las variables de entorno.');
 const SALT_ROUNDS = 10;
 
 const forgotPassword = async (email) => {

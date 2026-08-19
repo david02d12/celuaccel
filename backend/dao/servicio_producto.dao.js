@@ -1,6 +1,6 @@
-const { queryPromise: query } = require('../config/db');
+﻿const { queryPromise: query } = require('../config/db');
 
-/** RF-015: Obtener todos los repuestos de un servicio */
+/** Obtener todos los repuestos de un servicio */
 const getByServicio = (idServicio) =>
     query(
         `SELECT sp.ID_Servicio, sp.Codigo_Producto, sp.Cantidad,
@@ -11,7 +11,7 @@ const getByServicio = (idServicio) =>
         [idServicio]
     );
 
-/** RF-015: Registra que se usó un repuesto en un servicio */
+/** Registra que se usó un repuesto en un servicio */
 const agregar = (idServicio, codigoProducto, cantidad) =>
     query(
         `INSERT INTO Servicio_Producto (ID_Servicio, Codigo_Producto, Cantidad)
@@ -20,14 +20,14 @@ const agregar = (idServicio, codigoProducto, cantidad) =>
         [idServicio, codigoProducto, cantidad]
     );
 
-/** RF-015: Elimina un repuesto de un servicio */
+/** Elimina un repuesto de un servicio */
 const remove = (idServicio, codigoProducto) =>
     query(
         'DELETE FROM Servicio_Producto WHERE ID_Servicio = ? AND Codigo_Producto = ?',
         [idServicio, codigoProducto]
     );
 
-/** RF-015: Elimina todos los repuestos de un servicio */
+/** Elimina todos los repuestos de un servicio */
 const removeByServicio = (idServicio) =>
     query('DELETE FROM Servicio_Producto WHERE ID_Servicio = ?', [idServicio]);
 

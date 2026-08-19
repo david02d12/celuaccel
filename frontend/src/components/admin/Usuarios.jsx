@@ -208,7 +208,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
                         </div>
                       </div>
                       <div className="d-flex gap-1 flex-shrink-0">
-                        <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
+                        <button id="btn-editar-usuario" className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
                           onClick={() => prepararEdicion(u)}>
                           Editar
                         </button>
