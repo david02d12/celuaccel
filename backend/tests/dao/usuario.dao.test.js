@@ -66,7 +66,7 @@ describe('Usuario DAO', () => {
     });
 
     it('countAdmins debe contar', async () => {
-        db.queryPromise.mockResolvedValue([[{ total: 2 }]]);
+        db.queryPromise.mockResolvedValue([{ count: 2 }]);
         const res = await usuarioDao.countAdmins();
         expect(res).toBe(2);
     });
