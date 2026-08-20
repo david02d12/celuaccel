@@ -6,7 +6,7 @@ export const useCustomRouter = (logueado, setLogueado, cerrarSesionInterno) => {
     if (params.has('token')) return 'resetPassword';
     const token = sessionStorage.getItem('token');
     if (token) return sessionStorage.getItem('ultimaVista') || 'home';
-    return 'login';
+    return 'catalogoPublico';
   });
 
   const [modoRegistro, setModoRegistro] = useState(false);
@@ -49,8 +49,8 @@ export const useCustomRouter = (logueado, setLogueado, cerrarSesionInterno) => {
 
       if (!token) {
         setLogueado(false);
-        setVista('login');
-        window.history.replaceState({ vista: 'login', perfilId: null }, '', window.location.href);
+        setVista('catalogoPublico');
+        window.history.replaceState({ vista: 'catalogoPublico', perfilId: null }, '', window.location.href);
         return;
       }
 
@@ -107,7 +107,7 @@ export const useCustomRouter = (logueado, setLogueado, cerrarSesionInterno) => {
     cerrarSesionInterno();
     setModoRegistro(false);
     setPerfilTarget(null);
-    setVista('login');
+    setVista('catalogoPublico');
   }, [cerrarSesionInterno]);
 
   return { vista, modoRegistro, setModoRegistro, perfilTarget, cambiarVista, cerrarSesion };
