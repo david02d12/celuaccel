@@ -50,9 +50,12 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
+    const idNum = Number(id);
+    if (!Number.isInteger(idNum)) return;
+
     if (await confirmar('¿Eliminar este mensaje?')) {
       try {
-        await api.delete(`/mensajes/eliminar/${encodeURIComponent(id)}`);
+        await api.delete(`/mensajes/eliminar/${idNum}`);
         listar();
       } catch (err) {
         await mostrarAlerta('Error al eliminar el mensaje', 'error');

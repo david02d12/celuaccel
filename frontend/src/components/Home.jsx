@@ -17,8 +17,11 @@ const Home = ({ cerrarSesion, setVista }) => {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
+        const usuarioNum = Number(usuario);
+        if (role === 2 && !Number.isInteger(usuarioNum)) return;
+        
         const serviciosUrl = role === 2
-          ? `/servicios/mis-servicios/${encodeURIComponent(usuario)}`
+          ? `/servicios/mis-servicios/${usuarioNum}`
           : '/servicios/listar';
 
         const peticiones = [

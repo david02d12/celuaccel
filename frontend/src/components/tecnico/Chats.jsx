@@ -44,9 +44,12 @@ const Chats = ({ cerrarSesion, setVista }) => {
   };
 
   const eliminar = async (id) => {
+    const idNum = Number(id);
+    if (!Number.isInteger(idNum)) return;
+
     if (await confirmar('¿Eliminar chat?')) {
       try {
-        await api.delete(`/chats/eliminar/${encodeURIComponent(id)}`);
+        await api.delete(`/chats/eliminar/${idNum}`);
         listar();
       } catch (err) {
         await mostrarAlerta('Error al eliminar chat', 'error');
