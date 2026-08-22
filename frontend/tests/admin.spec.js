@@ -1,13 +1,10 @@
+import { loginComo } from './utils/login-helper.js';
+
 const ADMIN_ID   = '1022922817';
 const ADMIN_PASS = '1022922817';
 
 async function loginAdmin() {
-  await browser.url('/');
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue(ADMIN_ID);
-  await $('input[placeholder="Ingresa tu contraseña"]').setValue(ADMIN_PASS);
-  await $('button=Ingresar al Sistema').click();
-  await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
+  await loginComo(ADMIN_ID, ADMIN_PASS);
 }
 
 describe('Panel de Administrador — Usuarios', () => {
@@ -115,13 +112,7 @@ describe('Panel de Administrador — Tipos de Documento', () => {
   });
 
   it('Usuarios sin rol admin NO pueden acceder a Tipo Documento', async () => {
-
-    await browser.url('/');
-    await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
-    await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue('maria@correo.com');
-    await $('input[placeholder="Ingresa tu contraseña"]').setValue('123456');
-    await $('button=Ingresar al Sistema').click();
-    await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
+    await loginComo('maria@correo.com', '123456');
 
     const btnTipo = await $('#btn-acc-tipo');
     const existe = await btnTipo.isExisting();

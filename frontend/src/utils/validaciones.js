@@ -5,7 +5,29 @@
  * de los componentes individuales.
  */
 
-// ── Nombre completo ───────────────────────────────────────────────────────────
+// ── Nombres (campo separado, máx 3 nombres) ───────────────────────────────────
+export const validarNombres = (nombres) => {
+  if (!nombres || !nombres.trim()) return 'Los nombres son obligatorios.';
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s\-']+$/.test(nombres.trim()))
+    return 'Los nombres solo pueden contener letras, espacios y guiones.';
+  const partes = nombres.trim().split(/\s+/).filter(p => p.length >= 2);
+  if (partes.length < 1) return 'Ingresa al menos 1 nombre (mínimo 2 letras).';
+  if (partes.length > 3) return 'Máximo 3 nombres permitidos.';
+  return '';
+};
+
+// ── Apellidos (campo separado, máx 2 apellidos) ───────────────────────────────
+export const validarApellidos = (apellidos) => {
+  if (!apellidos || !apellidos.trim()) return 'Los apellidos son obligatorios.';
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s\-']+$/.test(apellidos.trim()))
+    return 'Los apellidos solo pueden contener letras, espacios y guiones.';
+  const partes = apellidos.trim().split(/\s+/).filter(p => p.length >= 2);
+  if (partes.length < 1) return 'Ingresa al menos 1 apellido (mínimo 2 letras).';
+  if (partes.length > 2) return 'Máximo 2 apellidos permitidos.';
+  return '';
+};
+
+// ── Nombre completo (compatibilidad con Perfil.jsx al editar campo único) ──────
 export const validarNombre = (nombre) => {
   if (!nombre.trim()) return 'El nombre completo es obligatorio.';
   const palabras = nombre.trim().split(/\s+/).filter(p => p.length >= 2);

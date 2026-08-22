@@ -1,15 +1,11 @@
 import { limpiarComentarioPrueba } from './utils/db-cleaner.js';
+import { loginComo } from './utils/login-helper.js';
 
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 
 async function loginUsuario() {
-  await browser.url('/');
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue(USUARIO_ID);
-  await $('input[placeholder="Ingresa tu contraseña"]').setValue(USUARIO_PASS);
-  await $('button=Ingresar al Sistema').click();
-  await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
+  await loginComo(USUARIO_ID, USUARIO_PASS);
 }
 
 async function irAComentarios() {

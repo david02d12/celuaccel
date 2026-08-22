@@ -1,14 +1,12 @@
+import { loginComo } from './utils/login-helper.js';
+
 const TECNICO_ID   = 'carlos@correo.com';
 const TECNICO_PASS = '123456';
 
 async function loginTecnico() {
-  await browser.url('/');
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue(TECNICO_ID);
-  await $('input[placeholder="Ingresa tu contraseña"]').setValue(TECNICO_PASS);
-  await $('button=Ingresar al Sistema').click();
-  await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
+  await loginComo(TECNICO_ID, TECNICO_PASS);
 }
+
 
 describe('Módulo de Historial de Eventos', () => {
 

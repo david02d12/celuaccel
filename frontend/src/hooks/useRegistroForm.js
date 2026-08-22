@@ -16,11 +16,23 @@ const REGLAS_DOC = {
   '5': { nombre: 'PEP',                  min: 15, max: 17, soloNumeros: false, regex: /^[A-Za-z0-9]{15,17}$/ },
 };
 
-const validarNombre = (nombre) => {
-  if (!nombre.trim()) return 'El nombre completo es obligatorio.';
-  const palabras = nombre.trim().split(/\s+/).filter(p => p.length >= 2);
-  if (palabras.length < 2) return 'Ingresa mínimo 1 nombre y 1 apellido (ej: Juan Pérez).';
-  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s\-']+$/.test(nombre.trim())) return 'El nombre solo puede contener letras, espacios y guiones.';
+const validarNombres = (nombres) => {
+  if (!nombres || !nombres.trim()) return 'Los nombres son obligatorios.';
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s\-']+$/.test(nombres.trim()))
+    return 'Los nombres solo pueden contener letras, espacios y guiones.';
+  const partes = nombres.trim().split(/\s+/).filter(p => p.length >= 2);
+  if (partes.length < 1) return 'Ingresa al menos 1 nombre (mínimo 2 letras).';
+  if (partes.length > 3) return 'Máximo 3 nombres permitidos.';
+  return '';
+};
+
+const validarApellidos = (apellidos) => {
+  if (!apellidos || !apellidos.trim()) return 'Los apellidos son obligatorios.';
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s\-']+$/.test(apellidos.trim()))
+    return 'Los apellidos solo pueden contener letras, espacios y guiones.';
+  const partes = apellidos.trim().split(/\s+/).filter(p => p.length >= 2);
+  if (partes.length < 1) return 'Ingresa al menos 1 apellido (mínimo 2 letras).';
+  if (partes.length > 2) return 'Máximo 2 apellidos permitidos.';
   return '';
 };
 
@@ -67,7 +79,7 @@ export const fuerzaClave = (clave) => {
 
 export const useRegistroForm = (setModoRegistro, setVista) => {
   const [formReg, setFormReg] = useState({
-    ID_Usuario: '', Codigo_Documento: '', Nombre: '',
+    ID_Usuario: '', Codigo_Documento: '', Nombres: '', Apellidos: '',
     Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: '', ClaveConfirm: ''
   });
   const [tiposDoc, setTiposDoc] = useState([]);
@@ -97,11 +109,12 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
     setFormReg(nuevo);
 
     const errs = { ...errores };
-    if (campo === 'Nombre')          errs.Nombre    = validarNombre(valor);
-    if (campo === 'Telefono')        errs.Telefono  = validarTelefono(valor);
-    if (campo === 'Direccion')       errs.Direccion = validarDireccion(valor);
-    if (campo === 'ID_Usuario')      errs.ID_Usuario = validarDocumento(valor, nuevo.Codigo_Documento);
-    if (campo === 'Codigo_Documento')errs.ID_Usuario = validarDocumento(nuevo.ID_Usuario, valor);
+    if (campo === 'Nombres')          errs.Nombres   = validarNombres(valor);
+    if (campo === 'Apellidos')        errs.Apellidos = validarApellidos(valor);
+    if (campo === 'Telefono')         errs.Telefono  = validarTelefono(valor);
+    if (campo === 'Direccion')        errs.Direccion = validarDireccion(valor);
+    if (campo === 'ID_Usuario')       errs.ID_Usuario = validarDocumento(valor, nuevo.Codigo_Documento);
+    if (campo === 'Codigo_Documento') errs.ID_Usuario = validarDocumento(nuevo.ID_Usuario, valor);
     if (campo === 'Correo') {
       const arrs = (valor.match(/@/g) || []).length;
       errs.Correo = arrs > 1 ? 'El correo debe tener exactamente un @.' : '';
@@ -110,12 +123,14 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
   };
 
   const registrarUsuario = async () => {
-    if (!formReg.ID_Usuario || !formReg.Nombre || !formReg.Correo || !formReg.Clave || !formReg.Codigo_Documento) {
+    if (!formReg.ID_Usuario || !formReg.Nombres || !formReg.Apellidos || !formReg.Correo || !formReg.Clave || !formReg.Codigo_Documento) {
       mostrarToast('Por favor completa todos los campos obligatorios (*).', false);
       return;
     }
-    const errNombre = validarNombre(formReg.Nombre);
-    if (errNombre) { mostrarToast(errNombre, false); return; }
+    const errNombres = validarNombres(formReg.Nombres);
+    if (errNombres) { mostrarToast(errNombres, false); return; }
+    const errApellidos = validarApellidos(formReg.Apellidos);
+    if (errApellidos) { mostrarToast(errApellidos, false); return; }
     const errDoc = validarDocumento(formReg.ID_Usuario, formReg.Codigo_Documento);
     if (errDoc) { mostrarToast(errDoc, false); return; }
     const errTel = validarTelefono(formReg.Telefono);
@@ -149,8 +164,11 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
       }
     }
     try {
+      // Combina nombres y apellidos en el campo Nombre que espera el backend
+      const nombreCompleto = `${formReg.Nombres.trim()} ${formReg.Apellidos.trim()}`;
       await api.post('/registro', {
         ...formReg,
+        Nombre: nombreCompleto,
         ID_Usuario: formReg.ID_Usuario.trim(),
         Correo: formReg.Correo.trim(),
         Clave: formReg.Clave.trim()

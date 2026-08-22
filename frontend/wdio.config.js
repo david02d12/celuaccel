@@ -13,8 +13,6 @@ export const config = {
       browserName: 'chrome',
       'goog:chromeOptions': {
         args: [
-          // Elimina '--headless' si quieres ver el navegador abrirse
-          // '--headless',
           '--disable-gpu',
           '--no-sandbox',
           '--window-size=1280,900',

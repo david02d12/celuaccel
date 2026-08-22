@@ -2,6 +2,13 @@ import { limpiarUsuarioPrueba } from './utils/db-cleaner.js';
 
 async function irARegistro() {
   await browser.url('/');
+  await browser.execute(() => sessionStorage.clear());
+  await browser.url('/');
+  // La app abre en el catálogo público; primero vamos al login
+  const btnIrLogin = await $('#btn-ir-login');
+  await btnIrLogin.waitForDisplayed({ timeout: 6000 });
+  await btnIrLogin.click();
+  // Ahora estamos en el login; hacemos clic en "Crear cuenta nueva"
   await $('#btn-crear-cuenta').waitForDisplayed({ timeout: 5000 });
   await $('#btn-crear-cuenta').click();
   await $('#btn-registrar').waitForDisplayed({ timeout: 5000 });
@@ -17,7 +24,8 @@ describe('Módulo de Registro', () => {
     await irARegistro();
     expect(await $('#reg-tipo-doc').isDisplayed()).toBe(true);
     expect(await $('#reg-id-usuario').isDisplayed()).toBe(true);
-    expect(await $('#reg-nombre').isDisplayed()).toBe(true);
+    expect(await $('#reg-nombres').isDisplayed()).toBe(true);
+    expect(await $('#reg-apellidos').isDisplayed()).toBe(true);
     expect(await $('#reg-correo').isDisplayed()).toBe(true);
     expect(await $('#reg-clave').isDisplayed()).toBe(true);
     expect(await $('#reg-clave-confirm').isDisplayed()).toBe(true);
@@ -37,7 +45,8 @@ describe('Módulo de Registro', () => {
 
     await $('#reg-tipo-doc').selectByVisibleText('Cédula de Ciudadanía');
     await $('#reg-id-usuario').setValue('1234567890');
-    await $('#reg-nombre').setValue('Juan Pérez');
+    await $('#reg-nombres').setValue('Juan');
+    await $('#reg-apellidos').setValue('Pérez');
     await $('#reg-correo').setValue('test@correo.com');
     await $('#reg-clave').setValue('abc');
     await $('#btn-registrar').click();
@@ -52,7 +61,8 @@ describe('Módulo de Registro', () => {
 
     await $('#reg-tipo-doc').selectByVisibleText('Cédula de Ciudadanía');
     await $('#reg-id-usuario').setValue('1234567890');
-    await $('#reg-nombre').setValue('Juan Pérez');
+    await $('#reg-nombres').setValue('Juan');
+    await $('#reg-apellidos').setValue('Pérez');
     await $('#reg-correo').setValue('test@correo.com');
     await $('#reg-clave').setValue('123456');
     await $('#reg-clave-confirm').setValue('654321');

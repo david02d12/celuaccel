@@ -1,18 +1,11 @@
 import { runQuery } from './utils/db-cleaner.js';
+import { loginComo } from './utils/login-helper.js';
 
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 const TECNICO_ID   = 'carlos@correo.com';
 const TECNICO_PASS = '123456';
 
-async function loginComo(id, pass) {
-  await browser.url('/');
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue(id);
-  await $('input[placeholder="Ingresa tu contraseña"]').setValue(pass);
-  await $('button=Ingresar al Sistema').click();
-  await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
-}
 
 describe('Módulo de Chat — Usuario', () => {
 

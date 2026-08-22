@@ -37,9 +37,11 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
-      const url = enEdicion ? 'actualizar' : 'agregar';
-      const metodo = enEdicion ? 'put' : 'post';
-      await api[metodo](`/mensajes/${url}`, form);
+      if (enEdicion) {
+        await api.put('/mensajes/actualizar', form);
+      } else {
+        await api.post('/mensajes/agregar', form);
+      }
       listar();
       limpiar();
     } catch (err) {
@@ -50,7 +52,7 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (await confirmar('¿Eliminar este mensaje?')) {
       try {
-        await api.delete(`/mensajes/eliminar/${id}`);
+        await api.delete(`/mensajes/eliminar/${encodeURIComponent(id)}`);
         listar();
       } catch (err) {
         await mostrarAlerta('Error al eliminar el mensaje', 'error');

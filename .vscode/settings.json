@@ -1,11 +1,6 @@
 {
-    "codemetrics.basics.ComplexityLevelNormal": 30,
-    "codemetrics.basics.ComplexityLevelLow": 20,
-    "codemetrics.basics.ComplexityLevelHigh": 40,
-    "codemetrics.basics.ComplexityLevelExtreme": 50,
-    "sonarlint.rules": {
-        "javascript:S3776": {
-            "level": "off"
-        }
+    "sonarlint.connectedMode.project": {
+        "connectionId": "david02d12",
+        "projectKey": "david02d12_celuaccel"
     }
 }

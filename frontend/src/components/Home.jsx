@@ -18,7 +18,7 @@ const Home = ({ cerrarSesion, setVista }) => {
     const cargarDatos = async () => {
       try {
         const serviciosUrl = role === 2
-          ? `/servicios/mis-servicios/${usuario}`
+          ? `/servicios/mis-servicios/${encodeURIComponent(usuario)}`
           : '/servicios/listar';
 
         const peticiones = [

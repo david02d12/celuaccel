@@ -73,13 +73,34 @@ const Registro = ({ setModoRegistro, setVista }) => {
           {errores.ID_Usuario && <small className="text-danger">{errores.ID_Usuario}</small>}
         </div>
 
+        {/* Nombres — máx 3 nombres */}
         <div className="mb-3">
-          <label className="form-label fw-bold small text-muted">Nombre Completo *</label>
-          <input id="reg-nombre" className={`form-control ${errores.Nombre ? 'is-invalid' : formReg.Nombre && !errores.Nombre ? 'is-valid' : ''}`}
-            style={inputStyle} placeholder="Ej: Juan Pérez" value={formReg.Nombre}
-            onChange={e => actualizar('Nombre', e.target.value)} />
-          {errores.Nombre && <small className="text-danger">{errores.Nombre}</small>}
+          <label className="form-label fw-bold small text-muted">
+            Nombres * <span className="fw-normal" style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>(máx. 3 nombres)</span>
+          </label>
+          <input id="reg-nombres"
+            className={`form-control ${errores.Nombres ? 'is-invalid' : formReg.Nombres && !errores.Nombres ? 'is-valid' : ''}`}
+            style={inputStyle}
+            placeholder="Ej: Juan Carlos"
+            value={formReg.Nombres}
+            onChange={e => actualizar('Nombres', e.target.value)} />
+          {errores.Nombres && <small className="text-danger">{errores.Nombres}</small>}
         </div>
+
+        {/* Apellidos — máx 2 apellidos */}
+        <div className="mb-3">
+          <label className="form-label fw-bold small text-muted">
+            Apellidos * <span className="fw-normal" style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>(máx. 2 apellidos)</span>
+          </label>
+          <input id="reg-apellidos"
+            className={`form-control ${errores.Apellidos ? 'is-invalid' : formReg.Apellidos && !errores.Apellidos ? 'is-valid' : ''}`}
+            style={inputStyle}
+            placeholder="Ej: Pérez Rodríguez"
+            value={formReg.Apellidos}
+            onChange={e => actualizar('Apellidos', e.target.value)} />
+          {errores.Apellidos && <small className="text-danger">{errores.Apellidos}</small>}
+        </div>
+
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Correo Electrónico *</label>

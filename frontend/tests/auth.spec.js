@@ -1,11 +1,12 @@
+import { irAlLogin, loginComo } from './utils/login-helper.js';
+
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 
 describe('Módulo de Autenticación', () => {
 
   beforeEach(async () => {
-    await browser.url('/');
-    await $('#login-usuario').waitForDisplayed({ timeout: 6000 });
+    await irAlLogin();
   });
 
   it('Login con credenciales válidas → entra al sistema', async () => {

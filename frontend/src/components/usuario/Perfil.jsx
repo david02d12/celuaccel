@@ -6,7 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import {
-  validarNombre, validarTelefono,
+  validarNombres, validarApellidos,
+  validarTelefono,
   validarDireccion, fuerzaClave,
 } from '../../utils/validaciones';
 
@@ -42,11 +43,32 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
       <p className="text-muted small mb-4">El correo electrónico y la fecha de nacimiento son datos de identidad y no pueden modificarse.</p>
       <div className="row g-3">
 
-        {/* ── Nombre ── */}
+        {/* ── Nombres ── */}
         <div className="col-md-6">
-          <label className="small fw-bold text-muted mb-1">Nombre Completo *</label>
-          <input className={`form-control ${errores.Nombre ? 'is-invalid' : ''}`} value={form.Nombre} placeholder="Ej: Juan Pérez" style={iStyle('Nombre')} onChange={onChange('Nombre')} />
-          <CampoError mensaje={errores.Nombre} />
+          <label className="small fw-bold text-muted mb-1">
+            Nombres * <span className="fw-normal" style={{ fontSize: '0.7rem' }}>(máx. 3)</span>
+          </label>
+          <input
+            className={`form-control ${errores.Nombres ? 'is-invalid' : ''}`}
+            value={form.Nombres}
+            placeholder="Ej: Juan Carlos"
+            style={iStyle('Nombres')}
+            onChange={onChange('Nombres')} />
+          <CampoError mensaje={errores.Nombres} />
+        </div>
+
+        {/* ── Apellidos ── */}
+        <div className="col-md-6">
+          <label className="small fw-bold text-muted mb-1">
+            Apellidos * <span className="fw-normal" style={{ fontSize: '0.7rem' }}>(máx. 2)</span>
+          </label>
+          <input
+            className={`form-control ${errores.Apellidos ? 'is-invalid' : ''}`}
+            value={form.Apellidos}
+            placeholder="Ej: Pérez Rodríguez"
+            style={iStyle('Apellidos')}
+            onChange={onChange('Apellidos')} />
+          <CampoError mensaje={errores.Apellidos} />
         </div>
 
         {/* ── Teléfono ── */}
@@ -150,7 +172,7 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
   const [toast, setToast]             = useState({ visible: false, msg: '', ok: true });
   const [errores, setErrores]         = useState({});
   // Formulario: SIN Correo y SIN Fecha_Nacimiento (no editables)
-  const [form, setForm] = useState({ Nombre: '', Direccion: '', Telefono: '', Clave: '', ClaveConfirm: '' });
+  const [form, setForm] = useState({ Nombres: '', Apellidos: '', Direccion: '', Telefono: '', Clave: '', ClaveConfirm: '' });
 
   const mostrarToast = (msg, ok = true) => {
     setToast({ visible: true, msg, ok });
@@ -162,11 +184,16 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
     try {
       const res = await api.get(`/usuarios/perfil/${idAcargar}`);
       setPerfil(res.data);
+      // Intenta separar el nombre completo en nombres y apellidos si el backend lo devuelve junto
+      const partes = (res.data.Nombre || '').trim().split(/\s+/);
+      const apellidos = partes.slice(-2).join(' ');
+      const nombres   = partes.slice(0, partes.length - 2).join(' ') || partes[0] || '';
       setForm({
-        Nombre:    res.data.Nombre    || '',
-        Direccion: res.data.Direccion || '',
-        Telefono:  res.data.Telefono  || '',
-        Clave:     '',
+        Nombres:      nombres,
+        Apellidos:    apellidos,
+        Direccion:    res.data.Direccion || '',
+        Telefono:     res.data.Telefono  || '',
+        Clave:        '',
         ClaveConfirm: ''
       });
     } catch {
@@ -183,7 +210,8 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
 
   const guardarCambios = async () => {
     const nuevosErrores = {
-      Nombre:    validarNombre(form.Nombre),
+      Nombres:   validarNombres(form.Nombres),
+      Apellidos: validarApellidos(form.Apellidos),
       Telefono:  validarTelefono(form.Telefono),
       Direccion: validarDireccion(form.Direccion),
       Clave:     form.Clave && form.Clave.length < 6
@@ -199,9 +227,11 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
     if (Object.values(nuevosErrores).some(e => e !== '')) {
       return mostrarToast('Corrige los errores antes de guardar.', false);
     }
+    const nombreCompleto = `${form.Nombres.trim()} ${form.Apellidos.trim()}`;
     try {
-      await api.put('/usuarios/mi-perfil', {
-        ...form,
+      await api.put('/usuarios/mi-perfil', { 
+        ...form, 
+        Nombre: nombreCompleto,
         Correo: perfil.Correo,
         Fecha_Nacimiento: perfil.Fecha_Nacimiento
       });

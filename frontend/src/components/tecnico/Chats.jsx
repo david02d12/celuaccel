@@ -31,9 +31,11 @@ const Chats = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
-      const url = enEdicion ? 'actualizar' : 'agregar';
-      const metodo = enEdicion ? 'put' : 'post';
-      await api[metodo](`/chats/${url}`, form);
+      if (enEdicion) {
+        await api.put('/chats/actualizar', form);
+      } else {
+        await api.post('/chats/agregar', form);
+      }
       listar();
       limpiar();
     } catch (err) {
@@ -44,7 +46,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     if (await confirmar('¿Eliminar chat?')) {
       try {
-        await api.delete(`/chats/eliminar/${id}`);
+        await api.delete(`/chats/eliminar/${encodeURIComponent(id)}`);
         listar();
       } catch (err) {
         await mostrarAlerta('Error al eliminar chat', 'error');
