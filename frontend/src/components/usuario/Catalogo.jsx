@@ -155,7 +155,9 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                 <div
                   className="card border-0 shadow-sm h-100 card-hover"
                   style={{ cursor: 'pointer' }}
+                  role="button" tabIndex="0"
                   onClick={() => setProductoSel(p)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') setProductoSel(p); }}
                 >
                   {p.Imagen ? (
                     <img
@@ -221,6 +223,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
               </div>
               <div className="modal-body">
                 <table className="table table-borderless mb-0">
+                  <thead className="visually-hidden"><tr><th>Atributo</th><th>Valor</th></tr></thead>
                   <tbody>
                     <tr><td className="fw-bold text-muted">Código</td><td>{productoSel.Codigo_Producto}</td></tr>
                     <tr><td className="fw-bold text-muted">Categoría</td><td>{nombreCategoria(productoSel.ID_Categoria)}</td></tr>

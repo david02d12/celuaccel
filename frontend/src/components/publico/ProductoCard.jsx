@@ -28,9 +28,11 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
           display: 'flex', flexDirection: 'column', height: '100%',
           position: 'relative',
         }}
+        role="button" tabIndex="0"
         onMouseEnter={() => setProdHover(true)}
         onMouseLeave={() => setProdHover(false)}
         onClick={() => setModalVisible(true)}
+        onKeyDown={(e) => { if (e.key === 'Enter') setModalVisible(true); }}
       >
         <div style={{ position: 'relative', height: '180px', flexShrink: 0 }}>
           {p.Imagen ? (

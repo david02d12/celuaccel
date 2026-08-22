@@ -106,7 +106,9 @@ const Home = ({ cerrarSesion, setVista }) => {
           ].map((card, i) => (
             <div key={i} className="col-6 col-md flex-grow-1">
               <div className="card border-0 shadow-sm h-100 card-hover" style={{ cursor: 'pointer' }}
-                onClick={() => setVista(card.vista)}>
+                role="button" tabIndex="0"
+                onClick={() => setVista(card.vista)}
+                onKeyDown={(e) => { if (e.key === 'Enter') setVista(card.vista); }}>
                 <div className="card-body text-center py-4">
                   <h2 className="fw-bold my-1" style={{ color: card.isPrimary ? 'var(--color-primary)' : 'var(--color-text)' }}>{card.valor}</h2>
                   <p className="text-muted small mb-0">{card.titulo}</p>

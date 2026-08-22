@@ -205,6 +205,8 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
               return (
                 <div key={n.Codigo_Notificaciones ?? idx}
                   className="card stagger-item"
+                  role="button" tabIndex="0"
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !leida) marcarLeida(n.Codigo_Notificaciones); }}
                   style={{ borderLeft: `4px solid ${leida ? 'var(--color-border)' : icono.color}`, opacity: leida ? 0.72 : 1, transition: 'all 0.22s ease', cursor: leida ? 'default' : 'pointer' }}
                   onClick={() => !leida && marcarLeida(n.Codigo_Notificaciones)}
                   title={leida ? '' : 'Clic para marcar como leída'}>

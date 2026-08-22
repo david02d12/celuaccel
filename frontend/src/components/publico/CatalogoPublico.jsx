@@ -259,6 +259,8 @@ const CatalogoPublico = ({ setVista }) => {
       {modalVisible && (
         <div
           onClick={() => setModalVisible(false)}
+          role="button" tabIndex="0"
+          onKeyDown={(e) => { if (e.key === 'Enter') setModalVisible(false); }}
           style={{
             position: 'fixed', inset: 0, zIndex: 1000,
             background: 'rgba(0,0,0,0.55)',
@@ -274,6 +276,8 @@ const CatalogoPublico = ({ setVista }) => {
           `}</style>
           <div
             onClick={e => e.stopPropagation()}
+            role="button" tabIndex="-1"
+            onKeyDown={e => e.stopPropagation()}
             style={{
               background: '#fff', borderRadius: '20px',
               padding: '40px 32px', width: '100%', maxWidth: '380px',

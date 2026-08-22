@@ -104,6 +104,7 @@ const ChatLista = ({
               <div
                 key={c.Codigo_Chat}
                 className="p-3 border-bottom"
+                role="button" tabIndex="0"
                 style={{
                   cursor: 'pointer',
                   backgroundColor: isActive ? 'var(--color-primary-lt)' : 'transparent',
@@ -112,6 +113,7 @@ const ChatLista = ({
                   borderColor: 'var(--color-border)'
                 }}
                 onClick={() => setChatSel(c)}
+                onKeyDown={(e) => { if (e.key === 'Enter') setChatSel(c); }}
               >
                 <div className="d-flex align-items-center gap-2">
                   <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"

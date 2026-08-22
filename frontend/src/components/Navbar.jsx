@@ -34,7 +34,10 @@ const Navbar = ({ titulo, cerrarSesion, children }) => {
           className="navbar-brand fw-bold ms-3"
           style={{ cursor: 'pointer', letterSpacing: '-0.01em' }}
           title="Regresar al Panel Principal"
+          role="button"
+          tabIndex="0"
           onClick={() => window.dispatchEvent(new CustomEvent('navigateHome'))}
+          onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('navigateHome')); }}
         >
           {titulo}
         </span>
