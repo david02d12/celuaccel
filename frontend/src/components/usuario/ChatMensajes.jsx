@@ -111,13 +111,26 @@ const ChatMensajes = ({
                             : ''}
                         </small>
                         {esMio && (
-                          <button 
-                            className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
-                            style={{ fontSize: '0.75rem' }} 
-                            onClick={() => eliminarMensaje(m.Codigo_Mensaje)}
-                          >
-                            Eliminar
-                          </button>
+                          <div className="d-flex align-items-center gap-2">
+                            <svg 
+                              width="16" height="16" viewBox="0 0 24 24" 
+                              fill="none" 
+                              stroke={Number(m.Estado) === 1 ? '#34B7F1' : '#9ca3af'} 
+                              strokeWidth="2.5" 
+                              strokeLinecap="round" strokeLinejoin="round"
+                              title={Number(m.Estado) === 1 ? 'Leído' : 'Enviado'}
+                            >
+                              <polyline points="18 6 9 17 4 12"></polyline>
+                              <polyline points="22 6 13 17 11.5 15.5"></polyline>
+                            </svg>
+                            <button 
+                              className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
+                              style={{ fontSize: '0.75rem' }} 
+                              onClick={() => eliminarMensaje(m.Codigo_Mensaje)}
+                            >
+                              Eliminar
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
