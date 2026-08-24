@@ -56,6 +56,18 @@ const ChatMensajes = ({
               iniciales = nombreCliente.substring(0, 1).toUpperCase() + nombreTecnico.substring(0, 1).toUpperCase();
             }
 
+            const getEstadoBadge = (etapa) => {
+              if (etapa === undefined || etapa === null) return null;
+              const map = {
+                '-1': { t: 'Cancelado', bg: 'bg-danger' },
+                '0': { t: 'Recibido', bg: 'bg-secondary' },
+                '1': { t: 'En Revisión', bg: 'bg-warning text-dark' },
+                '2': { t: 'Terminado', bg: 'bg-success' }
+              };
+              const e = map[String(etapa)];
+              return e ? <span className={`badge ${e.bg} ms-2 align-middle`}>{e.t}</span> : null;
+            };
+
             return (
               <div className="p-3 border-bottom d-flex align-items-center gap-3" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
                 <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
@@ -63,7 +75,10 @@ const ChatMensajes = ({
                   {iniciales}
                 </div>
                 <div>
-                  <div className="fw-bold fs-5">{titulo}</div>
+                  <div className="fw-bold fs-5 d-flex align-items-center">
+                    {titulo}
+                    {chatSel.ID_Servicio && getEstadoBadge(chatSel.Etapa_Servicio)}
+                  </div>
                   <div className="small text-muted">
                     Chat #{chatSel.Codigo_Chat} • {chatSel.ID_Servicio
                       ? `Servicio #${chatSel.ID_Servicio}`

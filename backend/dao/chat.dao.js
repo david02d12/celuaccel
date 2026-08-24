@@ -6,6 +6,7 @@ const CHAT_SELECT = `
         c.Codigo_Chat,
         c.ID_Usuario,
         c.ID_Servicio,
+        s.Etapa             AS Etapa_Servicio,
         u.Nombre            AS Nombre_Usuario,
         m.Mensaje           AS Ultimo_Mensaje,
         m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje,
@@ -19,6 +20,7 @@ const CHAT_SELECT = `
         ) AS Nombre_Tecnico
     FROM Chat c
     LEFT JOIN Usuario u  ON TRIM(u.ID_Usuario) = TRIM(c.ID_Usuario)
+    LEFT JOIN Servicio s ON s.ID_Servicio = c.ID_Servicio
     LEFT JOIN Mensajes m ON m.Codigo_Mensaje = (
         SELECT Codigo_Mensaje FROM Mensajes
         WHERE Codigo_Chat = c.Codigo_Chat
