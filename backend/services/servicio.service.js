@@ -1,4 +1,4 @@
-﻿const AppError = require('../config/AppError');
+const AppError = require('../config/AppError');
 const servicioDao = require('../dao/servicio.dao');
 const usuarioDao = require('../dao/usuario.dao');
 
@@ -15,10 +15,14 @@ const misServicios = async (idUsuario, userId) => {
 };
 
 const agregar = async (data, userId) => {
-    const { Descripcion, ID_Usuario } = data;
+    const { Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra } = data;
     if (!Descripcion || !ID_Usuario) {
         throw new AppError('Los campos Descripcion e ID_Usuario son obligatorios.', 400);
     }
+    if (Precio !== undefined && Number(Precio) < 0) throw new AppError('El precio total no puede ser negativo.', 400);
+    if (Precio_Repuestos !== undefined && Number(Precio_Repuestos) < 0) throw new AppError('El precio de repuestos no puede ser negativo.', 400);
+    if (Precio_Mano_Obra !== undefined && Number(Precio_Mano_Obra) < 0) throw new AppError('El precio de mano de obra no puede ser negativo.', 400);
+    
     const rolRes = await usuarioDao.getRol(userId);
     const miRol = rolRes.length > 0 ? rolRes[0].Codigo_Rol : 2;
     if (ID_Usuario !== userId && miRol !== 1 && miRol !== 3) {
@@ -29,6 +33,10 @@ const agregar = async (data, userId) => {
 
 const actualizar = async (data) => {
     if (!data.ID_Servicio) throw new AppError('El campo ID_Servicio es obligatorio para actualizar.', 400);
+    const { Precio, Precio_Repuestos, Precio_Mano_Obra } = data;
+    if (Precio !== undefined && Number(Precio) < 0) throw new AppError('El precio total no puede ser negativo.', 400);
+    if (Precio_Repuestos !== undefined && Number(Precio_Repuestos) < 0) throw new AppError('El precio de repuestos no puede ser negativo.', 400);
+    if (Precio_Mano_Obra !== undefined && Number(Precio_Mano_Obra) < 0) throw new AppError('El precio de mano de obra no puede ser negativo.', 400);
 
     // Etapa=2 = Terminado. Para completar una orden se requiere descripción final.
     if (Number(data.Etapa) === 2) {

@@ -1,4 +1,4 @@
-﻿const AppError = require('../config/AppError');
+const AppError = require('../config/AppError');
 const productoDao = require('../dao/producto.dao');
 
 /** Todos los productos (admin/técnico) */
@@ -11,9 +11,11 @@ const agregar = async (data) => {
     if (!data.Codigo_Producto || !data.Nombre || !data.Precio) {
         throw new AppError('Los campos Codigo_Producto, Nombre y Precio son obligatorios.', 400);
     }
-    // no se permite registrar con cantidad negativa
     if (data.Cantidad !== undefined && Number(data.Cantidad) < 0) {
         throw new AppError('La cantidad inicial del producto no puede ser negativa.', 400);
+    }
+    if (data.Precio !== undefined && Number(data.Precio) < 0) {
+        throw new AppError('El precio del producto no puede ser negativo.', 400);
     }
     try {
         await productoDao.create(data);
@@ -25,6 +27,12 @@ const agregar = async (data) => {
 
 const actualizar = async (data) => {
     if (!data.Codigo_Producto) throw new AppError('El campo Codigo_Producto es obligatorio para actualizar.', 400);
+    if (data.Cantidad !== undefined && Number(data.Cantidad) < 0) {
+        throw new AppError('La cantidad del producto no puede ser negativa.', 400);
+    }
+    if (data.Precio !== undefined && Number(data.Precio) < 0) {
+        throw new AppError('El precio del producto no puede ser negativo.', 400);
+    }
     const result = await productoDao.update(data);
     if (result.affectedRows === 0) throw new AppError('Producto no encontrado.', 404);
 };

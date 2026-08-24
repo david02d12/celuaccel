@@ -129,13 +129,15 @@ const Productos = ({ cerrarSesion, setVista }) => {
                 onChange={e => setForm({...form, Codigo_Producto: e.target.value})} />
               <input className="form-control mb-2" style={inputStyle} placeholder="Nombre del producto"
                 value={form.Nombre} onChange={e => setForm({...form, Nombre: e.target.value})} />
-              <div className="row g-2 mb-2">
-                <div className="col-6">
-                  <input className="form-control" style={inputStyle} type="number" placeholder="Cantidad"
-                    value={form.Cantidad} onChange={e => setForm({...form, Cantidad: e.target.value})} />
+              <div className="d-flex gap-2 mb-2">
+                <div className="w-50">
+                  <label className="small text-muted fw-bold mb-1">Cantidad Inicial</label>
+                  <input className="form-control" style={inputStyle} type="number" min="0" placeholder="Cantidad"
+                    value={form.Cantidad} onChange={e => setForm({...form, Cantidad: e.target.value})} disabled={enEdicion} />
                 </div>
-                <div className="col-6">
-                  <input className="form-control" style={inputStyle} type="number" placeholder="Precio ($)"
+                <div className="w-50">
+                  <label className="small text-muted fw-bold mb-1">Precio</label>
+                  <input className="form-control" style={inputStyle} type="number" min="0" placeholder="Precio ($)"
                     value={form.Precio} onChange={e => setForm({...form, Precio: e.target.value})} />
                 </div>
               </div>
