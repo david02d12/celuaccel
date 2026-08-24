@@ -96,6 +96,8 @@ export const useChatView = (role, usuario) => {
       setCargando(true);
       const res = await api.get(`/mensajes/por-chat/${codigoChat}`);
       setMensajes(res.data);
+      // Marcar los mensajes entrantes como leídos
+      api.put(`/mensajes/leidos/${codigoChat}`).catch(err => console.error('Error al marcar leídos:', err));
     } catch (err) {
       console.error('Error al cargar mensajes:', err);
     } finally {
