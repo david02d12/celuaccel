@@ -1,5 +1,6 @@
 const AppError = require('../config/AppError');
 const mensajeDao = require('../dao/mensaje.dao');
+const usuarioDao = require('../dao/usuario.dao');
 
 const listar = () => mensajeDao.getAll();
 
@@ -54,4 +55,12 @@ const marcarLeidos = async (codigoChat, userId) => {
     return mensajeDao.marcarLeidos(codigoChat, userId);
 };
 
-module.exports = { listar, listarPorChat, agregar, actualizar, eliminar, marcarLeidos };
+const noLeidosGlobal = async (userId) => {
+    if (!userId) throw new AppError('El ID del usuario es obligatorio.', 400);
+    const rolRes = await usuarioDao.getRol(userId);
+    const rol = rolRes.length > 0 ? rolRes[0].Codigo_Rol : 2;
+    const res = await mensajeDao.contarNoLeidosGlobal(userId, rol);
+    return { total: res.length > 0 ? res[0].total : 0 };
+};
+
+module.exports = { listar, listarPorChat, agregar, actualizar, eliminar, marcarLeidos, noLeidosGlobal };

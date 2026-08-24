@@ -1,19 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 const Sidebar = ({ setVista }) => {
   const role = Number(sessionStorage.getItem('role')) || 2;
   const currentVista = sessionStorage.getItem('ultimaVista') || 'home';
+  const [unreadChat, setUnreadChat] = useState(0);
 
-  const Btn = ({ label, vista }) => {
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const res = await api.get('/mensajes/no-leidos');
+        if (res.data && typeof res.data.total === 'number') {
+          setUnreadChat(res.data.total);
+        }
+      } catch (err) {
+        // ignore errors silently for polling
+      }
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const Btn = ({ label, vista, badge }) => {
     const isActive = vista === currentVista;
     return (
       <button
         id={`nav-${vista}`}
-        className={`btn text-start sidebar-btn w-100 ${isActive ? 'active' : ''}`}
+        className={`btn text-start sidebar-btn w-100 d-flex align-items-center justify-content-between ${isActive ? 'active' : ''}`}
         onClick={() => setVista(vista)}
         data-bs-dismiss="offcanvas"
       >
-        {label}
+        <span>{label}</span>
+        {badge > 0 && (
+          <span className="badge bg-danger rounded-pill" style={{ fontSize: '0.7rem' }}>
+            {badge > 99 ? '+99' : badge}
+          </span>
+        )}
       </button>
     );
   };
@@ -35,7 +58,7 @@ const Sidebar = ({ setVista }) => {
           <>
             <SectionLabel>Mis Servicios</SectionLabel>
             <Btn label="Mis Servicios"       vista="miServicio" />
-            <Btn label="Chat con Asesor"     vista="chatVista" />
+            <Btn label="Chat con Asesor"     vista="chatVista" badge={unreadChat} />
             <Btn label="Mis Notificaciones"  vista="misNotificaciones" />
             <Btn label="Mis Preguntas"       vista="misPreguntas" />
 
@@ -50,7 +73,7 @@ const Sidebar = ({ setVista }) => {
           <>
             <SectionLabel>Operaciones</SectionLabel>
             <Btn label="Gestión de Servicios"    vista="servicios" />
-            <Btn label="Chat de Soporte"         vista="chatVista" />
+            <Btn label="Chat de Soporte"         vista="chatVista" badge={unreadChat} />
             <Btn label="Historial de Eventos"    vista="historial" />
             <Btn label="Notificaciones"          vista="notificaciones" />
 

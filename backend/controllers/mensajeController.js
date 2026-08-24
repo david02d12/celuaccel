@@ -78,3 +78,9 @@ exports.marcarLeidos = async (req, res) => {
         res.status(200).json({ message: 'Mensajes marcados como leídos.' });
     } catch (err) { handleError(res, err); }
 };
+
+exports.noLeidosGlobal = async (req, res) => {
+    try {
+        res.status(200).json(await mensajeService.noLeidosGlobal(req.userId));
+    } catch (err) { handleError(res, err); }
+};

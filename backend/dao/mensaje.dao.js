@@ -45,4 +45,25 @@ const marcarLeidos = (codigoChat, idUsuarioLector) =>
         [codigoChat, idUsuarioLector]
     );
 
-module.exports = { getAll, create, update, findWithOwnerCheck, remove, getByChat, marcarLeidos };
+const contarNoLeidosGlobal = (idUsuario, rol) => {
+    if (rol === 2) {
+        return query(
+            `SELECT COUNT(*) AS total
+             FROM Mensajes m
+             JOIN Chat c ON m.Codigo_Chat = c.Codigo_Chat
+             WHERE m.Estado = 0 
+               AND m.ID_Usuario != ? 
+               AND TRIM(c.ID_Usuario) = TRIM(?)`,
+            [idUsuario, idUsuario]
+        );
+    }
+    return query(
+        `SELECT COUNT(*) AS total
+         FROM Mensajes m
+         WHERE m.Estado = 0 
+           AND m.ID_Usuario != ?`,
+        [idUsuario]
+    );
+};
+
+module.exports = { getAll, create, update, findWithOwnerCheck, remove, getByChat, marcarLeidos, contarNoLeidosGlobal };
