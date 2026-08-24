@@ -1,19 +1,12 @@
+import { irAlLogin, loginComo } from './utils/login-helper.js';
+
 const USUARIO_ID   = 'maria@correo.com';
 const USUARIO_PASS = '123456';
 
-async function loginUsuario() {
-  await browser.url('/');
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').waitForDisplayed({ timeout: 5000 });
-  await $('input[placeholder="Ej: 1001234567 o correo@ejemplo.com"]').setValue(USUARIO_ID);
-  await $('input[placeholder="Ingresa tu contraseña"]').setValue(USUARIO_PASS);
-  await $('button=Ingresar al Sistema').click();
-  await $('h4.fw-bold').waitForDisplayed({ timeout: 8000 });
-}
-
 describe('Módulo de Catálogo', () => {
 
-  it('Ver catálogo público sin iniciar sesión', async () => {
-    await browser.url('/');
+  it('Ver catálogo público sin iniciar sesión (desde el login)', async () => {
+    await irAlLogin();
     const btnCatalogo = await $('#btn-catalogo-publico');
     await btnCatalogo.waitForExist({ timeout: 5000 });
     await btnCatalogo.click();
@@ -25,17 +18,16 @@ describe('Módulo de Catálogo', () => {
 
   it('El catálogo público tiene botón para volver al login', async () => {
     await browser.url('/');
-    const btnCatalogo = await $('#btn-catalogo-publico');
-    await btnCatalogo.waitForExist({ timeout: 5000 });
-    await btnCatalogo.click();
-
+    await browser.execute(() => sessionStorage.clear());
+    await browser.url('/');
+    // Ya estamos en el catálogo público
     const btnLogin = await $('#btn-ir-login');
     await btnLogin.waitForExist({ timeout: 5000 });
     expect(await btnLogin.isExisting()).toBe(true);
   });
 
   it('Usuario autenticado puede acceder al catálogo', async () => {
-    await loginUsuario();
+    await loginComo(USUARIO_ID, USUARIO_PASS);
 
     const btnCatalogo = await $('#btn-acc-catalogo');
     await btnCatalogo.waitForExist({ timeout: 5000 });
