@@ -34,6 +34,8 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
   const [mostrarForm, setMostrarForm] = useState(false);
   const [enviando, setEnviando]   = useState(false);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
+  const [productosCatalogo, setProductosCatalogo] = useState([]);
+  const [todosLosProductos, setTodosLosProductos] = useState([]);
 
   const [form, setForm] = useState({
     Codigo_Producto: '',
@@ -53,10 +55,15 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
   const listar = async () => {
     setCargando(true);
     try {
-      const res = await api.get('/preguntas/mis-preguntas');
-      setPreguntas(res.data);
+      const [pregRes, prodRes] = await Promise.all([
+        api.get('/preguntas/mis-preguntas'),
+        api.get('/productos/listar')
+      ]);
+      setPreguntas(pregRes.data);
+      setTodosLosProductos(prodRes.data);
+      setProductosCatalogo(prodRes.data.filter(p => Number(p.Activo_Catalogo) === 1));
     } catch {
-      mostrarToast('Error al cargar tus preguntas.', false);
+      mostrarToast('Error al cargar la información.', false);
     } finally {
       setCargando(false);
     }
@@ -137,7 +144,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
             <div className="d-flex gap-3 mt-1" style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
               {p.Codigo_Producto && (
                 <span className="d-flex align-items-center gap-1">
-                  <IconPackage /> Producto: <strong>{p.Codigo_Producto}</strong>
+                  <IconPackage /> Producto: <strong>{todosLosProductos.find(prod => String(prod.Codigo_Producto) === String(p.Codigo_Producto))?.Nombre || ''} ({p.Codigo_Producto})</strong>
                 </span>
               )}
               <span>{formatFecha(p.Fecha)}</span>
@@ -205,60 +212,82 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                 Consulta las respuestas del equipo técnico o envía una nueva pregunta.
               </p>
             </div>
-            <button
-              id="btn-nueva-pregunta"
-              className="btn btn-sm"
-              style={{ background: 'var(--color-primary)', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: 600 }}
-              onClick={() => setMostrarForm(f => !f)}
-            >
-              {mostrarForm ? '✕ Cancelar' : '+ Nueva pregunta'}
-            </button>
+            {!mostrarForm && (
+              <button
+                id="btn-nueva-pregunta"
+                className="btn btn-sm"
+                style={{ background: 'var(--color-primary)', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: 600 }}
+                onClick={() => setMostrarForm(true)}
+              >
+                + Nueva pregunta
+              </button>
+            )}
           </div>
 
           {/* ── Formulario nueva pregunta ──────────────────────────────────── */}
           {mostrarForm && (
-            <div className="mb-4 rounded p-4 border" style={{ background: 'var(--color-bg-card, var(--color-bg))', borderColor: 'var(--color-primary)55' }}>
-              <h6 className="fw-bold mb-3" style={{ color: 'var(--color-text)' }}>Enviar nueva pregunta</h6>
+            <div className="mb-4 p-4 fade-in" style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--color-border)' }}>
+              <h6 className="fw-bold mb-4" style={{ color: 'var(--color-text)' }}>Enviar nueva pregunta</h6>
               <form onSubmit={enviar}>
                 <div className="mb-3">
-                  <label className="form-label small fw-semibold" style={{ color: 'var(--color-text-muted)' }}>
-                    CÓDIGO DE PRODUCTO (opcional)
+                  <label className="form-label small fw-bold" style={{ color: 'var(--color-text-muted)' }}>
+                    SELECCIONA UN PRODUCTO (opcional)
                   </label>
-                  <input
-                    id="input-codigo-producto"
-                    className="form-control"
-                    style={{ background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
-                    placeholder="Ej: PROD-001"
+                  <select
+                    id="select-codigo-producto"
+                    className="form-select"
+                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-btn)' }}
                     value={form.Codigo_Producto}
                     onChange={e => setForm(f => ({ ...f, Codigo_Producto: e.target.value }))}
-                  />
+                  >
+                    <option value="">-- Ninguno (Pregunta general) --</option>
+                    {productosCatalogo.map(p => (
+                      <option key={p.Codigo_Producto} value={p.Codigo_Producto}>
+                        {p.Nombre} ({p.Codigo_Producto})
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div className="mb-3">
-                  <label className="form-label small fw-semibold" style={{ color: 'var(--color-text-muted)' }}>
+                <div className="mb-4">
+                  <label className="form-label small fw-bold" style={{ color: 'var(--color-text-muted)' }}>
                     TU PREGUNTA *
                   </label>
                   <textarea
                     id="input-pregunta-texto"
                     className="form-control"
-                    style={{ background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)', minHeight: '90px', resize: 'vertical' }}
+                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-btn)', minHeight: '110px', resize: 'vertical' }}
                     placeholder="Escribe tu consulta con detalle..."
                     value={form.Pregunta}
                     onChange={e => setForm(f => ({ ...f, Pregunta: e.target.value }))}
                     required
                   />
                 </div>
-                <button
-                  id="btn-enviar-pregunta"
-                  type="submit"
-                  className="btn d-flex align-items-center gap-2"
-                  style={{ background: 'var(--color-primary)', color: '#fff', fontWeight: 600 }}
-                  disabled={enviando}
-                >
-                  {enviando
-                    ? <><span className="spinner-border spinner-border-sm" /> Enviando...</>
-                    : <><IconSend /> Enviar pregunta</>
-                  }
-                </button>
+                <div className="d-flex justify-content-end gap-2 mt-2">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary fw-bold"
+                    style={{ borderRadius: 'var(--radius-btn)' }}
+                    onClick={() => {
+                      setMostrarForm(false);
+                      setForm({ Codigo_Producto: '', Pregunta: '' });
+                    }}
+                    disabled={enviando}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    id="btn-enviar-pregunta"
+                    type="submit"
+                    className="btn d-flex align-items-center gap-2 border-0"
+                    style={{ background: 'var(--color-primary)', color: '#fff', fontWeight: 600, borderRadius: 'var(--radius-btn)' }}
+                    disabled={enviando}
+                  >
+                    {enviando
+                      ? <><span className="spinner-border spinner-border-sm" /> Enviando...</>
+                      : <><IconSend /> Enviar pregunta</>
+                    }
+                  </button>
+                </div>
               </form>
             </div>
           )}

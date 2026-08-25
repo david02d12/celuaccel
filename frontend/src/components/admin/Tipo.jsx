@@ -14,10 +14,24 @@ const IconDoc = () => (
   </svg>
 );
 
+const ModalOverlay = ({ titulo, onClose, children }) => (
+  <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
+    <div style={{ background:'var(--color-surface,#1e1e1e)',borderRadius:12,width:'100%',maxWidth:480,maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 40px rgba(0,0,0,0.5)' }}>
+      <div style={{ background:'var(--color-primary,#DB0000)',borderRadius:'12px 12px 0 0',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center' }}>
+        <span style={{ color:'#fff',fontWeight:700,fontSize:'1.05rem' }}>{titulo}</span>
+        <button onClick={onClose} style={{ background:'transparent',border:'none',color:'#fff',fontSize:'1.3rem',lineHeight:1,cursor:'pointer' }}>✕</button>
+      </div>
+      <div style={{ padding:'20px' }}>{children}</div>
+    </div>
+  </div>
+);
+
 const Tipo = ({ cerrarSesion, setVista }) => {
   const [datos, setDatos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [detalleItem, setDetalleItem] = useState(null);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
   const [form, setForm] = useState({ Codigo_Documento: '', Tipo_Documento: '' });
 
@@ -35,10 +49,8 @@ const Tipo = ({ cerrarSesion, setVista }) => {
   useEffect(() => { listar(); }, []);
 
   const listar = async () => {
-    try {
-      const res = await api.get('/tipodocumento/listar');
-      setDatos(res.data);
-    } catch { mostrarToast('Error al cargar tipos de documento.', false); }
+    try { const res = await api.get('/tipodocumento/listar'); setDatos(res.data); }
+    catch { mostrarToast('Error al cargar tipos de documento.', false); }
   };
 
   const guardar = async () => {
@@ -53,14 +65,15 @@ const Tipo = ({ cerrarSesion, setVista }) => {
 
   const eliminar = async (id) => {
     if (await confirmar('¿Eliminar este tipo de documento?')) {
-      try {
-        await api.delete(`/tipodocumento/eliminar/${id}`);
-        mostrarToast('Tipo eliminado.'); listar();
-      } catch { mostrarToast('Error al eliminar.', false); }
+      try { await api.delete(`/tipodocumento/eliminar/${id}`); mostrarToast('Tipo eliminado.'); listar(); }
+      catch { mostrarToast('Error al eliminar.', false); }
     }
   };
 
-  const limpiar = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); };
+  const limpiar = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); setModalAbierto(false); };
+  const abrirNuevo = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); setModalAbierto(true); };
+  const abrirEdicion = (d) => { setEnEdicion(true); setForm(d); setDetalleItem(null); setModalAbierto(true); };
+  const abrirDetalle = (d) => setDetalleItem(d);
 
   const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
 
@@ -73,6 +86,47 @@ const Tipo = ({ cerrarSesion, setVista }) => {
         </div>
       )}
 
+      {detalleItem && (
+        <ModalOverlay titulo={detalleItem.Tipo_Documento} onClose={() => setDetalleItem(null)}>
+          <div style={{ display:'flex',gap:12,padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)' }}>
+            <span style={{ minWidth:130,fontWeight:700,fontSize:'0.88rem',color:'var(--color-text)' }}>Código</span>
+            <span style={{ color:'var(--color-text)',fontSize:'0.88rem' }}>#{detalleItem.Codigo_Documento}</span>
+          </div>
+          <div style={{ display:'flex',gap:12,padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)' }}>
+            <span style={{ minWidth:130,fontWeight:700,fontSize:'0.88rem',color:'var(--color-text)' }}>Tipo</span>
+            <span style={{ color:'var(--color-text)',fontSize:'0.88rem' }}>{detalleItem.Tipo_Documento}</span>
+          </div>
+          <div className="d-flex gap-2 mt-4">
+            <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
+            <button className="btn btn-outline-secondary" style={{ flex:1 }} onClick={() => abrirEdicion(detalleItem)}>✏️ Editar</button>
+            <button className="btn" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }} onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.Codigo_Documento); }}>🗑 Eliminar</button>
+          </div>
+        </ModalOverlay>
+      )}
+
+      {modalAbierto && (
+        <ModalOverlay titulo={enEdicion ? 'Editar Tipo' : 'Nuevo Tipo'} onClose={limpiar}>
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-1">Código del Documento</label>
+            <input className="form-control" style={inputStyle} type="number" disabled={enEdicion}
+              value={form.Codigo_Documento} placeholder="Código del Documento"
+              onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
+          </div>
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-1">Tipo de Documento</label>
+            <input className="form-control" style={inputStyle}
+              value={form.Tipo_Documento} placeholder="Tipo de Documento"
+              onChange={e => setForm({...form, Tipo_Documento: e.target.value})} />
+          </div>
+          <div className="d-flex gap-2 mt-3">
+            <button className="btn btn-secondary" style={{ flex: 1 }} onClick={limpiar}>Cerrar</button>
+            <button id="btn-agregar-tipo" className="btn fw-bold" style={{ flex: 1, background: 'var(--color-primary)', color: '#fff', border: 'none' }} onClick={guardar}>
+              {enEdicion ? 'Actualizar' : 'Guardar Tipo'}
+            </button>
+          </div>
+        </ModalOverlay>
+      )}
+
       <Navbar titulo="CELUACCEL — Tipos de Documento" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
@@ -81,75 +135,48 @@ const Tipo = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Tipos de Documento</h4>
             <p className="mb-0 opacity-75">Configura los tipos de documento validos en el sistema</p>
           </div>
-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{datos.length} tipos</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{datos.length} tipos</span>
+            <button className="btn btn-sm fw-bold" style={{ background: '#fff', color: 'var(--color-primary)', borderRadius: '8px', padding: '6px 14px' }} onClick={abrirNuevo}>
+              + Nuevo tipo
+            </button>
+          </div>
         </div>
 
-        <div className="row">
-          {/* FORMULARIO */}
-          <div className="col-lg-4 col-12 mb-4">
-            <div className="card p-3 shadow-sm h-100">
-              <div className="d-flex align-items-center gap-2 mb-3">
-                <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
-                <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Tipo' : 'Nuevo Tipo'}</h5>
-              </div>
-              <input className="form-control mb-2" style={inputStyle} type="number" disabled={enEdicion}
-                value={form.Codigo_Documento} placeholder="Codigo del Documento"
-                onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
-              <input className="form-control mb-3" style={inputStyle}
-                value={form.Tipo_Documento} placeholder="Tipo de Documento"
-                onChange={e => setForm({...form, Tipo_Documento: e.target.value})} />
-              <button id="btn-agregar-tipo" className="btn w-100 btn-primary fw-bold" onClick={guardar}>
-                {enEdicion ? 'Actualizar' : 'Guardar Tipo'}
-              </button>
-              {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
-            </div>
-          </div>
+        <div className="mb-3">
+          <input type="text" className="form-control" style={inputStyle}
+            placeholder="Buscar por código o nombre..."
+            value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
+        </div>
 
-          {/* CARDS */}
-          <div className="col-lg-8 col-12">
-            <div className="mb-3">
-                <input type="text" className="form-control" style={inputStyle}
-                  placeholder="Buscar por código o nombre..."
-                  value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
-            </div>
-
-            <div className="d-flex flex-column gap-2">
-              {datosPagina.map(d => (
-                <div key={d.Codigo_Documento} className="card border-0 shadow-sm fade-in"
-                  style={{ borderLeft: '4px solid #0d6efd', borderRadius: 10 }}>
-                  <div className="card-body p-3 d-flex align-items-center gap-3">
-                    <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
-                      style={{ width: 42, height: 42, backgroundColor: '#0d6efd20', color: '#0d6efd' }}>
-                      <IconDoc />
-                    </div>
-                    <div className="flex-grow-1">
-                      <div className="d-flex align-items-center gap-2">
-                        <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Tipo_Documento}</span>
-                        <span className="badge bg-primary" style={{ fontSize: '0.7rem' }}>#{d.Codigo_Documento}</span>
-                      </div>
-                    </div>
-                    <div className="d-flex gap-1">
-                      <button className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
-                        onClick={() => { setEnEdicion(true); setForm(d); }}>
-                        Editar
-                      </button>
-                      <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
-                        onClick={() => eliminar(d.Codigo_Documento)}>
-                        Borrar
-                      </button>
-                    </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px,1fr))', gap:'0.75rem' }}>
+          {datosPagina.map(d => (
+            <div key={d.Codigo_Documento} className="card border-0 shadow-sm fade-in"
+              style={{ borderLeft: '4px solid #0d6efd', borderRadius: 10 }}>
+              <div className="card-body p-3 d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                  style={{ width: 42, height: 42, backgroundColor: '#0d6efd20', color: '#0d6efd' }}>
+                  <IconDoc />
+                </div>
+                <div className="flex-grow-1">
+                  <div className="d-flex align-items-center gap-2">
+                    <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Tipo_Documento}</span>
+                    <span className="badge bg-primary" style={{ fontSize: '0.7rem' }}>#{d.Codigo_Documento}</span>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {totalPaginas > 1 && (
-              <div className="mt-3">
-                <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+                <div className="d-flex gap-1">
+                    <button className="btn btn-sm fw-bold" style={{ fontSize:'0.77rem', background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6 }} onClick={() => abrirDetalle(d)}>Ver más</button>
+                  </div>
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
+
+        {totalPaginas > 1 && (
+          <div className="mt-3">
+            <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+          </div>
+        )}
       </div>
 
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">

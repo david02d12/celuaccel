@@ -1,3 +1,4 @@
+import { useTheme } from '../../context/ThemeContext';
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -12,10 +13,11 @@ const CatalogoPublico = ({ setVista }) => {
     filtrados, nombreCat
   } = useCatalogoPublico();
 
+  const { isDark, toggleTheme } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f0f2f5', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', fontFamily: "'Inter', sans-serif" }}>
 
       <nav style={{
         position: 'sticky', top: 0, zIndex: 200,
@@ -29,13 +31,20 @@ const CatalogoPublico = ({ setVista }) => {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
-              onClick={() => setVista('catalogoPublico')}
-              style={{
-                background: 'none', border: 'none', color: 'rgba(255,255,255,0.8)',
-                fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', padding: '6px 12px',
-              }}
+              className="btn btn-link text-white p-2"
+              onClick={toggleTheme}
+              title={isDark ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}
+              style={{ textDecoration: 'none', boxShadow: 'none', padding: '6px 12px' }}
             >
-              Catalogo
+              {isDark ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M10.794 3.148a.217.217 0 0 1 .412-.02A7.001 7.001 0 0 0 15.71 10.1a7.002 7.002 0 0 1-10.457-7.002 5.495 5.495 0 0 1 5.541-2.95zm-2.823 8.7a8.2 8.2 0 0 1-5.23-5.23A6 6 0 1 0 11.23 11.23a8.2 8.2 0 0 1-3.26-.082z"/>
+                </svg>
+              )}
             </button>
             <button
               id="btn-ir-login"
@@ -114,8 +123,8 @@ const CatalogoPublico = ({ setVista }) => {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             marginBottom: '28px', flexWrap: 'wrap', gap: '8px',
           }}>
-            <p style={{ color: '#666', fontSize: '0.88rem', margin: 0 }}>
-              <strong style={{ color: '#1a1a1a' }}>{filtrados.length}</strong> productos encontrados
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', margin: 0 }}>
+              <strong style={{ color: 'var(--color-text)' }}>{filtrados.length}</strong> productos encontrados
               {categoriaFiltro && categorias.length > 0 && (
                 <span> en <strong style={{ color: '#c00000' }}>{nombreCat(categoriaFiltro)}</strong></span>
               )}
@@ -133,18 +142,18 @@ const CatalogoPublico = ({ setVista }) => {
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
             <div style={{
               width: '44px', height: '44px', borderRadius: '50%',
-              border: '3px solid #f0f0f0', borderTopColor: '#c00000',
+              border: '3px solid var(--color-border)', borderTopColor: '#c00000',
               animation: 'spin 0.8s linear infinite', margin: '0 auto 20px',
             }} />
             <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-            <p style={{ color: '#999', fontSize: '0.9rem' }}>Cargando productos...</p>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Cargando productos...</p>
           </div>
         )}
 
         {error && !cargando && (
           <div style={{
             textAlign: 'center', padding: '60px 20px',
-            background: '#fff', borderRadius: '16px',
+            background: 'var(--color-surface)', borderRadius: '16px',
             border: '1px solid rgba(200,0,0,0.12)',
             boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
           }}>
@@ -158,8 +167,8 @@ const CatalogoPublico = ({ setVista }) => {
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
             </div>
-            <h6 style={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>No se pudo cargar el catalogo</h6>
-            <p style={{ color: '#888', fontSize: '0.88rem', marginBottom: '20px' }}>{error}</p>
+            <h6 style={{ fontWeight: 700, color: 'var(--color-text)', marginBottom: '8px' }}>No se pudo cargar el catalogo</h6>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', marginBottom: '20px' }}>{error}</p>
             <button
               onClick={() => window.location.reload()}
               style={{
@@ -175,23 +184,23 @@ const CatalogoPublico = ({ setVista }) => {
 
         {!cargando && !error && filtrados.length === 0 && productos.length === 0 && (
           <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ddd" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
               <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/>
             </svg>
-            <h6 style={{ color: '#bbb', fontWeight: 600 }}>No hay productos disponibles</h6>
-            <p style={{ color: '#ccc', fontSize: '0.85rem' }}>Vuelve pronto, estamos actualizando el inventario.</p>
+            <h6 style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>No hay productos disponibles</h6>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Vuelve pronto, estamos actualizando el inventario.</p>
           </div>
         )}
 
         {!cargando && !error && filtrados.length === 0 && productos.length > 0 && (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <h6 style={{ color: '#aaa', fontWeight: 600 }}>Sin resultados para "{busqueda}"</h6>
+            <h6 style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>Sin resultados para "{busqueda}"</h6>
             <button onClick={() => { setBusqueda(''); setCategoriaFiltro(''); }} style={{
-              marginTop: '12px', background: 'none', border: '1px solid #ddd',
-              padding: '8px 20px', borderRadius: '8px', color: '#888',
+              marginTop: '12px', background: 'none', border: '1px solid var(--color-border)',
+              padding: '8px 20px', borderRadius: '8px', color: 'var(--color-text-muted)',
               cursor: 'pointer', fontSize: '0.85rem',
             }}>Limpiar filtros</button>
           </div>
@@ -279,7 +288,7 @@ const CatalogoPublico = ({ setVista }) => {
             role="button" tabIndex="-1"
             onKeyDown={e => e.stopPropagation()}
             style={{
-              background: '#fff', borderRadius: '20px',
+              background: 'var(--color-surface)', borderRadius: '20px',
               padding: '40px 32px', width: '100%', maxWidth: '380px',
               textAlign: 'center',
               boxShadow: '0 32px 80px rgba(0,0,0,0.3)',
@@ -297,10 +306,10 @@ const CatalogoPublico = ({ setVista }) => {
               </svg>
             </div>
 
-            <h5 style={{ fontWeight: 800, color: '#111', marginBottom: '8px' }}>
+            <h5 style={{ fontWeight: 800, color: 'var(--color-text)', marginBottom: '8px' }}>
               Inicia sesion para continuar
             </h5>
-            <p style={{ color: '#888', fontSize: '0.88rem', marginBottom: '28px', lineHeight: 1.6 }}>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', marginBottom: '28px', lineHeight: 1.6 }}>
               Para ver detalles del producto y realizar solicitudes necesitas una cuenta en CELUACCEL.
             </p>
 
@@ -319,7 +328,7 @@ const CatalogoPublico = ({ setVista }) => {
               <button
                 onClick={() => setVista('registro')}
                 style={{
-                  background: '#f5f5f5', color: '#1a1a1a', border: 'none',
+                  background: 'var(--color-bg)', color: 'var(--color-text)', border: 'none',
                   padding: '13px', borderRadius: '10px', fontWeight: 700,
                   cursor: 'pointer', fontSize: '0.92rem',
                 }}
@@ -329,7 +338,7 @@ const CatalogoPublico = ({ setVista }) => {
               <button
                 onClick={() => setModalVisible(false)}
                 style={{
-                  background: 'none', color: '#aaa', border: 'none',
+                  background: 'none', color: 'var(--color-text-muted)', border: 'none',
                   padding: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500,
                 }}
               >

@@ -15,10 +15,36 @@ const IconReply = () => (
   </svg>
 );
 
+/* ── Modal genérico ─────────────────────────────────────────────────────── */
+const ModalOverlay = ({ titulo, onClose, children }) => (
+  <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
+    <div style={{ background:'var(--color-surface,#1e1e1e)',borderRadius:12,width:'100%',maxWidth:520,maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 40px rgba(0,0,0,0.5)' }}>
+      <div style={{ background:'var(--color-primary,#DB0000)',borderRadius:'12px 12px 0 0',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center' }}>
+        <span style={{ color:'#fff',fontWeight:700,fontSize:'1.05rem' }}>{titulo}</span>
+        <button onClick={onClose} style={{ background:'transparent',border:'none',color:'#fff',fontSize:'1.3rem',lineHeight:1,cursor:'pointer' }}>✕</button>
+      </div>
+      <div style={{ padding:'20px' }}>{children}</div>
+    </div>
+  </div>
+);
+
+/* ── Fila de detalle (solo lectura) ─────────────────────────────────────── */
+const FilaDetalle = ({ label, children }) => (
+  <div style={{ display:'flex',gap:'12px',padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)',alignItems:'flex-start' }}>
+    <span style={{ minWidth:140,fontWeight:700,color:'var(--color-text)',fontSize:'0.88rem' }}>{label}</span>
+    <span style={{ color:'var(--color-text)',fontSize:'0.88rem',flex:1 }}>{children}</span>
+  </div>
+);
+
 const Preguntas = ({ cerrarSesion, setVista }) => {
   const [preguntas, setPreguntas] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [enEdicion, setEnEdicion] = useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [detalleItem, setDetalleItem] = useState(null);
+  const [respLocal, setRespLocal] = useState('');  // respuesta editable en modal detalle
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
   const { minDate, maxDate } = getLimitesGeneralesFecha();
   const [form, setForm] = useState({ ID_Consulta: '', ID_Usuario: '', Codigo_Producto: '', Pregunta: '', Fecha: '', Respuesta: '' });
@@ -36,26 +62,27 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
     String(p.Respuesta || '').toLowerCase().includes(busqueda.toLowerCase()) ||
     String(p.Fecha || '').includes(busqueda)
   );
-  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(preguntasFiltradas, 7);
+  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(preguntasFiltradas, 10);
 
   useEffect(() => { listar(); }, []);
 
   const listar = async () => {
     try {
-      const res = await api.get('/preguntas/listar');
-      setPreguntas(res.data);
+      const [pregRes, prodRes, usuRes] = await Promise.all([
+        api.get('/preguntas/listar'),
+        api.get('/productos/listar'),
+        api.get('/usuarios/listar')
+      ]);
+      setPreguntas(pregRes.data);
+      setProductos(prodRes.data);
+      setUsuarios(usuRes.data);
     } catch { mostrarToast('Error al cargar preguntas.', false); }
   };
 
   const guardar = async () => {
     try {
       if (enEdicion) {
-        const tecnico = sessionStorage.getItem('userId') || sessionStorage.getItem('user');
-        await api.put('/preguntas/actualizar', {
-          ...form,
-          ID_Tecnico_Responde: tecnico,
-          Fecha_Respuesta: form.Respuesta ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null
-        });
+        await api.put(`/preguntas/responder/${form.ID_Consulta}`, { Respuesta: form.Respuesta });
       } else {
         await api.post('/preguntas/agregar', form);
       }
@@ -75,14 +102,25 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
 
   const limpiar = () => {
     setForm({ ID_Consulta: '', ID_Usuario: '', Codigo_Producto: '', Pregunta: '', Fecha: '', Respuesta: '' });
-    setEnEdicion(false);
+    setEnEdicion(false); setModalAbierto(false);
   };
 
-  const inputStyle = {
-    backgroundColor: 'var(--color-bg)',
-    color: 'var(--color-text)',
-    borderColor: 'var(--color-border)'
+  const abrirNuevo = () => {
+    setForm({ ID_Consulta: '', ID_Usuario: '', Codigo_Producto: '', Pregunta: '', Fecha: '', Respuesta: '' });
+    setEnEdicion(false); setModalAbierto(true);
   };
+
+  const abrirEdicion = (p) => {
+    setForm({ ...p, Fecha: p.Fecha ? p.Fecha.split('T')[0] : '', Respuesta: p.Respuesta || '' });
+    setEnEdicion(true); setDetalleItem(null); setModalAbierto(true);
+  };
+
+  const abrirDetalle = (p) => { setDetalleItem(p); setRespLocal(p.Respuesta || ''); };
+
+  const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
+
+  const nombreUsuario = (id) => { const u = usuarios.find(u => String(u.ID_Usuario) === String(id)); return u ? u.Nombre : '—'; };
+  const nombreProducto = (cod) => { if (!cod) return 'Ninguno'; const p = productos.find(p => String(p.Codigo_Producto) === String(cod)); return p ? p.Nombre : '—'; };
 
   return (
     <div>
@@ -93,117 +131,177 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
         </div>
       )}
 
+      {/* MODAL */}
+      {detalleItem && (() => {
+        const respondida = !!detalleItem.Respuesta;
+        return (
+          <ModalOverlay titulo={`Consulta #${detalleItem.ID_Consulta}`} onClose={() => setDetalleItem(null)}>
+            {/* Estado visible arriba */}
+            <div className="text-center mb-3">
+              <span className={`badge px-3 py-2 fs-6 ${respondida ? 'bg-success' : 'bg-warning text-dark'}`}>
+                {respondida ? '✔ Respondida' : '⏳ Pendiente de respuesta'}
+              </span>
+            </div>
+            <FilaDetalle label="ID Consulta">{detalleItem.ID_Consulta}</FilaDetalle>
+            <FilaDetalle label="Documento">{detalleItem.ID_Usuario}</FilaDetalle>
+            <FilaDetalle label="Cliente">{nombreUsuario(detalleItem.ID_Usuario)}</FilaDetalle>
+            <FilaDetalle label="Cód. Producto">{detalleItem.Codigo_Producto || 'Ninguno'}</FilaDetalle>
+            <FilaDetalle label="Producto">{nombreProducto(detalleItem.Codigo_Producto)}</FilaDetalle>
+            <FilaDetalle label="Pregunta"><em>{detalleItem.Pregunta}</em></FilaDetalle>
+            {respondida && <FilaDetalle label="Respuesta actual"><span style={{ color:'var(--color-primary)', fontStyle:'italic' }}>{detalleItem.Respuesta}</span></FilaDetalle>}
+            <div className="mt-3">
+              <label className="small fw-bold mb-1" style={{ color:'var(--color-primary)' }}>
+                {respondida ? 'Actualizar respuesta:' : 'Escribe tu respuesta:'}
+              </label>
+              <textarea className="form-control mt-1" style={inputStyle} rows={3}
+                placeholder="Escribe la respuesta al cliente..."
+                value={respLocal} onChange={e => setRespLocal(e.target.value)} />
+            </div>
+            <div className="d-flex gap-2 mt-4">
+              <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
+              <button className="btn btn-outline-primary" style={{ flex:1 }}
+                onClick={async () => {
+                  if (!respLocal.trim()) return;
+                  try {
+                    await api.put(`/preguntas/responder/${detalleItem.ID_Consulta}`, { Respuesta: respLocal });
+                    mostrarToast('Respuesta guardada.');
+                    setDetalleItem(null); listar();
+                  } catch { mostrarToast('Error al guardar.', false); }
+                }}>✉️ Responder</button>
+              <button className="btn" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }}
+                onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.ID_Consulta); }}>🗑 Eliminar</button>
+            </div>
+          </ModalOverlay>
+        );
+      })()}
+
+      {modalAbierto && (
+        <ModalOverlay titulo={enEdicion ? 'Responder Consulta' : 'Nueva Consulta'} onClose={limpiar}>
+          {enEdicion ? (
+            <>
+              <FilaDetalle label="ID Consulta">{form.ID_Consulta}</FilaDetalle>
+              <FilaDetalle label="Documento">{form.ID_Usuario}</FilaDetalle>
+              <FilaDetalle label="Cliente">{nombreUsuario(form.ID_Usuario)}</FilaDetalle>
+              <FilaDetalle label="Código Producto">{form.Codigo_Producto || 'Ninguno'}</FilaDetalle>
+              <FilaDetalle label="Producto">{nombreProducto(form.Codigo_Producto)}</FilaDetalle>
+              <FilaDetalle label="Pregunta">{form.Pregunta}</FilaDetalle>
+              <div style={{ marginTop: 16 }}>
+                <label className="small fw-bold mb-1" style={{ color: 'var(--color-primary)' }}>Respuesta del Técnico</label>
+                <textarea className="form-control mt-1" style={inputStyle} rows={4}
+                  placeholder="Escribe tu respuesta al cliente..."
+                  value={form.Respuesta}
+                  onChange={e => setForm({ ...form, Respuesta: e.target.value })} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-2">
+                <label className="small text-muted fw-bold mb-1">ID Consulta</label>
+                <input className="form-control" style={inputStyle} type="number" placeholder="ID Consulta"
+                  value={form.ID_Consulta} onChange={e => setForm({ ...form, ID_Consulta: e.target.value })} />
+              </div>
+              <div className="mb-2">
+                <label className="small text-muted fw-bold mb-1">ID Usuario</label>
+                <input className="form-control" style={inputStyle} placeholder="ID Usuario"
+                  value={form.ID_Usuario} onChange={e => setForm({ ...form, ID_Usuario: e.target.value })} />
+              </div>
+              <div className="mb-2">
+                <label className="small text-muted fw-bold mb-1">Código Producto</label>
+                <input className="form-control" style={inputStyle} placeholder="Cód. Producto (opcional)"
+                  value={form.Codigo_Producto} onChange={e => setForm({ ...form, Codigo_Producto: e.target.value })} />
+              </div>
+              <div className="mb-2">
+                <label className="small text-muted fw-bold mb-1">Pregunta</label>
+                <textarea className="form-control" style={inputStyle} rows={3}
+                  value={form.Pregunta} onChange={e => setForm({ ...form, Pregunta: e.target.value })} />
+              </div>
+              <div className="mb-3">
+                <label className="small text-muted fw-bold mb-1">Fecha</label>
+                <input className="form-control" style={inputStyle} type="date" min={minDate} max={maxDate}
+                  value={form.Fecha} onChange={e => setForm({ ...form, Fecha: e.target.value })} />
+              </div>
+            </>
+          )}
+          <div className="d-flex gap-2 mt-3">
+            <button className="btn btn-secondary" style={{ flex: 1 }} onClick={limpiar}>Cerrar</button>
+            <button className="btn btn-primary fw-bold" style={{ flex: 1, background: 'var(--color-primary)', border: 'none' }} onClick={guardar}>
+              {enEdicion ? 'Guardar Respuesta' : 'Guardar'}
+            </button>
+          </div>
+        </ModalOverlay>
+      )}
+
       <Navbar titulo="CELUACCEL — Preguntas de Clientes" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
-        {/* BANNER ENCABEZADO */}
         <div className="mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2 module-banner">
           <div>
             <h4 className="fw-bold mb-1">Preguntas sobre Equipos</h4>
             <p className="mb-0 opacity-75">Responde las inquietudes técnicas de los clientes sobre los productos</p>
           </div>
-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{preguntas.length} preguntas</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{preguntas.length} preguntas</span>
+            <button className="btn btn-sm fw-bold" style={{ background: '#fff', color: 'var(--color-primary)', borderRadius: '8px', padding: '6px 14px' }} onClick={abrirNuevo}>
+              + Nueva consulta
+            </button>
+          </div>
         </div>
 
-        <div className="row">
-          {/* FORMULARIO */}
-          <div className="col-lg-4 col-12 mb-4">
-            <div className="card p-3 shadow-sm">
-              <h5 className="fw-bold mb-3">{enEdicion ? 'Editar Consulta' : 'Nueva Consulta'}</h5>
-              <input className="form-control mb-2" style={inputStyle} type="number" placeholder="ID Consulta"
-                value={form.ID_Consulta} disabled={enEdicion}
-                onChange={e => setForm({...form, ID_Consulta: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} placeholder="ID Usuario"
-                value={form.ID_Usuario}
-                onChange={e => setForm({...form, ID_Usuario: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} placeholder="Cód. Producto"
-                value={form.Codigo_Producto}
-                onChange={e => setForm({...form, Codigo_Producto: e.target.value})} />
-              <textarea className="form-control mb-2" style={inputStyle} placeholder="Pregunta"
-                value={form.Pregunta}
-                onChange={e => setForm({...form, Pregunta: e.target.value})} />
-              <label className="small text-muted fw-bold mb-1">Fecha</label>
-              <input className="form-control mb-2" style={inputStyle} type="date"
-                min={minDate} max={maxDate}
-                value={form.Fecha}
-                onChange={e => setForm({...form, Fecha: e.target.value})} />
-              {/* C5 FIX: Campo Respuesta — solo visible en modo edición */}
-              {enEdicion && (
-                <>
-                  <label className="small fw-bold text-muted mb-1 mt-2">Respuesta del Técnico</label>
-                  <textarea className="form-control mb-2" style={inputStyle} rows={3}
-                    placeholder="Escribe tu respuesta al cliente..."
-                    value={form.Respuesta}
-                    onChange={e => setForm({...form, Respuesta: e.target.value})} />
-                </>
-              )}
-              <button className="btn w-100 btn-primary mt-2" onClick={guardar}>
-                {enEdicion ? 'Guardar Respuesta' : 'Guardar'}
-              </button>
-              {enEdicion && (
-                <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>
-              )}
-            </div>
-          </div>
+        {/* BUSCADOR */}
+        <div className="mb-3">
+          <input type="text" className="form-control" style={inputStyle}
+            placeholder="Buscar por usuario, producto, pregunta, respuesta o fecha..."
+            value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
+        </div>
 
-          {/* TABLA */}
-          <div className="col-lg-8 col-12">
-            <div className="card border-0 shadow-sm overflow-hidden">
-              <div className="p-3 border-bottom" style={{ borderColor: 'var(--color-border)' }}>
-                <input type="text" className="form-control" style={inputStyle}
-                  placeholder="Buscar por usuario, producto, pregunta, respuesta o fecha..."
-                  value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
-              </div>
-              <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Usuario</th>
-                      <th>Producto</th>
-                      <th>Pregunta</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {datosPagina.map(p => (
-                      <tr key={p.ID_Consulta} className="stagger-item">
-                        <td>{p.ID_Consulta}</td>
-                        <td className="fw-bold">{p.ID_Usuario}</td>
-                        <td>{p.Codigo_Producto}</td>
-                        <td>
-                          <div>{p.Pregunta}</div>
-                          {p.Respuesta && (
-                            <div className="mt-1 p-2 rounded-2 small d-flex align-items-start gap-1"
-                              style={{ backgroundColor: 'var(--color-primary-lt)', color: 'var(--color-primary)', fontStyle: 'italic' }}>
-                              <IconReply />
-                              <span>{p.Respuesta}</span>
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          <span className={`badge ${p.Respuesta ? 'bg-success' : 'bg-secondary'} mb-1 d-block`} style={{ fontSize: '0.7rem' }}>
-                            {p.Respuesta ? 'Respondida' : 'Sin responder'}
-                          </span>
-                          <button id="btn-responder-pregunta" className="btn btn-sm btn-outline-secondary me-1"
-                            onClick={() => { setForm({...p, Fecha: p.Fecha ? p.Fecha.split('T')[0] : '', Respuesta: p.Respuesta || ''}); setEnEdicion(true); }}>Responder</button>
-                          <button className="btn btn-sm btn-outline-danger"
-                            onClick={() => eliminar(p.ID_Consulta)}>Borrar</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="p-3">
-                <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
-              </div>
-            </div>
+        {/* TABLA */}
+        <div className="card border-0 shadow-sm overflow-hidden">
+          <div className="table-responsive">
+            <table className="table table-hover mb-0">
+               <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Doc.</th>
+                  <th>Cliente</th>
+                  <th>Producto</th>
+                  <th>Pregunta (resumen)</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {datosPagina.map(p => (
+                  <tr key={p.ID_Consulta} className="stagger-item">
+                    <td>{p.ID_Consulta}</td>
+                    <td className="text-muted small">{p.ID_Usuario}</td>
+                    <td className="fw-bold">{nombreUsuario(p.ID_Usuario)}</td>
+                    <td>
+                      <div className="fw-bold" style={{ color:'var(--color-primary)', fontSize:'0.85rem' }}>{nombreProducto(p.Codigo_Producto)}</div>
+                      {p.Codigo_Producto && <div className="text-muted" style={{ fontSize:'0.72rem' }}>#{p.Codigo_Producto}</div>}
+                    </td>
+                    <td style={{ maxWidth: '180px' }}>
+                      <div style={{ fontSize:'0.85rem', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:170 }} title={p.Pregunta}>{p.Pregunta}</div>
+                    </td>
+                     <td>
+                       <span className={`badge ${p.Respuesta ? 'bg-success' : 'bg-warning text-dark'}`} style={{ fontSize: '0.7rem' }}>
+                         {p.Respuesta ? '✔ Respondida' : '⏳ Pendiente'}
+                       </span>
+                     </td>
+                     <td>
+                       <button className="btn btn-sm fw-bold" style={{ background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6, fontSize:'0.77rem' }}
+                         onClick={() => abrirDetalle(p)}>Ver más</button>
+                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-3">
+            <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
           </div>
         </div>
       </div>
 
-      {/* MENÚ LATERAL */}
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title fw-bold">Menú de Navegación</h5>
