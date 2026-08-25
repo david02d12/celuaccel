@@ -29,15 +29,15 @@ const CHAT_SELECT = `
 `;
 
 const getAll = () =>
-    query(`${CHAT_SELECT} ORDER BY c.Codigo_Chat DESC`);
+    query(`${CHAT_SELECT} WHERE c.Estado_Chat = 'Activo' ORDER BY c.Codigo_Chat DESC`);
 
 const getMios = (idUsuario) =>
     query(
         `${CHAT_SELECT}
-         WHERE TRIM(c.ID_Usuario) = TRIM(?)
+         WHERE c.Estado_Chat = 'Activo' AND (TRIM(c.ID_Usuario) = TRIM(?)
             OR c.ID_Servicio IN (
                 SELECT ID_Servicio FROM Servicio WHERE TRIM(ID_Usuario) = TRIM(?)
-            )
+            ))
          ORDER BY c.Codigo_Chat DESC`,
         [idUsuario, idUsuario]
     );
@@ -70,6 +70,6 @@ const update = ({ ID_Usuario, ID_Servicio, Codigo_Chat }) =>
     );
 
 const remove = (id) =>
-    query('DELETE FROM Chat WHERE Codigo_Chat = ?', [id]);
+    query('UPDATE Chat SET Estado_Chat = \'Inactivo\' WHERE Codigo_Chat = ?', [id]);
 
 module.exports = { getAll, getMios, findByServicio, create, update, remove };
