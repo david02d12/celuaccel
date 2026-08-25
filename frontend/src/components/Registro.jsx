@@ -64,6 +64,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
             style={inputStyle}
             placeholder={reglaDoc ? (reglaDoc.soloNumeros ? `Ej: ${'0'.repeat(reglaDoc.min)}` : `Ej: AB${reglaDoc.min}01`) : 'Ej: 1001234567'}
             value={formReg.ID_Usuario}
+            maxLength={25}
             onChange={e => {
               const v = e.target.value;
               if (reglaDoc?.soloNumeros && /[^0-9]/.test(v)) return;
@@ -83,6 +84,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
             style={inputStyle}
             placeholder="Ej: Juan Carlos"
             value={formReg.Nombres}
+            maxLength={25}
             onChange={e => actualizar('Nombres', e.target.value)} />
           {errores.Nombres && <small className="text-danger">{errores.Nombres}</small>}
         </div>
@@ -97,6 +99,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
             style={inputStyle}
             placeholder="Ej: Pérez Rodríguez"
             value={formReg.Apellidos}
+            maxLength={25}
             onChange={e => actualizar('Apellidos', e.target.value)} />
           {errores.Apellidos && <small className="text-danger">{errores.Apellidos}</small>}
         </div>
@@ -106,6 +109,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <label className="form-label fw-bold small text-muted">Correo Electrónico *</label>
           <input id="reg-correo" type="email" className={`form-control ${errores.Correo ? 'is-invalid' : formReg.Correo && !errores.Correo ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="ejemplo@correo.com" value={formReg.Correo}
+            maxLength={25}
             onChange={e => actualizar('Correo', e.target.value)} />
           {errores.Correo && <small className="text-danger">{errores.Correo}</small>}
         </div>
@@ -121,6 +125,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <label className="form-label fw-bold small text-muted">Dirección <span className="fw-normal">(Opcional)</span></label>
           <input className={`form-control ${errores.Direccion ? 'is-invalid' : formReg.Direccion && !errores.Direccion ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="Ej: Calle 45 #12-30" value={formReg.Direccion}
+            maxLength={25}
             onChange={e => actualizar('Direccion', e.target.value)} />
           {errores.Direccion && <small className="text-danger">{errores.Direccion}</small>}
         </div>
@@ -129,6 +134,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <label className="form-label fw-bold small text-muted">Teléfono <span className="fw-normal">(Opcional)</span></label>
           <input type="tel" className={`form-control ${errores.Telefono ? 'is-invalid' : formReg.Telefono && !errores.Telefono ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="Ej: 3001234567" value={formReg.Telefono}
+            maxLength={25}
             onChange={e => { if (!/[^0-9]/.test(e.target.value)) actualizar('Telefono', e.target.value); }} />
           {errores.Telefono && <small className="text-danger">{errores.Telefono}</small>}
         </div>

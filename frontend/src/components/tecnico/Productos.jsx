@@ -133,12 +133,18 @@ const Productos = ({ cerrarSesion, setVista }) => {
                 <div className="w-50">
                   <label className="small text-muted fw-bold mb-1">Cantidad Inicial</label>
                   <input className="form-control" style={inputStyle} type="number" min="0" placeholder="Cantidad"
-                    value={form.Cantidad} onChange={e => setForm({...form, Cantidad: e.target.value})} disabled={enEdicion} />
+                    value={form.Cantidad} onChange={e => {
+                      const v = e.target.value;
+                      if (v === '' || Number(v) >= 0) setForm({...form, Cantidad: v});
+                    }} disabled={enEdicion} />
                 </div>
                 <div className="w-50">
                   <label className="small text-muted fw-bold mb-1">Precio</label>
                   <input className="form-control" style={inputStyle} type="number" min="0" placeholder="Precio ($)"
-                    value={form.Precio} onChange={e => setForm({...form, Precio: e.target.value})} />
+                    value={form.Precio} onChange={e => {
+                      const v = e.target.value;
+                      if (v === '' || Number(v) >= 0) setForm({...form, Precio: v});
+                    }} />
                 </div>
               </div>
               <input className="form-control mb-2" style={inputStyle} placeholder="Descripcion del producto"

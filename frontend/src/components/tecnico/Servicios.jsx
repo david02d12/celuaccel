@@ -242,8 +242,14 @@ const Servicios = ({ cerrarSesion, setVista }) => {
               <input className="form-control mb-2" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente" disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
               
               <div className="d-flex gap-2 mb-2">
-                <input className="form-control" style={inputStyle} type="number" min="0" value={formServicio.Precio_Repuestos} placeholder="Repuestos ($)" onChange={e => setFormServicio({...formServicio, Precio_Repuestos: e.target.value})} />
-                <input className="form-control" style={inputStyle} type="number" min="0" value={formServicio.Precio_Mano_Obra} placeholder="Mano Obra ($)" onChange={e => setFormServicio({...formServicio, Precio_Mano_Obra: e.target.value})} />
+                <input className="form-control" style={inputStyle} type="number" min="0" value={formServicio.Precio_Repuestos} placeholder="Repuestos ($)" onChange={e => {
+                  const v = e.target.value;
+                  if (v === '' || Number(v) >= 0) setFormServicio({...formServicio, Precio_Repuestos: v});
+                }} />
+                <input className="form-control" style={inputStyle} type="number" min="0" value={formServicio.Precio_Mano_Obra} placeholder="Mano Obra ($)" onChange={e => {
+                  const v = e.target.value;
+                  if (v === '' || Number(v) >= 0) setFormServicio({...formServicio, Precio_Mano_Obra: v});
+                }} />
               </div>
               <div className="mb-2 p-2 rounded text-center fw-bold" style={{ backgroundColor: 'var(--color-surfaceAlt)', color: 'var(--color-primary)' }}>
                 Total: ${ (Number(formServicio.Precio_Repuestos) || 0) + (Number(formServicio.Precio_Mano_Obra) || 0) }

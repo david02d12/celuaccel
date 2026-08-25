@@ -52,6 +52,7 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
             className={`form-control ${errores.Nombres ? 'is-invalid' : ''}`}
             value={form.Nombres}
             placeholder="Ej: Juan Carlos"
+            maxLength={25}
             style={iStyle('Nombres')}
             onChange={onChange('Nombres')} />
           <CampoError mensaje={errores.Nombres} />
@@ -66,6 +67,7 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
             className={`form-control ${errores.Apellidos ? 'is-invalid' : ''}`}
             value={form.Apellidos}
             placeholder="Ej: Pérez Rodríguez"
+            maxLength={25}
             style={iStyle('Apellidos')}
             onChange={onChange('Apellidos')} />
           <CampoError mensaje={errores.Apellidos} />
@@ -81,7 +83,7 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
         {/* ── Dirección ── */}
         <div className="col-12">
           <label className="small fw-bold text-muted mb-1">Dirección <span className="text-muted fw-normal">(opcional)</span></label>
-          <input className={`form-control ${errores.Direccion ? 'is-invalid' : ''}`} value={form.Direccion} placeholder="Ej: Calle 45 #12-30" style={iStyle('Direccion')} onChange={onChange('Direccion')} />
+          <input className={`form-control ${errores.Direccion ? 'is-invalid' : ''}`} value={form.Direccion} placeholder="Ej: Calle 45 #12-30" maxLength={25} style={iStyle('Direccion')} onChange={onChange('Direccion')} />
           <CampoError mensaje={errores.Direccion} />
         </div>
 
