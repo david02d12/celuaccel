@@ -119,7 +119,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
             <p className="mb-0 opacity-75">Controla el stock, precios y visibilidad en el catalogo</p>
           </div>
           <div className="d-flex gap-2 align-items-center flex-wrap">
-            <span className="badge bg-white text-danger fw-bold">{productos.length} productos</span>
+            <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }}">{productos.length} productos</span>
             <span className="badge fw-bold" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
               {totalActivos} en catalogo
             </span>
@@ -191,7 +191,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
             </div>
 
             {filtrados.length === 0 ? (
-              <div className="text-center py-5 fade-in border rounded bg-white shadow-sm" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="text-center py-5 fade-in border rounded shadow-sm" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}>
                 <div className="mb-3 text-muted" style={{ opacity: 0.5 }}>
                   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>

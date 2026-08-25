@@ -85,7 +85,7 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Bandeja de Mensajes</h4>
             <p className="mb-0 opacity-75">Controla y edita los mensajes enviados en los chats</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{mensajes.length} mensajes</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{mensajes.length} mensajes</span>
         </div>
 
         <div className="row">
@@ -176,7 +176,7 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
                         <td className="fw-bold">{m.ID_Usuario}</td>
                         <td className="small">{m.Mensaje}</td>
                         <td>
-                          <span className={`badge ${Number(m.Estado) === 1 ? 'bg-success' : 'bg-warning text-dark'}`}>
+                          <span className={`badge ${Number(m.Estado) === 1 ? 'bg-success' : 'bg-warning'}`}>
                             {Number(m.Estado) === 1 ? 'Leído' : 'Pendiente'}
                           </span>
                         </td>

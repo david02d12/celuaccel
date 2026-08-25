@@ -119,7 +119,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Directorio de Usuarios</h4>
             <p className="mb-0 opacity-75">Gestiona cuentas, roles y datos personales</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{usuarios.length} usuarios</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{usuarios.length} usuarios</span>
         </div>
 
         <div className="row">

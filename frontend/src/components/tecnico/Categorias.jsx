@@ -83,7 +83,7 @@ const Categorias = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Categorias de Productos</h4>
             <p className="mb-0 opacity-75">Define y edita las categorias del catalogo</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{categorias.length} categorias</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{categorias.length} categorias</span>
         </div>
 
         <div className="row">

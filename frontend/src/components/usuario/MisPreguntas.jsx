@@ -80,8 +80,8 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
       setForm({ Codigo_Producto: '', Pregunta: '' });
       setMostrarForm(false);
       listar();
-    } catch {
-      mostrarToast('Error al enviar la pregunta.', false);
+    } catch (error) {
+      mostrarToast(error.response?.data?.error || 'Error al enviar la pregunta.', false);
     } finally {
       setEnviando(false);
     }

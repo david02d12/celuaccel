@@ -101,7 +101,7 @@ const Roles = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Privilegios y Roles</h4>
             <p className="mb-0 opacity-75">Configura los niveles de acceso del sistema</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{datos.length} roles</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{datos.length} roles</span>
         </div>
 
         <div className="row">

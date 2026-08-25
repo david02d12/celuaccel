@@ -153,7 +153,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
             <p className="mb-0 opacity-75">Registro cronologico de cada paso tecnico en los servicios</p>
           </div>
           <div className="d-flex gap-2 align-items-center flex-wrap">
-            <span className="badge bg-white text-danger fw-bold">{datos.length} eventos</span>
+            <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }}">{datos.length} eventos</span>
             <span className="badge fw-bold" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
               {totalActivos} activos
             </span>

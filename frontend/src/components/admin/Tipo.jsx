@@ -81,7 +81,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Tipos de Documento</h4>
             <p className="mb-0 opacity-75">Configura los tipos de documento validos en el sistema</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{datos.length} tipos</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{datos.length} tipos</span>
         </div>
 
         <div className="row">

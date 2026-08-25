@@ -79,7 +79,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Administración de Canales</h4>
             <p className="mb-0 opacity-75">Configura y gestiona los canales de chat activos</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{chats.length} canales</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{chats.length} canales</span>
         </div>
 
         <div className="row">
@@ -155,7 +155,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
                         <td>
                           {c.ID_Servicio
                             ? <span className="badge bg-primary">Servicio #{c.ID_Servicio}</span>
-                            : <span className="badge bg-warning text-dark">Consulta catálogo</span>
+                            : <span className="badge bg-warning">Consulta catálogo</span>
                           }
                         </td>
                         <td>

@@ -102,7 +102,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Preguntas sobre Equipos</h4>
             <p className="mb-0 opacity-75">Responde las inquietudes técnicas de los clientes sobre los productos</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{preguntas.length} preguntas</span>
+          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{preguntas.length} preguntas</span>
         </div>
 
         <div className="row">

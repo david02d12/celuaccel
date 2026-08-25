@@ -280,7 +280,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
                       <p className="mb-1"><strong>Descripción:</strong> {s.Descripcion}</p>
                       <p className="mb-1"><strong>Especificación:</strong> {s.Movil_Especificacion}</p>
                       
-                      <div className="bg-light p-2 rounded mb-2 mt-2" style={{ border: '1px solid var(--color-border)' }}>
+                      <div className="p-2" style={{ backgroundColor: 'var(--color-surface)' }} rounded mb-2 mt-2" style={{ border: '1px solid var(--color-border)' }}>
                         <div className="d-flex justify-content-between small mb-1">
                           <span>Repuestos:</span>
                           <span className="fw-bold">{s.Precio_Repuestos ? `$${s.Precio_Repuestos}` : 'N/A'}</span>

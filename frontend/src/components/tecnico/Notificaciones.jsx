@@ -250,7 +250,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                 ))}
               </div>
             ) : notificacionesFiltradas.length === 0 ? (
-              <div className="text-center py-5 fade-in border rounded bg-white shadow-sm" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="text-center py-5 fade-in border rounded shadow-sm" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}>
                 <div className="mb-3 text-muted" style={{ opacity: 0.5 }}>
                   <IconBell color="currentColor" size={54} />
                 </div>

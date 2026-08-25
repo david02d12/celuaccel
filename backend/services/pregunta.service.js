@@ -1,4 +1,4 @@
-﻿const AppError = require('../config/AppError');
+const AppError = require('../config/AppError');
 const preguntaDao = require('../dao/pregunta.dao');
 const usuarioDao = require('../dao/usuario.dao');
 
@@ -6,8 +6,8 @@ const listar = () => preguntaDao.getAll();
 
 const agregar = async (data, userId) => {
     const { ID_Usuario, Codigo_Producto, Pregunta } = data;
-    if (!ID_Usuario || !Codigo_Producto || !Pregunta) {
-        throw new AppError('Los campos ID_Usuario, Codigo_Producto y Pregunta son obligatorios.', 400);
+    if (!ID_Usuario || !Pregunta) {
+        throw new AppError('Los campos ID_Usuario y Pregunta son obligatorios.', 400);
     }
     if (!userId) throw new AppError('Usuario no autenticado.', 401);
     const rolRes = await usuarioDao.getRol(userId);
@@ -18,7 +18,14 @@ const agregar = async (data, userId) => {
     // C4 FIX: Técnicos/admins pueden registrar preguntas con el ID_Usuario enviado.
     // Clientes solo pueden registrar para sí mismos (ya validado arriba).
     const idFinal = (miRol === 1 || miRol === 3) ? String(ID_Usuario).trim() : userId;
-    return preguntaDao.create({ ...data, ID_Usuario: idFinal });
+    try {
+        return await preguntaDao.create({ ...data, ID_Usuario: idFinal, Codigo_Producto: Codigo_Producto || null });
+    } catch (error) {
+        if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+            throw new AppError('El código de producto ingresado no existe en el catálogo.', 400);
+        }
+        throw error;
+    }
 };
 
 const actualizar = async (data) => {
