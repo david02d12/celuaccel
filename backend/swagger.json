@@ -1292,7 +1292,7 @@
     },
     "/chats/listar-mios": {
       "get": {
-        "description": "",
+        "description": "Lista los chats activos del usuario autenticado (Cliente). Retorna el campo Estado_Chat.",
         "parameters": [
           {
             "name": "authorization",
@@ -1315,7 +1315,7 @@
     },
     "/chats/listar": {
       "get": {
-        "description": "",
+        "description": "Lista los chats. Retorna el campo Estado_Chat. Para el rol Técnico solo retorna los activos, para Admin retorna todos (incluyendo Ocultos).",
         "parameters": [
           {
             "name": "authorization",
@@ -1416,7 +1416,7 @@
     },
     "/chats/eliminar/{id}": {
       "delete": {
-        "description": "",
+        "description": "Realiza un borrado lógico del chat, cambiando su Estado_Chat a 'Oculto'.",
         "parameters": [
           {
             "name": "id",
