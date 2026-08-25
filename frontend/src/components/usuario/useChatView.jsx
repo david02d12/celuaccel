@@ -135,14 +135,14 @@ export const useChatView = (role, usuario) => {
   };
 
   const eliminarChat = async (id) => {
-    if (!await confirmar('¿Estás seguro de eliminar este chat? Esta acción no se puede deshacer.')) return;
+    if (!await confirmar('¿Estás seguro de ocultar este chat? Desaparecerá de tu lista.')) return;
     try {
       await api.delete(`/chats/eliminar/${id}`);
-      await mostrarAlerta('Chat eliminado correctamente', 'success');
+      await mostrarAlerta('Chat ocultado correctamente', 'success');
       setChatSel(null);
       cargarChats();
     } catch (err) {
-      await mostrarAlerta('Error al eliminar el chat.', 'error');
+      await mostrarAlerta('Error al ocultar el chat.', 'error');
     }
   };
 
