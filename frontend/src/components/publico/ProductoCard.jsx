@@ -15,7 +15,7 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
     <div className="col-6 col-md-4 col-lg-3">
       <div
         style={{
-          background: '#fff',
+          background: 'var(--color-surface)',
           borderRadius: '16px',
           border: '1px solid rgba(0,0,0,0.07)',
           boxShadow: prodHover
@@ -45,14 +45,14 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
           <div style={{
             display: p.Imagen ? 'none' : 'flex',
             width: '100%', height: '100%',
-            background: 'linear-gradient(135deg,#f5f5f5,#ebebeb)',
+            background: 'var(--color-bg)',
             alignItems: 'center', justifyContent: 'center',
             flexDirection: 'column', gap: '6px',
           }}>
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round">
               <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/>
             </svg>
-            <span style={{ fontSize: '0.7rem', color: '#ccc', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Sin imagen</span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Sin imagen</span>
           </div>
           <div style={{
             position: 'absolute', inset: 0,
@@ -75,11 +75,11 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
           <span style={pill('rgba(192,0,0,0.09)', '#9a0000')}>
             {nombreCat(p.ID_Categoria)}
           </span>
-          <h6 style={{ fontWeight: 700, margin: 0, fontSize: '0.95rem', color: '#1a1a1a', lineHeight: 1.3 }}>
+          <h6 style={{ fontWeight: 700, margin: 0, fontSize: '0.95rem', color: 'var(--color-text)', lineHeight: 1.3 }}>
             {p.Nombre}
           </h6>
           <p style={{
-            color: '#888', fontSize: '0.8rem', margin: 0, flexGrow: 1,
+            color: 'var(--color-text-muted)', fontSize: '0.8rem', margin: 0, flexGrow: 1,
             display: '-webkit-box', WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical', overflow: 'hidden',
           }}>

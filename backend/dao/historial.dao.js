@@ -10,13 +10,13 @@ const create = ({ ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado }) =>
         [ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado]
     );
 
-const update = ({ ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado, ID_Historial }) =>
+const update = ({ ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado, ID_Registro }) =>
     query(
-        `UPDATE Historial_Servicios SET ID_Servicio=?, Fecha_Evento=?, Descripcion_Evento=?, Estado=? WHERE ID_Historial=?`,
-        [ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado, ID_Historial]
+        `UPDATE Historial_Servicios SET ID_Servicio=?, Fecha_Evento=?, Descripcion_Evento=?, Estado=? WHERE ID_Registro=?`,
+        [ID_Servicio, Fecha_Evento, Descripcion_Evento, Estado, ID_Registro]
     );
 
 const remove = (id) =>
-    query('DELETE FROM Historial_Servicios WHERE ID_Historial = ?', [id]);
+    query('DELETE FROM Historial_Servicios WHERE ID_Registro = ?', [id]);
 
 module.exports = { getAll, create, update, remove };

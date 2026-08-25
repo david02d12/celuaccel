@@ -21,6 +21,18 @@ const getIniciales = (nombre = '') => {
   return nombre.slice(0, 2).toUpperCase();
 };
 
+const ModalOverlay = ({ titulo, onClose, children }) => (
+  <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
+    <div style={{ background:'var(--color-surface,#1e1e1e)',borderRadius:12,width:'100%',maxWidth:520,maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 40px rgba(0,0,0,0.5)' }}>
+      <div style={{ background:'var(--color-primary,#DB0000)',borderRadius:'12px 12px 0 0',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center' }}>
+        <span style={{ color:'#fff',fontWeight:700,fontSize:'1.05rem' }}>{titulo}</span>
+        <button onClick={onClose} style={{ background:'transparent',border:'none',color:'#fff',fontSize:'1.3rem',lineHeight:1,cursor:'pointer' }}>✕</button>
+      </div>
+      <div style={{ padding:'20px' }}>{children}</div>
+    </div>
+  </div>
+);
+
 const Usuarios = ({ cerrarSesion, setVista }) => {
   const miUsuario = sessionStorage.getItem('user');
   const [usuarios, setUsuarios] = useState([]);
@@ -29,6 +41,8 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
   const { minDate, maxDate } = calcFechaLimites();
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
   const [enEdicion, setEnEdicion] = useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [detalleItem, setDetalleItem] = useState(null);
   const [form, setForm] = useState({
     ID_Usuario: '', Codigo_Documento: '', Nombre: '', Fecha_Nacimiento: '',
     Direccion: '', Telefono: '', Correo: '', Clave: '', Codigo_Rol: 2
@@ -81,13 +95,22 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
   const limpiar = () => {
     setForm({ ID_Usuario: '', Codigo_Documento: '', Nombre: '', Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: '', Codigo_Rol: 2 });
     setEnEdicion(false);
+    setModalAbierto(false);
   };
 
   const prepararEdicion = (u) => {
     const fechaFormateada = u.Fecha_Nacimiento ? new Date(u.Fecha_Nacimiento).toISOString().split('T')[0] : '';
     setForm({ ...u, Fecha_Nacimiento: fechaFormateada, Clave: '' });
     setEnEdicion(true);
+    setDetalleItem(null);
+    setModalAbierto(true);
   };
+  const abrirNuevo = () => {
+    setForm({ ID_Usuario: '', Codigo_Documento: '', Nombre: '', Fecha_Nacimiento: '', Direccion: '', Telefono: '', Correo: '', Clave: '', Codigo_Rol: 2 });
+    setEnEdicion(false);
+    setModalAbierto(true);
+  };
+  const abrirDetalle = (u) => setDetalleItem(u);
 
   const usuariosFiltrados = usuarios.filter(u =>
     String(u.ID_Usuario).toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -111,6 +134,33 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
         </div>
       )}
 
+      {detalleItem && (() => {
+        const rolDB = roles.find(r => r.Codigo_Rol === detalleItem.Codigo_Rol);
+        const rolNombre = rolDB ? rolDB.Nombre_Rol : `Rol ${detalleItem.Codigo_Rol}`;
+        const info = ROL_INFO[detalleItem.Codigo_Rol] || { color: '#6c757d' };
+        const fila = (label, val) => (
+          <div style={{ display:'flex',gap:12,padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)' }}>
+            <span style={{ minWidth:140,fontWeight:700,fontSize:'0.88rem',color:'var(--color-text)' }}>{label}</span>
+            <span style={{ color:'var(--color-text)',fontSize:'0.88rem',flex:1 }}>{val || '—'}</span>
+          </div>
+        );
+        return (
+          <ModalOverlay titulo={detalleItem.Nombre || detalleItem.ID_Usuario} onClose={() => setDetalleItem(null)}>
+            {fila('ID Usuario', detalleItem.ID_Usuario)}
+            {fila('Nombre', detalleItem.Nombre)}
+            {fila('Correo', detalleItem.Correo)}
+            {fila('Teléfono', detalleItem.Telefono)}
+            {fila('Dirección', detalleItem.Direccion)}
+            {fila('Rol', rolNombre)}
+            <div className="d-flex gap-2 mt-4">
+              <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
+              <button className="btn btn-outline-secondary" style={{ flex:1 }} onClick={() => prepararEdicion(detalleItem)}>✏️ Editar</button>
+              <button className="btn" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }} onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.ID_Usuario); }}>🗑 Eliminar</button>
+            </div>
+          </ModalOverlay>
+        );
+      })()}
+
       <Navbar titulo="CELUACCEL — Directorio de Usuarios" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
@@ -119,68 +169,83 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
             <h4 className="fw-bold mb-1">Directorio de Usuarios</h4>
             <p className="mb-0 opacity-75">Gestiona cuentas, roles y datos personales</p>
           </div>
-          <span className="badge bg-white text-danger fw-bold fs-6">{usuarios.length} usuarios</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{usuarios.length} usuarios</span>
+            <button className="btn btn-sm fw-bold" style={{ background: '#fff', color: 'var(--color-primary)', borderRadius: '8px', padding: '6px 14px' }} onClick={abrirNuevo}>
+              + Nuevo usuario
+            </button>
+          </div>
         </div>
 
-        <div className="row">
-          {/* FORMULARIO */}
-          <div className="col-lg-4 col-12 mb-4">
-            <div className="card p-3 shadow-sm h-100">
-              <div className="d-flex align-items-center gap-2 mb-3">
-                <span style={{ width: 4, height: 20, background: 'var(--color-primary)', borderRadius: 2, display: 'inline-block' }}/>
-                <h5 className="mb-0 fw-bold">{enEdicion ? 'Editar Perfil' : 'Registrar Usuario'}</h5>
-              </div>
-              <div className="row g-2 mb-2">
-                <div className="col-6">
-                  <input className="form-control" style={inputStyle} placeholder="ID Usuario"
-                    value={form.ID_Usuario} disabled={enEdicion}
-                    onChange={e => setForm({...form, ID_Usuario: e.target.value})} />
-                </div>
-                <div className="col-6">
-                  <input className="form-control" style={inputStyle} type="number" placeholder="Cod. Doc."
-                    value={form.Codigo_Documento} onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
-                </div>
-              </div>
-              <input className="form-control mb-2" style={inputStyle} placeholder="Nombre Completo"
-                value={form.Nombre} onChange={e => setForm({...form, Nombre: e.target.value})} />
-              <label className="small text-muted fw-bold mb-1">Fecha de Nacimiento</label>
-              <input className="form-control mb-2" style={inputStyle} type="date"
-                min={minDate} max={maxDate}
-                value={form.Fecha_Nacimiento} onChange={e => setForm({...form, Fecha_Nacimiento: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} placeholder="Direccion"
-                value={form.Direccion} onChange={e => setForm({...form, Direccion: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} placeholder="Telefono"
-                value={form.Telefono} onChange={e => setForm({...form, Telefono: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} type="email" placeholder="Correo Electronico"
-                value={form.Correo} onChange={e => setForm({...form, Correo: e.target.value})} />
-              <input className="form-control mb-2" style={inputStyle} type="password"
-                placeholder={enEdicion ? 'Nueva Clave (opcional)' : 'Contrasena'} maxLength="15"
-                value={form.Clave} onChange={e => setForm({...form, Clave: e.target.value})} />
-              <label className="small text-muted fw-bold mb-1">Rol</label>
-              <select className="form-select mb-3" style={inputStyle} value={form.Codigo_Rol}
-                disabled={enEdicion && String(form.ID_Usuario) === String(miUsuario)}
-                onChange={e => setForm({...form, Codigo_Rol: Number(e.target.value)})}>
-                {roles.map(r => (
-                  <option key={r.Codigo_Rol} value={r.Codigo_Rol}>{r.Nombre_Rol}</option>
-                ))}
-              </select>
-              <button className="btn w-100 btn-primary fw-bold" onClick={guardar}>
-                {enEdicion ? 'Actualizar Datos' : 'Registrar'}
-              </button>
-              {enEdicion && <button className="btn btn-secondary w-100 mt-2" onClick={limpiar}>Cancelar</button>}
-            </div>
+      {modalAbierto && (
+        <ModalOverlay titulo={enEdicion ? 'Editar Perfil' : 'Registrar Usuario'} onClose={limpiar}>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">ID Usuario</label>
+            <input className="form-control" style={inputStyle} placeholder="ID Usuario"
+              value={form.ID_Usuario} disabled={enEdicion}
+              onChange={e => setForm({...form, ID_Usuario: e.target.value})} />
           </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Cód. Tipo Documento</label>
+            <input className="form-control" style={inputStyle} type="number" placeholder="Cod. Doc."
+              value={form.Codigo_Documento} onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Nombre Completo</label>
+            <input className="form-control" style={inputStyle} placeholder="Nombre Completo"
+              value={form.Nombre} onChange={e => setForm({...form, Nombre: e.target.value})} />
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Fecha de Nacimiento</label>
+            <input className="form-control" style={inputStyle} type="date" min={minDate} max={maxDate}
+              value={form.Fecha_Nacimiento} onChange={e => setForm({...form, Fecha_Nacimiento: e.target.value})} />
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Dirección</label>
+            <input className="form-control" style={inputStyle} placeholder="Direccion"
+              value={form.Direccion} onChange={e => setForm({...form, Direccion: e.target.value})} />
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Teléfono</label>
+            <input className="form-control" style={inputStyle} placeholder="Telefono"
+              value={form.Telefono} onChange={e => setForm({...form, Telefono: e.target.value})} />
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Correo Electrónico</label>
+            <input className="form-control" style={inputStyle} type="email" placeholder="Correo Electronico"
+              value={form.Correo} onChange={e => setForm({...form, Correo: e.target.value})} />
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Contraseña</label>
+            <input className="form-control" style={inputStyle} type="password"
+              placeholder={enEdicion ? 'Nueva Clave (opcional)' : 'Contrasena'} maxLength="15"
+              value={form.Clave} onChange={e => setForm({...form, Clave: e.target.value})} />
+          </div>
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-1">Rol</label>
+            <select className="form-select" style={inputStyle} value={form.Codigo_Rol}
+              disabled={enEdicion && String(form.ID_Usuario) === String(miUsuario)}
+              onChange={e => setForm({...form, Codigo_Rol: Number(e.target.value)})}>
+              {roles.map(r => (<option key={r.Codigo_Rol} value={r.Codigo_Rol}>{r.Nombre_Rol}</option>))}
+            </select>
+          </div>
+          <div className="d-flex gap-2 mt-3">
+            <button className="btn btn-secondary" style={{ flex: 1 }} onClick={limpiar}>Cerrar</button>
+            <button className="btn fw-bold" style={{ flex: 1, background: 'var(--color-primary)', color: '#fff', border: 'none' }} onClick={guardar}>
+              {enEdicion ? 'Actualizar Datos' : 'Registrar'}
+            </button>
+          </div>
+        </ModalOverlay>
+      )}
 
-          {/* CARDS DE USUARIOS */}
-          <div className="col-lg-8 col-12">
-            <div className="mb-3">
-              <input type="text" className="form-control" style={inputStyle}
-                placeholder="Buscar por ID, nombre, correo, teléfono, dirección o rol..."
-                value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
-            </div>
+        <div className="mb-3">
+          <input type="text" className="form-control" style={inputStyle}
+            placeholder="Buscar por ID, nombre, correo, teléfono, dirección o rol..."
+            value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
+        </div>
 
-            <div className="d-flex flex-column gap-2">
-              {datosPagina.map(u => {
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px,1fr))', gap:'0.75rem' }}>
+          {datosPagina.map(u => {
                 const rolDB = roles.find(r => r.Codigo_Rol === u.Codigo_Rol);
                 const rolNombre = rolDB ? rolDB.Nombre_Rol : `Rol ${u.Codigo_Rol}`;
                 const info = ROL_INFO[u.Codigo_Rol] || { color: '#6c757d' };
@@ -208,14 +273,8 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
                         </div>
                       </div>
                       <div className="d-flex gap-1 flex-shrink-0">
-                        <button id="btn-editar-usuario" className="btn btn-sm btn-outline-secondary" style={{ fontSize: '0.77rem' }}
-                          onClick={() => prepararEdicion(u)}>
-                          Editar
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.77rem' }}
-                          onClick={() => eliminar(u.ID_Usuario)}>
-                          Borrar
-                        </button>
+                        <button className="btn btn-sm fw-bold" style={{ fontSize:'0.77rem', background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6 }}
+                          onClick={() => abrirDetalle(u)}>Ver más</button>
                       </div>
                     </div>
                   </div>
@@ -223,13 +282,11 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
               })}
             </div>
 
-            {totalPaginas > 1 && (
-              <div className="mt-3">
-                <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
-              </div>
-            )}
+        {totalPaginas > 1 && (
+          <div className="mt-3">
+            <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
           </div>
-        </div>
+        )}
       </div>
 
       <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">

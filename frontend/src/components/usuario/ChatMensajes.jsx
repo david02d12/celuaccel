@@ -61,7 +61,7 @@ const ChatMensajes = ({
               const map = {
                 '-1': { t: 'Cancelado', bg: 'bg-danger' },
                 '0': { t: 'Recibido', bg: 'bg-secondary' },
-                '1': { t: 'En Revisión', bg: 'bg-warning text-dark' },
+                '1': { t: 'En Revisión', bg: 'bg-warning' },
                 '2': { t: 'Terminado', bg: 'bg-success' }
               };
               const e = map[String(etapa)];

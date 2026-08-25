@@ -119,8 +119,20 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
-      if (!form.Comentario.trim()) {
+      if (!form.ID_Usuario || !String(form.ID_Usuario).trim()) {
+        await mostrarAlerta("El ID del usuario es obligatorio.", 'warning');
+        return;
+      }
+      if (!form.Comentario || !form.Comentario.trim()) {
         await mostrarAlerta("El comentario no puede ir vacío.", 'warning');
+        return;
+      }
+      if (form.Comentario.trim().length < 10) {
+        await mostrarAlerta("El testimonio debe tener al menos 10 caracteres para ser publico.", 'warning');
+        return;
+      }
+      if (form.Comentario.trim().length > 500) {
+        await mostrarAlerta("El testimonio es muy largo (máximo 500 caracteres).", 'warning');
         return;
       }
 

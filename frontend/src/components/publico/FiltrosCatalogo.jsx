@@ -1,3 +1,4 @@
+import { useTheme } from '../../context/ThemeContext';
 import React from 'react';
 
 export const FiltrosCatalogo = ({ busqueda, setBusqueda, categoriaFiltro, setCategoriaFiltro, categorias }) => {

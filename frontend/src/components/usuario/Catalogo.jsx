@@ -49,29 +49,10 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
         Fecha: new Date().toISOString().split('T')[0]
       });
 
-      // 2. Crear un chat de consulta (sin servicio asociado)
-      const chatRes = await api.post('/chats/agregar', {
-        ID_Usuario: usuario,
-        ID_Servicio: null
-      });
-      const codigoChat = chatRes.data.id;
-
-      // 3. Enviar la pregunta como primer mensaje del chat
-      await api.post('/mensajes/agregar', {
-        Codigo_Chat: codigoChat,
-        ID_Usuario: usuario,
-        Mensaje: `Consulta sobre "${productoSel.Nombre}": ${nuevaPregunta}`,
-        Estado: 'Enviado'
-      });
-
-      // 4. Guardar referencia del chat para que ChatVista lo abra automáticamente
-      sessionStorage.setItem('chatInfo', JSON.stringify({ Codigo_Chat: codigoChat }));
-
-      // 5. Redirigir al chat en tiempo real con el técnico
       setHaciendoPregunta(false);
       setNuevaPregunta('');
       setProductoSel(null);
-      setVista('chatVista');
+      await mostrarAlerta('Tu pregunta ha sido enviada al técnico. Podrás ver la respuesta en la sección "Mis Preguntas".', 'success');
     } catch (err) {
       console.error(err);
       const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al enviar la pregunta. Intenta de nuevo.';
@@ -249,7 +230,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                   <div className="w-100 mt-2" style={{ animation: 'fadeIn 0.3s' }}>
                     <div className="alert alert-info py-2 px-3 mb-3 small d-flex align-items-center gap-2" style={{ borderRadius: '10px' }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                      Tu pregunta abrirá un chat directo con el técnico.
+                      Tu consulta será enviada al técnico. Podrás ver su respuesta en la sección "Mis Preguntas".
                     </div>
                     <textarea 
                       className="form-control mb-3 shadow-sm" 
@@ -266,8 +247,8 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
                       </button>
                       <button className="btn btn-primary fw-bold px-4" onClick={enviarPregunta} disabled={enviandoPregunta}>
                         {enviandoPregunta
-                          ? (<><span className="spinner-border spinner-border-sm me-2" />Conectando con técnico...</>)
-                          : 'Chatear con el Técnico'
+                          ? (<><span className="spinner-border spinner-border-sm me-2" />Enviando...</>)
+                          : 'Enviar Pregunta'
                         }
                       </button>
                     </div>

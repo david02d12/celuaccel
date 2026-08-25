@@ -108,8 +108,7 @@ const Home = ({ cerrarSesion, setVista }) => {
             ...(role !== 2 ? [{ titulo: 'Eventos', valor: stats.historial, vista: 'historial', isPrimary: false }] : []),
           ].map((card, i) => (
             <div key={i} className="col-6 col-md flex-grow-1">
-              <div className="card border-0 shadow-sm h-100 card-hover" style={{ cursor: 'pointer' }}
-                role="button" tabIndex="0"
+              <div className="card border-0 shadow-sm h-100 card-hover" style={{ cursor: 'pointer', backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }} role="button" tabIndex="0"
                 onClick={() => setVista(card.vista)}
                 onKeyDown={(e) => { if (e.key === 'Enter') setVista(card.vista); }}>
                 <div className="card-body text-center py-4">
@@ -129,11 +128,10 @@ const Home = ({ cerrarSesion, setVista }) => {
               <div key={i} className="col-6 col-sm-4 col-md-3 col-lg-2 stagger-item">
                 <div 
                   id={`btn-acc-${acc.vista}`} 
-                  className="card border-0 shadow-sm h-100 card-hover" 
-                  onClick={() => setVista(acc.vista)}
+                  className="card border-0 shadow-sm h-100 card-hover" style={{ cursor: 'pointer', backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }} onClick={() => setVista(acc.vista)}
                   role="button" tabIndex="0"
                   onKeyDown={(e) => { if (e.key === 'Enter') setVista(acc.vista); }}
-                  style={{ cursor: 'pointer', backgroundColor: 'var(--color-surface)' }}
+                  style={{ cursor: 'pointer' }}
                 >
                   <div className="card-body d-flex flex-column align-items-center justify-content-center text-center p-3">
                     <span className="fw-bold" style={{ color: 'var(--color-text)', fontSize: '0.9rem' }}>{acc.label}</span>
@@ -146,7 +144,7 @@ const Home = ({ cerrarSesion, setVista }) => {
 
         {/* SERVICIOS RECIENTES (SOLO PARA TÉCNICOS/ADMIN) */}
         {role !== 2 && (
-          <div className="card border-0 shadow-sm overflow-hidden">
+          <div className="card border-0 shadow-sm overflow-hidden" style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}>
             <div className="card-header bg-transparent border-bottom fw-bold d-flex justify-content-between align-items-center"
               style={{ borderColor: 'var(--color-border)' }}>
               <span> Servicios Generales Recientes</span>

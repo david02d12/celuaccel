@@ -86,6 +86,26 @@ const fechaCorta = (iso) => {
 
 const inputStyle = { backgroundColor: 'var(--color-surface)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
 
+/* ── Modal genérico ── */
+const ModalOverlay = ({ titulo, onClose, children }) => (
+  <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
+    <div style={{ background:'var(--color-surface,#1e1e1e)',borderRadius:12,width:'100%',maxWidth:500,maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 40px rgba(0,0,0,0.5)' }}>
+      <div style={{ background:'var(--color-primary,#DB0000)',borderRadius:'12px 12px 0 0',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center' }}>
+        <span style={{ color:'#fff',fontWeight:700,fontSize:'1.05rem' }}>{titulo}</span>
+        <button onClick={onClose} style={{ background:'transparent',border:'none',color:'#fff',fontSize:'1.3rem',lineHeight:1,cursor:'pointer' }}>✕</button>
+      </div>
+      <div style={{ padding:'20px' }}>{children}</div>
+    </div>
+  </div>
+);
+
+const Fila = ({ label, children }) => (
+  <div style={{ display:'flex',gap:12,padding:'9px 0',borderBottom:'1px solid var(--color-border,#333)',alignItems:'flex-start' }}>
+    <span style={{ minWidth:140,fontWeight:700,fontSize:'0.86rem',color:'var(--color-text)',flexShrink:0 }}>{label}</span>
+    <span style={{ color:'var(--color-text)',fontSize:'0.86rem',flex:1 }}>{children}</span>
+  </div>
+);
+
 const Notificaciones = ({ cerrarSesion, setVista }) => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [busqueda, setBusqueda]             = useState('');
@@ -93,6 +113,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
   const [cargando, setCargando]             = useState(true);
   const [enviando, setEnviando]             = useState(false);
   const [toast, setToast]                   = useState(null);
+  const [detalleItem, setDetalleItem]       = useState(null);
   const [form, setForm] = useState({ Codigo_Notificaciones: '', ID_Usuario_Destino: '', ID_Servicio: '', Mensaje: '' });
 
   const notificacionesFiltradas = notificaciones.filter(n => {
@@ -149,6 +170,14 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
     setEnEdicion(false);
   };
 
+  const abrirEdicion = (n) => {
+    const dest = destinoN(n);
+    setForm({ Codigo_Notificaciones: n.Codigo_Notificaciones, ID_Usuario_Destino: dest === 'General' ? '' : dest, ID_Servicio: servicioN(n) || '', Mensaje: textoNotif(n) });
+    setEnEdicion(true); setDetalleItem(null);
+  };
+
+  const abrirDetalle = (n) => setDetalleItem(n);
+
   const sinLeer = notificaciones.filter(n => !esLeida(n)).length;
 
   return (
@@ -164,6 +193,34 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
           </div>
         </div>
       )}
+
+      {/* ── MODAL DETALLE ── */}
+      {detalleItem && (() => {
+        const leida  = esLeida(detalleItem);
+        const icono  = iconoTipo(textoNotif(detalleItem));
+        const { Icon } = icono;
+        return (
+          <ModalOverlay titulo={`Notificación #${detalleItem.Codigo_Notificaciones}`} onClose={() => setDetalleItem(null)}>
+            <div className="text-center mb-4">
+              <span className="badge px-4 py-2 fs-6 fw-bold" style={{ backgroundColor: leida ? '#6c757d' : icono.color }}>
+                {leida ? '✔ Leída' : '🔔 Nueva'}
+              </span>
+            </div>
+            <Fila label="Código">#{detalleItem.Codigo_Notificaciones}</Fila>
+            <Fila label="Destinatario">{destinoN(detalleItem) || 'General'}</Fila>
+            {servicioN(detalleItem) && <Fila label="Servicio asociado">#{servicioN(detalleItem)}</Fila>}
+            <Fila label="Fecha">{fechaCorta(fechaNotif(detalleItem))}</Fila>
+            <Fila label="Mensaje"><em>{textoNotif(detalleItem)}</em></Fila>
+            <div className="d-flex gap-2 mt-4">
+              <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
+              <button className="btn btn-outline-secondary d-flex align-items-center gap-1 justify-content-center" style={{ flex:1 }}
+                onClick={() => abrirEdicion(detalleItem)}><IconEdit size={14} /> Editar</button>
+              <button className="btn d-flex align-items-center gap-1 justify-content-center" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }}
+                onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.Codigo_Notificaciones); }}><IconTrash size={14} /> Eliminar</button>
+            </div>
+          </ModalOverlay>
+        );
+      })()}
 
       <div className="container mt-4 pb-5">
         <nav aria-label="breadcrumb" className="mb-3 fade-in-up">
@@ -250,7 +307,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                 ))}
               </div>
             ) : notificacionesFiltradas.length === 0 ? (
-              <div className="text-center py-5 fade-in border rounded bg-white shadow-sm" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="text-center py-5 fade-in border rounded shadow-sm" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}>
                 <div className="mb-3 text-muted" style={{ opacity: 0.5 }}>
                   <IconBell color="currentColor" size={54} />
                 </div>
@@ -297,16 +354,10 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                             </div>
                           </div>
 
-                          {/* Acciones */}
-                          <div className="d-flex flex-column gap-1 flex-shrink-0">
-                            <button style={{ borderRadius: 7, padding: '5px 12px', fontSize: '0.72rem', fontWeight: 600, border: '1.5px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
-                              onClick={() => { setForm({ Codigo_Notificaciones: n.Codigo_Notificaciones, ID_Usuario_Destino: dest === 'General' ? '' : dest, ID_Servicio: servicioN(n) || '', Mensaje: textoNotif(n) }); setEnEdicion(true); }}>
-                              <IconEdit size={12} /> Editar
-                            </button>
-                            <button style={{ borderRadius: 7, padding: '5px 12px', fontSize: '0.72rem', fontWeight: 600, border: '1.5px solid rgba(219,0,0,0.3)', background: 'rgba(219,0,0,0.07)', color: 'var(--color-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
-                              onClick={() => eliminar(n.Codigo_Notificaciones)}>
-                              <IconTrash size={12} /> Borrar
-                            </button>
+                          {/* Ver más */}
+                          <div className="flex-shrink-0 ms-1">
+                            <button style={{ borderRadius:7, padding:'5px 14px', fontSize:'0.77rem', fontWeight:700, border:'none', background:'var(--color-primary)', color:'#fff', cursor:'pointer' }}
+                              onClick={() => abrirDetalle(n)}>Ver más</button>
                           </div>
                         </div>
                       </div>
