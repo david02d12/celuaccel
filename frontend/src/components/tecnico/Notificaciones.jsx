@@ -166,6 +166,16 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
       )}
 
       <div className="container mt-4 pb-5">
+        <nav aria-label="breadcrumb" className="mb-3 fade-in-up">
+          <ol className="breadcrumb mb-0" style={{ fontSize: '0.85rem' }}>
+            <li className="breadcrumb-item">
+              <a href="#" className="text-decoration-none text-muted" onClick={(e) => { e.preventDefault(); setVista('home'); }}>Inicio</a>
+            </li>
+            <li className="breadcrumb-item active fw-bold" aria-current="page" style={{ color: 'var(--color-primary)' }}>
+              Central de Notificaciones
+            </li>
+          </ol>
+        </nav>
 
         {/* Banner */}
         <div className="module-banner mb-4 position-relative overflow-hidden">
@@ -240,10 +250,15 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
                 ))}
               </div>
             ) : notificacionesFiltradas.length === 0 ? (
-              <div className="card text-center p-5 fade-in">
-                <div style={{ margin: '0 auto 12px', opacity: 0.2 }}><IconBell color="var(--color-text)" size={44} /></div>
-                <h6 className="fw-bold">Sin resultados</h6>
-                <p className="small" style={{ color: 'var(--color-text-muted)' }}>{busqueda ? `No se encontraron resultados para "${busqueda}"` : 'No hay notificaciones registradas.'}</p>
+              <div className="text-center py-5 fade-in border rounded bg-white shadow-sm" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="mb-3 text-muted" style={{ opacity: 0.5 }}>
+                  <IconBell color="currentColor" size={54} />
+                </div>
+                <h5 className="fw-bold mb-2 text-muted">Aún no hay notificaciones</h5>
+                <p className="text-muted small mb-4">{busqueda ? `No encontramos resultados para "${busqueda}".` : 'No hay notificaciones enviadas ni recibidas.'}</p>
+                <button className="btn btn-outline-primary fw-bold" onClick={() => document.querySelector('input[placeholder="Documento del cliente"]')?.focus()}>
+                  ¡Haz clic aquí para enviar la primera!
+                </button>
               </div>
             ) : (
               <>

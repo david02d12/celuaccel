@@ -102,6 +102,16 @@ const Productos = ({ cerrarSesion, setVista }) => {
       <Navbar titulo="CELUACCEL — Inventario de Productos" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
+        <nav aria-label="breadcrumb" className="mb-3 fade-in-up">
+          <ol className="breadcrumb mb-0" style={{ fontSize: '0.85rem' }}>
+            <li className="breadcrumb-item">
+              <a href="#" className="text-decoration-none text-muted" onClick={(e) => { e.preventDefault(); setVista('home'); }}>Inicio</a>
+            </li>
+            <li className="breadcrumb-item active fw-bold" aria-current="page" style={{ color: 'var(--color-primary)' }}>
+              Inventario de Productos
+            </li>
+          </ol>
+        </nav>
         {/* BANNER */}
         <div className="mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2 module-banner">
           <div>
@@ -181,8 +191,18 @@ const Productos = ({ cerrarSesion, setVista }) => {
             </div>
 
             {filtrados.length === 0 ? (
-              <div className="text-center py-5">
-                <p className="text-muted fw-semibold mt-3">No se encontraron productos.</p>
+              <div className="text-center py-5 fade-in border rounded bg-white shadow-sm" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="mb-3 text-muted" style={{ opacity: 0.5 }}>
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                  </svg>
+                </div>
+                <h5 className="fw-bold mb-2 text-muted">Aún no hay productos</h5>
+                <p className="text-muted small mb-4">No encontramos productos que coincidan con tu búsqueda.</p>
+                <button className="btn btn-outline-primary fw-bold" onClick={() => document.querySelector('input[placeholder="Nombre del producto"]')?.focus()}>
+                  ¡Haz clic aquí para añadir el primero!
+                </button>
               </div>
             ) : (
               <div className="d-flex flex-column gap-3">

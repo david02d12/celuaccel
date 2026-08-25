@@ -214,6 +214,16 @@ const Servicios = ({ cerrarSesion, setVista }) => {
       <Navbar titulo="CELUACCEL — Control de Reparaciones" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
+        <nav aria-label="breadcrumb" className="mb-3 fade-in-up">
+          <ol className="breadcrumb mb-0" style={{ fontSize: '0.85rem' }}>
+            <li className="breadcrumb-item">
+              <a href="#" className="text-decoration-none text-muted" onClick={(e) => { e.preventDefault(); setVista('home'); }}>Inicio</a>
+            </li>
+            <li className="breadcrumb-item active fw-bold" aria-current="page" style={{ color: 'var(--color-primary)' }}>
+              Gestión de Reparaciones
+            </li>
+          </ol>
+        </nav>
         <div className="mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2 module-banner">
           <div>
             <h4 className="fw-bold mb-1">Gestion de Reparaciones</h4>
@@ -277,8 +287,19 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             </div>
 
             {filtrados.length === 0 ? (
-              <div className="text-center py-5">
-                <p className="text-muted fw-semibold mt-3">No se encontraron servicios.</p>
+              <div className="text-center py-5 fade-in border rounded bg-white shadow-sm" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="mb-3 text-muted" style={{ opacity: 0.5 }}>
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <h5 className="fw-bold mb-2 text-muted">Aún no hay servicios</h5>
+                <p className="text-muted small mb-4">No encontramos reparaciones para mostrar en este momento.</p>
+                {userRole !== 1 && (
+                  <button className="btn btn-outline-primary fw-bold" onClick={() => document.querySelector('input[placeholder="Descripcion del problema"]')?.focus()}>
+                    ¡Haz clic aquí para crear el primero!
+                  </button>
+                )}
               </div>
             ) : (
               <div className="d-flex flex-column gap-3">
