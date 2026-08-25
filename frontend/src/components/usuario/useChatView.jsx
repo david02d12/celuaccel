@@ -134,6 +134,18 @@ export const useChatView = (role, usuario) => {
     }
   };
 
+  const eliminarChat = async (id) => {
+    if (!await confirmar('¿Estás seguro de eliminar este chat? Esta acción no se puede deshacer.')) return;
+    try {
+      await api.delete(`/chats/eliminar/${id}`);
+      await mostrarAlerta('Chat eliminado correctamente', 'success');
+      setChatSel(null);
+      cargarChats();
+    } catch (err) {
+      await mostrarAlerta('Error al eliminar el chat.', 'error');
+    }
+  };
+
   const chatsFiltrados = chats.filter(c =>
     String(c.Codigo_Chat).includes(busquedaChat) ||
     String(c.ID_Servicio).includes(busquedaChat) ||
@@ -162,6 +174,7 @@ export const useChatView = (role, usuario) => {
     iniciarChatDesdeServicio,
     enviarMensaje,
     eliminarMensaje,
+    eliminarChat,
     chatsFiltrados,
     handleKeyDown
   };
