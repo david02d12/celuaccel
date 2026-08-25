@@ -60,32 +60,32 @@ const Home = ({ cerrarSesion, setVista }) => {
   // Se han removido las vistas duplicadas que ya están en las tarjetas superiores (Servicios, Productos, Historial/Eventos, Usuarios)
   const menuAccesoFiltro = role === 2
     ? [
-        { label: 'Chat con Asesor',     vista: 'chatVista',        icon: '💬' },
-        { label: 'Notificaciones',      vista: 'misNotificaciones',icon: '🔔' },
-        { label: 'Mis Preguntas',       vista: 'misPreguntas',     icon: '❓' },
-        { label: 'Comentarios',         vista: 'comentarios',      icon: '⭐' },
-        { label: 'Mi Perfil',           vista: 'perfil',           icon: '👤' },
+        { label: 'Chat con Asesor',     vista: 'chatVista' },
+        { label: 'Notificaciones',      vista: 'misNotificaciones' },
+        { label: 'Mis Preguntas',       vista: 'misPreguntas' },
+        { label: 'Comentarios',         vista: 'comentarios' },
+        { label: 'Mi Perfil',           vista: 'perfil' },
       ]
     : role === 1
     ? [
-        { label: 'Chat de Soporte',     vista: 'chatVista',        icon: '💬' },
-        { label: 'Notificaciones',      vista: 'notificaciones',   icon: '🔔' },
-        { label: 'Categorías',          vista: 'categorias',       icon: '🏷️' },
-        { label: 'Preguntas',           vista: 'preguntas',        icon: '❓' },
-        { label: 'Catálogo',            vista: 'catalogo',         icon: '🛍️' },
-        { label: 'Comentarios',         vista: 'comentarios',      icon: '⭐' },
-        { label: 'Mi Perfil',           vista: 'perfil',           icon: '👤' },
+        { label: 'Chat de Soporte',     vista: 'chatVista' },
+        { label: 'Notificaciones',      vista: 'notificaciones' },
+        { label: 'Categorías',          vista: 'categorias' },
+        { label: 'Preguntas',           vista: 'preguntas' },
+        { label: 'Catálogo',            vista: 'catalogo' },
+        { label: 'Comentarios',         vista: 'comentarios' },
+        { label: 'Mi Perfil',           vista: 'perfil' },
       ]
     : [
-        { label: 'Chat de Soporte',     vista: 'chatVista',        icon: '💬' },
-        { label: 'Notificaciones',      vista: 'notificaciones',   icon: '🔔' },
-        { label: 'Categorías',          vista: 'categorias',       icon: '🏷️' },
-        { label: 'Preguntas',           vista: 'preguntas',        icon: '❓' },
-        { label: 'Catálogo',            vista: 'catalogo',         icon: '🛍️' },
-        { label: 'Comentarios',         vista: 'comentarios',      icon: '⭐' },
-        { label: 'Tipos Doc.',          vista: 'tipo',             icon: '📄' },
-        { label: 'Roles',               vista: 'roles',            icon: '🛡️' },
-        { label: 'Mi Perfil',           vista: 'perfil',           icon: '👤' },
+        { label: 'Chat de Soporte',     vista: 'chatVista' },
+        { label: 'Notificaciones',      vista: 'notificaciones' },
+        { label: 'Categorías',          vista: 'categorias' },
+        { label: 'Preguntas',           vista: 'preguntas' },
+        { label: 'Catálogo',            vista: 'catalogo' },
+        { label: 'Comentarios',         vista: 'comentarios' },
+        { label: 'Tipos Doc.',          vista: 'tipo' },
+        { label: 'Roles',               vista: 'roles' },
+        { label: 'Mi Perfil',           vista: 'perfil' },
       ];
 
   return (
@@ -136,8 +136,7 @@ const Home = ({ cerrarSesion, setVista }) => {
                   style={{ cursor: 'pointer', backgroundColor: 'var(--color-surface)' }}
                 >
                   <div className="card-body d-flex flex-column align-items-center justify-content-center text-center p-3">
-                    <span className="fs-3 mb-2">{acc.icon}</span>
-                    <span className="fw-bold" style={{ color: 'var(--color-text)', fontSize: '0.85rem' }}>{acc.label}</span>
+                    <span className="fw-bold" style={{ color: 'var(--color-text)', fontSize: '0.9rem' }}>{acc.label}</span>
                   </div>
                 </div>
               </div>
