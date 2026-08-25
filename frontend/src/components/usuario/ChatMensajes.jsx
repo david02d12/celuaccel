@@ -91,14 +91,17 @@ const ChatMensajes = ({
                 {role === 3 && (
                   <div>
                     <button 
-                      className="btn btn-sm btn-outline-danger fw-bold d-flex align-items-center gap-1" 
+                      className="btn btn-link text-muted p-2" 
+                      title="Eliminar Chat"
+                      style={{ transition: 'color 0.2s' }}
+                      onMouseEnter={(e) => e.currentTarget.classList.add('text-danger')}
+                      onMouseLeave={(e) => e.currentTarget.classList.remove('text-danger')}
                       onClick={() => eliminarChat(chatSel.Codigo_Chat)}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                       </svg>
-                      Eliminar Chat
                     </button>
                   </div>
                 )}
