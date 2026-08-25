@@ -48,6 +48,13 @@ exports.actualizar = async (req, res) => {
 exports.eliminar = async (req, res) => {
     try {
         await chatService.eliminar(req.params.id);
-        res.status(200).json({ message: 'Chat eliminado correctamente.' });
+        res.status(200).json({ message: 'Chat ocultado correctamente.' });
+    } catch (err) { handleError(res, err); }
+};
+
+exports.restaurar = async (req, res) => {
+    try {
+        await chatService.restaurar(req.params.id);
+        res.status(200).json({ message: 'Chat restaurado correctamente.' });
     } catch (err) { handleError(res, err); }
 };

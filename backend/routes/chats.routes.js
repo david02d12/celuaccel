@@ -8,5 +8,6 @@ router.post('/chats/agregar',       validarToken,              chatController.ag
 router.post('/chats/crear',         validarToken,              chatController.agregar);
 router.put('/chats/actualizar',     validarToken,              chatController.actualizar);
 router.delete('/chats/eliminar/:id',validarToken, validarRol(1, 3), chatController.eliminar);
+router.put('/chats/restaurar/:id',  validarToken, validarRol(1, 3), chatController.restaurar);
 
 module.exports = router;

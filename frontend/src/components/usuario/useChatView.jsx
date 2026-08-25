@@ -146,6 +146,19 @@ export const useChatView = (role, usuario) => {
     }
   };
 
+  const restaurarChat = async (id) => {
+    if (!await confirmar('¿Estás seguro de restaurar este chat y hacerlo visible de nuevo?')) return;
+    try {
+      await api.put(`/chats/restaurar/${id}`);
+      await mostrarAlerta('Chat restaurado correctamente', 'success');
+      cargarChats();
+      // Update local chatSel state if it's the currently selected chat
+      setChatSel(prev => prev && prev.Codigo_Chat === id ? { ...prev, Estado_Chat: 'Activo' } : prev);
+    } catch (err) {
+      await mostrarAlerta('Error al restaurar el chat.', 'error');
+    }
+  };
+
   const chatsFiltrados = chats.filter(c =>
     String(c.Codigo_Chat).includes(busquedaChat) ||
     String(c.ID_Servicio).includes(busquedaChat) ||
@@ -175,6 +188,7 @@ export const useChatView = (role, usuario) => {
     enviarMensaje,
     eliminarMensaje,
     eliminarChat,
+    restaurarChat,
     chatsFiltrados,
     handleKeyDown
   };
