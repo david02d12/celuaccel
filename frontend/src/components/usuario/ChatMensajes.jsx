@@ -70,7 +70,7 @@ const ChatMensajes = ({
             };
 
             return (
-              <div className="p-3 border-bottom d-flex align-items-center gap-3" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
+              <div className="p-3 border-bottom d-flex align-items-center gap-3" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)', position: 'relative' }}>
                 <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
                   style={{ width: '44px', height: '44px', backgroundColor: 'var(--color-primary)', fontSize: '0.9rem', color: '#fff' }}>
                   {iniciales}
@@ -87,20 +87,20 @@ const ChatMensajes = ({
                     }
                   </div>
                 </div>
-                {/* BOTON ELIMINAR CHAT (Solo Admin) */}
+                {/* BOTON OCULTAR CHAT (Solo Admin) */}
                 {role === 3 && (
-                  <div>
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
                     <button 
-                      className="btn btn-link text-muted p-2" 
-                      title="Eliminar Chat"
+                      className="btn btn-link text-muted p-1" 
+                      title="Ocultar Chat"
                       style={{ transition: 'color 0.2s' }}
                       onMouseEnter={(e) => e.currentTarget.classList.add('text-danger')}
                       onMouseLeave={(e) => e.currentTarget.classList.remove('text-danger')}
                       onClick={() => eliminarChat(chatSel.Codigo_Chat)}
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
                       </svg>
                     </button>
                   </div>

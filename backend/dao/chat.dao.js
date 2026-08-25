@@ -70,6 +70,6 @@ const update = ({ ID_Usuario, ID_Servicio, Codigo_Chat }) =>
     );
 
 const remove = (id) =>
-    query('UPDATE Chat SET Estado_Chat = \'Inactivo\' WHERE Codigo_Chat = ?', [id]);
+    query('UPDATE Chat SET Estado_Chat = \'Oculto\' WHERE Codigo_Chat = ?', [id]);
 
 module.exports = { getAll, getMios, findByServicio, create, update, remove };
