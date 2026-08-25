@@ -186,10 +186,23 @@ const Perfil = ({ cerrarSesion, setVista, perfilObjetivoId }) => {
     try {
       const res = await api.get(`/usuarios/perfil/${idAcargar}`);
       setPerfil(res.data);
-      // Intenta separar el nombre completo en nombres y apellidos si el backend lo devuelve junto
+      // Intenta separar el nombre completo en nombres y apellidos
       const partes = (res.data.Nombre || '').trim().split(/\s+/);
-      const apellidos = partes.slice(-2).join(' ');
-      const nombres   = partes.slice(0, partes.length - 2).join(' ') || partes[0] || '';
+      let nombres = '';
+      let apellidos = '';
+      
+      if (partes.length === 1) {
+        nombres = partes[0];
+      } else if (partes.length === 2) {
+        nombres = partes[0];
+        apellidos = partes[1];
+      } else if (partes.length === 3) {
+        nombres = partes.slice(0, 1).join(' '); // 1 nombre
+        apellidos = partes.slice(1).join(' ');  // 2 apellidos
+      } else if (partes.length >= 4) {
+        nombres = partes.slice(0, 2).join(' '); // 2 nombres
+        apellidos = partes.slice(2).join(' ');  // el resto son apellidos
+      }
       setForm({
         Nombres:      nombres,
         Apellidos:    apellidos,
