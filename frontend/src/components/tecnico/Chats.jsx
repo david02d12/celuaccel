@@ -66,7 +66,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
               {detalleItem.ID_Servicio ? `📡 Servicio #${detalleItem.ID_Servicio}` : '📋 Consulta Catálogo'}
             </span>
           </div>
-          {[['Código Chat', detalleItem.Codigo_Chat], ['ID Usuario', detalleItem.ID_Usuario], ['ID Servicio', detalleItem.ID_Servicio || 'N/A']].map(([l,v]) => (
+          {[['Código Chat', detalleItem.Codigo_Chat], ['ID Usuario', detalleItem.ID_Usuario], ['ID Servicio', detalleItem.ID_Servicio || 'N/A'], ['Estado', detalleItem.Estado_Chat || 'Activo']].map(([l,v]) => (
             <div key={l} style={{ display:'flex',gap:12,padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)' }}>
               <span style={{ minWidth:130,fontWeight:700,fontSize:'0.88rem',color:'var(--color-text)' }}>{l}</span>
               <span style={{ color:'var(--color-text)',fontSize:'0.88rem' }}>{v}</span>
@@ -134,7 +134,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
           <div className="table-responsive">
             <table className="table table-hover mb-0">
               <thead>
-                <tr><th>Cod</th><th>ID Usuario</th><th>ID Servicio</th><th>Acciones</th></tr>
+                <tr><th>Cod</th><th>ID Usuario</th><th>ID Servicio</th><th>Estado</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {chats.filter(c =>
@@ -149,6 +149,11 @@ const Chats = ({ cerrarSesion, setVista }) => {
                     <td>{c.ID_Servicio
                       ? <span className="badge bg-primary">Servicio #{c.ID_Servicio}</span>
                       : <span className="badge bg-warning text-dark">Catálogo</span>}
+                    </td>
+                    <td>
+                      {c.Estado_Chat === 'Oculto' 
+                        ? <span className="badge bg-secondary">Oculto</span> 
+                        : <span className="badge bg-success">Activo</span>}
                     </td>
                     <td>
                       <button className="btn btn-sm fw-bold" style={{ background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6, fontSize:'0.77rem' }}

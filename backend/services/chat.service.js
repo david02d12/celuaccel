@@ -1,7 +1,7 @@
 const AppError = require('../config/AppError');
 const chatDao = require('../dao/chat.dao');
 
-const listar = () => chatDao.getAll();
+const listar = (rol) => chatDao.getAll(rol);
 
 const listarMios = async (idUsuario) => {
     if (!idUsuario) throw new AppError('Usuario no autenticado.', 401);

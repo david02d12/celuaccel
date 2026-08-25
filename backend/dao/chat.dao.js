@@ -7,6 +7,7 @@ const CHAT_SELECT = `
         c.ID_Usuario,
         c.ID_Servicio,
         s.Etapa             AS Etapa_Servicio,
+        c.Estado_Chat,
         u.Nombre            AS Nombre_Usuario,
         m.Mensaje           AS Ultimo_Mensaje,
         m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje,
@@ -28,16 +29,18 @@ const CHAT_SELECT = `
     )
 `;
 
-const getAll = () =>
-    query(`${CHAT_SELECT} WHERE c.Estado_Chat = 'Activo' ORDER BY c.Codigo_Chat DESC`);
+const getAll = (rol) => {
+    const whereClause = rol === 3 ? '' : " WHERE c.Estado_Chat = 'Activo'";
+    return query(`${CHAT_SELECT} ${whereClause} ORDER BY c.Codigo_Chat DESC`);
+};
 
 const getMios = (idUsuario) =>
     query(
         `${CHAT_SELECT}
-         WHERE c.Estado_Chat = 'Activo' AND (TRIM(c.ID_Usuario) = TRIM(?)
+         WHERE TRIM(c.ID_Usuario) = TRIM(?)
             OR c.ID_Servicio IN (
                 SELECT ID_Servicio FROM Servicio WHERE TRIM(ID_Usuario) = TRIM(?)
-            ))
+            )
          ORDER BY c.Codigo_Chat DESC`,
         [idUsuario, idUsuario]
     );

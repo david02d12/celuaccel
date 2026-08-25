@@ -127,8 +127,13 @@ const ChatLista = ({
                     }}>
                     {iniciales}
                   </div>
-                  <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                    <div className={`fw-bold small text-truncate ${isActive ? 'text-primary' : ''}`} title={titulo}>{titulo}</div>
+                  <div style={{ minWidth: 0, overflow: 'hidden', flexGrow: 1 }}>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className={`fw-bold small text-truncate ${isActive ? 'text-primary' : ''}`} title={titulo}>{titulo}</div>
+                      {role === 3 && c.Estado_Chat === 'Oculto' && (
+                        <span className="badge bg-secondary ms-2" style={{ fontSize: '0.65rem' }}>Oculto</span>
+                      )}
+                    </div>
                     <div className="small text-muted text-truncate">
                       Chat #{c.Codigo_Chat} • {c.ID_Servicio ? `Servicio #${c.ID_Servicio}` : 'Catálogo'}
                     </div>
