@@ -146,8 +146,8 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
     if (formReg.Clave.trim().length < 6) {
       mostrarToast('La contraseña debe tener mínimo 6 caracteres.', false); return;
     }
-    if (formReg.Clave.trim().length > 15) {
-      mostrarToast('La contraseña no puede exceder los 15 caracteres.', false); return;
+    if (formReg.Clave.trim().length > 64) {
+      mostrarToast('La contraseña no puede exceder los 64 caracteres.', false); return;
     }
     if (formReg.Clave.trim() !== formReg.ClaveConfirm.trim()) {
       mostrarToast('Las contraseñas no coinciden. Verifícalas e intenta de nuevo.', false); return;

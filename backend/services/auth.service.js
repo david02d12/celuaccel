@@ -13,7 +13,7 @@ const registro = async ({ ID_Usuario, Codigo_Documento, Nombre, Fecha_Nacimiento
     }
     if (Clave) {
         if (Clave.trim().length < 6) throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
-        if (Clave.trim().length > 15) throw new AppError('La contraseña no puede exceder los 15 caracteres.', 400);
+        if (Clave.trim().length > 64) throw new AppError('La contraseña no puede exceder los 64 caracteres.', 400);
     }
     const hashedClave = await bcrypt.hash(Clave, SALT_ROUNDS);
     const rolAsignado = Codigo_Rol || 2;

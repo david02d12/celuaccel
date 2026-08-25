@@ -23,7 +23,7 @@ const validarCambioRol = async (ID_Usuario, Codigo_Rol) => {
 const procesarClave = async (Clave) => {
     if (!Clave) return null;
     if (Clave.trim().length < 6) throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
-    if (Clave.trim().length > 15) throw new AppError('La contraseña no puede exceder los 15 caracteres.', 400);
+    if (Clave.trim().length > 64) throw new AppError('La contraseña no puede exceder los 64 caracteres.', 400);
     return await bcrypt.hash(Clave, SALT_ROUNDS);
 };
 
