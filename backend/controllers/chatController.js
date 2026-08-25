@@ -21,7 +21,7 @@ const handleError = (res, err) =>
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor.' });
 
 exports.listar = async (req, res) => {
-    try { res.status(200).json(await chatService.listar()); }
+    try { res.status(200).json(await chatService.listar(req.userRol)); }
     catch (err) { handleError(res, err); }
 };
 
