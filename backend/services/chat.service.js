@@ -43,5 +43,10 @@ const eliminar = async (id) => {
     const result = await chatDao.remove(id);
     if (result.affectedRows === 0) throw new AppError('Chat no encontrado.', 404);
 };
+const restaurar = async (id) => {
+    if (!id) throw new AppError('El ID del chat es obligatorio.', 400);
+    const result = await chatDao.restore(id);
+    if (result.affectedRows === 0) throw new AppError('Chat no encontrado.', 404);
+};
 
-module.exports = { listar, listarMios, agregar, actualizar, eliminar };
+module.exports = { listar, listarMios, agregar, actualizar, eliminar, restaurar };

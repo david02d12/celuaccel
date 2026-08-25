@@ -46,9 +46,18 @@ const Chats = ({ cerrarSesion, setVista }) => {
   const eliminar = async (id) => {
     const idNum = Number(id);
     if (!Number.isInteger(idNum)) return;
-    if (await confirmar('¿Eliminar chat?')) {
+    if (await confirmar('¿Ocultar este chat?')) {
       try { await api.delete(`/chats/eliminar/${idNum}`); listar(); }
-      catch { await mostrarAlerta('Error al eliminar chat', 'error'); }
+      catch { await mostrarAlerta('Error al ocultar chat', 'error'); }
+    }
+  };
+
+  const restaurar = async (id) => {
+    const idNum = Number(id);
+    if (!Number.isInteger(idNum)) return;
+    if (await confirmar('¿Restaurar este chat?')) {
+      try { await api.put(`/chats/restaurar/${idNum}`); listar(); }
+      catch { await mostrarAlerta('Error al restaurar chat', 'error'); }
     }
   };
 
@@ -75,7 +84,11 @@ const Chats = ({ cerrarSesion, setVista }) => {
           <div className="d-flex gap-2 mt-4">
             <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
             <button className="btn btn-outline-secondary" style={{ flex:1 }} onClick={() => abrirEdicion(detalleItem)}>✏️ Editar</button>
-            <button className="btn" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }} onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.Codigo_Chat); }}>🗑 Eliminar</button>
+            {detalleItem.Estado_Chat === 'Oculto' ? (
+              <button className="btn" style={{ flex:1, background:'#198754', color:'#fff', border:'none' }} onClick={async () => { setDetalleItem(null); await restaurar(detalleItem.Codigo_Chat); }}>👁️ Restaurar</button>
+            ) : (
+              <button className="btn" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }} onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.Codigo_Chat); }}>🚫 Ocultar</button>
+            )}
           </div>
         </ModalOverlay>
       )}

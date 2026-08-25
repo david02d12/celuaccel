@@ -2183,6 +2183,29 @@
           }
         }
       }
+    },
+    "/chats/restaurar/{id}": {
+      "put": {
+        "description": "Restaura un chat previamente ocultado, cambiando su Estado_Chat a 'Activo'.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   }
 }
