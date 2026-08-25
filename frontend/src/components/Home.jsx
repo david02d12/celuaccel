@@ -57,32 +57,35 @@ const Home = ({ cerrarSesion, setVista }) => {
     return { texto: `Etapa ${e}`, color: '#6c757d' };
   };
 
+  // Se han removido las vistas duplicadas que ya están en las tarjetas superiores (Servicios, Productos, Historial/Eventos, Usuarios)
   const menuAccesoFiltro = role === 2
     ? [
-        { label: 'Mis Servicios',       vista: 'miServicio' },
-        { label: 'Chat con Asesor',     vista: 'chatVista'  },
-        { label: 'Catálogo',           vista: 'catalogo'   },
-        { label: 'Comentarios',         vista: 'comentarios'},
+        { label: 'Chat con Asesor',     vista: 'chatVista',        icon: '💬' },
+        { label: 'Notificaciones',      vista: 'misNotificaciones',icon: '🔔' },
+        { label: 'Mis Preguntas',       vista: 'misPreguntas',     icon: '❓' },
+        { label: 'Comentarios',         vista: 'comentarios',      icon: '⭐' },
+        { label: 'Mi Perfil',           vista: 'perfil',           icon: '👤' },
       ]
     : role === 1
     ? [
-        { label: 'Gestión de Servicios', vista: 'servicios'      },
-        { label: 'Chat de Soporte',      vista: 'chatVista'      },
-        { label: 'Historial',            vista: 'historial'      },
-        { label: 'Productos',            vista: 'productos'      },
-        { label: 'Categorías',          vista: 'categorias'     },
-        { label: 'Notificaciones',      vista: 'notificaciones' },
-        { label: 'Comentarios',         vista: 'comentarios'    },
-        { label: 'Catálogo',           vista: 'catalogo'       },
+        { label: 'Chat de Soporte',     vista: 'chatVista',        icon: '💬' },
+        { label: 'Notificaciones',      vista: 'notificaciones',   icon: '🔔' },
+        { label: 'Categorías',          vista: 'categorias',       icon: '🏷️' },
+        { label: 'Preguntas',           vista: 'preguntas',        icon: '❓' },
+        { label: 'Catálogo',            vista: 'catalogo',         icon: '🛍️' },
+        { label: 'Comentarios',         vista: 'comentarios',      icon: '⭐' },
+        { label: 'Mi Perfil',           vista: 'perfil',           icon: '👤' },
       ]
     : [
-        { label: 'Gestión de Servicios', vista: 'servicios'      },
-        { label: 'Usuarios',             vista: 'usuarios'       },
-        { label: 'Historial',            vista: 'historial'      },
-        { label: 'Productos',            vista: 'productos'      },
-        { label: 'Categorías',          vista: 'categorias'     },
-        { label: 'Notificaciones',      vista: 'notificaciones' },
-        { label: 'Tipos de Documento',  vista: 'tipo'           },
+        { label: 'Chat de Soporte',     vista: 'chatVista',        icon: '💬' },
+        { label: 'Notificaciones',      vista: 'notificaciones',   icon: '🔔' },
+        { label: 'Categorías',          vista: 'categorias',       icon: '🏷️' },
+        { label: 'Preguntas',           vista: 'preguntas',        icon: '❓' },
+        { label: 'Catálogo',            vista: 'catalogo',         icon: '🛍️' },
+        { label: 'Comentarios',         vista: 'comentarios',      icon: '⭐' },
+        { label: 'Tipos Doc.',          vista: 'tipo',             icon: '📄' },
+        { label: 'Roles',               vista: 'roles',            icon: '🛡️' },
+        { label: 'Mi Perfil',           vista: 'perfil',           icon: '👤' },
       ];
 
   return (
@@ -119,23 +122,26 @@ const Home = ({ cerrarSesion, setVista }) => {
         </div>
 
         {/* ACCESOS RÁPIDOS */}
-        <div className="row g-3 mb-4">
-          <div className="col-12">
-            <div className="card border-0 shadow-sm">
-              <div className="card-header bg-transparent fw-bold border-bottom" style={{ borderColor: 'var(--color-border)' }}>
-                 Accesos Rápidos
-              </div>
-              <div className="card-body">
-                <div className="d-flex flex-wrap gap-2">
-                  {menuAccesoFiltro.map((acc, i) => (
-                    <button key={i} id={`btn-acc-${acc.vista}`} className={`btn fw-bold ${i % 2 === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
-                      onClick={() => setVista(acc.vista)}>
-                      {acc.label}
-                    </button>
-                  ))}
+        <div className="mb-4">
+          <h5 className="fw-bold mb-3 ms-1" style={{ color: 'var(--color-text)' }}>Accesos Rápidos</h5>
+          <div className="row g-3">
+            {menuAccesoFiltro.map((acc, i) => (
+              <div key={i} className="col-6 col-sm-4 col-md-3 col-lg-2 stagger-item">
+                <div 
+                  id={`btn-acc-${acc.vista}`} 
+                  className="card border-0 shadow-sm h-100 card-hover" 
+                  onClick={() => setVista(acc.vista)}
+                  role="button" tabIndex="0"
+                  onKeyDown={(e) => { if (e.key === 'Enter') setVista(acc.vista); }}
+                  style={{ cursor: 'pointer', backgroundColor: 'var(--color-surface)' }}
+                >
+                  <div className="card-body d-flex flex-column align-items-center justify-content-center text-center p-3">
+                    <span className="fs-3 mb-2">{acc.icon}</span>
+                    <span className="fw-bold" style={{ color: 'var(--color-text)', fontSize: '0.85rem' }}>{acc.label}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
 

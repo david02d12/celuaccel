@@ -127,7 +127,7 @@ const Notificaciones = ({ cerrarSesion, setVista }) => {
     setEnviando(true);
     try {
       if (enEdicion) {
-        await api.put('/notificaciones/actualizar', { Codigo_Notificaciones: form.Codigo_Notificaciones, Tipo_Notificacion: form.Mensaje });
+        await api.put('/notificaciones/actualizar', { ID_Notificacion: form.Codigo_Notificaciones, Mensaje: form.Mensaje });
         mostrarToast('Notificación actualizada.');
       } else {
         await api.post('/notificaciones/dirigida', { ID_Usuario_Destino: form.ID_Usuario_Destino, ID_Servicio: form.ID_Servicio || null, Mensaje: form.Mensaje });

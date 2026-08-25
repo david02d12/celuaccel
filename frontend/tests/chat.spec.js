@@ -60,6 +60,41 @@ describe('Módulo de Chat — Usuario', () => {
     await mensaje.waitForDisplayed({ timeout: 15000 });
     expect(await mensaje.isDisplayed()).toBe(true);
   });
+  it('Probar el decremento del conteo de mensajes pendientes tras leer una conversación', async () => {
+    // 1. Insertamos un mensaje pendiente (no leído) en el chat de Maria
+    await runQuery(`
+      INSERT INTO mensajes (Codigo_Chat, ID_Usuario, Mensaje, Estado) 
+      SELECT Codigo_Chat, 'carlos@correo.com', 'Mensaje de prueba pendiente', 0 
+      FROM chat WHERE ID_Usuario = 'maria@correo.com' LIMIT 1
+    `);
+
+    // 2. Iniciamos sesión
+    await loginComo(USUARIO_ID, USUARIO_PASS);
+
+    // 3. Verificamos que el badge del menú lateral exista (solo se renderiza si hay mensajes > 0)
+    const badgeSidebar = await $('#nav-chatVista .badge');
+    await badgeSidebar.waitForExist({ timeout: 15000 });
+
+    // 4. Entramos a la vista de chat desde el panel rápido
+    const btnChat = await $('#btn-acc-chatVista');
+    await btnChat.waitForExist({ timeout: 5000 });
+    await btnChat.click();
+
+    // 5. Hacemos clic en la conversación (esto dispara la lectura en el backend)
+    const chatItem = await $('div[style*="cursor: pointer"]');
+    await chatItem.waitForExist({ timeout: 10000 });
+    await chatItem.click();
+
+    // Damos un momento al servidor para procesar la petición PUT
+    await browser.pause(1500);
+
+    // Refrescamos la página para forzar el re-render y saltarnos los 15s de espera del polling
+    await browser.refresh();
+
+    // 6. Comprobamos que el badge de pendientes ha desaparecido
+    const badgeAfter = await $('#nav-chatVista .badge');
+    await badgeAfter.waitForExist({ reverse: true, timeout: 5000 });
+  });
 
 });
 

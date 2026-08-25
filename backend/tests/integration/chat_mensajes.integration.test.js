@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 describe('Chat + Mensajes Integration Tests (Database)', () => {
     const userId = `INT_CHAT_${Math.floor(Math.random() * 100000)}`;
+    const adminId = `INT_ADM_${Math.floor(Math.random() * 100000)}`;
     let token;
     let chatId;
 
@@ -12,6 +13,10 @@ describe('Chat + Mensajes Integration Tests (Database)', () => {
         await queryPromise(
             'INSERT INTO Usuario (ID_Usuario, Nombre, Correo, Contraseña, Codigo_Rol) VALUES (?, ?, ?, ?, ?)',
             [userId, 'Chat Test User', `${userId}@test.com`, 'hash', 2]
+        );
+        await queryPromise(
+            'INSERT INTO Usuario (ID_Usuario, Nombre, Correo, Contraseña, Codigo_Rol) VALUES (?, ?, ?, ?, ?)',
+            [adminId, 'Admin Test User', `${adminId}@test.com`, 'hash', 1]
         );
         token = jwt.sign({ id: userId }, process.env.JWT_SECRET || 'CeluAccel_S3cr3t_K3y_2026!#Secure', { expiresIn: '1h' });
     });
@@ -22,6 +27,7 @@ describe('Chat + Mensajes Integration Tests (Database)', () => {
             await queryPromise('DELETE FROM Chat WHERE Codigo_Chat = ?', [chatId]);
         }
         await queryPromise('DELETE FROM Usuario WHERE ID_Usuario = ?', [userId]);
+        await queryPromise('DELETE FROM Usuario WHERE ID_Usuario = ?', [adminId]);
     });
 
     it('Debe crear un chat de consulta (sin servicio) en la DB real', async () => {
@@ -90,5 +96,35 @@ describe('Chat + Mensajes Integration Tests (Database)', () => {
             .expect(200);
 
         expect(Array.isArray(res.body)).toBe(true);
+    });
+    it('Debe devolver el conteo de mensajes no leídos (pendientes)', async () => {
+        // Simulamos que un técnico (adminId) envía un mensaje a este chat
+        await queryPromise(
+            'INSERT INTO Mensajes (Codigo_Chat, ID_Usuario, Mensaje, Estado) VALUES (?, ?, ?, ?)',
+            [chatId, adminId, 'Respuesta del técnico', 0]
+        );
+
+        const res = await request(app)
+            .get('/api/mensajes/no-leidos')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(res.body.total).toBeGreaterThanOrEqual(1);
+    });
+
+    it('Debe decrementar el conteo de mensajes pendientes al leer la conversación', async () => {
+        // El usuario lee el chat
+        await request(app)
+            .put(`/api/mensajes/leidos/${chatId}`)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        // Verificamos que el conteo ahora es 0
+        const res = await request(app)
+            .get('/api/mensajes/no-leidos')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+
+        expect(res.body.total).toBe(0);
     });
 });

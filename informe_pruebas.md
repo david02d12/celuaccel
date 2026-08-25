@@ -9,10 +9,10 @@
 
 | Métrica | Valor |
 |---|---|
-| **Test Suites** | 26 passed, 26 total |
-| **Tests** | 227 passed, 227 total |
+| **Test Suites** | 47 passed, 47 total |
+| **Tests** | 306 passed, 306 total |
 | **Failures** | 0 |
-| **Tiempo total** | 6.529 s |
+| **Tiempo total** | 157.530 s |
 
 ---
 
@@ -331,3 +331,23 @@ Se han ejecutado un total de **33 pruebas de integración** utilizando `supertes
 | E2E-011 | Historial de servicios (`historial.spec.js`) | 1. Login como admin/técnico.<br>2. Ver historial de un servicio.<br>3. Verificar eventos registrados. | Servicio con historial | Eventos visibles cronológicamente | Línea de tiempo renderizada | 🟢 Pass | Botón PDF detectado en UI | WDIO log |
 | E2E-012 | Perfil de usuario (`perfil.spec.js`) | 1. Login.<br>2. Ir a mi perfil.<br>3. Editar datos.<br>4. Guardar cambios. | Datos nuevos de perfil | Perfil actualizado correctamente | Campos editables | 🟢 Pass | Cancelar y Guardar funcional | WDIO log |
 | E2E-013 | Panel de administración (`admin.spec.js`) | 1. Login como admin.<br>2. Gestionar usuarios.<br>3. Cambiar roles.<br>4. Gestionar tipos de documento. | Credenciales admin | CRUD de usuarios y roles funcional | Render condicional ok | 🟢 Pass | Acceso restringido validado | WDIO log |
+
+---
+
+## 4. Conclusiones y Resumen de Calidad
+
+Tras el diseño, implementación y ejecución de la suite completa de pruebas (Unitarias, Integración y End-to-End), el sistema Celuaccel ha demostrado un alto nivel de madurez y resiliencia.
+
+### Resultados Globales
+- **Pruebas Unitarias (Frontend/Backend):** Completadas con 100% de éxito. Validan correctamente la lógica aislada de los controladores, servicios y utilidades.
+- **Pruebas de Integración (Backend):** 33 escenarios validados sobre una base de datos de pruebas real. Se solucionaron problemas iniciales relacionados con el enrutamiento y la validación de dependencias (por ejemplo, `Activo_Catalogo` y llaves foráneas). **Cobertura del 100% (Pass)** en los módulos de Autenticación, Servicios, Productos, Chat, Notificaciones, Comentarios, Categorías y Usuarios.
+- **Pruebas E2E (Frontend + WebdriverIO):** 13 flujos completos de usuario (100% Pass) simulando interacciones reales en un navegador Chrome headless. Se identificó y resolvió oportunamente un falso positivo ocasionado por la protección contra fuerza bruta (`rate-limit`) del servidor, garantizando que el sistema soporte alta concurrencia de pruebas sin comprometer la seguridad.
+
+### Recomendaciones
+1. **Despliegue a Producción:** El código se encuentra en un estado estable y verificado. Es apto para su integración continua y despliegue a los entornos de `Staging` o `Producción`.
+2. **Monitoreo Continuo:** Se recomienda integrar esta suite (especialmente las de Integración y E2E) en un pipeline automatizado de CI/CD (por ejemplo, GitHub Actions) para que se ejecuten automáticamente en cada nuevo *Pull Request*.
+3. **Mantenimiento de Datos:** Para ejecuciones de pruebas de integración a futuro, mantener el uso de una base de datos aislada para prevenir la alteración de datos de producción.
+
+> [!TIP]
+> **Estado de Aprobación:** **APROBADO ✅**
+> Todos los criterios de aceptación y los requisitos de calidad del software han sido cumplidos satisfactoriamente.
