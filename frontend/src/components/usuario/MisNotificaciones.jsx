@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import api from '../../services/api';
+import { usePaginacion } from '../../hooks/usePaginacion';
+import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -110,6 +112,8 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
     return true;
   });
 
+  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(notifFiltradas, 5);
+
   /* ─── Pill button style ─── */
   const pillStyle = (key) => ({
     borderRadius: 99, padding: '6px 20px', fontSize: '0.82rem', fontWeight: 600,
@@ -163,9 +167,9 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
 
         {/* ── Filtros ── */}
         <div className="d-flex gap-2 mb-4 flex-wrap">
-          <button style={pillStyle('todas')}  onClick={() => setFiltro('todas')}>Todas ({total})</button>
-          <button style={pillStyle('nuevas')} onClick={() => setFiltro('nuevas')}>Sin leer ({sinLeer})</button>
-          <button style={pillStyle('leidas')} onClick={() => setFiltro('leidas')}>Leídas ({total - sinLeer})</button>
+          <button style={pillStyle('todas')}  onClick={() => { setFiltro('todas'); setPagina(1); }}>Todas ({total})</button>
+          <button style={pillStyle('nuevas')} onClick={() => { setFiltro('nuevas'); setPagina(1); }}>Sin leer ({sinLeer})</button>
+          <button style={pillStyle('leidas')} onClick={() => { setFiltro('leidas'); setPagina(1); }}>Leídas ({total - sinLeer})</button>
         </div>
 
         {/* ── Contenido ── */}
@@ -194,8 +198,9 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
             </button>
           </div>
         ) : (
-          <div className="d-flex flex-column gap-3">
-            {notifFiltradas.map((n, idx) => {
+          <>
+            <div className="d-flex flex-column gap-3 mb-4">
+              {datosPagina.map((n, idx) => {
               const leida  = esLeida(n);
               const icono  = iconoTipo(textoNotif(n));
               const { Icon } = icono;
@@ -252,7 +257,9 @@ const MisNotificaciones = ({ cerrarSesion, setVista }) => {
                 </div>
               );
             })}
-          </div>
+            </div>
+            <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+          </>
         )}
       </div>
 
