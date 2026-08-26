@@ -1,6 +1,7 @@
 const AppError = require('../config/AppError');
 const servicioDao = require('../dao/servicio.dao');
 const usuarioDao = require('../dao/usuario.dao');
+const notificacionDao = require('../dao/notificacion.dao');
 
 const listar = () => servicioDao.getAll();
 
@@ -33,6 +34,11 @@ const agregar = async (data, userId) => {
 
 const actualizar = async (data) => {
     if (!data.ID_Servicio) throw new AppError('El campo ID_Servicio es obligatorio para actualizar.', 400);
+
+    const rows = await servicioDao.findById(data.ID_Servicio);
+    if (rows.length === 0) throw new AppError('Servicio no encontrado.', 404);
+    const oldServicio = rows[0];
+
     const { Precio, Precio_Repuestos, Precio_Mano_Obra } = data;
     if (Precio !== undefined && Number(Precio) < 0) throw new AppError('El precio total no puede ser negativo.', 400);
     if (Precio_Repuestos !== undefined && Number(Precio_Repuestos) < 0) throw new AppError('El precio de repuestos no puede ser negativo.', 400);
@@ -50,7 +56,27 @@ const actualizar = async (data) => {
     }
 
     const result = await servicioDao.update(data);
-    if (result.affectedRows === 0) throw new AppError('Servicio no encontrado.', 404);
+    if (result.affectedRows === 0) throw new AppError('Servicio no encontrado al intentar actualizar.', 404);
+
+    const oldEtapa = Number(oldServicio.Etapa);
+    const newEtapa = Number(data.Etapa);
+
+    if (oldEtapa !== newEtapa) {
+        const etapas = { '-1': 'Cancelado', '0': 'Recibido', '1': 'En Revisión', '2': 'Terminado' };
+        const nombreEtapa = etapas[String(newEtapa)] || 'Desconocido';
+        const mensaje = `El estado de tu servicio #${data.ID_Servicio} ha cambiado a: ${nombreEtapa}.`;
+        
+        try {
+            await notificacionDao.crearDirigida({
+                ID_Usuario_Destino: oldServicio.ID_Usuario,
+                ID_Usuario_Origen: null,
+                ID_Servicio: data.ID_Servicio,
+                Mensaje: mensaje
+            });
+        } catch (err) {
+            console.error('Error al generar la notificación automática:', err);
+        }
+    }
 };
 
 const cancelar = async (id, userId) => {
