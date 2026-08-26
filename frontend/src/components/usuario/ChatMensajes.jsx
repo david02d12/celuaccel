@@ -174,13 +174,15 @@ const ChatMensajes = ({
                               <polyline points="18 6 9 17 4 12"></polyline>
                               <polyline points="22 6 13 17 11.5 15.5"></polyline>
                             </svg>
-                            <button 
-                              className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
-                              style={{ fontSize: '0.75rem' }} 
-                              onClick={() => eliminarMensaje(m.Codigo_Mensaje)}
-                            >
-                              Eliminar
-                            </button>
+                            {role !== 2 && (
+                              <button 
+                                className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
+                                style={{ fontSize: '0.75rem' }} 
+                                onClick={() => eliminarMensaje(m.Codigo_Mensaje)}
+                              >
+                                Eliminar
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
