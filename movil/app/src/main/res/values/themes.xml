@@ -8,7 +8,22 @@
         <item name="colorSecondary">@color/celuaccel_success</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="android:colorBackground">@color/celuaccel_bg</item>
+
+        <!-- Fuente Inter: igual que el sitio web -->
+        <item name="android:fontFamily">@font/inter</item>
+
+        <!-- Transiciones de pantalla suaves entre Activities -->
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowAnimationStyle">@style/ActivityTransition</item>
     </style>
 
     <style name="Theme.MyApplication" parent="Base.Theme.MyApplication"/>
+
+    <!-- Transición suave tipo fade + slide (equivalente a las animaciones CSS del web) -->
+    <style name="ActivityTransition" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
 </resources>

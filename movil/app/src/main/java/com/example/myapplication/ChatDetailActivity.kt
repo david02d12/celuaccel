@@ -27,6 +27,7 @@ class ChatDetailActivity : AppCompatActivity() {
     private lateinit var idUsuario: String
     private var codigoChat: Int = -1
     private var idServicio: Int = -1
+    private var userRole: Int = 2
 
     private lateinit var recyclerMensajes: RecyclerView
     private lateinit var adapter: MensajeAdapter
@@ -41,6 +42,7 @@ class ChatDetailActivity : AppCompatActivity() {
         val tokenGuardado = sharedPref.getString("token", "") ?: ""
         token     = if (tokenGuardado.startsWith("Bearer ")) tokenGuardado else "Bearer $tokenGuardado"
         idUsuario = sharedPref.getString("user_id", "") ?: ""
+        userRole  = sharedPref.getInt("user_role", 2)
 
         api = ApiClient.retrofit.create(ApiService::class.java)
 
@@ -58,7 +60,7 @@ class ChatDetailActivity : AppCompatActivity() {
         val btnEnviar    = findViewById<Button>(R.id.btnEnviarMensaje)
 
         recyclerMensajes.layoutManager = LinearLayoutManager(this)
-        adapter = MensajeAdapter(emptyList(), idUsuario) { idMensaje ->
+        adapter = MensajeAdapter(emptyList(), idUsuario, userRole) { idMensaje ->
             confirmarEliminarMensaje(idMensaje)
         }
         recyclerMensajes.adapter = adapter
@@ -140,6 +142,7 @@ class ChatDetailActivity : AppCompatActivity() {
     private class MensajeAdapter(
         private var mensajes: List<Mensaje>,
         private val idUsuarioActual: String,
+        private val userRole: Int = 2,
         private val onEliminar: (Int) -> Unit
     ) : RecyclerView.Adapter<MensajeAdapter.ViewHolder>() {
 
@@ -174,9 +177,15 @@ class ChatDetailActivity : AppCompatActivity() {
                 holder.bubbleOtro.visibility  = View.GONE
                 holder.tvMensajeMio.text      = msg.mensaje
                 holder.tvHoraMio.text         = hora
-                holder.bubbleMio.setOnLongClickListener {
-                    msg.codigoMensaje?.let { id -> onEliminar(id) }
-                    true
+                // Solo Técnico/Admin pueden eliminar mensajes (userRole != 2)
+                if (userRole != 2) {
+                    holder.bubbleMio.setOnLongClickListener {
+                        msg.codigoMensaje?.let { id -> onEliminar(id) }
+                        true
+                    }
+                } else {
+                    holder.bubbleMio.setOnLongClickListener(null)
+                    holder.bubbleMio.isLongClickable = false
                 }
             } else {
                 holder.bubbleMio.visibility   = View.GONE

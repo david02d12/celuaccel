@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:background="@color/celuaccel_bg">
 
-    
+    <!-- ── Header con gradiente rojo ── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +43,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            
             <TextView
                 android:id="@+id/tvConteoNotif"
                 android:layout_width="wrap_content"
@@ -53,7 +52,6 @@
                 android:textSize="12sp"/>
         </LinearLayout>
 
-        
         <Button
             android:id="@+id/btnNuevaNotificacion"
             android:layout_width="wrap_content"
@@ -66,7 +64,7 @@
             android:background="@drawable/bg_btn_outline_white"/>
     </LinearLayout>
 
-    
+    <!-- ── Filtros pill ── -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,7 +80,6 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            
             <Button
                 android:id="@+id/btnFiltroTodas"
                 android:layout_width="wrap_content"
@@ -96,7 +93,6 @@
                 android:background="@drawable/bg_btn_primary"
                 android:textColor="#FFFFFF"/>
 
-            
             <Button
                 android:id="@+id/btnFiltroNuevas"
                 android:layout_width="wrap_content"
@@ -110,7 +106,6 @@
                 android:background="@drawable/bg_btn_outline"
                 android:textColor="@color/celuaccel_primary"/>
 
-            
             <Button
                 android:id="@+id/btnFiltroLeidas"
                 android:layout_width="wrap_content"
@@ -125,7 +120,7 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    
+    <!-- ── Estado vacío ── -->
     <LinearLayout
         android:id="@+id/viewEstadoVacio"
         android:layout_width="match_parent"
@@ -165,15 +160,66 @@
             android:lineSpacingMultiplier="1.4"/>
     </LinearLayout>
 
-    
+    <!-- ── RecyclerView con animación stagger (igual al web) ── -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerNotificaciones"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        android:clipToPadding="false"/>
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        android:layoutAnimation="@anim/layout_anim_stagger"/>
+
+    <!-- ── Controles de paginación ── -->
+    <LinearLayout
+        android:id="@+id/layoutPaginacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/celuaccel_surface"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:elevation="4dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnPaginaAnterior"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:text="← Ant."
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:background="@drawable/bg_btn_outline"
+            android:textColor="@color/celuaccel_primary"/>
+
+        <TextView
+            android:id="@+id/tvPaginaActual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Página 1 de 1"
+            android:textSize="12sp"
+            android:textColor="@color/celuaccel_text_muted"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnPaginaSiguiente"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:text="Sig. →"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:background="@drawable/bg_btn_outline"
+            android:textColor="@color/celuaccel_primary"/>
+    </LinearLayout>
 
 </LinearLayout>
-

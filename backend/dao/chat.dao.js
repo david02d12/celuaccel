@@ -55,15 +55,15 @@ const create = (ID_Usuario, ID_Servicio) => {
         // Inserción atómica: solo inserta si no existe ya un chat para este servicio
         // Esto previene duplicados por condiciones de carrera
         return query(
-            `INSERT INTO Chat (ID_Usuario, ID_Servicio)
-             SELECT ?, ?
+            `INSERT INTO Chat (ID_Usuario, ID_Servicio, Estado_Chat)
+             SELECT ?, ?, 'Activo'
              FROM DUAL
              WHERE NOT EXISTS (SELECT 1 FROM Chat WHERE ID_Servicio = ?)`,
             [ID_Usuario, ID_Servicio, ID_Servicio]
         );
     }
     // Chat de consulta de catálogo: sin servicio asociado
-    return query('INSERT INTO Chat (ID_Usuario) VALUES (?)', [ID_Usuario]);
+    return query("INSERT INTO Chat (ID_Usuario, Estado_Chat) VALUES (?, 'Activo')", [ID_Usuario]);
 };
 
 const update = ({ ID_Usuario, ID_Servicio, Codigo_Chat }) =>

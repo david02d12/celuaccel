@@ -22,6 +22,7 @@ const swaggerUI = require('swagger-ui-express');
 const swaggerDocumentation = require('./swagger.json');
 const cors = require('cors');
 const { registrarEventos } = require('./config/socket.handler');
+const { runMigrations } = require('./config/migrate');
 
 const app = express();
 
@@ -112,10 +113,12 @@ app.set('io', io);
 
 const PORT = process.env.PORT || 3000;
 if (require.main === module) {
-    server.listen(PORT, () => {
-        console.log(`Servidor corriendo en http://localhost:${PORT}`);
-        console.log(`Documentacion: http://localhost:${PORT}/doc`);
-        console.log(`Socket.IO activo en ws://localhost:${PORT}`);
+    runMigrations().then(() => {
+        server.listen(PORT, () => {
+            console.log(`Servidor corriendo en http://localhost:${PORT}`);
+            console.log(`Documentacion: http://localhost:${PORT}/doc`);
+            console.log(`Socket.IO activo en ws://localhost:${PORT}`);
+        });
     });
 }
 
