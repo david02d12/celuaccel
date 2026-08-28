@@ -7,6 +7,7 @@ export const useChatView = (role, usuario) => {
   const [chatSel, setChatSel] = useState(null);
   const [mensajes, setMensajes] = useState([]);
   const [nuevoMensaje, setNuevoMensaje] = useState('');
+  const [mensajeEnEdicion, setMensajeEnEdicion] = useState(null);
   const [busquedaChat, setBusquedaChat] = useState('');
   const [cargando, setCargando] = useState(false);
   const [cargandoChats, setCargandoChats] = useState(true);
@@ -108,20 +109,35 @@ export const useChatView = (role, usuario) => {
   const enviarMensaje = async () => {
     if (!nuevoMensaje.trim() || !chatSel) return;
 
-    const payload = {
-      Codigo_Chat: chatSel.Codigo_Chat,
-      ID_Usuario: usuario,
-      Mensaje: nuevoMensaje.trim(),
-      Estado: 'Enviado',
-    };
-
     try {
-      await api.post('/mensajes/agregar', payload);
+      if (mensajeEnEdicion) {
+        // Modo edición
+        const payload = {
+          Codigo_Mensaje: mensajeEnEdicion,
+          Mensaje: nuevoMensaje.trim()
+        };
+        await api.put('/mensajes/actualizar', payload);
+        setMensajeEnEdicion(null);
+      } else {
+        // Modo nuevo mensaje
+        const payload = {
+          Codigo_Chat: chatSel.Codigo_Chat,
+          ID_Usuario: usuario,
+          Mensaje: nuevoMensaje.trim(),
+          Estado: 'Enviado',
+        };
+        await api.post('/mensajes/agregar', payload);
+      }
       setNuevoMensaje('');
       cargarMensajes(chatSel.Codigo_Chat);
     } catch (err) {
-      await mostrarAlerta('Error al enviar el mensaje. Verifica que los campos sean correctos.', 'error');
+      await mostrarAlerta('Error al procesar el mensaje. Verifica que los campos sean correctos.', 'error');
     }
+  };
+
+  const cancelarEdicion = () => {
+    setMensajeEnEdicion(null);
+    setNuevoMensaje('');
   };
 
   const eliminarMensaje = async (id) => {
@@ -190,6 +206,8 @@ export const useChatView = (role, usuario) => {
     eliminarChat,
     restaurarChat,
     chatsFiltrados,
-    handleKeyDown
+    handleKeyDown,
+    mensajeEnEdicion, setMensajeEnEdicion,
+    cancelarEdicion
   };
 };

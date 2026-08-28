@@ -67,7 +67,7 @@ const _verificarPropiedad = async (codigoComentario, userId) => {
     const rolRes = await usuarioDao.getRol(userId);
     if (rolRes.length === 0) throw new AppError('Usuario no encontrado.', 404);
     const rol = rolRes[0].Codigo_Rol;
-    if (userId !== ownerId && rol !== 1 && rol !== 3) {
+    if (String(userId).trim() !== String(ownerId).trim() && rol !== 1 && rol !== 3) {
         throw new AppError('No puedes modificar comentarios de otros usuarios.', 403);
     }
 };

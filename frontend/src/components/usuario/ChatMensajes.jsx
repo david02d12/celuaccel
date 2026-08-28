@@ -15,7 +15,10 @@ const ChatMensajes = ({
   eliminarMensaje,
   eliminarChat,
   restaurarChat,
-  mensajesEndRef
+  mensajesEndRef,
+  mensajeEnEdicion,
+  setMensajeEnEdicion,
+  cancelarEdicion
 }) => {
   return (
     <div className="d-flex flex-column flex-grow-1" style={{ overflow: 'hidden', backgroundColor: 'var(--color-surface)' }}>
@@ -174,6 +177,16 @@ const ChatMensajes = ({
                               <polyline points="18 6 9 17 4 12"></polyline>
                               <polyline points="22 6 13 17 11.5 15.5"></polyline>
                             </svg>
+                            <button 
+                              className="btn btn-link p-0 text-decoration-none text-primary fw-bold" 
+                              style={{ fontSize: '0.75rem' }} 
+                              onClick={() => {
+                                setMensajeEnEdicion(m.Codigo_Mensaje);
+                                setNuevoMensaje(m.Mensaje);
+                              }}
+                            >
+                              Editar
+                            </button>
                             {role !== 2 && (
                               <button 
                                 className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
@@ -201,18 +214,25 @@ const ChatMensajes = ({
                 id="chat-input-mensaje"
                 type="text"
                 className="form-control"
-                placeholder="Escribe un mensaje... (Enter para enviar)"
+                placeholder={mensajeEnEdicion ? "Edita tu mensaje... (Enter para guardar)" : "Escribe un mensaje... (Enter para enviar)"}
                 value={nuevoMensaje}
                 onChange={e => setNuevoMensaje(e.target.value)}
                 onKeyDown={handleKeyDown}
                 style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
               />
+              {mensajeEnEdicion && (
+                <button
+                  className="btn btn-outline-secondary px-3"
+                  onClick={cancelarEdicion}>
+                  Cancelar
+                </button>
+              )}
               <button
                 id="btn-enviar-mensaje"
                 className="btn btn-primary px-4"
                 onClick={enviarMensaje}
                 disabled={!nuevoMensaje.trim()}>
-                Enviar
+                {mensajeEnEdicion ? 'Actualizar' : 'Enviar'}
               </button>
             </div>
             <small className="text-muted mt-1 d-block">
