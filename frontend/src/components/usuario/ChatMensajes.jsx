@@ -13,6 +13,12 @@ const ChatMensajes = ({
   enviarMensaje,
   handleKeyDown,
   eliminarMensaje,
+  editandoMensajeId,
+  textoEdicion,
+  setTextoEdicion,
+  iniciarEdicion,
+  cancelarEdicion,
+  guardarEdicion,
   mensajesEndRef
 }) => {
   return (
@@ -106,6 +112,27 @@ const ChatMensajes = ({
                   <div key={m.Codigo_Mensaje}
                     className={`d-flex mb-3 ${esMio ? 'justify-content-end' : 'justify-content-start'}`}>
                     <div style={{ maxWidth: '70%' }}>
+                      {editandoMensajeId === m.Codigo_Mensaje ? (
+                        <div className="p-3 rounded-3 shadow-sm" style={{ backgroundColor: 'var(--color-surfaceAlt)' }}>
+                          <div className="small fw-bold opacity-75 mb-1">Editando mensaje...</div>
+                          <textarea
+                            className="form-control mb-2"
+                            rows={2}
+                            style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)', resize: 'vertical' }}
+                            value={textoEdicion}
+                            onChange={e => setTextoEdicion(e.target.value)}
+                          />
+                          <div className="d-flex gap-2 justify-content-end">
+                            <button className="btn btn-sm btn-outline-secondary" onClick={cancelarEdicion}>Cancelar</button>
+                            <button
+                              className="btn btn-sm btn-primary"
+                              disabled={!textoEdicion.trim()}
+                              style={{ backgroundColor: 'var(--color-primary)', border: 'none' }}
+                              onClick={guardarEdicion}
+                            >Guardar</button>
+                          </div>
+                        </div>
+                      ) : (
                       <div
                         className="p-3 rounded-3 shadow-sm"
                         style={{
@@ -116,6 +143,7 @@ const ChatMensajes = ({
                         <div className="small fw-bold opacity-75 mb-1">{m.Nombre_Usuario || m.ID_Usuario}</div>
                         <div>{m.Mensaje}</div>
                       </div>
+                      )}
                       <div className={`d-flex mt-1 gap-2 align-items-center ${esMio ? 'justify-content-end' : ''}`}>
                         <small className="text-muted" style={{ fontSize: '0.75rem' }}>
                           {m.Fecha_Mensaje
@@ -125,7 +153,7 @@ const ChatMensajes = ({
                               })
                             : ''}
                         </small>
-                        {esMio && (
+                        {esMio && editandoMensajeId !== m.Codigo_Mensaje && (
                           <div className="d-flex align-items-center gap-2">
                             <svg 
                               width="16" height="16" viewBox="0 0 24 24" 
@@ -138,6 +166,13 @@ const ChatMensajes = ({
                               <polyline points="18 6 9 17 4 12"></polyline>
                               <polyline points="22 6 13 17 11.5 15.5"></polyline>
                             </svg>
+                            <button 
+                              className="btn btn-link p-0 text-decoration-none fw-bold" 
+                              style={{ fontSize: '0.75rem', color: 'var(--color-primary)' }} 
+                              onClick={() => iniciarEdicion(m)}
+                            >
+                              Editar
+                            </button>
                             <button 
                               className="btn btn-link p-0 text-decoration-none text-danger fw-bold" 
                               style={{ fontSize: '0.75rem' }} 

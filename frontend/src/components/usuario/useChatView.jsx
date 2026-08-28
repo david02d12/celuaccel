@@ -7,6 +7,8 @@ export const useChatView = (role, usuario) => {
   const [chatSel, setChatSel] = useState(null);
   const [mensajes, setMensajes] = useState([]);
   const [nuevoMensaje, setNuevoMensaje] = useState('');
+  const [editandoMensajeId, setEditandoMensajeId] = useState(null);
+  const [textoEdicion, setTextoEdicion] = useState('');
   const [busquedaChat, setBusquedaChat] = useState('');
   const [cargando, setCargando] = useState(false);
   const [cargandoChats, setCargandoChats] = useState(true);
@@ -36,7 +38,9 @@ export const useChatView = (role, usuario) => {
       let chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(info.ID_Servicio));
       if (chatExistente) {
         setChatSel(chatExistente);
-      } else if (role === 2) {
+      } else {
+        // El backend asigna el chat al cliente dueño del servicio; se crea
+        // tanto si lo abre el cliente como el técnico/admin.
         await api.post('/chats/agregar', { ID_Usuario: usuario, ID_Servicio: info.ID_Servicio });
         const resUpdated = await api.get(url);
         chatsCargados = resUpdated.data;
@@ -134,6 +138,37 @@ export const useChatView = (role, usuario) => {
     }
   };
 
+  const iniciarEdicion = (mensaje) => {
+    setEditandoMensajeId(mensaje.Codigo_Mensaje);
+    setTextoEdicion(mensaje.Mensaje || '');
+  };
+
+  const cancelarEdicion = () => {
+    setEditandoMensajeId(null);
+    setTextoEdicion('');
+  };
+
+  const guardarEdicion = async () => {
+    if (!textoEdicion.trim() || !chatSel) return;
+    const original = mensajes.find(m => m.Codigo_Mensaje === editandoMensajeId);
+    if (!original) return cancelarEdicion();
+    try {
+      await api.put('/mensajes/actualizar', {
+        Codigo_Mensaje: original.Codigo_Mensaje,
+        Codigo_Chat: original.Codigo_Chat,
+        ID_Usuario: original.ID_Usuario,
+        Fecha_Mensaje: original.Fecha_Mensaje,
+        Mensaje: textoEdicion.trim(),
+        Estado: original.Estado,
+      });
+      setEditandoMensajeId(null);
+      setTextoEdicion('');
+      cargarMensajes(chatSel.Codigo_Chat);
+    } catch (err) {
+      await mostrarAlerta('Error al editar el mensaje.', 'error');
+    }
+  };
+
   const chatsFiltrados = chats.filter(c =>
     String(c.Codigo_Chat).includes(busquedaChat) ||
     String(c.ID_Servicio).includes(busquedaChat) ||
@@ -152,6 +187,11 @@ export const useChatView = (role, usuario) => {
     chatSel, setChatSel,
     mensajes, setMensajes,
     nuevoMensaje, setNuevoMensaje,
+    editandoMensajeId, setEditandoMensajeId,
+    textoEdicion, setTextoEdicion,
+    iniciarEdicion,
+    cancelarEdicion,
+    guardarEdicion,
     busquedaChat, setBusquedaChat,
     cargando, setCargando,
     cargandoChats, setCargandoChats,

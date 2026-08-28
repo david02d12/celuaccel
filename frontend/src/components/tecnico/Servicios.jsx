@@ -68,7 +68,6 @@ const Fila = ({ label, children }) => (
 );
 
 const Servicios = ({ cerrarSesion, setVista }) => {
-  const userRole = Number(sessionStorage.getItem('role')) || 1;
   const [servicios, setServicios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
@@ -269,12 +268,12 @@ const Servicios = ({ cerrarSesion, setVista }) => {
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Descripción del problema</label>
             <input className="form-control" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema"
-              disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
+              onChange={e => setFormServicio({...formServicio, Descripcion: e.target.value})} />
           </div>
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Documento del cliente</label>
             <input className="form-control" style={inputStyle} value={formServicio.ID_Usuario} placeholder="Documento del cliente"
-              disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
+              onChange={e => setFormServicio({...formServicio, ID_Usuario: e.target.value})} />
           </div>
           <div className="row g-2 mb-2">
             <div className="col-6">
@@ -294,17 +293,17 @@ const Servicios = ({ cerrarSesion, setVista }) => {
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Marca y Modelo del Móvil</label>
             <input className="form-control" style={inputStyle} value={formServicio.Movil_Nombre} placeholder="Marca y Modelo"
-              disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
+              onChange={e => setFormServicio({...formServicio, Movil_Nombre: e.target.value})} />
           </div>
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Especificación técnica</label>
             <input className="form-control" style={inputStyle} value={formServicio.Movil_Especificacion} placeholder="Especificacion tecnica"
-              disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
+              onChange={e => setFormServicio({...formServicio, Movil_Especificacion: e.target.value})} />
           </div>
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Fecha de ingreso</label>
             <input className="form-control" style={inputStyle} type="date" value={formServicio.Fecha} min={minDate} max={maxDate}
-              disabled={userRole === 1} onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
+              onChange={e => setFormServicio({...formServicio, Fecha: e.target.value})} />
           </div>
           <div className="mb-3">
             <label className="small text-muted fw-bold mb-1">Etapa</label>
@@ -369,11 +368,9 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
               </svg> PDF
             </button>
-            {userRole !== 1 && (
-              <button className="btn btn-sm fw-bold" style={{ background:'#fff', color:'var(--color-primary)', borderRadius:'8px', padding:'6px 14px' }} onClick={abrirNuevo}>
-                + Nuevo servicio
-              </button>
-            )}
+            <button className="btn btn-sm fw-bold" style={{ background:'#fff', color:'var(--color-primary)', borderRadius:'8px', padding:'6px 14px' }} onClick={abrirNuevo}>
+              + Nuevo servicio
+            </button>
           </div>
         </div>
 
@@ -389,7 +386,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
           <div className="text-center py-5 fade-in border rounded shadow-sm" style={{ borderColor:'var(--color-border)', backgroundColor:'var(--color-surface)' }}>
             <h5 className="fw-bold mb-2 text-muted">Aún no hay servicios</h5>
             <p className="text-muted small mb-4">No encontramos reparaciones para mostrar en este momento.</p>
-            {userRole !== 1 && <button className="btn btn-outline-primary fw-bold" onClick={abrirNuevo}>¡Crear el primero!</button>}
+            <button className="btn btn-outline-primary fw-bold" onClick={abrirNuevo}>¡Crear el primero!</button>
           </div>
         ) : (
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:'1rem' }}>

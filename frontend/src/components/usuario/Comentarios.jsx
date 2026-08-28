@@ -359,7 +359,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                           </div>
                           
                           <div className="d-flex gap-2">
-                            {(miRol === 3 || c.ID_Usuario === miUsuario) && (
+                            {(miRol === 3 || miRol === 1 || c.ID_Usuario === miUsuario) && (
                               <>
                                 <button className="btn btn-sm btn-outline-secondary" onClick={() => { setForm(c); setEnEdicion(true); }}>
                                   Editar

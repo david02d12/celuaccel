@@ -40,7 +40,7 @@ exports.agregar = async (req, res) => {
 
 exports.actualizar = async (req, res) => {
     try {
-        await preguntaService.actualizar(req.body);
+        await preguntaService.actualizar(req.body, req.userId);
         res.status(200).json({ message: 'Pregunta actualizada correctamente.' });
     } catch (err) { handleError(res, err); }
 };

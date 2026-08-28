@@ -189,7 +189,7 @@ class HistorialActivity : AppCompatActivity() {
                     canvas.drawRect(x - 1f, y - 10f, x + colWidths.sum(), y + 8f, altPaint)
                 }
 
-                canvas.drawText(item.idHistorial?.toString() ?: "", x + 3f, y + 2f, rowPaintBold)
+                canvas.drawText(item.idRegistro?.toString() ?: "", x + 3f, y + 2f, rowPaintBold)
                 canvas.drawText(item.idServicio.toString(), x + colWidths[0] + 3f, y + 2f, rowPaint)
 
                 val fecha = item.fechaEvento?.let {

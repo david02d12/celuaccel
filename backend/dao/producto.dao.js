@@ -11,21 +11,21 @@ const getPublicos = () =>
 const findById = (id) =>
     query('SELECT * FROM Producto WHERE Codigo_Producto = ?', [id]);
 
-const create = ({ Codigo_Producto, Nombre, Descripcion, Cantidad, Precio, Imagen, Activo_Catalogo, ID_Categoria }) =>
+const create = ({ Codigo_Producto, Nombre, Descripcion, Cantidad, Precio, Precio_Compra, Imagen, Activo_Catalogo, ID_Categoria }) =>
     query(
         `INSERT INTO Producto
-            (Codigo_Producto, Nombre, Descripcion, Cantidad, Precio, Imagen, Activo_Catalogo, ID_Categoria)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [Codigo_Producto, Nombre, Descripcion, Cantidad, Precio, Imagen, Activo_Catalogo, ID_Categoria]
+            (Codigo_Producto, Nombre, Descripcion, Cantidad, Precio, Precio_Compra, Imagen, Activo_Catalogo, ID_Categoria)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [Codigo_Producto, Nombre, Descripcion, Cantidad, Precio, Precio_Compra ?? null, Imagen, Activo_Catalogo, ID_Categoria]
     );
 
 // ── M6 FIX: UPDATE incluye todos los campos del esquema mejorado ──────────────
-const update = ({ Nombre, Descripcion, Cantidad, Precio, Imagen, Activo_Catalogo, ID_Categoria, Codigo_Producto }) =>
+const update = ({ Nombre, Descripcion, Cantidad, Precio, Precio_Compra, Imagen, Activo_Catalogo, ID_Categoria, Codigo_Producto }) =>
     query(
         `UPDATE Producto
-         SET Nombre=?, Descripcion=?, Cantidad=?, Precio=?, Imagen=?, Activo_Catalogo=?, ID_Categoria=?
+         SET Nombre=?, Descripcion=?, Cantidad=?, Precio=?, Precio_Compra=?, Imagen=?, Activo_Catalogo=?, ID_Categoria=?
          WHERE Codigo_Producto=?`,
-        [Nombre, Descripcion, Cantidad, Precio, Imagen, Activo_Catalogo, ID_Categoria, Codigo_Producto]
+        [Nombre, Descripcion, Cantidad, Precio, Precio_Compra ?? null, Imagen, Activo_Catalogo, ID_Categoria, Codigo_Producto]
     );
 
 const remove = (id) =>

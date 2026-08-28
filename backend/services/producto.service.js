@@ -17,6 +17,9 @@ const agregar = async (data) => {
     if (data.Precio !== undefined && Number(data.Precio) < 0) {
         throw new AppError('El precio del producto no puede ser negativo.', 400);
     }
+    if (data.Precio_Compra !== undefined && Number(data.Precio_Compra) < 0) {
+        throw new AppError('El precio de compra del producto no puede ser negativo.', 400);
+    }
     try {
         await productoDao.create(data);
     } catch (err) {
@@ -32,6 +35,9 @@ const actualizar = async (data) => {
     }
     if (data.Precio !== undefined && Number(data.Precio) < 0) {
         throw new AppError('El precio del producto no puede ser negativo.', 400);
+    }
+    if (data.Precio_Compra !== undefined && Number(data.Precio_Compra) < 0) {
+        throw new AppError('El precio de compra del producto no puede ser negativo.', 400);
     }
     const result = await productoDao.update(data);
     if (result.affectedRows === 0) throw new AppError('Producto no encontrado.', 404);

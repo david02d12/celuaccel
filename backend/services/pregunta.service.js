@@ -19,7 +19,7 @@ const agregar = async (data, userId) => {
     // Clientes solo pueden registrar para sí mismos (ya validado arriba).
     const idFinal = (miRol === 1 || miRol === 3) ? String(ID_Usuario).trim() : userId;
     try {
-        return await preguntaDao.create({ ...data, ID_Usuario: idFinal, Codigo_Producto: Codigo_Producto || null });
+        return await preguntaDao.create({ ...data, ID_Usuario: idFinal, Codigo_Producto: Codigo_Producto || 'GENERAL' });
     } catch (error) {
         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
             throw new AppError('El código de producto ingresado no existe en el catálogo.', 400);
@@ -28,9 +28,23 @@ const agregar = async (data, userId) => {
     }
 };
 
-const actualizar = async (data) => {
-    if (!data.ID_Consulta) throw new AppError('El campo ID_Consulta es obligatorio para actualizar.', 400);
-    const result = await preguntaDao.update(data);
+const actualizar = async (data, userId) => {
+    const { ID_Consulta, ID_Usuario } = data;
+    if (!ID_Consulta) throw new AppError('El campo ID_Consulta es obligatorio para actualizar.', 400);
+    if (!userId) throw new AppError('Usuario no autenticado.', 401);
+
+    // El cliente solo puede modificar sus propias preguntas; técnicos/admins pueden editar cualquiera.
+    const rolRes = await usuarioDao.getRol(userId);
+    const miRol = rolRes.length > 0 ? Number(rolRes[0].Codigo_Rol) : 2;
+    if (miRol === 2 && String(ID_Usuario).trim() !== String(userId).trim()) {
+        throw new AppError('Acceso denegado: no puedes modificar preguntas de otro usuario.', 403);
+    }
+
+    const result = await preguntaDao.update({
+        ...data,
+        ID_Usuario: (miRol === 1 || miRol === 3) ? String(ID_Usuario).trim() : userId,
+        Codigo_Producto: data.Codigo_Producto || 'GENERAL',
+    });
     if (result.affectedRows === 0) throw new AppError('Pregunta no encontrada.', 404);
 };
 

@@ -36,12 +36,17 @@ const enviar = async ({ ID_Usuario_Destino, ID_Servicio, Mensaje }, userId) => {
     return { message: 'Notificación enviada al cliente.', id: result.insertId };
 };
 
-const agregar = async ({ Mensaje }) => {
-    if (!Mensaje) {
-        throw new AppError('El campo Mensaje es obligatorio.', 400);
+const agregar = async ({ ID_Usuario_Destino, ID_Servicio, Mensaje }, userId) => {
+    if (!ID_Usuario_Destino || !Mensaje) {
+        throw new AppError('Los campos ID_Usuario_Destino y Mensaje son obligatorios.', 400);
     }
     try {
-        await notificacionDao.create({ Mensaje });
+        await notificacionDao.create({
+            ID_Usuario_Destino: String(ID_Usuario_Destino).trim(),
+            ID_Usuario_Origen:  String(userId).trim(),
+            ID_Servicio:        ID_Servicio || null,
+            Mensaje:            Mensaje,
+        });
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') throw new AppError('La notificación ya existe.', 409);
         throw err;

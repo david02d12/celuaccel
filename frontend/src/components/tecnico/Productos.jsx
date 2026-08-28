@@ -51,7 +51,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [detalleItem, setDetalleItem] = useState(null);
   const [form, setForm] = useState({
-    Codigo_Producto: '', Cantidad: '', Precio: '', Nombre: '',
+    Codigo_Producto: '', Cantidad: '', Precio: '', Precio_Compra: '', Nombre: '',
     Descripcion: '', Imagen: '', Activo_Catalogo: 1, ID_Categoria: ''
   });
 
@@ -88,7 +88,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
   };
 
   const limpiar = () => {
-    setForm({ Codigo_Producto: '', Cantidad: '', Precio: '', Nombre: '', Descripcion: '', Imagen: '', Activo_Catalogo: 1, ID_Categoria: '' });
+    setForm({ Codigo_Producto: '', Cantidad: '', Precio: '', Precio_Compra: '', Nombre: '', Descripcion: '', Imagen: '', Activo_Catalogo: 1, ID_Categoria: '' });
     setEnEdicion(false); setModalAbierto(false);
   };
 
@@ -125,6 +125,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
             <Fila label="Código">{detalleItem.Codigo_Producto}</Fila>
             <Fila label="Categoría">{nombreCategoria(detalleItem.ID_Categoria)}</Fila>
             <Fila label="Precio"><strong style={{ color:'#198754',fontSize:'1.1rem' }}>${Number(detalleItem.Precio).toLocaleString()}</strong></Fila>
+            {detalleItem.Precio_Compra != null && <Fila label="Costo">${Number(detalleItem.Precio_Compra).toLocaleString()}</Fila>}
             <Fila label="Stock">
               <span style={{ color: stockBajo ? '#dc3545' : 'inherit', fontWeight: 700 }}>
                 {detalleItem.Cantidad} unidades{stockBajo && <span className="ms-1 badge bg-danger">Stock bajo</span>}
@@ -178,6 +179,12 @@ const Productos = ({ cerrarSesion, setVista }) => {
                 value={form.Precio}
                 onChange={e => { const v = e.target.value; if (v === '' || Number(v) >= 0) setForm({...form, Precio: v}); }} />
             </div>
+          </div>
+          <div className="mb-2">
+            <label className="small text-muted fw-bold mb-1">Precio de Compra ($) (opcional)</label>
+            <input className="form-control" style={inputStyle} type="number" min="0" placeholder="Precio de compra"
+              value={form.Precio_Compra === null || form.Precio_Compra === undefined ? '' : form.Precio_Compra}
+              onChange={e => { const v = e.target.value; if (v === '' || Number(v) >= 0) setForm({...form, Precio_Compra: v}); }} />
           </div>
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Descripción</label>

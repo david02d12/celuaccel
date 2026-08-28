@@ -32,7 +32,8 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
   const [cargando, setCargando]   = useState(true);
   const [expandida, setExpandida] = useState(null);
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [enviando, setEnviando]   = useState(false);
+  const [enviando, setEnviando]       = useState(false);
+  const [editandoId, setEditandoId]   = useState(null);
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
   const [productosCatalogo, setProductosCatalogo] = useState([]);
   const [todosLosProductos, setTodosLosProductos] = useState([]);
@@ -69,7 +70,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
     }
   };
 
-  // ── Enviar nueva pregunta ───────────────────────────────────────────────────
+  // ── Enviar nueva pregunta / guardar edición ────────────────────────────────
   const enviar = async (e) => {
     e.preventDefault();
     if (!form.Pregunta.trim()) {
@@ -78,20 +79,45 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
     }
     setEnviando(true);
     try {
-      await api.post('/preguntas/agregar', {
-        ID_Usuario:      userId,
-        Codigo_Producto: form.Codigo_Producto.trim() || null,
-        Pregunta:        form.Pregunta.trim(),
-      });
-      mostrarToast('✅ Pregunta enviada. El equipo técnico responderá pronto.');
+      const Codigo_Producto = form.Codigo_Producto?.trim() || 'GENERAL';
+      if (editandoId) {
+        await api.put('/preguntas/actualizar', {
+          ID_Consulta:      editandoId,
+          ID_Usuario:       userId,
+          Codigo_Producto,
+          Pregunta:         form.Pregunta.trim(),
+          Fecha:            (form.Fecha || new Date().toISOString().split('T')[0]),
+        });
+        mostrarToast('✅ Pregunta actualizada correctamente.');
+      } else {
+        await api.post('/preguntas/agregar', {
+          ID_Usuario:      userId,
+          Codigo_Producto,
+          Pregunta:        form.Pregunta.trim(),
+        });
+        mostrarToast('✅ Pregunta enviada. El equipo técnico responderá pronto.');
+      }
       setForm({ Codigo_Producto: '', Pregunta: '' });
+      setEditandoId(null);
       setMostrarForm(false);
       listar();
     } catch (error) {
-      mostrarToast(error.response?.data?.error || 'Error al enviar la pregunta.', false);
+      mostrarToast(error.response?.data?.error || 'Error al procesar la pregunta.', false);
     } finally {
       setEnviando(false);
     }
+  };
+
+  const editarPregunta = (p) => {
+    setForm({ Codigo_Producto: p.Codigo_Producto === 'GENERAL' ? '' : (p.Codigo_Producto || ''), Pregunta: p.Pregunta, Fecha: p.Fecha ? p.Fecha.split('T')[0] : '' });
+    setEditandoId(p.ID_Consulta);
+    setMostrarForm(true);
+  };
+
+  const cancelarEdicion = () => {
+    setForm({ Codigo_Producto: '', Pregunta: '' });
+    setEditandoId(null);
+    setMostrarForm(false);
   };
 
   const toggleExpandir = (id) => setExpandida(prev => prev === id ? null : id);
@@ -176,6 +202,17 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                 )}
               </div>
             </div>
+            {!respondida && (
+              <div className="mt-2">
+                <button
+                  className="btn btn-sm btn-outline-secondary fw-bold"
+                  style={{ borderRadius: 'var(--radius-btn)', fontSize: '12px' }}
+                  onClick={() => editarPregunta(p)}
+                >
+                  ✏️ Editar pregunta
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -227,7 +264,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
           {/* ── Formulario nueva pregunta ──────────────────────────────────── */}
           {mostrarForm && (
             <div className="mb-4 p-4 fade-in" style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--color-border)' }}>
-              <h6 className="fw-bold mb-4" style={{ color: 'var(--color-text)' }}>Enviar nueva pregunta</h6>
+              <h6 className="fw-bold mb-4" style={{ color: 'var(--color-text)' }}>{editandoId ? 'Editar pregunta' : 'Enviar nueva pregunta'}</h6>
               <form onSubmit={enviar}>
                 <div className="mb-3">
                   <label className="form-label small fw-bold" style={{ color: 'var(--color-text-muted)' }}>
@@ -267,10 +304,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                     type="button"
                     className="btn btn-outline-secondary fw-bold"
                     style={{ borderRadius: 'var(--radius-btn)' }}
-                    onClick={() => {
-                      setMostrarForm(false);
-                      setForm({ Codigo_Producto: '', Pregunta: '' });
-                    }}
+                    onClick={cancelarEdicion}
                     disabled={enviando}
                   >
                     Cancelar
@@ -284,7 +318,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
                   >
                     {enviando
                       ? <><span className="spinner-border spinner-border-sm" /> Enviando...</>
-                      : <><IconSend /> Enviar pregunta</>
+                      : <><IconSend /> {editandoId ? 'Guardar cambios' : 'Enviar pregunta'}</>
                     }
                   </button>
                 </div>

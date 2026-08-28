@@ -1,5 +1,6 @@
 const AppError = require('../config/AppError');
 const chatDao = require('../dao/chat.dao');
+const servicioDao = require('../dao/servicio.dao');
 
 const listar = () => chatDao.getAll();
 
@@ -15,20 +16,28 @@ const listarMios = async (idUsuario) => {
 };
 
 const agregar = async ({ ID_Usuario, ID_Servicio }) => {
-    if (!ID_Usuario) {
-        throw new AppError('El campo ID_Usuario es obligatorio.', 400);
-    }
     // Chats de catálogo (sin servicio asociado): siempre crear uno nuevo
     if (ID_Servicio === null || ID_Servicio === undefined) {
+        if (!ID_Usuario) {
+            throw new AppError('El campo ID_Usuario es obligatorio.', 400);
+        }
         const result = await chatDao.create(ID_Usuario, null);
         return { message: 'Chat de consulta creado correctamente.', id: result.insertId, existente: false };
     }
-    // Chats de servicio: evitar duplicados
+    // Chats de servicio: el dueño del chat es el cliente dueño del servicio.
+    // Esto permite que cliente o técnico/admin creen el chat y siempre quede
+    // asociado al cliente correcto, sin depender del emisor.
+    const svc = await servicioDao.findById(ID_Servicio);
+    const clienteId = svc.length > 0 ? svc[0].ID_Usuario : ID_Usuario;
+    if (!clienteId) {
+        throw new AppError('No se pudo determinar el cliente del servicio.', 400);
+    }
+    // Evitar duplicados
     const existing = await chatDao.findByServicio(ID_Servicio);
     if (existing.length > 0) {
         return { message: 'Ya existe un chat para este servicio.', id: existing[0].Codigo_Chat, existente: true };
     }
-    const result = await chatDao.create(ID_Usuario, ID_Servicio);
+    const result = await chatDao.create(clienteId, ID_Servicio);
     return { message: 'Chat creado correctamente.', id: result.insertId, existente: false };
 };
 

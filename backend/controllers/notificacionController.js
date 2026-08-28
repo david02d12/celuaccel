@@ -35,7 +35,7 @@ exports.listar = async (req, res) => {
 
 exports.agregar = async (req, res) => {
     try {
-        await notificacionAdminService.agregar(req.body);
+        await notificacionAdminService.agregar(req.body, req.userId);
         res.status(201).json({ message: 'Notificación creada correctamente.' });
     } catch (err) { handleError(res, err); }
 };
