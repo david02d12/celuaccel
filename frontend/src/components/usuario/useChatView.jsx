@@ -7,43 +7,26 @@ export const useChatView = (role, usuario) => {
   const [chatSel, setChatSel] = useState(null);
   const [mensajes, setMensajes] = useState([]);
   const [nuevoMensaje, setNuevoMensaje] = useState('');
-  const [mensajeEnEdicion, setMensajeEnEdicion] = useState(null);
   const [busquedaChat, setBusquedaChat] = useState('');
   const [cargando, setCargando] = useState(false);
   const [cargandoChats, setCargandoChats] = useState(true);
   const [servicios, setServicios] = useState([]);
   const [iniciandoChat, setIniciandoChat] = useState(null);
   const [panelAbierto, setPanelAbierto] = useState(false);
+  const [mensajeEnEdicion, setMensajeEnEdicion] = useState(null);
   const mensajesEndRef = useRef(null);
 
-  useEffect(() => {
-    cargarChats();
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    if (chatSel) cargarMensajes(chatSel.Codigo_Chat);
-  }, [chatSel]);
-
-  useEffect(() => {
-    mensajesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [mensajes]);
-
-  const procesarEnlaceAutomatico = async (info, chatsCargados, url) => {
-    if (info.Codigo_Chat) {
-      const chatExistente = chatsCargados.find(c => String(c.Codigo_Chat) === String(info.Codigo_Chat));
-      if (chatExistente) setChatSel(chatExistente);
-    } else if (info.ID_Servicio) {
-      let chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(info.ID_Servicio));
-      if (chatExistente) {
-        setChatSel(chatExistente);
-      } else if (role === 2) {
-        await api.post('/chats/agregar', { ID_Usuario: usuario, ID_Servicio: info.ID_Servicio });
-        const resUpdated = await api.get(url);
-        chatsCargados = resUpdated.data;
-        chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(info.ID_Servicio));
-        if (chatExistente) setChatSel(chatExistente);
-      }
+  const procesarEnlaceAutomatico = async (chatInfo, chatsCargados, url) => {
+    let chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(chatInfo.idServicio));
+    if (!chatExistente) {
+      await api.post('/chats/agregar', { ID_Usuario: usuario, ID_Servicio: chatInfo.idServicio });
+      const res = await api.get(url);
+      chatsCargados = res.data;
+      chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(chatInfo.idServicio));
+    }
+    if (chatExistente) {
+      setChatSel(chatExistente);
+      setPanelAbierto(true);
     }
     sessionStorage.removeItem('chatInfo');
     return chatsCargados;
@@ -72,6 +55,12 @@ export const useChatView = (role, usuario) => {
       setCargandoChats(false);
     }
   };
+
+  useEffect(() => {
+    if (usuario) {
+      cargarChats();
+    }
+  }, [usuario, role]);
 
   const iniciarChatDesdeServicio = async (idServicio) => {
     setIniciandoChat(idServicio);
@@ -111,7 +100,6 @@ export const useChatView = (role, usuario) => {
 
     try {
       if (mensajeEnEdicion) {
-        // Modo edición
         const payload = {
           Codigo_Mensaje: mensajeEnEdicion,
           Mensaje: nuevoMensaje.trim()
@@ -119,7 +107,6 @@ export const useChatView = (role, usuario) => {
         await api.put('/mensajes/actualizar', payload);
         setMensajeEnEdicion(null);
       } else {
-        // Modo nuevo mensaje
         const payload = {
           Codigo_Chat: chatSel.Codigo_Chat,
           ID_Usuario: usuario,
@@ -168,7 +155,6 @@ export const useChatView = (role, usuario) => {
       await api.put(`/chats/restaurar/${id}`);
       await mostrarAlerta('Chat restaurado correctamente', 'success');
       cargarChats();
-      // Update local chatSel state if it's the currently selected chat
       setChatSel(prev => prev && prev.Codigo_Chat === id ? { ...prev, Estado_Chat: 'Activo' } : prev);
     } catch (err) {
       await mostrarAlerta('Error al restaurar el chat.', 'error');

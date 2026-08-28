@@ -33,7 +33,7 @@ const validarToken = (req, res, next) => {
     if (!token) return res.status(401).json({ error: 'Acceso denegado. Token no proporcionado.' });
 
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) return res.status(403).json({ error: 'Token inválido o expirado.' });
+        if (err) return res.status(401).json({ error: 'Token inválido o expirado.' });
         req.userId = decoded.id;
         next();
     });
