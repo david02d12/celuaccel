@@ -10,5 +10,6 @@ data class Chat(
     @SerializedName("Ultimo_Mensaje")       val ultimoMensaje: String? = null,
     @SerializedName("Fecha_Ultimo_Mensaje") val fechaUltimoMensaje: String? = null,
     @SerializedName("Servicio_Descripcion") val servicioDescripcion: String? = null,
-    @SerializedName("Servicio_Movil")       val servicioMovil: String? = null
+    @SerializedName("Servicio_Movil")       val servicioMovil: String? = null,
+    @SerializedName("Estado_Chat")          val estadoChat: String? = "Activo"
 )

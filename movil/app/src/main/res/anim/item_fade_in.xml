@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Animación fade-in + slide-up para cada item de RecyclerView
+     Equivalente al efecto .stagger-item / .fade-in del CSS del sitio web -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_cubic">
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="350"/>
+    <translate
+        android:fromYDelta="24dp"
+        android:toYDelta="0dp"
+        android:duration="350"/>
+</set>
