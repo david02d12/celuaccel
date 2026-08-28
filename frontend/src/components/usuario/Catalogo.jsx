@@ -195,8 +195,8 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
 
       {/* DETALLES MODAL */}
       {productoSel && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}>
-          <div className="modal-dialog modal-dialog-centered">
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} onClick={() => { setProductoSel(null); setHaciendoPregunta(false); }}>
+          <div className="modal-dialog modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content border-0 shadow">
               <div className="modal-header bg-primary">
                 <h5 className="modal-title text-white fw-bold">{productoSel.Nombre}</h5>
