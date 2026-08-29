@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- ── Paleta Principal Web CeluAccel ────────────── -->
+    <color name="celuaccel_primary">#DB0000</color>
+    <color name="celuaccel_primary_dark">#8B0000</color>
+    <color name="celuaccel_primary_light">#FFF0F0</color>
+    <color name="celuaccel_primary_alpha">#14DB0000</color>
+
+    <!-- Superficie y fondo -->
+    <color name="celuaccel_bg">#F4F6F8</color>
+    <color name="celuaccel_surface">#FFFFFF</color>
+    <color name="celuaccel_border">#E0E0E0</color>
+    <color name="celuaccel_border_alpha">#1A000000</color>
+
+    <!-- Texto -->
+    <color name="celuaccel_text">#1A1A1A</color>
+    <color name="celuaccel_text_muted">#6C757D</color>
+    <color name="celuaccel_text_light">#9E9E9E</color>
+
+    <!-- Semánticos -->
+    <color name="celuaccel_success">#198754</color>
+    <color name="celuaccel_warning">#F59E0B</color>
+    <color name="celuaccel_info">#0D6EFD</color>
+    <color name="celuaccel_purple">#8B5CF6</color>
+    <color name="celuaccel_danger">#DB0000</color>
+
+    <!-- ── Etapas de Servicio (igual que la web) ──────── -->
+    <!-- 0 = Recibido -->
+    <color name="etapa_recibido_bg">#1A6C757D</color>
+    <color name="etapa_recibido_text">#495057</color>
+    <color name="etapa_recibido_border">#406C757D</color>
+    <!-- 25 = Diagnóstico -->
+    <color name="etapa_diagnostico_bg">#1A0D6EFD</color>
+    <color name="etapa_diagnostico_text">#0A58CA</color>
+    <color name="etapa_diagnostico_border">#400D6EFD</color>
+    <!-- 50 = Reparación -->
+    <color name="etapa_reparacion_bg">#1AF59E0B</color>
+    <color name="etapa_reparacion_text">#B45309</color>
+    <color name="etapa_reparacion_border">#4DF59E0B</color>
+    <!-- 75 = Control de Calidad -->
+    <color name="etapa_calidad_bg">#1A8B5CF6</color>
+    <color name="etapa_calidad_text">#6D28D9</color>
+    <color name="etapa_calidad_border">#408B5CF6</color>
+    <!-- 100 = Listo -->
+    <color name="etapa_listo_bg">#1A198754</color>
+    <color name="etapa_listo_text">#146C43</color>
+    <color name="etapa_listo_border">#40198754</color>
+    <!-- -1 = Cancelado -->
+    <color name="etapa_cancelado_bg">#14DB0000</color>
+    <color name="etapa_cancelado_text">#A10000</color>
+    <color name="etapa_cancelado_border">#40DB0000</color>
+
+    <!-- Badge notificación -->
+    <color name="badge_notification">#FF6F00</color>
+</resources>

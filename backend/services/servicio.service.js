@@ -1,0 +1,82 @@
+const AppError = require('../config/AppError');
+const servicioDao = require('../dao/servicio.dao');
+const usuarioDao = require('../dao/usuario.dao');
+
+const listar = () => servicioDao.getAll();
+
+const misServicios = async (idUsuario, userId) => {
+    if (!idUsuario) throw new AppError('El ID de usuario es obligatorio.', 400);
+    const rolRes = await usuarioDao.getRol(userId);
+    const miRol = rolRes.length > 0 ? rolRes[0].Codigo_Rol : 2;
+    if (idUsuario !== userId && miRol !== 1 && miRol !== 3) {
+        throw new AppError('Acceso denegado: solo puedes ver tus propios servicios.', 403);
+    }
+    return servicioDao.getByUsuario(idUsuario);
+};
+
+const agregar = async (data, userId) => {
+    const { Descripcion, ID_Usuario, Precio, Precio_Repuestos, Precio_Mano_Obra } = data;
+    if (!Descripcion || !ID_Usuario) {
+        throw new AppError('Los campos Descripcion e ID_Usuario son obligatorios.', 400);
+    }
+    if (Precio !== undefined && Number(Precio) < 0) throw new AppError('El precio total no puede ser negativo.', 400);
+    if (Precio_Repuestos !== undefined && Number(Precio_Repuestos) < 0) throw new AppError('El precio de repuestos no puede ser negativo.', 400);
+    if (Precio_Mano_Obra !== undefined && Number(Precio_Mano_Obra) < 0) throw new AppError('El precio de mano de obra no puede ser negativo.', 400);
+    
+    const rolRes = await usuarioDao.getRol(userId);
+    const miRol = rolRes.length > 0 ? rolRes[0].Codigo_Rol : 2;
+    if (ID_Usuario !== userId && miRol !== 1 && miRol !== 3) {
+        throw new AppError('Acceso denegado: no puedes crear servicios para otro usuario.', 403);
+    }
+    return servicioDao.create(data);
+};
+
+const actualizar = async (data) => {
+    if (!data.ID_Servicio) throw new AppError('El campo ID_Servicio es obligatorio para actualizar.', 400);
+    const { Precio, Precio_Repuestos, Precio_Mano_Obra } = data;
+    if (Precio !== undefined && Number(Precio) < 0) throw new AppError('El precio total no puede ser negativo.', 400);
+    if (Precio_Repuestos !== undefined && Number(Precio_Repuestos) < 0) throw new AppError('El precio de repuestos no puede ser negativo.', 400);
+    if (Precio_Mano_Obra !== undefined && Number(Precio_Mano_Obra) < 0) throw new AppError('El precio de mano de obra no puede ser negativo.', 400);
+
+    // Etapa=2 = Terminado. Para completar una orden se requiere descripción final.
+    if (Number(data.Etapa) === 2) {
+        const descripcion = data.Descripcion ? String(data.Descripcion).trim() : '';
+        if (!descripcion) {
+            throw new AppError(
+                'Para completar el servicio (Etapa 2 = Terminado) es obligatorio registrar un diagnóstico final en el campo Descripcion.',
+                400
+            );
+        }
+    }
+
+    const result = await servicioDao.update(data);
+    if (result.affectedRows === 0) throw new AppError('Servicio no encontrado.', 404);
+};
+
+const cancelar = async (id, userId) => {
+    if (!id) throw new AppError('El ID del servicio es obligatorio.', 400);
+    const rows = await servicioDao.findById(id);
+    if (rows.length === 0) throw new AppError('Servicio no encontrado.', 404);
+
+    const { Etapa, ID_Usuario } = rows[0];
+    // Etapa=2 = Terminado, Etapa=-1 = Cancelado
+    if (Number(Etapa) === 2)  throw new AppError('No se puede cancelar un servicio ya terminado.', 409);
+    if (Number(Etapa) === -1) throw new AppError('El servicio ya fue cancelado.', 409);
+
+    const rolRes = await usuarioDao.getRol(userId);
+    const rolUsuario = rolRes[0]?.Codigo_Rol;
+    if (userId !== ID_Usuario && rolUsuario !== 1 && rolUsuario !== 3) {
+        throw new AppError('No tienes permiso para cancelar este servicio.', 403);
+    }
+    const result = await servicioDao.cancelar(id);
+    if (result.affectedRows === 0) throw new AppError('Servicio no encontrado.', 404);
+};
+
+const eliminar = async (id) => {
+    if (!id) throw new AppError('El ID del servicio es obligatorio.', 400);
+    const result = await servicioDao.remove(id);
+    if (result.affectedRows === 0) throw new AppError('Servicio no encontrado.', 404);
+};
+
+module.exports = { listar, misServicios, agregar, actualizar, cancelar, eliminar };
+

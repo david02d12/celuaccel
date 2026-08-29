@@ -1,0 +1,96 @@
+package com.example.myapplication
+
+import android.content.res.ColorStateList
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.model.Historial
+
+class HistorialAdapter(
+    private var items: List<Historial>,
+    private val onClick: ((Historial) -> Unit)? = null
+) : RecyclerView.Adapter<HistorialAdapter.VH>() {
+
+    fun updateList(newList: List<Historial>) {
+        items = newList
+        notifyDataSetChanged()
+    }
+
+
+    data class EtapaInfo(
+        val texto: String,
+        val badgeDrawable: Int,
+        val textColorRes: Int,
+        val porcentaje: Int,
+        val progressColorRes: Int
+    )
+
+    private fun etapaInfo(etapa: Int): EtapaInfo = when {
+        etapa == -1 -> EtapaInfo("Cancelado",  R.drawable.bg_badge_cancelado,   R.color.etapa_cancelado_text,   0,   R.color.etapa_cancelado_border)
+        etapa == 0  -> EtapaInfo("Pendiente",  R.drawable.bg_badge_recibido,    R.color.etapa_recibido_text,    10,  R.color.etapa_recibido_border)
+        etapa == 1  -> EtapaInfo("En proceso", R.drawable.bg_badge_reparacion,  R.color.etapa_reparacion_text,  50,  R.color.etapa_reparacion_border)
+        etapa == 2  -> EtapaInfo("Terminado",  R.drawable.bg_badge_listo,       R.color.etapa_listo_text,       100, R.color.etapa_listo_border)
+        else        -> EtapaInfo("En proceso", R.drawable.bg_badge_reparacion,  R.color.etapa_reparacion_text,  etapa, R.color.etapa_reparacion_border)
+    }
+
+    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+        val tvIdHistorial:       TextView    = v.findViewById(R.id.tvIdHistorial)
+        val tvEtapaHistorial:    TextView    = v.findViewById(R.id.tvEtapaHistorial)
+        val tvDispositivoHistorial: TextView = v.findViewById(R.id.tvDispositivoHistorial)
+        val tvDescHistorial:     TextView    = v.findViewById(R.id.tvDescHistorial)
+        val progressHistorial:   ProgressBar = v.findViewById(R.id.progressHistorial)
+        val tvFechaHistorial:    TextView    = v.findViewById(R.id.tvFechaHistorial)
+        val tvPrecioHistorial:   TextView    = v.findViewById(R.id.tvPrecioHistorial)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_historial, parent, false)
+        return VH(v)
+    }
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        val h   = items[position]
+        val ctx = holder.itemView.context
+
+
+        val etapaNum = when {
+            h.estado == null                               -> 0
+            h.estado.toIntOrNull() != null                 -> h.estado.toInt()
+            h.estado.equals("Listo", ignoreCase = true)    -> 100
+            h.estado.equals("Activo", ignoreCase = true)   -> 50
+            h.estado.equals("Cancelado", ignoreCase = true)-> -1
+            else                                           -> 0
+        }
+        val info = etapaInfo(etapaNum)
+
+        holder.tvIdHistorial.text = "Servicio #${h.idServicio}"
+
+        holder.tvEtapaHistorial.text       = info.texto
+        holder.tvEtapaHistorial.background = ContextCompat.getDrawable(ctx, info.badgeDrawable)
+        holder.tvEtapaHistorial.setTextColor(ContextCompat.getColor(ctx, info.textColorRes))
+
+
+        holder.tvDispositivoHistorial.text = h.descripcionEvento.take(40)
+        holder.tvDescHistorial.text        = h.descripcionEvento
+
+
+        holder.progressHistorial.progress = info.porcentaje
+        holder.progressHistorial.progressTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(ctx, info.progressColorRes))
+
+
+        val fechaStr = h.fechaEvento
+        holder.tvFechaHistorial.text = "📅 ${if (fechaStr.contains("T")) fechaStr.substringBefore("T") else fechaStr}"
+
+
+        holder.tvPrecioHistorial.visibility = View.GONE
+
+        holder.itemView.setOnClickListener { onClick?.invoke(h) }
+    }
+
+    override fun getItemCount(): Int = items.size
+}

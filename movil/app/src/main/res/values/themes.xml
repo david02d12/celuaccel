@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Colores base de Celuaccel -->
+        <item name="colorPrimary">@color/celuaccel_primary</item>
+        <item name="colorPrimaryVariant">@color/celuaccel_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/celuaccel_success</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/celuaccel_bg</item>
+    </style>
+
+    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication"/>
+</resources>
