@@ -18,7 +18,6 @@ class ChatAdapter(
         val tvNombreChat:     TextView = view.findViewById(R.id.tvNombreChat)
         val tvUltimoMensaje:  TextView = view.findViewById(R.id.tvUltimoMensaje)
         val tvHoraChat:       TextView = view.findViewById(R.id.tvHoraChat)
-        val tvEstadoChat:     TextView = view.findViewById(R.id.tvEstadoChat)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -64,14 +63,6 @@ class ChatAdapter(
         holder.tvAvatarChat.text = inicial
         holder.tvUltimoMensaje.text = subtitulo
         holder.tvHoraChat.text = hora
-
-        // Badge de estado: solo lo ve el admin/técnico cuando el chat está Oculto
-        val estaOculto = chat.estadoChat?.equals("Oculto", ignoreCase = true) == true
-        if (estaOculto && userRole != 2) {
-            holder.tvEstadoChat.visibility = View.VISIBLE
-        } else {
-            holder.tvEstadoChat.visibility = View.GONE
-        }
 
         holder.itemView.setOnClickListener { onChatClick(chat) }
     }

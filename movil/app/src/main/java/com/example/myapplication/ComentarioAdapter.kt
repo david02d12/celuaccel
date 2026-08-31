@@ -62,15 +62,11 @@ class ComentarioAdapter(
 
 
         val esDuenio = c.idUsuario == currentUserId
-        val esTecnico = currentUserRole == 3
+        val esTecnico = currentUserRole == 1 || currentUserRole == 3
         if (esDuenio || esTecnico) {
             holder.actionButtons.visibility = View.VISIBLE
-            if (esDuenio) {
-                holder.btnEdit.visibility = View.VISIBLE
-                holder.btnEdit.setOnClickListener { onEdit?.invoke(c) }
-            } else {
-                holder.btnEdit.visibility = View.GONE
-            }
+            holder.btnEdit.visibility = View.VISIBLE
+            holder.btnEdit.setOnClickListener { onEdit?.invoke(c) }
             holder.btnDelete.setOnClickListener { onDelete?.invoke(c) }
         } else {
             holder.actionButtons.visibility = View.GONE

@@ -41,17 +41,10 @@ class NotificacionActivity : AppCompatActivity() {
 
 
     private var listaCompleta: MutableList<Notificacion> = mutableListOf()
+
+
     private var filtroActual = "todas"
 
-    // ── Paginación ──
-    private val ITEMS_POR_PAGINA = 5
-    private var paginaActual    = 1
-    private var totalPaginas    = 1
-
-    private lateinit var layoutPaginacion:  LinearLayout
-    private lateinit var tvPaginaActual:    TextView
-    private lateinit var btnPaginaAnt:      Button
-    private lateinit var btnPaginaSig:      Button
 
     private val colorActivo   = Color.parseColor("#DB0000")
     private val colorInactivo = Color.parseColor("#6C757D")
@@ -74,19 +67,8 @@ class NotificacionActivity : AppCompatActivity() {
         viewEstadoVacio  = findViewById(R.id.viewEstadoVacio)
         tvVacioTitulo    = findViewById(R.id.tvEstadoVacioTitulo)
         tvVacioDesc      = findViewById(R.id.tvEstadoVacioDesc)
-        layoutPaginacion = findViewById(R.id.layoutPaginacion)
-        tvPaginaActual   = findViewById(R.id.tvPaginaActual)
-        btnPaginaAnt     = findViewById(R.id.btnPaginaAnterior)
-        btnPaginaSig     = findViewById(R.id.btnPaginaSiguiente)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        btnPaginaAnt.setOnClickListener {
-            if (paginaActual > 1) { paginaActual--; mostrarFiltrado() }
-        }
-        btnPaginaSig.setOnClickListener {
-            if (paginaActual < totalPaginas) { paginaActual++; mostrarFiltrado() }
-        }
 
 
         findViewById<Button>(R.id.btnRegresar).setOnClickListener { finish() }
@@ -153,7 +135,6 @@ class NotificacionActivity : AppCompatActivity() {
 
     private fun aplicarFiltro(filtro: String) {
         filtroActual = filtro
-        paginaActual = 1   // Resetear a página 1 al cambiar filtro
         actualizarPills()
         mostrarFiltrado()
     }
@@ -169,7 +150,6 @@ class NotificacionActivity : AppCompatActivity() {
         if (lista.isEmpty()) {
             viewEstadoVacio.visibility  = View.VISIBLE
             recyclerView.visibility     = View.GONE
-            layoutPaginacion.visibility = View.GONE
             val (titulo, desc) = when (filtroActual) {
                 "nuevas" -> Pair("Todo al día", "No tienes notificaciones sin leer.")
                 "leidas" -> Pair("Sin leídas",  "Ninguna notificación marcada como leída.")
@@ -180,19 +160,6 @@ class NotificacionActivity : AppCompatActivity() {
         } else {
             viewEstadoVacio.visibility = View.GONE
             recyclerView.visibility    = View.VISIBLE
-
-            // Calcular paginación
-            totalPaginas = Math.max(1, Math.ceil(lista.size.toDouble() / ITEMS_POR_PAGINA).toInt())
-            if (paginaActual > totalPaginas) paginaActual = totalPaginas
-            val inicio = (paginaActual - 1) * ITEMS_POR_PAGINA
-            val fin    = Math.min(inicio + ITEMS_POR_PAGINA, lista.size)
-            lista      = lista.subList(inicio, fin).toMutableList()
-
-            // Mostrar/ocultar controles de paginación
-            layoutPaginacion.visibility = if (totalPaginas > 1) View.VISIBLE else View.GONE
-            tvPaginaActual.text = "Página $paginaActual de $totalPaginas"
-            btnPaginaAnt.isEnabled = paginaActual > 1
-            btnPaginaSig.isEnabled = paginaActual < totalPaginas
         }
 
         val adapter = NotificacionAdapter(
