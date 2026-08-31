@@ -71,6 +71,12 @@ app.get('/api/health', (req, res) => {
 // Archivos subidos (adjuntos de chat)
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
+// Descarga de la app móvil (APK)
+app.get('/api/descargar-apk', (req, res) => {
+    const apkPath = require('path').join(__dirname, '..', 'frontend', 'descargables', 'app-debug.apk');
+    res.download(apkPath, 'app-debug.apk');
+});
+
 // Documentación Swagger
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocumentation));
 
