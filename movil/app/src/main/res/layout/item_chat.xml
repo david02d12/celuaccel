@@ -34,41 +34,15 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Fila de nombre + badge de estado -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvNombreChat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="3dp">
-
-                <TextView
-                    android:id="@+id/tvNombreChat"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cliente Ejemplo"
-                    android:textColor="@color/celuaccel_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold"/>
-
-                <!-- Badge: solo visible si Estado_Chat = 'Oculto' -->
-                <TextView
-                    android:id="@+id/tvEstadoChat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Oculto"
-                    android:textSize="10sp"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:paddingLeft="7dp"
-                    android:paddingRight="7dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:background="@drawable/bg_badge_muted"
-                    android:layout_marginStart="6dp"
-                    android:visibility="gone"/>
-            </LinearLayout>
+                android:text="Cliente Ejemplo"
+                android:textColor="@color/celuaccel_text"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="3dp"/>
 
             <TextView
                 android:id="@+id/tvUltimoMensaje"
@@ -95,5 +69,4 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/celuaccel_border"/>
-
 </LinearLayout>

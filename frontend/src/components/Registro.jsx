@@ -109,7 +109,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <label className="form-label fw-bold small text-muted">Correo Electrónico *</label>
           <input id="reg-correo" type="email" className={`form-control ${errores.Correo ? 'is-invalid' : formReg.Correo && !errores.Correo ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="ejemplo@correo.com" value={formReg.Correo}
-            maxLength={25}
+            maxLength={120}
             onChange={e => actualizar('Correo', e.target.value)} />
           {errores.Correo && <small className="text-danger">{errores.Correo}</small>}
         </div>

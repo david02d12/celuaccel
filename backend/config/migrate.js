@@ -31,10 +31,10 @@ const runMigrations = async () => {
     for (const m of migraciones) {
         try {
             await queryPromise(m.sql);
-            console.log(`[migrate] ✅ ${m.id}: ${m.descripcion}`);
+            // console.log(`[migrate] ✅ ${m.id}: ${m.descripcion}`);
         } catch (err) {
             if (m.ignorarError && err.code === m.ignorarError) {
-                console.log(`[migrate] ⏭️  ${m.id}: ya aplicada — ${m.descripcion}`);
+                // console.log(`[migrate] ⏭️  ${m.id}: ya aplicada — ${m.descripcion}`);
             } else {
                 console.error(`[migrate] ❌ ${m.id}: ${err.message}`);
             }

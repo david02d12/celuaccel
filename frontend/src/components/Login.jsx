@@ -74,16 +74,31 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
         <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '3px', color: '#fff' }}>
           CELUACCEL
         </span>
-        <button
-          onClick={() => setVista('catalogoPublico')}
-          style={{
-            background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
-            color: '#fff', padding: '6px 16px', borderRadius: '8px',
-            fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
-          }}
-        >
-          Ver Catálogo
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <a
+            href={`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/descargar-apk`}
+            download="app-debug.apk"
+            style={{
+              background: 'var(--color-primary)', border: '1px solid var(--color-primary)',
+              color: '#fff', padding: '6px 16px', borderRadius: '8px',
+              fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
+              textDecoration: 'none', display: 'inline-block',
+            }}
+            title="Descargar la aplicación móvil (APK)"
+          >
+            Descargar App
+          </a>
+          <button
+            onClick={() => setVista('catalogoPublico')}
+            style={{
+              background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
+              color: '#fff', padding: '6px 16px', borderRadius: '8px',
+              fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
+            }}
+          >
+            Ver Catálogo
+          </button>
+        </div>
       </nav>
 
       {/* Card de login */}

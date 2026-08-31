@@ -1,0 +1,598 @@
+diff --git a/frontend/src/components/admin/Roles.jsx b/frontend/src/components/admin/Roles.jsx
+index 8aafb0a..bf02a96 100644
+--- a/frontend/src/components/admin/Roles.jsx
++++ b/frontend/src/components/admin/Roles.jsx
+@@ -101,7 +101,7 @@ const Roles = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Privilegios y Roles</h4>
+             <p className="mb-0 opacity-75">Configura los niveles de acceso del sistema</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{datos.length} roles</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: 'var(--color-surface)' }}>{datos.length} roles</span>
+         </div>
+ 
+         <div className="row">
+diff --git a/frontend/src/components/admin/Tipo.jsx b/frontend/src/components/admin/Tipo.jsx
+index 0520fc6..52c2b7a 100644
+--- a/frontend/src/components/admin/Tipo.jsx
++++ b/frontend/src/components/admin/Tipo.jsx
+@@ -81,7 +81,7 @@ const Tipo = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Tipos de Documento</h4>
+             <p className="mb-0 opacity-75">Configura los tipos de documento validos en el sistema</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{datos.length} tipos</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: 'var(--color-surface)' }}>{datos.length} tipos</span>
+         </div>
+ 
+         <div className="row">
+diff --git a/frontend/src/components/admin/Usuarios.jsx b/frontend/src/components/admin/Usuarios.jsx
+index 9424162..1e29360 100644
+--- a/frontend/src/components/admin/Usuarios.jsx
++++ b/frontend/src/components/admin/Usuarios.jsx
+@@ -119,7 +119,7 @@ const Usuarios = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Directorio de Usuarios</h4>
+             <p className="mb-0 opacity-75">Gestiona cuentas, roles y datos personales</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{usuarios.length} usuarios</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: 'var(--color-surface)' }}>{usuarios.length} usuarios</span>
+         </div>
+ 
+         <div className="row">
+diff --git a/frontend/src/components/publico/CatalogoPublico.jsx b/frontend/src/components/publico/CatalogoPublico.jsx
+index 0bd5f7b..fd5f154 100644
+--- a/frontend/src/components/publico/CatalogoPublico.jsx
++++ b/frontend/src/components/publico/CatalogoPublico.jsx
+@@ -1,3 +1,4 @@
++import { useTheme } from '../../context/ThemeContext';
+ import React, { useState } from 'react';
+ import 'bootstrap/dist/css/bootstrap.min.css';
+ 
+@@ -12,10 +13,11 @@ const CatalogoPublico = ({ setVista }) => {
+     filtrados, nombreCat
+   } = useCatalogoPublico();
+ 
++  const { isDark, toggleTheme } = useTheme();
+   const [modalVisible, setModalVisible] = useState(false);
+ 
+   return (
+-    <div style={{ minHeight: '100vh', backgroundColor: '#f0f2f5', fontFamily: "'Inter', sans-serif" }}>
++    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', fontFamily: "'Inter', sans-serif" }}>
+ 
+       <nav style={{
+         position: 'sticky', top: 0, zIndex: 200,
+@@ -29,13 +31,20 @@ const CatalogoPublico = ({ setVista }) => {
+           </div>
+           <div style={{ display: 'flex', gap: '10px' }}>
+             <button
+-              onClick={() => setVista('catalogoPublico')}
+-              style={{
+-                background: 'none', border: 'none', color: 'rgba(255,255,255,0.8)',
+-                fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', padding: '6px 12px',
+-              }}
++              className="btn btn-link text-white p-2"
++              onClick={toggleTheme}
++              title={isDark ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}
++              style={{ textDecoration: 'none', boxShadow: 'none', padding: '6px 12px' }}
+             >
+-              Catalogo
++              {isDark ? (
++                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
++                  <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
++                </svg>
++              ) : (
++                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
++                  <path d="M10.794 3.148a.217.217 0 0 1 .412-.02A7.001 7.001 0 0 0 15.71 10.1a7.002 7.002 0 0 1-10.457-7.002 5.495 5.495 0 0 1 5.541-2.95zm-2.823 8.7a8.2 8.2 0 0 1-5.23-5.23A6 6 0 1 0 11.23 11.23a8.2 8.2 0 0 1-3.26-.082z"/>
++                </svg>
++              )}
+             </button>
+             <button
+               id="btn-ir-login"
+@@ -114,8 +123,8 @@ const CatalogoPublico = ({ setVista }) => {
+             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+             marginBottom: '28px', flexWrap: 'wrap', gap: '8px',
+           }}>
+-            <p style={{ color: '#666', fontSize: '0.88rem', margin: 0 }}>
+-              <strong style={{ color: '#1a1a1a' }}>{filtrados.length}</strong> productos encontrados
++            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', margin: 0 }}>
++              <strong style={{ color: 'var(--color-text)' }}>{filtrados.length}</strong> productos encontrados
+               {categoriaFiltro && categorias.length > 0 && (
+                 <span> en <strong style={{ color: '#c00000' }}>{nombreCat(categoriaFiltro)}</strong></span>
+               )}
+@@ -133,18 +142,18 @@ const CatalogoPublico = ({ setVista }) => {
+           <div style={{ textAlign: 'center', padding: '80px 0' }}>
+             <div style={{
+               width: '44px', height: '44px', borderRadius: '50%',
+-              border: '3px solid #f0f0f0', borderTopColor: '#c00000',
++              border: '3px solid var(--color-border)', borderTopColor: '#c00000',
+               animation: 'spin 0.8s linear infinite', margin: '0 auto 20px',
+             }} />
+             <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+-            <p style={{ color: '#999', fontSize: '0.9rem' }}>Cargando productos...</p>
++            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Cargando productos...</p>
+           </div>
+         )}
+ 
+         {error && !cargando && (
+           <div style={{
+             textAlign: 'center', padding: '60px 20px',
+-            background: '#fff', borderRadius: '16px',
++            background: 'var(--color-surface)', borderRadius: '16px',
+             border: '1px solid rgba(200,0,0,0.12)',
+             boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+           }}>
+@@ -158,8 +167,8 @@ const CatalogoPublico = ({ setVista }) => {
+                 <line x1="12" y1="16" x2="12.01" y2="16"/>
+               </svg>
+             </div>
+-            <h6 style={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>No se pudo cargar el catalogo</h6>
+-            <p style={{ color: '#888', fontSize: '0.88rem', marginBottom: '20px' }}>{error}</p>
++            <h6 style={{ fontWeight: 700, color: 'var(--color-text)', marginBottom: '8px' }}>No se pudo cargar el catalogo</h6>
++            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', marginBottom: '20px' }}>{error}</p>
+             <button
+               onClick={() => window.location.reload()}
+               style={{
+@@ -175,23 +184,23 @@ const CatalogoPublico = ({ setVista }) => {
+ 
+         {!cargando && !error && filtrados.length === 0 && productos.length === 0 && (
+           <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ddd" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
++            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
+               <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/>
+             </svg>
+-            <h6 style={{ color: '#bbb', fontWeight: 600 }}>No hay productos disponibles</h6>
+-            <p style={{ color: '#ccc', fontSize: '0.85rem' }}>Vuelve pronto, estamos actualizando el inventario.</p>
++            <h6 style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>No hay productos disponibles</h6>
++            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Vuelve pronto, estamos actualizando el inventario.</p>
+           </div>
+         )}
+ 
+         {!cargando && !error && filtrados.length === 0 && productos.length > 0 && (
+           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
++            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '16px' }}>
+               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+             </svg>
+-            <h6 style={{ color: '#aaa', fontWeight: 600 }}>Sin resultados para "{busqueda}"</h6>
++            <h6 style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>Sin resultados para "{busqueda}"</h6>
+             <button onClick={() => { setBusqueda(''); setCategoriaFiltro(''); }} style={{
+-              marginTop: '12px', background: 'none', border: '1px solid #ddd',
+-              padding: '8px 20px', borderRadius: '8px', color: '#888',
++              marginTop: '12px', background: 'none', border: '1px solid var(--color-border)',
++              padding: '8px 20px', borderRadius: '8px', color: 'var(--color-text-muted)',
+               cursor: 'pointer', fontSize: '0.85rem',
+             }}>Limpiar filtros</button>
+           </div>
+@@ -279,7 +288,7 @@ const CatalogoPublico = ({ setVista }) => {
+             role="button" tabIndex="-1"
+             onKeyDown={e => e.stopPropagation()}
+             style={{
+-              background: '#fff', borderRadius: '20px',
++              background: 'var(--color-surface)', borderRadius: '20px',
+               padding: '40px 32px', width: '100%', maxWidth: '380px',
+               textAlign: 'center',
+               boxShadow: '0 32px 80px rgba(0,0,0,0.3)',
+@@ -297,10 +306,10 @@ const CatalogoPublico = ({ setVista }) => {
+               </svg>
+             </div>
+ 
+-            <h5 style={{ fontWeight: 800, color: '#111', marginBottom: '8px' }}>
++            <h5 style={{ fontWeight: 800, color: 'var(--color-text)', marginBottom: '8px' }}>
+               Inicia sesion para continuar
+             </h5>
+-            <p style={{ color: '#888', fontSize: '0.88rem', marginBottom: '28px', lineHeight: 1.6 }}>
++            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', marginBottom: '28px', lineHeight: 1.6 }}>
+               Para ver detalles del producto y realizar solicitudes necesitas una cuenta en CELUACCEL.
+             </p>
+ 
+@@ -319,7 +328,7 @@ const CatalogoPublico = ({ setVista }) => {
+               <button
+                 onClick={() => setVista('registro')}
+                 style={{
+-                  background: '#f5f5f5', color: '#1a1a1a', border: 'none',
++                  background: 'var(--color-bg)', color: 'var(--color-text)', border: 'none',
+                   padding: '13px', borderRadius: '10px', fontWeight: 700,
+                   cursor: 'pointer', fontSize: '0.92rem',
+                 }}
+@@ -329,7 +338,7 @@ const CatalogoPublico = ({ setVista }) => {
+               <button
+                 onClick={() => setModalVisible(false)}
+                 style={{
+-                  background: 'none', color: '#aaa', border: 'none',
++                  background: 'none', color: 'var(--color-text-muted)', border: 'none',
+                   padding: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500,
+                 }}
+               >
+diff --git a/frontend/src/components/publico/FiltrosCatalogo.jsx b/frontend/src/components/publico/FiltrosCatalogo.jsx
+index 5a93322..9f00f64 100644
+--- a/frontend/src/components/publico/FiltrosCatalogo.jsx
++++ b/frontend/src/components/publico/FiltrosCatalogo.jsx
+@@ -1,3 +1,4 @@
++import { useTheme } from '../../context/ThemeContext';
+ import React from 'react';
+ 
+ export const FiltrosCatalogo = ({ busqueda, setBusqueda, categoriaFiltro, setCategoriaFiltro, categorias }) => {
+diff --git a/frontend/src/components/publico/ProductoCard.jsx b/frontend/src/components/publico/ProductoCard.jsx
+index 81bdde1..b5fb4da 100644
+--- a/frontend/src/components/publico/ProductoCard.jsx
++++ b/frontend/src/components/publico/ProductoCard.jsx
+@@ -15,7 +15,7 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
+     <div className="col-6 col-md-4 col-lg-3">
+       <div
+         style={{
+-          background: '#fff',
++          background: 'var(--color-surface)',
+           borderRadius: '16px',
+           border: '1px solid rgba(0,0,0,0.07)',
+           boxShadow: prodHover
+@@ -45,14 +45,14 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
+           <div style={{
+             display: p.Imagen ? 'none' : 'flex',
+             width: '100%', height: '100%',
+-            background: 'linear-gradient(135deg,#f5f5f5,#ebebeb)',
++            background: 'var(--color-bg)',
+             alignItems: 'center', justifyContent: 'center',
+             flexDirection: 'column', gap: '6px',
+           }}>
+             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round">
+               <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/>
+             </svg>
+-            <span style={{ fontSize: '0.7rem', color: '#ccc', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Sin imagen</span>
++            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Sin imagen</span>
+           </div>
+           <div style={{
+             position: 'absolute', inset: 0,
+@@ -75,11 +75,11 @@ export const ProductoCard = ({ p, nombreCat, setModalVisible }) => {
+           <span style={pill('rgba(192,0,0,0.09)', '#9a0000')}>
+             {nombreCat(p.ID_Categoria)}
+           </span>
+-          <h6 style={{ fontWeight: 700, margin: 0, fontSize: '0.95rem', color: '#1a1a1a', lineHeight: 1.3 }}>
++          <h6 style={{ fontWeight: 700, margin: 0, fontSize: '0.95rem', color: 'var(--color-text)', lineHeight: 1.3 }}>
+             {p.Nombre}
+           </h6>
+           <p style={{
+-            color: '#888', fontSize: '0.8rem', margin: 0, flexGrow: 1,
++            color: 'var(--color-text-muted)', fontSize: '0.8rem', margin: 0, flexGrow: 1,
+             display: '-webkit-box', WebkitLineClamp: 2,
+             WebkitBoxOrient: 'vertical', overflow: 'hidden',
+           }}>
+diff --git a/frontend/src/components/tecnico/Categorias.jsx b/frontend/src/components/tecnico/Categorias.jsx
+index 73308aa..f9016ec 100644
+--- a/frontend/src/components/tecnico/Categorias.jsx
++++ b/frontend/src/components/tecnico/Categorias.jsx
+@@ -83,7 +83,7 @@ const Categorias = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Categorias de Productos</h4>
+             <p className="mb-0 opacity-75">Define y edita las categorias del catalogo</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{categorias.length} categorias</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{categorias.length} categorias</span>
+         </div>
+ 
+         <div className="row">
+diff --git a/frontend/src/components/tecnico/Chats.jsx b/frontend/src/components/tecnico/Chats.jsx
+index 9d0dee0..9141cf3 100644
+--- a/frontend/src/components/tecnico/Chats.jsx
++++ b/frontend/src/components/tecnico/Chats.jsx
+@@ -79,7 +79,7 @@ const Chats = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Administración de Canales</h4>
+             <p className="mb-0 opacity-75">Configura y gestiona los canales de chat activos</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{chats.length} canales</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{chats.length} canales</span>
+         </div>
+ 
+         <div className="row">
+diff --git a/frontend/src/components/tecnico/Historial.jsx b/frontend/src/components/tecnico/Historial.jsx
+index 8a7bcd3..1e12186 100644
+--- a/frontend/src/components/tecnico/Historial.jsx
++++ b/frontend/src/components/tecnico/Historial.jsx
+@@ -153,7 +153,7 @@ const Historial = ({ cerrarSesion, setVista }) => {
+             <p className="mb-0 opacity-75">Registro cronologico de cada paso tecnico en los servicios</p>
+           </div>
+           <div className="d-flex gap-2 align-items-center flex-wrap">
+-            <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }}">{datos.length} eventos</span>
++            <span className="badge text-danger fw-bold" style={{ backgroundColor: '#fff' }}>{datos.length} eventos</span>
+             <span className="badge fw-bold" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+               {totalActivos} activos
+             </span>
+diff --git a/frontend/src/components/tecnico/Mensajes.jsx b/frontend/src/components/tecnico/Mensajes.jsx
+index 6a7ceec..8fabea3 100644
+--- a/frontend/src/components/tecnico/Mensajes.jsx
++++ b/frontend/src/components/tecnico/Mensajes.jsx
+@@ -85,7 +85,7 @@ const Mensajes = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Bandeja de Mensajes</h4>
+             <p className="mb-0 opacity-75">Controla y edita los mensajes enviados en los chats</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{mensajes.length} mensajes</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{mensajes.length} mensajes</span>
+         </div>
+ 
+         <div className="row">
+diff --git a/frontend/src/components/tecnico/Preguntas.jsx b/frontend/src/components/tecnico/Preguntas.jsx
+index 7cbb584..b9dbf79 100644
+--- a/frontend/src/components/tecnico/Preguntas.jsx
++++ b/frontend/src/components/tecnico/Preguntas.jsx
+@@ -50,11 +50,8 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
+   const guardar = async () => {
+     try {
+       if (enEdicion) {
+-        const tecnico = sessionStorage.getItem('userId') || sessionStorage.getItem('user');
+-        await api.put('/preguntas/actualizar', {
+-          ...form,
+-          ID_Tecnico_Responde: tecnico,
+-          Fecha_Respuesta: form.Respuesta ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null
++        await api.put(`/preguntas/responder/${form.ID_Consulta}`, {
++          Respuesta: form.Respuesta
+         });
+       } else {
+         await api.post('/preguntas/agregar', form);
+@@ -102,7 +99,7 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
+             <h4 className="fw-bold mb-1">Preguntas sobre Equipos</h4>
+             <p className="mb-0 opacity-75">Responde las inquietudes técnicas de los clientes sobre los productos</p>
+           </div>
+-          <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{preguntas.length} preguntas</span>
++          <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{preguntas.length} preguntas</span>
+         </div>
+ 
+         <div className="row">
+@@ -114,18 +111,18 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
+                 value={form.ID_Consulta} disabled={enEdicion}
+                 onChange={e => setForm({...form, ID_Consulta: e.target.value})} />
+               <input className="form-control mb-2" style={inputStyle} placeholder="ID Usuario"
+-                value={form.ID_Usuario}
++                value={form.ID_Usuario} disabled={enEdicion}
+                 onChange={e => setForm({...form, ID_Usuario: e.target.value})} />
+               <input className="form-control mb-2" style={inputStyle} placeholder="Cód. Producto"
+-                value={form.Codigo_Producto}
++                value={form.Codigo_Producto} disabled={enEdicion}
+                 onChange={e => setForm({...form, Codigo_Producto: e.target.value})} />
+               <textarea className="form-control mb-2" style={inputStyle} placeholder="Pregunta"
+-                value={form.Pregunta}
++                value={form.Pregunta} disabled={enEdicion}
+                 onChange={e => setForm({...form, Pregunta: e.target.value})} />
+               <label className="small text-muted fw-bold mb-1">Fecha</label>
+               <input className="form-control mb-2" style={inputStyle} type="date"
+                 min={minDate} max={maxDate}
+-                value={form.Fecha}
++                value={form.Fecha} disabled={enEdicion}
+                 onChange={e => setForm({...form, Fecha: e.target.value})} />
+               {/* C5 FIX: Campo Respuesta — solo visible en modo edición */}
+               {enEdicion && (
+diff --git a/frontend/src/components/tecnico/Productos.jsx b/frontend/src/components/tecnico/Productos.jsx
+index 6e5eb86..d38e6ca 100644
+--- a/frontend/src/components/tecnico/Productos.jsx
++++ b/frontend/src/components/tecnico/Productos.jsx
+@@ -119,7 +119,7 @@ const Productos = ({ cerrarSesion, setVista }) => {
+             <p className="mb-0 opacity-75">Controla el stock, precios y visibilidad en el catalogo</p>
+           </div>
+           <div className="d-flex gap-2 align-items-center flex-wrap">
+-            <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }}">{productos.length} productos</span>
++            <span className="badge text-danger fw-bold" style={{ backgroundColor: '#fff' }}>{productos.length} productos</span>
+             <span className="badge fw-bold" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+               {totalActivos} en catalogo
+             </span>
+diff --git a/frontend/src/components/tecnico/Servicios.jsx b/frontend/src/components/tecnico/Servicios.jsx
+index 6723684..ba194dc 100644
+--- a/frontend/src/components/tecnico/Servicios.jsx
++++ b/frontend/src/components/tecnico/Servicios.jsx
+@@ -230,7 +230,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
+             <p className="mb-0 opacity-75">Registra y actualiza el seguimiento de cada servicio tecnico</p>
+           </div>
+           <div className="d-flex align-items-center gap-2">
+-            <span className="badge text-danger fw-bold" style={{ backgroundColor: 'var(--color-surface)' }} fs-6">{servicios.length} servicios</span>
++            <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{servicios.length} servicios</span>
+             <button className="btn btn-sm btn-light text-danger fw-bold d-flex align-items-center gap-1" onClick={generarPDF}>
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+diff --git a/frontend/src/components/usuario/Catalogo.jsx b/frontend/src/components/usuario/Catalogo.jsx
+index 48ce4ae..5c075b1 100644
+--- a/frontend/src/components/usuario/Catalogo.jsx
++++ b/frontend/src/components/usuario/Catalogo.jsx
+@@ -49,29 +49,10 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
+         Fecha: new Date().toISOString().split('T')[0]
+       });
+ 
+-      // 2. Crear un chat de consulta (sin servicio asociado)
+-      const chatRes = await api.post('/chats/agregar', {
+-        ID_Usuario: usuario,
+-        ID_Servicio: null
+-      });
+-      const codigoChat = chatRes.data.id;
+-
+-      // 3. Enviar la pregunta como primer mensaje del chat
+-      await api.post('/mensajes/agregar', {
+-        Codigo_Chat: codigoChat,
+-        ID_Usuario: usuario,
+-        Mensaje: `Consulta sobre "${productoSel.Nombre}": ${nuevaPregunta}`,
+-        Estado: 'Enviado'
+-      });
+-
+-      // 4. Guardar referencia del chat para que ChatVista lo abra automáticamente
+-      sessionStorage.setItem('chatInfo', JSON.stringify({ Codigo_Chat: codigoChat }));
+-
+-      // 5. Redirigir al chat en tiempo real con el técnico
+       setHaciendoPregunta(false);
+       setNuevaPregunta('');
+       setProductoSel(null);
+-      setVista('chatVista');
++      await mostrarAlerta('Tu pregunta ha sido enviada al técnico. Podrás ver la respuesta en la sección "Mis Preguntas".', 'success');
+     } catch (err) {
+       console.error(err);
+       const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Error al enviar la pregunta. Intenta de nuevo.';
+@@ -249,7 +230,7 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
+                   <div className="w-100 mt-2" style={{ animation: 'fadeIn 0.3s' }}>
+                     <div className="alert alert-info py-2 px-3 mb-3 small d-flex align-items-center gap-2" style={{ borderRadius: '10px' }}>
+                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+-                      Tu pregunta abrirá un chat directo con el técnico.
++                      Tu consulta será enviada al técnico. Podrás ver su respuesta en la sección "Mis Preguntas".
+                     </div>
+                     <textarea 
+                       className="form-control mb-3 shadow-sm" 
+@@ -266,8 +247,8 @@ const Catalogo = ({ cerrarSesion, setVista }) => {
+                       </button>
+                       <button className="btn btn-primary fw-bold px-4" onClick={enviarPregunta} disabled={enviandoPregunta}>
+                         {enviandoPregunta
+-                          ? (<><span className="spinner-border spinner-border-sm me-2" />Conectando con técnico...</>)
+-                          : 'Chatear con el Técnico'
++                          ? (<><span className="spinner-border spinner-border-sm me-2" />Enviando...</>)
++                          : 'Enviar Pregunta'
+                         }
+                       </button>
+                     </div>
+diff --git a/frontend/src/components/usuario/MiServicio.jsx b/frontend/src/components/usuario/MiServicio.jsx
+index bbbfa71..2ebab54 100644
+--- a/frontend/src/components/usuario/MiServicio.jsx
++++ b/frontend/src/components/usuario/MiServicio.jsx
+@@ -280,7 +280,7 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
+                       <p className="mb-1"><strong>Descripción:</strong> {s.Descripcion}</p>
+                       <p className="mb-1"><strong>Especificación:</strong> {s.Movil_Especificacion}</p>
+                       
+-                      <div className="p-2" style={{ backgroundColor: 'var(--color-surface)' }} rounded mb-2 mt-2" style={{ border: '1px solid var(--color-border)' }}>
++                      <div className="p-2 rounded mb-2 mt-2" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                         <div className="d-flex justify-content-between small mb-1">
+                           <span>Repuestos:</span>
+                           <span className="fw-bold">{s.Precio_Repuestos ? `$${s.Precio_Repuestos}` : 'N/A'}</span>
+diff --git a/frontend/src/components/usuario/MisPreguntas.jsx b/frontend/src/components/usuario/MisPreguntas.jsx
+index 6096653..d0fd662 100644
+--- a/frontend/src/components/usuario/MisPreguntas.jsx
++++ b/frontend/src/components/usuario/MisPreguntas.jsx
+@@ -34,6 +34,7 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
+   const [mostrarForm, setMostrarForm] = useState(false);
+   const [enviando, setEnviando]   = useState(false);
+   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
++  const [productosCatalogo, setProductosCatalogo] = useState([]);
+ 
+   const [form, setForm] = useState({
+     Codigo_Producto: '',
+@@ -53,10 +54,14 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
+   const listar = async () => {
+     setCargando(true);
+     try {
+-      const res = await api.get('/preguntas/mis-preguntas');
+-      setPreguntas(res.data);
++      const [pregRes, prodRes] = await Promise.all([
++        api.get('/preguntas/mis-preguntas'),
++        api.get('/productos/listar')
++      ]);
++      setPreguntas(pregRes.data);
++      setProductosCatalogo(prodRes.data.filter(p => Number(p.Activo_Catalogo) === 1));
+     } catch {
+-      mostrarToast('Error al cargar tus preguntas.', false);
++      mostrarToast('Error al cargar la información.', false);
+     } finally {
+       setCargando(false);
+     }
+@@ -205,60 +210,82 @@ const MisPreguntas = ({ cerrarSesion, setVista }) => {
+                 Consulta las respuestas del equipo técnico o envía una nueva pregunta.
+               </p>
+             </div>
+-            <button
+-              id="btn-nueva-pregunta"
+-              className="btn btn-sm"
+-              style={{ background: 'var(--color-primary)', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: 600 }}
+-              onClick={() => setMostrarForm(f => !f)}
+-            >
+-              {mostrarForm ? '✕ Cancelar' : '+ Nueva pregunta'}
+-            </button>
++            {!mostrarForm && (
++              <button
++                id="btn-nueva-pregunta"
++                className="btn btn-sm"
++                style={{ background: 'var(--color-primary)', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: 600 }}
++                onClick={() => setMostrarForm(true)}
++              >
++                + Nueva pregunta
++              </button>
++            )}
+           </div>
+ 
+           {/* ── Formulario nueva pregunta ──────────────────────────────────── */}
+           {mostrarForm && (
+-            <div className="mb-4 rounded p-4 border" style={{ background: 'var(--color-bg-card, var(--color-bg))', borderColor: 'var(--color-primary)55' }}>
+-              <h6 className="fw-bold mb-3" style={{ color: 'var(--color-text)' }}>Enviar nueva pregunta</h6>
++            <div className="mb-4 p-4 fade-in" style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--color-border)' }}>
++              <h6 className="fw-bold mb-4" style={{ color: 'var(--color-text)' }}>Enviar nueva pregunta</h6>
+               <form onSubmit={enviar}>
+                 <div className="mb-3">
+-                  <label className="form-label small fw-semibold" style={{ color: 'var(--color-text-muted)' }}>
+-                    CÓDIGO DE PRODUCTO (opcional)
++                  <label className="form-label small fw-bold" style={{ color: 'var(--color-text-muted)' }}>
++                    SELECCIONA UN PRODUCTO (opcional)
+                   </label>
+-                  <input
+-                    id="input-codigo-producto"
+-                    className="form-control"
+-                    style={{ background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+-                    placeholder="Ej: PROD-001"
++                  <select
++                    id="select-codigo-producto"
++                    className="form-select"
++                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-btn)' }}
+                     value={form.Codigo_Producto}
+                     onChange={e => setForm(f => ({ ...f, Codigo_Producto: e.target.value }))}
+-                  />
++                  >
++                    <option value="">-- Ninguno (Pregunta general) --</option>
++                    {productosCatalogo.map(p => (
++                      <option key={p.Codigo_Producto} value={p.Codigo_Producto}>
++                        {p.Nombre} ({p.Codigo_Producto})
++                      </option>
++                    ))}
++                  </select>
+                 </div>
+-                <div className="mb-3">
+-                  <label className="form-label small fw-semibold" style={{ color: 'var(--color-text-muted)' }}>
++                <div className="mb-4">
++                  <label className="form-label small fw-bold" style={{ color: 'var(--color-text-muted)' }}>
+                     TU PREGUNTA *
+                   </label>
+                   <textarea
+                     id="input-pregunta-texto"
+                     className="form-control"
+-                    style={{ background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)', minHeight: '90px', resize: 'vertical' }}
++                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-btn)', minHeight: '110px', resize: 'vertical' }}
+                     placeholder="Escribe tu consulta con detalle..."
+                     value={form.Pregunta}
+                     onChange={e => setForm(f => ({ ...f, Pregunta: e.target.value }))}
+                     required
+                   />
+                 </div>
+-                <button
+-                  id="btn-enviar-pregunta"
+-                  type="submit"
+-                  className="btn d-flex align-items-center gap-2"
+-                  style={{ background: 'var(--color-primary)', color: '#fff', fontWeight: 600 }}
+-                  disabled={enviando}
+-                >
+-                  {enviando
+-                    ? <><span className="spinner-border spinner-border-sm" /> Enviando...</>
+-                    : <><IconSend /> Enviar pregunta</>
+-                  }
+-                </button>
++                <div className="d-flex justify-content-end gap-2 mt-2">
++                  <button
++                    type="button"
++                    className="btn btn-outline-secondary fw-bold"
++                    style={{ borderRadius: 'var(--radius-btn)' }}
++                    onClick={() => {
++                      setMostrarForm(false);
++                      setForm({ Codigo_Producto: '', Pregunta: '' });
++                    }}
++                    disabled={enviando}
++                  >
++                    Cancelar
++                  </button>
++                  <button
++                    id="btn-enviar-pregunta"
++                    type="submit"
++                    className="btn d-flex align-items-center gap-2 border-0"
++                    style={{ background: 'var(--color-primary)', color: '#fff', fontWeight: 600, borderRadius: 'var(--radius-btn)' }}
++                    disabled={enviando}
++                  >
++                    {enviando
++                      ? <><span className="spinner-border spinner-border-sm" /> Enviando...</>
++                      : <><IconSend /> Enviar pregunta</>
++                    }
++                  </button>
++                </div>
+               </form>
+             </div>
+           )}
