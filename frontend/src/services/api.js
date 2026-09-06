@@ -4,41 +4,39 @@
  * - Todas las llamadas al backend pasan por aquí.
  * - La URL base se lee de la variable de entorno VITE_API_URL.
  * - El interceptor adjunta el token JWT automáticamente en cada request.
- * - No hay que copiar el token en cada componente.
  *
  * Uso en un service:
- *   import api from './api';
- *   const data = await api.get('/productos/listar');
+ *   import API from './api';
+ *   const data = await API.get('/productos/listar');
  */
 import axios from 'axios';
 
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:20703/api',// SE CAMBIO EL PUERTO 300O POR EL PUERTO DEL BACKEND NUEVO QUE CAMBIO A SERL EL PUERTO 20703 
-    headers: { 'Content-Type': 'application/json' },
+// Instancia centralizada apuntando a la URL del backend en Render
+const API = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || 'https://celuaccel-1.onrender.com',
+    withCredentials: true
 });
 
 // Interceptor de request: agrega el token JWT si existe
-api.interceptors.request.use(
+API.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem('token');
-        if (token) config.headers.Authorization = `Bearer ${token}`;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
 // Interceptor de response: manejo global de 401 (token expirado/inválido)
-api.interceptors.response.use(
+API.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Solo cerrar sesión si había un token guardado (usuario autenticado)
-            // Evita el bucle infinito cuando rutas públicas devuelven 401
             const teniaToken = !!sessionStorage.getItem('token');
             if (teniaToken) {
                 sessionStorage.clear();
-                // Despacha evento personalizado para que App.jsx maneje el logout
-                // sin hacer window.location.reload() (que causaba el bucle)
                 window.dispatchEvent(new CustomEvent('sessionExpired'));
             }
         }
@@ -46,4 +44,4 @@ api.interceptors.response.use(
     }
 );
 
-export default api;
+export default API;

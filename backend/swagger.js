@@ -3,6 +3,10 @@ const swaggerAutogen = require('swagger-autogen')();
 const outputFile = './swagger.json';
 const endPointsFiles = ['./routes/index.js'];
 
+// Determinar el host según el entorno
+const HOST = process.env.RENDER_EXTERNAL_HOSTNAME || process.env.HOST_URL || 'localhost:20703';
+const SCHEMES = process.env.NODE_ENV === 'production' ? ['https'] : ['http', 'https'];
+
 const doc = {
     info: {
         title: 'API Celuaccel — Sistema de Reparaciones Móviles',

@@ -110,7 +110,7 @@ const io = new Server(server, {
 registrarEventos(io);
 app.set('io', io);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 if (require.main === module) {
     server.listen(PORT, () => {
         console.log(`Servidor corriendo en http://localhost:${PORT}`);
