@@ -1,0 +1,193 @@
+import React, { useState, useEffect } from 'react';
+import Navbar from '../Navbar';
+import Sidebar from '../Sidebar';
+import api from '../../services/api';
+import { confirmar } from '../../utils/alerts';
+import { usePaginacion } from '../../hooks/usePaginacion';
+import Paginacion from '../Paginacion';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+const IconDoc = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+  </svg>
+);
+
+const ModalOverlay = ({ titulo, onClose, children }) => (
+  <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
+    <div style={{ background:'var(--color-surface,#1e1e1e)',borderRadius:12,width:'100%',maxWidth:480,maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 40px rgba(0,0,0,0.5)' }}>
+      <div style={{ background:'var(--color-primary,#DB0000)',borderRadius:'12px 12px 0 0',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center' }}>
+        <span style={{ color:'#fff',fontWeight:700,fontSize:'1.05rem' }}>{titulo}</span>
+        <button onClick={onClose} style={{ background:'transparent',border:'none',color:'#fff',fontSize:'1.3rem',lineHeight:1,cursor:'pointer' }}>✕</button>
+      </div>
+      <div style={{ padding:'20px' }}>{children}</div>
+    </div>
+  </div>
+);
+
+const Tipo = ({ cerrarSesion, setVista }) => {
+  const [datos, setDatos] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
+  const [enEdicion, setEnEdicion] = useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [detalleItem, setDetalleItem] = useState(null);
+  const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
+  const [form, setForm] = useState({ Codigo_Documento: '', Tipo_Documento: '' });
+
+  const tiposFiltrados = datos.filter(d =>
+    String(d.Codigo_Documento).includes(busqueda) ||
+    String(d.Tipo_Documento || '').toLowerCase().includes(busqueda.toLowerCase())
+  );
+  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(tiposFiltrados, 8);
+
+  const mostrarToast = (msg, ok = true) => {
+    setToast({ visible: true, msg, ok });
+    setTimeout(() => setToast({ visible: false, msg: '', ok: true }), 3000);
+  };
+
+  useEffect(() => { listar(); }, []);
+
+  const listar = async () => {
+    try { const res = await api.get('/tipodocumento/listar'); setDatos(res.data); }
+    catch { mostrarToast('Error al cargar tipos de documento.', false); }
+  };
+
+  const guardar = async () => {
+    try {
+      const url = enEdicion ? 'actualizar' : 'agregar';
+      const metodo = enEdicion ? 'put' : 'post';
+      await api[metodo](`/tipodocumento/${url}`, form);
+      mostrarToast(enEdicion ? 'Tipo actualizado.' : 'Tipo registrado.');
+      listar(); limpiar();
+    } catch { mostrarToast('Error al procesar la solicitud.', false); }
+  };
+
+  const eliminar = async (id) => {
+    if (await confirmar('¿Eliminar este tipo de documento?')) {
+      try { await api.delete(`/tipodocumento/eliminar/${id}`); mostrarToast('Tipo eliminado.'); listar(); }
+      catch { mostrarToast('Error al eliminar.', false); }
+    }
+  };
+
+  const limpiar = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); setModalAbierto(false); };
+  const abrirNuevo = () => { setForm({ Codigo_Documento: '', Tipo_Documento: '' }); setEnEdicion(false); setModalAbierto(true); };
+  const abrirEdicion = (d) => { setEnEdicion(true); setForm(d); setDetalleItem(null); setModalAbierto(true); };
+  const abrirDetalle = (d) => setDetalleItem(d);
+
+  const inputStyle = { backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' };
+
+  return (
+    <div>
+      {toast.visible && (
+        <div className={`toast show position-fixed top-0 end-0 m-3 text-white toast-premium ${toast.ok ? 'bg-success' : 'bg-danger'}`}
+          style={{ zIndex: 9999, minWidth: '260px' }} role="alert">
+          <div className="toast-body fw-bold">{toast.msg}</div>
+        </div>
+      )}
+
+      {detalleItem && (
+        <ModalOverlay titulo={detalleItem.Tipo_Documento} onClose={() => setDetalleItem(null)}>
+          <div style={{ display:'flex',gap:12,padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)' }}>
+            <span style={{ minWidth:130,fontWeight:700,fontSize:'0.88rem',color:'var(--color-text)' }}>Código</span>
+            <span style={{ color:'var(--color-text)',fontSize:'0.88rem' }}>#{detalleItem.Codigo_Documento}</span>
+          </div>
+          <div style={{ display:'flex',gap:12,padding:'10px 0',borderBottom:'1px solid var(--color-border,#333)' }}>
+            <span style={{ minWidth:130,fontWeight:700,fontSize:'0.88rem',color:'var(--color-text)' }}>Tipo</span>
+            <span style={{ color:'var(--color-text)',fontSize:'0.88rem' }}>{detalleItem.Tipo_Documento}</span>
+          </div>
+          <div className="d-flex gap-2 mt-4">
+            <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
+            <button className="btn btn-outline-secondary" style={{ flex:1 }} onClick={() => abrirEdicion(detalleItem)}>✏️ Editar</button>
+            <button className="btn" style={{ flex:1, background:'#dc3545', color:'#fff', border:'none' }} onClick={async () => { setDetalleItem(null); await eliminar(detalleItem.Codigo_Documento); }}>🗑 Eliminar</button>
+          </div>
+        </ModalOverlay>
+      )}
+
+      {modalAbierto && (
+        <ModalOverlay titulo={enEdicion ? 'Editar Tipo' : 'Nuevo Tipo'} onClose={limpiar}>
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-1">Código del Documento</label>
+            <input className="form-control" style={inputStyle} type="number" disabled={enEdicion}
+              value={form.Codigo_Documento} placeholder="Código del Documento"
+              onChange={e => setForm({...form, Codigo_Documento: e.target.value})} />
+          </div>
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-1">Tipo de Documento</label>
+            <input className="form-control" style={inputStyle}
+              value={form.Tipo_Documento} placeholder="Tipo de Documento"
+              onChange={e => setForm({...form, Tipo_Documento: e.target.value})} />
+          </div>
+          <div className="d-flex gap-2 mt-3">
+            <button className="btn btn-secondary" style={{ flex: 1 }} onClick={limpiar}>Cerrar</button>
+            <button id="btn-agregar-tipo" className="btn fw-bold" style={{ flex: 1, background: 'var(--color-primary)', color: '#fff', border: 'none' }} onClick={guardar}>
+              {enEdicion ? 'Actualizar' : 'Guardar Tipo'}
+            </button>
+          </div>
+        </ModalOverlay>
+      )}
+
+      <Navbar titulo="CELUACCEL — Tipos de Documento" cerrarSesion={cerrarSesion} />
+
+      <div className="container mt-4">
+        <div className="mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2 module-banner">
+          <div>
+            <h4 className="fw-bold mb-1">Tipos de Documento</h4>
+            <p className="mb-0 opacity-75">Configura los tipos de documento validos en el sistema</p>
+          </div>
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge text-danger fw-bold fs-6" style={{ backgroundColor: '#fff' }}>{datos.length} tipos</span>
+            <button className="btn btn-sm fw-bold" style={{ background: '#fff', color: 'var(--color-primary)', borderRadius: '8px', padding: '6px 14px' }} onClick={abrirNuevo}>
+              + Nuevo tipo
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <input type="text" className="form-control" style={inputStyle}
+            placeholder="Buscar por código o nombre..."
+            value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px,1fr))', gap:'0.75rem' }}>
+          {datosPagina.map(d => (
+            <div key={d.Codigo_Documento} className="card border-0 shadow-sm fade-in"
+              style={{ borderLeft: '4px solid #0d6efd', borderRadius: 10 }}>
+              <div className="card-body p-3 d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                  style={{ width: 42, height: 42, backgroundColor: '#0d6efd20', color: '#0d6efd' }}>
+                  <IconDoc />
+                </div>
+                <div className="flex-grow-1">
+                  <div className="d-flex align-items-center gap-2">
+                    <span className="fw-bold" style={{ fontSize: '0.95rem' }}>{d.Tipo_Documento}</span>
+                    <span className="badge bg-primary" style={{ fontSize: '0.7rem' }}>#{d.Codigo_Documento}</span>
+                  </div>
+                </div>
+                <div className="d-flex gap-1">
+                    <button className="btn btn-sm fw-bold" style={{ fontSize:'0.77rem', background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6 }} onClick={() => abrirDetalle(d)}>Ver más</button>
+                  </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {totalPaginas > 1 && (
+          <div className="mt-3">
+            <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
+          </div>
+        )}
+      </div>
+
+      <div className="offcanvas offcanvas-start text-white" tabIndex="-1" id="menuGlobal">
+        <div className="offcanvas-header">
+          <h5 className="offcanvas-title fw-bold">Menu de Navegacion</h5>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <Sidebar setVista={setVista} />
+      </div>
+    </div>
+  );
+};
+
+export default Tipo;

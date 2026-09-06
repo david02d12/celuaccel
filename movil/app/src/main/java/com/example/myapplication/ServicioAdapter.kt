@@ -1,0 +1,101 @@
+package com.example.myapplication
+
+import android.content.res.ColorStateList
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.model.Servicio
+class ServicioAdapter(
+    private val servicios: List<Servicio>,
+    private val esCliente: Boolean = true,
+    private val onCancelar: ((Servicio) -> Unit)? = null,
+    private val onChat:     ((Servicio) -> Unit)? = null,
+    private val onClick:    ((Servicio) -> Unit)? = null
+) : RecyclerView.Adapter<ServicioAdapter.ViewHolder>() {
+
+
+    data class EtapaInfo(
+        val texto: String,
+        val badgeDrawable: Int,
+        val textColorAttr: Int,
+        val porcentaje: Int,
+        val progressColorRes: Int
+    )
+
+    private fun etapaInfo(etapa: Int?): EtapaInfo = when {
+        etapa == null -> EtapaInfo("Sin etapa",   R.drawable.bg_badge_recibido,   R.color.etapa_recibido_text,   0,   R.color.etapa_recibido_border)
+        etapa == -1   -> EtapaInfo("Cancelado",   R.drawable.bg_badge_cancelado,  R.color.etapa_cancelado_text,  0,   R.color.etapa_cancelado_border)
+        etapa == 0    -> EtapaInfo("Pendiente",   R.drawable.bg_badge_recibido,   R.color.etapa_recibido_text,   10,  R.color.etapa_recibido_border)
+        etapa == 1    -> EtapaInfo("En proceso",  R.drawable.bg_badge_reparacion, R.color.etapa_reparacion_text, 50,  R.color.etapa_reparacion_border)
+        etapa == 2    -> EtapaInfo("Terminado",   R.drawable.bg_badge_listo,      R.color.etapa_listo_text,      100, R.color.etapa_listo_border)
+        else          -> EtapaInfo("Etapa $etapa", R.drawable.bg_badge_recibido,  R.color.etapa_recibido_text,   0,   R.color.etapa_recibido_border)
+    }
+
+
+    inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val tvIdServicio:       TextView    = v.findViewById(R.id.tvIdServicio)
+        val tvBadgeEtapa:       TextView    = v.findViewById(R.id.tvBadgeEtapa)
+        val tvDispositivo:      TextView    = v.findViewById(R.id.tvDispositivo)
+        val tvDescripcion:      TextView    = v.findViewById(R.id.tvDescripcionServicio)
+        val progressEtapa:      ProgressBar = v.findViewById(R.id.progressEtapa)
+        val tvFecha:            TextView    = v.findViewById(R.id.tvFechaServicio)
+        val tvPrecio:           TextView    = v.findViewById(R.id.tvPrecioServicio)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_servicio, parent, false)
+        return ViewHolder(v)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val s    = servicios[position]
+        val info = etapaInfo(s.etapa)
+        val ctx  = holder.itemView.context
+
+        holder.tvIdServicio.text = "#${s.idServicio ?: (position + 1)}"
+
+        holder.tvBadgeEtapa.text = info.texto
+        holder.tvBadgeEtapa.background = ContextCompat.getDrawable(ctx, info.badgeDrawable)
+        holder.tvBadgeEtapa.setTextColor(ContextCompat.getColor(ctx, info.textColorAttr))
+
+        val movilN = s.movilNombre.orEmpty()
+        val movilE = s.movilEspecificacion.orEmpty()
+        holder.tvDispositivo.text = buildString {
+            append(movilN.ifEmpty { "Dispositivo sin nombre" })
+            if (movilE.isNotEmpty()) append(" — $movilE")
+        }
+
+        holder.tvDescripcion.text = s.descripcion.orEmpty().ifEmpty { "Sin descripción" }
+
+        if (s.etapa == null || s.etapa == -1) {
+            holder.progressEtapa.visibility = View.INVISIBLE
+        } else {
+            holder.progressEtapa.visibility = View.VISIBLE
+            holder.progressEtapa.progress   = info.porcentaje
+            holder.progressEtapa.progressTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(ctx, info.progressColorRes))
+        }
+
+
+        val rawFecha = s.fecha.orEmpty()
+        val fechaStr = rawFecha.takeIf { it.length >= 10 }?.substring(0, 10) ?: rawFecha
+        holder.tvFecha.text = "📅 $fechaStr"
+
+
+        val precio = s.precio ?: 0.0
+        holder.tvPrecio.text = if (precio > 0) "$${"%.0f".format(precio)}" else "Por definir"
+
+        holder.itemView.setOnClickListener { onClick?.invoke(s) }
+        holder.itemView.setOnLongClickListener {
+            onCancelar?.invoke(s)
+            true
+        }
+    }
+
+    override fun getItemCount(): Int = servicios.size
+}
