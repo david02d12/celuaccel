@@ -76,7 +76,7 @@ const Login = ({ setLogueado, setModoRegistro, setVista }) => {
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <a
-            href={`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/descargar-apk`}
+            href={`${import.meta.env.VITE_API_URL || 'https://celuaccel-backend.onrender.com'}/descargar-apk`}
             download="app-debug.apk"
             style={{
               background: 'var(--color-primary)', border: '1px solid var(--color-primary)',
