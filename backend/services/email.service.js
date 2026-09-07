@@ -33,10 +33,13 @@ module.exports = async (to, subject, text) => {
 
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',   // Host explícito para forzar IPv4
-            port: 465,
-            secure: true,
-            family: 4,                // ← Fuerza IPv4 (Render free tier no soporta IPv6)
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,        // STARTTLS (más compatible con Render que SSL 465)
+            requireTLS: true,
+            connectionTimeout: 10000,   // 10 segundos máximo para conectar
+            greetingTimeout: 10000,     // 10 segundos para el saludo SMTP
+            socketTimeout: 15000,       // 15 segundos por operación
             auth: {
                 user: emailUser,
                 pass: emailPass
