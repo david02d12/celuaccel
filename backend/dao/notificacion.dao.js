@@ -6,17 +6,17 @@ const { queryPromise: query } = require('../config/db');
 const getAll = () =>
     query(`
         SELECT *
-        FROM   Notificaciones
+        FROM   notificaciones
         ORDER  BY Fecha DESC
     `);
 
 /** Notificaciones para un usuario específico, opcionalmente solo las no leídas */
 const getByUsuario = (idUsuario, soloNoLeidas = false) => {
     const sql = soloNoLeidas
-        ? `SELECT * FROM Notificaciones
+        ? `SELECT * FROM notificaciones
            WHERE ID_Usuario_Destino = ? AND Leida = 0
            ORDER BY Fecha DESC`
-        : `SELECT * FROM Notificaciones
+        : `SELECT * FROM notificaciones
            WHERE ID_Usuario_Destino = ?
            ORDER BY Fecha DESC`;
     return query(sql, [idUsuario]);
@@ -26,7 +26,7 @@ const getByUsuario = (idUsuario, soloNoLeidas = false) => {
 const contarNoLeidas = (idUsuario) =>
     query(
         `SELECT COUNT(*) AS total
-         FROM   Notificaciones
+         FROM   notificaciones
          WHERE  ID_Usuario_Destino = ? AND Leida = 0`,
         [idUsuario]
     );
@@ -34,7 +34,7 @@ const contarNoLeidas = (idUsuario) =>
 /** Busca una notificación por ID devolviendo todos los campos */
 const findById = (id) =>
     query(
-        'SELECT * FROM Notificaciones WHERE ID_Notificacion = ?',
+        'SELECT * FROM notificaciones WHERE ID_Notificacion = ?',
         [id]
     );
 
@@ -50,7 +50,7 @@ const findById = (id) =>
  */
 const crearDirigida = ({ ID_Usuario_Destino, ID_Usuario_Origen = null, ID_Servicio = null, Mensaje }) =>
     query(
-        `INSERT INTO Notificaciones
+        `INSERT INTO notificaciones
             (ID_Usuario_Destino, ID_Usuario_Origen, ID_Servicio, Mensaje, Leida)
          VALUES (?, ?, ?, ?, 0)`,
         [ID_Usuario_Destino, ID_Usuario_Origen, ID_Servicio, Mensaje]
@@ -62,14 +62,14 @@ const crearDirigida = ({ ID_Usuario_Destino, ID_Usuario_Origen = null, ID_Servic
  */
 const create = ({ Mensaje }) =>
     query(
-        `INSERT INTO Notificaciones (Mensaje) VALUES (?)`,
+        `INSERT INTO notificaciones (Mensaje) VALUES (?)`,
         [Mensaje]
     );
 
 /** Actualiza el texto de una notificación */
 const update = ({ Mensaje, ID_Notificacion }) =>
     query(
-        `UPDATE Notificaciones
+        `UPDATE notificaciones
          SET    Mensaje = ?
          WHERE  ID_Notificacion = ?`,
         [Mensaje, ID_Notificacion]
@@ -78,19 +78,19 @@ const update = ({ Mensaje, ID_Notificacion }) =>
 /** Marca una notificación como leída */
 const marcarLeida = (id) =>
     query(
-        `UPDATE Notificaciones SET Leida = 1 WHERE ID_Notificacion = ?`,
+        `UPDATE notificaciones SET Leida = 1 WHERE ID_Notificacion = ?`,
         [id]
     );
 
 /** Marca todas las notificaciones de un usuario como leídas */
 const marcarTodasLeidas = (idUsuario) =>
     query(
-        `UPDATE Notificaciones SET Leida = 1 WHERE ID_Usuario_Destino = ?`,
+        `UPDATE notificaciones SET Leida = 1 WHERE ID_Usuario_Destino = ?`,
         [idUsuario]
     );
 
 const remove = (id) =>
-    query('DELETE FROM Notificaciones WHERE ID_Notificacion = ?', [id]);
+    query('DELETE FROM notificaciones WHERE ID_Notificacion = ?', [id]);
 
 module.exports = {
     getAll,

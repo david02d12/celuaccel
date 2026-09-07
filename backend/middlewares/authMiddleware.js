@@ -48,7 +48,7 @@ const validarRol = (...rolesPermitidos) => {
         if (!req.userId) return res.status(401).json({ error: 'Usuario no autenticado.' });
         try {
             const results = await queryPromise(
-                'SELECT Codigo_Rol FROM Usuario WHERE ID_Usuario = ?',
+                'SELECT Codigo_Rol FROM usuario WHERE ID_Usuario = ?',
                 [req.userId]
             );
             if (results.length === 0) {

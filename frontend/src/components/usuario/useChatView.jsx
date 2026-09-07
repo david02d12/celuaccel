@@ -95,6 +95,13 @@ export const useChatView = (role, usuario) => {
     }
   };
 
+  // Scroll automático al último mensaje cada vez que cambia la lista
+  useEffect(() => {
+    if (mensajesEndRef.current) {
+      mensajesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [mensajes]);
+
   const enviarMensaje = async () => {
     if (!nuevoMensaje.trim() || !chatSel) return;
 
