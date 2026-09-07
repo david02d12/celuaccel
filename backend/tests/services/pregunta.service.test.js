@@ -20,7 +20,7 @@ describe('Pregunta Service', () => {
 
     describe('agregar', () => {
         it('debe lanzar error si faltan datos', async () => {
-            await expect(preguntaService.agregar({}, 'u1')).rejects.toThrow('Los campos ID_Usuario, Codigo_Producto y Pregunta son obligatorios.');
+            await expect(preguntaService.agregar({}, 'u1')).rejects.toThrow('Los campos ID_Usuario y Pregunta son obligatorios.');
         });
 
         it('debe lanzar error si no hay userId', async () => {

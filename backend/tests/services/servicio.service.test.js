@@ -68,17 +68,19 @@ describe('Servicio Service', () => {
         });
 
         it('debe lanzar error si Etapa=2 pero no hay descripcion', async () => {
+            servicioDao.findById.mockResolvedValue([{ ID_Servicio: 1, Etapa: 1 }]);
             await expect(servicioService.actualizar({ ID_Servicio: 1, Etapa: 2, Descripcion: '   ' }))
                 .rejects.toThrow('Para completar el servicio (Etapa 2 = Terminado) es obligatorio registrar un diagnóstico final');
         });
 
         it('debe actualizar si datos son correctos', async () => {
+            servicioDao.findById.mockResolvedValue([{ ID_Servicio: 1, Etapa: 1 }]);
             servicioDao.update.mockResolvedValue({ affectedRows: 1 });
             await expect(servicioService.actualizar({ ID_Servicio: 1, Etapa: 1 })).resolves.toBeUndefined();
         });
 
         it('debe lanzar error si el servicio no existe', async () => {
-            servicioDao.update.mockResolvedValue({ affectedRows: 0 });
+            servicioDao.findById.mockResolvedValue([]);
             await expect(servicioService.actualizar({ ID_Servicio: 1, Etapa: 1 })).rejects.toThrow('Servicio no encontrado.');
         });
     });
