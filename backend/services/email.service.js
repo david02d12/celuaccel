@@ -54,9 +54,13 @@ module.exports = async (to, subject, text) => {
         });
         console.log(`[EMAIL SENT] Correo enviado exitosamente a ${to}`);
     } catch (error) {
-        console.error('Error al enviar el correo con nodemailer:', error.message);
+        console.error('[EMAIL ERROR] Fallo al enviar correo:');
+        console.error('  - message:', error.message);
+        console.error('  - code:', error.code);
+        console.error('  - command:', error.command);
+        console.error('  - responseCode:', error.responseCode);
         throw new AppError(
-            'No se pudo enviar el correo de recuperación. Verifica las credenciales de correo en el servidor.',
+            `No se pudo enviar el correo: ${error.message || 'Error desconocido en SMTP'}`,
             503
         );
     }
