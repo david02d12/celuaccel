@@ -1,57 +1,35 @@
-const AppError = require('../config/AppError');
-
-// Valores de ejemplo que NO son credenciales reales
-const PLACEHOLDER_KEY = 're_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+const nodemailer = require('nodemailer');
 
 module.exports = async (to, subject, text) => {
-    console.log(`\n==================================================`);
-    console.log(`[EMAIL SENDING] Destinatario: ${to}`);
-    console.log(`[EMAIL SENDING] Asunto: ${subject}`);
-    console.log(`[EMAIL SENDING] Contenido:\n${text}`);
-    console.log(`==================================================\n`);
+    console.log(`[EMAIL SETUP] Preparando envÌo hacia: ${to}`);
 
-    const resendApiKey = process.env.RESEND_API_KEY;
-
-    // Sin API key ‚Üí silencio en desarrollo (ver consola)
-    if (!resendApiKey) {
-        console.warn('[EMAIL] RESEND_API_KEY no est√° configurada. El correo no se enviar√° (ver enlace en consola).');
-        return;
-    }
-
-    // Clave de ejemplo ‚Üí lanzar error legible
-    if (resendApiKey === PLACEHOLDER_KEY) {
-        throw new AppError(
-            'El servicio de correo no est√° configurado correctamente en el servidor. Contacta al administrador.',
-            503
-        );
+    // 1. Validar que las variables existan en Render
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.error('[EMAIL ERROR] EMAIL_USER o EMAIL_PASS no est·n configurados en Render.');
+        throw new Error('El servicio de correo no est· configurado en el servidor.');
     }
 
     try {
-        // Importaci√≥n din√°mica para compatibilidad con el m√≥dulo ESM de Resend
-        const { Resend } = require('resend');
-        const resend = new Resend(resendApiKey);
+        // 2. Transporter con Gmail (usa contraseÒa de aplicaciÛn de 16 caracteres)
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
 
-        const { data, error } = await resend.emails.send({
-            from: 'CeluAccel <onboarding@resend.dev>',  // dominio verificado de Resend (no requiere dominio propio)
-            to: [to],
+        // 3. Enviar correo
+        const info = await transporter.sendMail({
+            from: `"CeluAccel Soporte" <${process.env.EMAIL_USER}>`,
+            to,
             subject,
             text
         });
 
-        if (error) {
-            console.error('[EMAIL ERROR] Resend devolvi√≥ error:', JSON.stringify(error));
-            throw new AppError(`Error al enviar correo: ${error.message || JSON.stringify(error)}`, 503);
-        }
-
-        console.log(`[EMAIL SENT] Correo enviado exitosamente a ${to}. ID: ${data?.id}`);
+        console.log(`[EMAIL SENT] Correo enviado exitosamente a ${to}. Message ID: ${info.messageId}`);
     } catch (error) {
-        if (error instanceof AppError) throw error;
-        console.error('[EMAIL ERROR] Fallo inesperado al enviar correo:');
-        console.error('  - message:', error.message);
-        console.error('  - code:', error.code);
-        throw new AppError(
-            `No se pudo enviar el correo: ${error.message || 'Error desconocido'}`,
-            503
-        );
+        console.error('[EMAIL ERROR] Error en Nodemailer:', error.message);
+        throw new Error(`No se pudo enviar el correo de recuperaciÛn: ${error.message}`);
     }
 };
