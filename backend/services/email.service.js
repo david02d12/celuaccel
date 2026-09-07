@@ -33,9 +33,10 @@ module.exports = async (to, subject, text) => {
 
     try {
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',   // Host explícito para forzar IPv4
             port: 465,
             secure: true,
+            family: 4,                // ← Fuerza IPv4 (Render free tier no soporta IPv6)
             auth: {
                 user: emailUser,
                 pass: emailPass
