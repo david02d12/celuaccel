@@ -47,7 +47,7 @@ class RegistroActivity : AppCompatActivity() {
             TipoDocumento(5, "PEP")
         )
         tiposDocumento = tiposLocales
-        val nombresSpinner = tiposLocales.map { it.nombreDocumento }
+        val nombresSpinner = tiposLocales.map { it.tipoDocumento }
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, nombresSpinner)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerTipo.adapter = spinnerAdapter

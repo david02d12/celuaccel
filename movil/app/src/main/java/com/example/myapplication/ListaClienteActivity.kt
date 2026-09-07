@@ -59,6 +59,10 @@ class ListaClienteActivity : AppCompatActivity() {
         btnRegresar.setOnClickListener {
             finish()
         }
+
+        findViewById<Button>(R.id.btnNuevoCliente).setOnClickListener {
+            startActivity(Intent(this@ListaClienteActivity, FormularioClienteActivity::class.java))
+        }
     }
 
     override fun onResume() {

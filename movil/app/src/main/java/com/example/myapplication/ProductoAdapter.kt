@@ -29,6 +29,7 @@ class ProductoAdapter(
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
+        val prod = productos[position]
         holder.tvNombre.text    = prod.nombre
         holder.tvPrecio.text    = "$${"%.0f".format(prod.precio)}"
         holder.tvCategoria.text = "Stock: ${prod.cantidad}"

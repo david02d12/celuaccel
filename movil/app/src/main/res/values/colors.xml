@@ -14,6 +14,7 @@
     <color name="celuaccel_surface">#FFFFFF</color>
     <color name="celuaccel_border">#E0E0E0</color>
     <color name="celuaccel_border_alpha">#1A000000</color>
+    <color name="celuaccel_divider">#E0E0E0</color>
 
     <!-- Texto -->
     <color name="celuaccel_text">#1A1A1A</color>

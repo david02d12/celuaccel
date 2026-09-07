@@ -103,12 +103,12 @@ class RolesActivity : AppCompatActivity() {
 
         val call: Call<Void> = if (rolEnEdicion != null) {
 
-            api.actualizarRol(token, Rol(codigoRol = rolEnEdicion!!.codigoRol, descripcionRol = descripcion))
+            api.actualizarRol(token, Rol(codigoRol = rolEnEdicion!!.codigoRol, nombreRol = descripcion))
         } else {
 
             val codigo = etCodigo.text.toString().trim()
             if (codigo.isEmpty()) { etCodigo.error = "Código requerido"; return }
-            api.agregarRol(token, Rol(codigoRol = codigo, descripcionRol = descripcion))
+            api.agregarRol(token, Rol(codigoRol = codigo, nombreRol = descripcion))
         }
 
         call.enqueue(object : Callback<Void> {
@@ -139,7 +139,7 @@ class RolesActivity : AppCompatActivity() {
         etCodigo.setText(rol.codigoRol)
         etCodigo.isEnabled = false
         etCodigo.visibility = android.view.View.GONE
-        etNombre.setText(rol.descripcionRol)
+        etNombre.setText(rol.nombreRol)
         cardForm.visibility = View.VISIBLE
         btnNuevo.visibility = View.GONE
         etNombre.requestFocus()
@@ -148,7 +148,7 @@ class RolesActivity : AppCompatActivity() {
     private fun confirmarEliminar(rol: Rol) {
         AlertDialog.Builder(this)
             .setTitle("Eliminar Rol")
-            .setMessage("¿Eliminar '${rol.descripcionRol}'?")
+            .setMessage("¿Eliminar '${rol.nombreRol}'?")
             .setPositiveButton("Eliminar") { _, _ ->
                 api.deleteRol(token, rol.codigoRol).enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {

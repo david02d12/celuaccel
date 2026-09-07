@@ -101,13 +101,13 @@ class TipoDocumentoActivity : AppCompatActivity() {
         val call: Call<Void> = if (tipoEnEdicion != null) {
             val actualizado = TipoDocumento(
                 codigoDocumento = tipoEnEdicion!!.codigoDocumento,
-                nombreDocumento = nombre
+                tipoDocumento = nombre
             )
             api.actualizarTipoDocumento(token, actualizado)
         } else {
             val codigo = abreviatura.toIntOrNull()
             if (codigo == null) { etAbreviatura.error = "Código numérico requerido"; return }
-            api.agregarTipoDocumento(token, TipoDocumento(codigoDocumento = codigo, nombreDocumento = nombre))
+            api.agregarTipoDocumento(token, TipoDocumento(codigoDocumento = codigo, tipoDocumento = nombre))
         }
 
         call.enqueue(object : Callback<Void> {
@@ -130,7 +130,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
 
     private fun iniciarEdicion(tipo: TipoDocumento) {
         tipoEnEdicion          = tipo
-        etNombre.setText(tipo.nombreDocumento)
+        etNombre.setText(tipo.tipoDocumento)
         etAbreviatura.setText(tipo.codigoDocumento?.toString() ?: "")
         etAbreviatura.isEnabled = false
         cardForm.visibility    = View.VISIBLE
@@ -150,7 +150,7 @@ class TipoDocumentoActivity : AppCompatActivity() {
     private fun confirmarEliminar(tipo: TipoDocumento) {
         AlertDialog.Builder(this)
             .setTitle("Eliminar Tipo de Documento")
-            .setMessage("¿Eliminar '${tipo.nombreDocumento}'?\n⚠ Esto puede afectar usuarios que lo usen.")
+            .setMessage("¿Eliminar '${tipo.tipoDocumento}'?\n⚠ Esto puede afectar usuarios que lo usen.")
             .setPositiveButton("Eliminar") { _, _ ->
                 tipo.codigoDocumento?.let { id ->
                     api.deleteTipoDocumento(token, id).enqueue(object : Callback<Void> {
@@ -194,7 +194,7 @@ class TipoDocumentoAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val tipo = items[position]
-        holder.tvNombre.text = tipo.nombreDocumento
+        holder.tvNombre.text = tipo.tipoDocumento
         holder.tvCodigo.text = "Cód: ${tipo.codigoDocumento ?: "—"}"
         holder.btnEditar.setOnClickListener  { onEditar(tipo) }
         holder.btnElim.setOnClickListener    { onEliminar(tipo) }

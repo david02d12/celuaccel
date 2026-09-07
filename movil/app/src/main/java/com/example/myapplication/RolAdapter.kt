@@ -27,7 +27,7 @@ class RolAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val r = items[position]
-        holder.tvNombre.text = r.descripcionRol
+        holder.tvNombre.text = r.nombreRol
         holder.tvId.text     = "ID: ${r.codigoRol}"
 
         holder.itemView.setOnClickListener { onSeleccionar(r) }

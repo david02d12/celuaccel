@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -67,7 +68,11 @@ class FormularioClienteActivity : AppCompatActivity() {
         if (!idRecibido.isNullOrEmpty()) {
             etIdCliente.setText(idRecibido)
             etIdCliente.isEnabled = false
+            btnGuardar.visibility = View.GONE
             cargarDatosCliente(idRecibido)
+        } else {
+            btnActualizar.visibility = View.GONE
+            btnEliminar.visibility = View.GONE
         }
 
         // AGREGAR CLIENTE

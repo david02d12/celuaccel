@@ -48,7 +48,7 @@ class DetalleProductoActivity : AppCompatActivity() {
         findViewById<android.widget.TextView>(R.id.tvPrecioDetalle).text    = "$${"%.0f".format(precio)}"
         findViewById<android.widget.TextView>(R.id.tvDescripcionDetalle).text = desc.ifEmpty { "Sin descripción" }
 
-        val ivProducto = findViewById<android.widget.ImageView>(R.id.ivDetalleProducto)
+        val ivProducto = findViewById<android.widget.ImageView>(R.id.imgDetalleProducto)
         if (imagenUrl.isNotEmpty() && ivProducto != null) {
             com.bumptech.glide.Glide.with(this)
                 .load(imagenUrl)

@@ -2,25 +2,15 @@
 <!--
     ════════════════════════════════════════════════════════════════
     CONFIGURACIÓN DE SEGURIDAD DE RED — CeluAccel Android
-    ════════════════════════════════════════════════════════════════
-    DESARROLLO:  Permite HTTP solo hacia la IP del servidor local.
-    PRODUCCIÓN:  Eliminar el <domain-config> y configurar HTTPS.
+    PRODUCCIÓN:  Solo HTTPS hacia el backend desplegado en la nube.
     ════════════════════════════════════════════════════════════════
 -->
 <network-security-config>
 
-    <!-- Política global: bloquear tráfico HTTP por defecto -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-
-    <!-- Excepción SOLO para el servidor de desarrollo local -->
-    <!-- ⚠️ Eliminar en producción y reemplazar por HTTPS      -->
-    <!-- ⚠️ Actualizar IP si cambia la red de desarrollo        -->
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">10.0.2.2</domain>
-    </domain-config>
 
 </network-security-config>

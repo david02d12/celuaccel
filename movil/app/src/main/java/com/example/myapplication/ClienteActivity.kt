@@ -47,6 +47,10 @@ class ClienteActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnRegresarListaClientes).setOnClickListener { finish() }
 
+        findViewById<Button>(R.id.btnNuevoCliente).setOnClickListener {
+            startActivity(Intent(this@ClienteActivity, FormularioClienteActivity::class.java))
+        }
+
         etBuscarCliente.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
