@@ -1,9 +1,7 @@
-const nodemailer = require('nodemailer');
 const AppError = require('../config/AppError');
 
 // Valores de ejemplo que NO son credenciales reales
-const PLACEHOLDER_USER = 'tu_correo_de_gmail@gmail.com';
-const PLACEHOLDER_PASS = 'tu_contrasena_de_aplicacion';
+const PLACEHOLDER_KEY = 're_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 module.exports = async (to, subject, text) => {
     console.log(`\n==================================================`);
@@ -12,57 +10,48 @@ module.exports = async (to, subject, text) => {
     console.log(`[EMAIL SENDING] Contenido:\n${text}`);
     console.log(`==================================================\n`);
 
-    const emailUser = process.env.EMAIL_USER;
-    const emailPass = process.env.EMAIL_PASS;
+    const resendApiKey = process.env.RESEND_API_KEY;
 
-    // Sin configuración de correo → silencio en desarrollo (ver consola)
-    if (!emailUser || !emailPass) {
-        console.warn('Advertencia: EMAIL_USER o EMAIL_PASS no están configurados.');
-        console.warn('El correo real no se enviará. Copia el enlace de la consola.');
+    // Sin API key → silencio en desarrollo (ver consola)
+    if (!resendApiKey) {
+        console.warn('[EMAIL] RESEND_API_KEY no está configurada. El correo no se enviará (ver enlace en consola).');
         return;
     }
 
-    // Credenciales de ejemplo → lanzar error legible al usuario
-    if (emailUser === PLACEHOLDER_USER || emailPass === PLACEHOLDER_PASS) {
+    // Clave de ejemplo → lanzar error legible
+    if (resendApiKey === PLACEHOLDER_KEY) {
         throw new AppError(
-            'El servicio de correo no está configurado correctamente en el servidor. ' +
-            'Contacta al administrador del sistema.',
+            'El servicio de correo no está configurado correctamente en el servidor. Contacta al administrador.',
             503
         );
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,        // STARTTLS (más compatible con Render que SSL 465)
-            requireTLS: true,
-            connectionTimeout: 10000,   // 10 segundos máximo para conectar
-            greetingTimeout: 10000,     // 10 segundos para el saludo SMTP
-            socketTimeout: 15000,       // 15 segundos por operación
-            auth: {
-                user: emailUser,
-                pass: emailPass
-            }
-        });
+        // Importación dinámica para compatibilidad con el módulo ESM de Resend
+        const { Resend } = require('resend');
+        const resend = new Resend(resendApiKey);
 
-        await transporter.sendMail({
-            from: emailUser,
-            to,
+        const { data, error } = await resend.emails.send({
+            from: 'CeluAccel <onboarding@resend.dev>',  // dominio verificado de Resend (no requiere dominio propio)
+            to: [to],
             subject,
             text
         });
-        console.log(`[EMAIL SENT] Correo enviado exitosamente a ${to}`);
+
+        if (error) {
+            console.error('[EMAIL ERROR] Resend devolvió error:', JSON.stringify(error));
+            throw new AppError(`Error al enviar correo: ${error.message || JSON.stringify(error)}`, 503);
+        }
+
+        console.log(`[EMAIL SENT] Correo enviado exitosamente a ${to}. ID: ${data?.id}`);
     } catch (error) {
-        console.error('[EMAIL ERROR] Fallo al enviar correo:');
+        if (error instanceof AppError) throw error;
+        console.error('[EMAIL ERROR] Fallo inesperado al enviar correo:');
         console.error('  - message:', error.message);
         console.error('  - code:', error.code);
-        console.error('  - command:', error.command);
-        console.error('  - responseCode:', error.responseCode);
         throw new AppError(
-            `No se pudo enviar el correo: ${error.message || 'Error desconocido en SMTP'}`,
+            `No se pudo enviar el correo: ${error.message || 'Error desconocido'}`,
             503
         );
     }
 };
-
