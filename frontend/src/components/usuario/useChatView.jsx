@@ -62,6 +62,15 @@ export const useChatView = (role, usuario) => {
     }
   }, [usuario, role]);
 
+  // Cargar mensajes automáticamente al seleccionar un chat
+  useEffect(() => {
+    if (chatSel?.Codigo_Chat) {
+      cargarMensajes(chatSel.Codigo_Chat);
+    } else {
+      setMensajes([]);
+    }
+  }, [chatSel?.Codigo_Chat]);
+
   const iniciarChatDesdeServicio = async (idServicio) => {
     setIniciandoChat(idServicio);
     try {
