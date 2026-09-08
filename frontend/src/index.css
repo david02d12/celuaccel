@@ -86,6 +86,17 @@ body {
 }
 
 /* =====================================================
+   FORMULARIOS (Overrides para Bootstrap)
+   ===================================================== */
+.form-control:disabled, .form-control[readonly],
+.form-select:disabled, .form-select[readonly] {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text-muted) !important;
+  border-color: var(--color-border) !important;
+  opacity: 0.8 !important;
+}
+
+/* =====================================================
    SCROLLBAR PERSONALIZADO
    ===================================================== */
 ::-webkit-scrollbar {
