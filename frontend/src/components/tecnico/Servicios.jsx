@@ -392,54 +392,68 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             {userRole !== 1 && <button className="btn btn-outline-primary fw-bold" onClick={abrirNuevo}>¡Crear el primero!</button>}
           </div>
         ) : (
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:'1rem' }}>
-            {filtrados.map(s => {
-              const info = etapaInfo(String(s.Etapa));
+          <div>
+            {ETAPAS.map(etapaObj => {
+              const serviciosEnEtapa = filtrados.filter(s => String(s.Etapa) === etapaObj.valor);
+              if (serviciosEnEtapa.length === 0) return null;
+              
               return (
-                <div key={s.ID_Servicio} className="card border-0 shadow-sm fade-in"
-                  style={{ borderLeft:`4px solid ${info.color}`, borderRadius:12, overflow:'hidden' }}>
-                  <div className="card-body p-3">
-                    {/* Header */}
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <div>
-                        <span className="fw-bold" style={{ fontSize:'0.92rem' }}>Servicio #{s.ID_Servicio}</span>
-                        <span className="text-muted ms-2" style={{ fontSize:'0.78rem' }}>{s.Fecha ? String(s.Fecha).split('T')[0] : ''}</span>
-                      </div>
-                      <span className="badge" style={{ backgroundColor:info.color, fontSize:'0.7rem', fontWeight:700 }}>{info.label}</span>
-                    </div>
-
-                    {/* Barra de progreso */}
-                    {String(s.Etapa) !== '-1' && (
-                      <div className="mb-2" style={{ height:4, borderRadius:99, backgroundColor:'var(--color-border)', overflow:'hidden' }}>
-                        <div style={{ width:`${info.pct}%`, height:'100%', backgroundColor:info.color, borderRadius:99 }} />
-                      </div>
-                    )}
-
-                    {/* Info resumida */}
-                    <div style={{ fontSize:'0.83rem' }} className="mb-2">
-                      <div className="d-flex justify-content-between">
-                        <span className="text-muted">Dispositivo:</span>
-                        <span className="fw-bold">{s.Movil_Nombre || '—'}</span>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <span className="text-muted">Cliente:</span>
-                        <button className="btn btn-link p-0 fw-bold" style={{ color:'var(--color-primary)', fontSize:'0.83rem' }}
-                          onClick={() => setVista('perfil', { perfilId: s.ID_Usuario })}>{s.ID_Usuario}</button>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <span className="text-muted">Precio:</span>
-                        <strong style={{ color:'#198754' }}>${Number(s.Precio||0).toLocaleString()}</strong>
-                      </div>
-                      {s.Descripcion && (
-                        <div className="text-muted mt-1" style={{ fontSize:'0.78rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }} title={s.Descripcion}>
-                          {s.Descripcion}
+                <div key={etapaObj.valor} className="mb-4 fade-in-up">
+                  <h5 className="fw-bold mb-3 pb-2" style={{ borderBottom: `2px solid ${etapaObj.color}`, color: etapaObj.color, display: 'inline-block', paddingRight: '20px' }}>
+                    {etapaObj.label} <span className="badge ms-2" style={{ backgroundColor: etapaObj.color }}>{serviciosEnEtapa.length}</span>
+                  </h5>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:'1rem' }}>
+                    {serviciosEnEtapa.map(s => {
+                      const info = etapaInfo(String(s.Etapa));
+                      return (
+                        <div key={s.ID_Servicio} className="card border-0 shadow-sm fade-in"
+                          style={{ borderLeft:`4px solid ${info.color}`, borderRadius:12, overflow:'hidden' }}>
+                          <div className="card-body p-3">
+                            {/* Header */}
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              <div>
+                                <span className="fw-bold" style={{ fontSize:'0.92rem' }}>Servicio #{s.ID_Servicio}</span>
+                                <span className="text-muted ms-2" style={{ fontSize:'0.78rem' }}>{s.Fecha ? String(s.Fecha).split('T')[0] : ''}</span>
+                              </div>
+                              <span className="badge" style={{ backgroundColor:info.color, fontSize:'0.7rem', fontWeight:700 }}>{info.label}</span>
+                            </div>
+        
+                            {/* Barra de progreso */}
+                            {String(s.Etapa) !== '-1' && (
+                              <div className="mb-2" style={{ height:4, borderRadius:99, backgroundColor:'var(--color-border)', overflow:'hidden' }}>
+                                <div style={{ width:`${info.pct}%`, height:'100%', backgroundColor:info.color, borderRadius:99 }} />
+                              </div>
+                            )}
+        
+                            {/* Info resumida */}
+                            <div style={{ fontSize:'0.83rem' }} className="mb-2">
+                              <div className="d-flex justify-content-between">
+                                <span className="text-muted">Dispositivo:</span>
+                                <span className="fw-bold">{s.Movil_Nombre || '—'}</span>
+                              </div>
+                              <div className="d-flex justify-content-between">
+                                <span className="text-muted">Cliente:</span>
+                                <button className="btn btn-link p-0 fw-bold" style={{ color:'var(--color-primary)', fontSize:'0.83rem' }}
+                                  onClick={() => setVista('perfil', { perfilId: s.ID_Usuario })}>{s.ID_Usuario}</button>
+                              </div>
+                              <div className="d-flex justify-content-between">
+                                <span className="text-muted">Precio:</span>
+                                <strong style={{ color:'#198754' }}>${Number(s.Precio||0).toLocaleString()}</strong>
+                              </div>
+                              {s.Descripcion && (
+                                <div className="text-muted mt-1" style={{ fontSize:'0.78rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }} title={s.Descripcion}>
+                                  {s.Descripcion}
+                                </div>
+                              )}
+                            </div>
+        
+                            {/* Botón Ver más */}
+                            <button className="btn btn-sm fw-bold w-100 mt-1" style={{ background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6, fontSize:'0.8rem' }}
+                              onClick={() => abrirDetalle(s)}>Ver más</button>
+                          </div>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Botón Ver más */}
-                    <button className="btn btn-sm fw-bold w-100 mt-1" style={{ background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6, fontSize:'0.8rem' }}
-                      onClick={() => abrirDetalle(s)}>Ver más</button>
+                      );
+                    })}
                   </div>
                 </div>
               );
