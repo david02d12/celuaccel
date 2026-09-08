@@ -225,9 +225,9 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             <Fila label="Dispositivo">{detalleItem.Movil_Nombre || '—'}</Fila>
             <Fila label="Especificación">{detalleItem.Movil_Especificacion || '—'}</Fila>
             <Fila label="Descripción falla">{detalleItem.Descripcion || '—'}</Fila>
-            <Fila label="Precio total"><strong style={{ color:'#198754', fontSize:'1rem' }}>${Number(detalleItem.Precio||0).toLocaleString()}</strong></Fila>
-            {detalleItem.Precio_Repuestos && <Fila label="→ Repuestos">${Number(detalleItem.Precio_Repuestos).toLocaleString()}</Fila>}
-            {detalleItem.Precio_Mano_Obra && <Fila label="→ Mano de obra">${Number(detalleItem.Precio_Mano_Obra).toLocaleString()}</Fila>}
+            <Fila label="Precio total"><strong style={{ color:'#198754', fontSize:'1rem' }}>${Number(detalleItem.Precio||0).toLocaleString('es-CO')}</strong></Fila>
+            {detalleItem.Precio_Repuestos && <Fila label="→ Repuestos">${Number(detalleItem.Precio_Repuestos).toLocaleString('es-CO')}</Fila>}
+            {detalleItem.Precio_Mano_Obra && <Fila label="→ Mano de obra">${Number(detalleItem.Precio_Mano_Obra).toLocaleString('es-CO')}</Fila>}
             <Fila label="Fecha ingreso">{detalleItem.Fecha ? String(detalleItem.Fecha).split('T')[0] : '—'}</Fila>
 
             {/* Cambio de etapa rápido dentro del detalle */}
@@ -438,7 +438,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                               </div>
                               <div className="d-flex justify-content-between">
                                 <span className="text-muted">Precio:</span>
-                                <strong style={{ color:'#198754' }}>${Number(s.Precio||0).toLocaleString()}</strong>
+                                <strong style={{ color:'#198754' }}>${Number(s.Precio||0).toLocaleString('es-CO')}</strong>
                               </div>
                               {s.Descripcion && (
                                 <div className="text-muted mt-1" style={{ fontSize:'0.78rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }} title={s.Descripcion}>
