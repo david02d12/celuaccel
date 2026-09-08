@@ -104,17 +104,17 @@ describe('Usuario Service', () => {
 
     describe('actualizarMiPerfil', () => {
         it('debe lanzar error si falta nombre o correo', async () => {
-            await expect(usuarioService.actualizarMiPerfil('A', { Nombre: 'N' })).rejects.toThrow('Nombre y correo son obligatorios.');
+            await expect(usuarioService.actualizarMiPerfil('A', { Nombre: 'Juan Perez' })).rejects.toThrow('Nombre y correo son obligatorios.');
         });
 
         it('debe actualizar mi perfil', async () => {
             usuarioDao.updateMiPerfil.mockResolvedValue({ affectedRows: 1 });
-            await expect(usuarioService.actualizarMiPerfil('A', { Nombre: 'N', Correo: 'C' })).resolves.toBeUndefined();
+            await expect(usuarioService.actualizarMiPerfil('A', { Nombre: 'Juan Perez', Correo: 'juan@perez.com' })).resolves.toBeUndefined();
         });
 
         it('debe lanzar error si affectedRows es 0', async () => {
             usuarioDao.updateMiPerfil.mockResolvedValue({ affectedRows: 0 });
-            await expect(usuarioService.actualizarMiPerfil('A', { Nombre: 'N', Correo: 'C' })).rejects.toThrow('Usuario no encontrado.');
+            await expect(usuarioService.actualizarMiPerfil('A', { Nombre: 'Juan Perez', Correo: 'juan@perez.com' })).rejects.toThrow('Usuario no encontrado.');
         });
     });
 });

@@ -12,8 +12,23 @@ const Registro = ({ setModoRegistro, setVista }) => {
     infoFuerza,
     reglaDoc,
     actualizar,
-    registrarUsuario
   } = useRegistroForm(setModoRegistro, setVista);
+
+  const [dirPasos, setDirPasos] = useState({
+    tipo_via: '', numero_principal: '', numero_secundario: '',
+    complemento: '', barrio: '', ciudad: ''
+  });
+
+  const actualizarDir = (campo, valor) => {
+    const n = { ...dirPasos, [campo]: valor };
+    setDirPasos(n);
+    const combinada = `${n.tipo_via} ${n.numero_principal} #${n.numero_secundario} ${n.complemento ? n.complemento + ' ' : ''}- ${n.barrio}, ${n.ciudad}`.trim();
+    if (n.tipo_via || n.numero_principal || n.ciudad) {
+      actualizar('Direccion', combinada);
+    } else {
+      actualizar('Direccion', '');
+    }
+  };
 
   const inputStyle = {
     backgroundColor: 'var(--color-bg)',
@@ -123,10 +138,36 @@ const Registro = ({ setModoRegistro, setVista }) => {
 
         <div className="mb-3">
           <label className="form-label fw-bold small text-muted">Dirección <span className="fw-normal">(Opcional)</span></label>
-          <input className={`form-control ${errores.Direccion ? 'is-invalid' : formReg.Direccion && !errores.Direccion ? 'is-valid' : ''}`}
-            style={inputStyle} placeholder="Ej: Calle 45 #12-30" value={formReg.Direccion}
-            maxLength={25}
-            onChange={e => actualizar('Direccion', e.target.value)} />
+          <div className="row g-2 mb-2">
+            <div className="col-4">
+              <select className="form-select" style={inputStyle} value={dirPasos.tipo_via} onChange={e => actualizarDir('tipo_via', e.target.value)}>
+                <option value="">Vía...</option>
+                <option value="Calle">Calle</option>
+                <option value="Carrera">Carrera</option>
+                <option value="Avenida">Avenida</option>
+                <option value="Transversal">Transv.</option>
+                <option value="Diagonal">Diagonal</option>
+              </select>
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={inputStyle} placeholder="Nº Principal" value={dirPasos.numero_principal} onChange={e => actualizarDir('numero_principal', e.target.value)} />
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={inputStyle} placeholder="# Secundario" value={dirPasos.numero_secundario} onChange={e => actualizarDir('numero_secundario', e.target.value)} />
+            </div>
+          </div>
+          <div className="row g-2 mb-2">
+            <div className="col-4">
+              <input className="form-control" style={inputStyle} placeholder="Apto/Int" value={dirPasos.complemento} onChange={e => actualizarDir('complemento', e.target.value)} />
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={inputStyle} placeholder="Barrio" value={dirPasos.barrio} onChange={e => actualizarDir('barrio', e.target.value)} />
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={inputStyle} placeholder="Ciudad" value={dirPasos.ciudad} onChange={e => actualizarDir('ciudad', e.target.value)} />
+            </div>
+          </div>
+          <input className="form-control bg-light" value={formReg.Direccion} readOnly placeholder="Dirección generada automáticamente" style={{ fontSize: '0.85rem' }} />
           {errores.Direccion && <small className="text-danger">{errores.Direccion}</small>}
         </div>
 
@@ -134,7 +175,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
           <label className="form-label fw-bold small text-muted">Teléfono <span className="fw-normal">(Opcional)</span></label>
           <input type="tel" className={`form-control ${errores.Telefono ? 'is-invalid' : formReg.Telefono && !errores.Telefono ? 'is-valid' : ''}`}
             style={inputStyle} placeholder="Ej: 3001234567" value={formReg.Telefono}
-            maxLength={25}
+            maxLength={10}
             onChange={e => { if (!/[^0-9]/.test(e.target.value)) actualizar('Telefono', e.target.value); }} />
           {errores.Telefono && <small className="text-danger">{errores.Telefono}</small>}
         </div>

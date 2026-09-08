@@ -3,14 +3,13 @@ import api from '../services/api';
 
 const calcFechaLimites = () => {
   const hoy = new Date();
-  const maxDate = new Date(hoy.getFullYear() - 10, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
+  const maxDate = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
   const minDate = new Date(hoy.getFullYear() - 80, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
   return { minDate, maxDate };
 };
 
 const REGLAS_DOC = {
   '1': { nombre: 'Cédula',               min: 6,  max: 10, soloNumeros: true,  regex: /^\d{6,10}$/ },
-  '2': { nombre: 'Tarjeta de Identidad', min: 10, max: 11, soloNumeros: true,  regex: /^\d{10,11}$/ },
   '3': { nombre: 'Cédula de Extranjería',min: 6,  max: 12, soloNumeros: false, regex: /^[A-Za-z0-9]{6,12}$/ },
   '4': { nombre: 'Pasaporte',            min: 5,  max: 15, soloNumeros: false, regex: /^[A-Za-z0-9]{5,15}$/ },
   '5': { nombre: 'PEP',                  min: 15, max: 17, soloNumeros: false, regex: /^[A-Za-z0-9]{15,17}$/ },
@@ -49,10 +48,10 @@ const validarDocumento = (id, codTipo) => {
 };
 
 const validarTelefono = (tel) => {
-  if (!tel.trim()) return '';
-  if (!/^\d+$/.test(tel.trim())) return 'El teléfono solo debe contener números.';
-  if (tel.trim().length < 7) return `Mínimo 7 dígitos (actualmente ${tel.trim().length}).`;
-  if (tel.trim().length > 10) return 'Máximo 10 dígitos.';
+  if (!tel.trim()) return 'El teléfono es obligatorio.';
+  if (!/^3\d{9}$/.test(tel.trim())) {
+    return 'El teléfono debe ser celular colombiano válido (10 dígitos, iniciando en 3).';
+  }
   return '';
 };
 
@@ -89,7 +88,6 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
   useEffect(() => {
     setTiposDoc([
       { Codigo_Documento: 1, Tipo_Documento: 'Cédula de Ciudadanía' },
-      { Codigo_Documento: 2, Tipo_Documento: 'Tarjeta de Identidad' },
       { Codigo_Documento: 3, Tipo_Documento: 'Cédula de Extranjería' },
       { Codigo_Documento: 4, Tipo_Documento: 'Pasaporte' },
       { Codigo_Documento: 5, Tipo_Documento: 'PEP' },
@@ -159,7 +157,7 @@ export const useRegistroForm = (setModoRegistro, setVista) => {
         const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
         const edadAnios = (hoy - dateNac) / (1000 * 60 * 60 * 24 * 365.25);
         if (dateNac >= hoy) { mostrarToast('La fecha debe estar en el pasado.', false); return; }
-        if (edadAnios < 10) { mostrarToast('Debes tener al menos 10 años para registrarte.', false); return; }
+        if (edadAnios < 18) { mostrarToast('Debes ser mayor de 18 años para registrarte.', false); return; }
         if (edadAnios > 80) { mostrarToast('La edad máxima permitida es 80 años.', false); return; }
       }
     }

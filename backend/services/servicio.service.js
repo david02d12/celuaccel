@@ -61,6 +61,16 @@ const actualizar = async (data) => {
     const oldEtapa = Number(oldServicio.Etapa);
     const newEtapa = Number(data.Etapa);
 
+    if (oldEtapa === -1 && newEtapa !== -1) {
+        throw new AppError('No se puede reabrir un servicio cancelado.', 400);
+    }
+    if (newEtapa > oldEtapa + 1 && oldEtapa !== -1 && newEtapa !== -1) {
+        throw new AppError('No puedes saltar etapas. Debes pasar el servicio a la etapa siguiente correspondiente.', 400);
+    }
+    if (newEtapa < oldEtapa && newEtapa !== -1) {
+        throw new AppError('No puedes regresar a una etapa anterior.', 400);
+    }
+
     if (oldEtapa !== newEtapa) {
         const etapas = { '-1': 'Cancelado', '0': 'Recibido', '1': 'En Revisión', '2': 'Terminado' };
         const nombreEtapa = etapas[String(newEtapa)] || 'Desconocido';

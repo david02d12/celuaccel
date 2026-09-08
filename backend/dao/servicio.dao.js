@@ -1,10 +1,10 @@
 const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
-    query('SELECT * FROM servicio ORDER BY Fecha DESC');
+    query('SELECT * FROM servicio ORDER BY Fecha DESC, ID_Servicio DESC');
 
 const getByUsuario = (idUsuario) =>
-    query('SELECT * FROM servicio WHERE ID_Usuario = ? ORDER BY Fecha DESC', [idUsuario]);
+    query('SELECT * FROM servicio WHERE ID_Usuario = ? ORDER BY Fecha DESC, ID_Servicio DESC', [idUsuario]);
 
 /**
  * Retorna un servicio Terminado (2) o Cancelado (-1) del usuario.

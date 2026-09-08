@@ -37,10 +37,31 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
   const iStyle = (k) => ({ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: errores[k] ? '#dc3545' : 'var(--color-border)' });
   const onChange = (k) => (e) => { setForm(f => ({ ...f, [k]: e.target.value })); setErrores(p => ({ ...p, [k]: '' })); };
 
+  // Parsear dirección
+  const matchDir = (form.Direccion || '').match(/^(.*?) (.*?) #(.*?) (.*?)- (.*?), (.*)$/) || [];
+  const [dirPasos, setDirPasos] = useState({
+    tipo_via: matchDir[1] || '',
+    numero_principal: matchDir[2] || '',
+    numero_secundario: matchDir[3] || '',
+    complemento: matchDir[4] ? matchDir[4].trim() : '',
+    barrio: matchDir[5] || '',
+    ciudad: matchDir[6] || ''
+  });
+
+  const actualizarDir = (campo, valor) => {
+    const n = { ...dirPasos, [campo]: valor };
+    setDirPasos(n);
+    const combinada = `${n.tipo_via} ${n.numero_principal} #${n.numero_secundario} ${n.complemento ? n.complemento + ' ' : ''}- ${n.barrio}, ${n.ciudad}`.trim();
+    if (n.tipo_via || n.numero_principal || n.ciudad) {
+      setForm(f => ({ ...f, Direccion: combinada }));
+    } else {
+      setForm(f => ({ ...f, Direccion: '' }));
+    }
+  };
+
   return (
     <div className="card border-0 shadow-sm p-4 fade-in-up">
       <h5 className="fw-bold mb-1" style={{ color: 'var(--color-primary)' }}>Editar Información Personal</h5>
-      <p className="text-muted small mb-4">El correo electrónico y la fecha de nacimiento son datos de identidad y no pueden modificarse.</p>
       <div className="row g-3">
 
         {/* ── Nombres ── */}
@@ -76,14 +97,43 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
         {/* ── Teléfono ── */}
         <div className="col-md-6">
           <label className="small fw-bold text-muted mb-1">Teléfono <span className="text-muted fw-normal">(opcional)</span></label>
-          <input className={`form-control ${errores.Telefono ? 'is-invalid' : ''}`} value={form.Telefono} placeholder="Ej: 3001234567" maxLength={10} style={iStyle('Telefono')} onChange={onChange('Telefono')} />
-          {errores.Telefono ? <CampoError mensaje={errores.Telefono} /> : <small className="text-muted mt-1 d-block">Celular: 10 dígitos iniciando en 3. Fijo: 7 dígitos.</small>}
+          <input className={`form-control ${errores.Telefono ? 'is-invalid' : ''}`} value={form.Telefono} placeholder="Ej: 3001234567" maxLength={10} style={iStyle('Telefono')} onChange={(e) => { if (!/[^0-9]/.test(e.target.value)) onChange('Telefono')(e); }} />
+          {errores.Telefono ? <CampoError mensaje={errores.Telefono} /> : <small className="text-muted mt-1 d-block">Celular: 10 dígitos iniciando en 3.</small>}
         </div>
 
         {/* ── Dirección ── */}
         <div className="col-12">
           <label className="small fw-bold text-muted mb-1">Dirección <span className="text-muted fw-normal">(opcional)</span></label>
-          <input className={`form-control ${errores.Direccion ? 'is-invalid' : ''}`} value={form.Direccion} placeholder="Ej: Calle 45 #12-30" maxLength={25} style={iStyle('Direccion')} onChange={onChange('Direccion')} />
+          <div className="row g-2 mb-2">
+            <div className="col-4">
+              <select className="form-select" style={iStyle('Direccion')} value={dirPasos.tipo_via} onChange={e => actualizarDir('tipo_via', e.target.value)}>
+                <option value="">Vía...</option>
+                <option value="Calle">Calle</option>
+                <option value="Carrera">Carrera</option>
+                <option value="Avenida">Avenida</option>
+                <option value="Transversal">Transv.</option>
+                <option value="Diagonal">Diagonal</option>
+              </select>
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={iStyle('Direccion')} placeholder="Nº Principal" value={dirPasos.numero_principal} onChange={e => actualizarDir('numero_principal', e.target.value)} />
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={iStyle('Direccion')} placeholder="# Secundario" value={dirPasos.numero_secundario} onChange={e => actualizarDir('numero_secundario', e.target.value)} />
+            </div>
+          </div>
+          <div className="row g-2 mb-2">
+            <div className="col-4">
+              <input className="form-control" style={iStyle('Direccion')} placeholder="Apto/Int" value={dirPasos.complemento} onChange={e => actualizarDir('complemento', e.target.value)} />
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={iStyle('Direccion')} placeholder="Barrio" value={dirPasos.barrio} onChange={e => actualizarDir('barrio', e.target.value)} />
+            </div>
+            <div className="col-4">
+              <input className="form-control" style={iStyle('Direccion')} placeholder="Ciudad" value={dirPasos.ciudad} onChange={e => actualizarDir('ciudad', e.target.value)} />
+            </div>
+          </div>
+          <input className="form-control bg-light" value={form.Direccion} readOnly placeholder="Dirección generada automáticamente" style={{ fontSize: '0.85rem' }} />
           <CampoError mensaje={errores.Direccion} />
         </div>
 

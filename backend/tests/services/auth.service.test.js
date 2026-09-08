@@ -19,12 +19,12 @@ describe('Auth Service', () => {
         });
 
         it('debe lanzar error si la contraseña es menor a 6 caracteres', async () => {
-            const userData = { ID_Usuario: '1', Nombre: 'A', Correo: 'a@a.com', Clave: '12345' };
+            const userData = { ID_Usuario: '1', Nombre: 'Juan Perez', Correo: 'a@a.com', Clave: '12345' };
             await expect(authService.registro(userData)).rejects.toThrow('La contraseña debe tener al menos 6 caracteres.');
         });
 
         it('debe registrar un usuario correctamente', async () => {
-            const userData = { ID_Usuario: '1', Nombre: 'A', Correo: 'a@a.com', Clave: '123456' };
+            const userData = { ID_Usuario: '1', Nombre: 'Juan Perez', Correo: 'a@a.com', Clave: '123456' };
             bcrypt.hash.mockResolvedValue('hashedClave');
             usuarioDao.create.mockResolvedValue(true);
 
@@ -36,7 +36,7 @@ describe('Auth Service', () => {
         });
 
         it('debe lanzar error si el usuario ya existe', async () => {
-            const userData = { ID_Usuario: '1', Nombre: 'A', Correo: 'a@a.com', Clave: '123456' };
+            const userData = { ID_Usuario: '1', Nombre: 'Juan Perez', Correo: 'a@a.com', Clave: '123456' };
             bcrypt.hash.mockResolvedValue('hashedClave');
             const error = new Error();
             error.code = 'ER_DUP_ENTRY';

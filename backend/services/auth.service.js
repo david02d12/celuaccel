@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const AppError = require('../config/AppError');
 const usuarioDao = require('../dao/usuario.dao');
+const val = require('../utils/validaciones');
 
 const SECRET_KEY = process.env.JWT_SECRET;
 if (!SECRET_KEY) throw new Error('JWT_SECRET no está definido en las variables de entorno.');
@@ -11,6 +12,12 @@ const registro = async ({ ID_Usuario, Codigo_Documento, Nombre, Fecha_Nacimiento
     if (!ID_Usuario || !Nombre || !Correo || !Clave) {
         throw new AppError('Los campos ID_Usuario, Nombre, Correo y Clave son obligatorios.', 400);
     }
+    val.validarDocumento(ID_Usuario, Codigo_Documento);
+    val.validarNombres(Nombre);
+    val.validarCorreo(Correo);
+    if (Telefono) val.validarTelefono(Telefono);
+    if (Fecha_Nacimiento) val.validarEdad(Fecha_Nacimiento);
+
     if (Clave) {
         if (Clave.trim().length < 6) throw new AppError('La contraseña debe tener al menos 6 caracteres.', 400);
         if (Clave.trim().length > 64) throw new AppError('La contraseña no puede exceder los 64 caracteres.', 400);

@@ -178,6 +178,8 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
     return { texto: `Etapa ${e}`, color: '#6c757d', porcentaje: 0 };
   };
 
+  const puedeExportar = servicios.some(s => Number(s.Etapa) === 2 || Number(s.Etapa) === -1);
+
   return (
     <div>
       {toast.visible && (
@@ -197,7 +199,10 @@ const MiServicio = ({ cerrarSesion, setVista }) => {
             <p className="mb-0 opacity-75">Usuario: <strong>{usuario}</strong> — {servicios.length} servicio(s) registrado(s)</p>
           </div>
           <div className="d-flex gap-2 flex-wrap">
-            <button className="btn btn-outline-light fw-bold px-3" onClick={generarPDF} title="Descargar historial en PDF">
+            <button className="btn btn-outline-light fw-bold px-3" 
+              onClick={generarPDF} 
+              disabled={!puedeExportar}
+              title={puedeExportar ? "Descargar historial en PDF" : "Disponible cuando tengas un servicio Terminado o Cancelado"}>
               Descargar PDF
             </button>
             <button id="btn-nuevo-servicio" className="btn btn-light fw-bold text-danger px-4" onClick={() => setMostrarFormulario(!mostrarFormulario)}>

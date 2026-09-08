@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const AppError = require('../config/AppError');
 const usuarioDao = require('../dao/usuario.dao');
+const val = require('../utils/validaciones');
 
 const SALT_ROUNDS = 10;
 
@@ -42,6 +43,12 @@ const listar = () => usuarioDao.getAll();
 const actualizar = async ({ Codigo_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Clave, Codigo_Rol, ID_Usuario }, userId) => {
     if (!ID_Usuario) throw new AppError('El campo ID_Usuario es obligatorio para actualizar.', 400);
 
+    if (Nombre) val.validarNombres(Nombre);
+    if (Correo) val.validarCorreo(Correo);
+    if (Telefono) val.validarTelefono(Telefono);
+    if (Fecha_Nacimiento) val.validarEdad(Fecha_Nacimiento);
+    if (Codigo_Documento) val.validarDocumento(ID_Usuario, Codigo_Documento);
+
     await validarCambioRol(ID_Usuario, Codigo_Rol);
     const hashedClave = await procesarClave(Clave);
 
@@ -75,6 +82,11 @@ const perfilPublico = async (id, userId) => {
 const actualizarMiPerfil = async (idSolicitante, { Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, Clave }) => {
     if (!Nombre || !Correo) throw new AppError('Nombre y correo son obligatorios.', 400);
     
+    val.validarNombres(Nombre);
+    val.validarCorreo(Correo);
+    if (Telefono) val.validarTelefono(Telefono);
+    if (Fecha_Nacimiento) val.validarEdad(Fecha_Nacimiento);
+
     const hashedClave = await procesarClave(Clave);
 
     const result = await usuarioDao.updateMiPerfil({ Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo, hashedClave, ID_Usuario: idSolicitante });
