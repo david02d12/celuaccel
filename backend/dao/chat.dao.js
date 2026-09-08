@@ -11,22 +11,22 @@ const CHAT_SELECT = `
         u.Nombre            AS Nombre_Usuario,
         m.Mensaje           AS Ultimo_Mensaje,
         m.Fecha_Mensaje     AS Fecha_Ultimo_Mensaje,
-        tec.Nombre          AS Nombre_Tecnico
+        (
+            SELECT u2.Nombre
+            FROM mensajes m2
+            JOIN usuario u2 ON m2.ID_Usuario = u2.ID_Usuario
+            WHERE m2.Codigo_Chat = c.Codigo_Chat AND u2.Codigo_Rol IN (1, 3)
+            ORDER BY m2.Codigo_Mensaje ASC
+            LIMIT 1
+        ) AS Nombre_Tecnico
     FROM chat c
-    LEFT JOIN usuario u  ON TRIM(u.ID_Usuario) = TRIM(c.ID_Usuario)
+    LEFT JOIN usuario u  ON u.ID_Usuario = c.ID_Usuario
     LEFT JOIN servicio s ON s.ID_Servicio = c.ID_Servicio
     LEFT JOIN mensajes m ON m.Codigo_Mensaje = (
         SELECT Codigo_Mensaje FROM mensajes
         WHERE Codigo_Chat = c.Codigo_Chat
         ORDER BY Codigo_Mensaje DESC LIMIT 1
     )
-    LEFT JOIN (
-        SELECT m2.Codigo_Chat, u2.Nombre
-        FROM mensajes m2
-        INNER JOIN usuario u2 ON m2.ID_Usuario = u2.ID_Usuario
-        WHERE u2.Codigo_Rol IN (1, 3)
-        GROUP BY m2.Codigo_Chat, u2.Nombre
-    ) tec ON tec.Codigo_Chat = c.Codigo_Chat
 `;
 
 const getAll = (rol) => {
