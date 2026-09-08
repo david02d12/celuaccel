@@ -91,11 +91,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
   const listar = useCallback(async () => {
     try {
       const res = await api.get('/comentarios/listar');
-      if (miRol === 2) {
-        setComentarios(res.data.filter(c => c.ID_Usuario === miUsuario));
-      } else {
-        setComentarios(res.data);
-      }
+      setComentarios(res.data);
     } catch (err) {
       console.error(err);
     }

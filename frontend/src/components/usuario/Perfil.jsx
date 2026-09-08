@@ -133,7 +133,7 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
               <input className="form-control" style={iStyle('Direccion')} placeholder="Ciudad" value={dirPasos.ciudad} onChange={e => actualizarDir('ciudad', e.target.value)} />
             </div>
           </div>
-          <input className="form-control bg-light" value={form.Direccion} readOnly placeholder="Dirección generada automáticamente" style={{ fontSize: '0.85rem' }} />
+          <input className="form-control" value={form.Direccion} readOnly placeholder="Dirección generada automáticamente" style={{ ...iStyle('Direccion'), fontSize: '0.85rem', opacity: 0.8 }} />
           <CampoError mensaje={errores.Direccion} />
         </div>
 

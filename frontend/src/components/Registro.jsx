@@ -168,7 +168,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
               <input className="form-control" style={inputStyle} placeholder="Ciudad" value={dirPasos.ciudad} onChange={e => actualizarDir('ciudad', e.target.value)} />
             </div>
           </div>
-          <input className="form-control bg-light" value={formReg.Direccion} readOnly placeholder="Dirección generada automáticamente" style={{ fontSize: '0.85rem' }} />
+          <input className="form-control" value={formReg.Direccion} readOnly placeholder="Dirección generada automáticamente" style={{ ...inputStyle, fontSize: '0.85rem', opacity: 0.8 }} />
           {errores.Direccion && <small className="text-danger">{errores.Direccion}</small>}
         </div>
 
