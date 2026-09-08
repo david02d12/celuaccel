@@ -12,6 +12,7 @@ const Registro = ({ setModoRegistro, setVista }) => {
     infoFuerza,
     reglaDoc,
     actualizar,
+    registrarUsuario
   } = useRegistroForm(setModoRegistro, setVista);
 
   const [dirPasos, setDirPasos] = useState({
