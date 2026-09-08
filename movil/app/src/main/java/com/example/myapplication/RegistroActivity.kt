@@ -63,57 +63,92 @@ class RegistroActivity : AppCompatActivity() {
             val clave     = etClave.text.toString()
             val confirmClave = etConfirmClave.text.toString()
 
-            // Validaciones idénticas a validaciones.js
+            // --- VALIDACIONES DE TIPO DE DOCUMENTO ---
+            val codigoDocumento = tiposDocumento.getOrNull(tipoIdx)?.codigoDocumento ?: 1
             if (documento.isEmpty()) { etDocumento.error = "Requerido"; return@setOnClickListener }
+            when (codigoDocumento) {
+                1 -> if (!documento.matches("^\\d{6,10}$".toRegex())) { etDocumento.error = "Cédula: 6-10 números"; return@setOnClickListener }
+                3 -> if (!documento.matches("^[A-Za-z0-9]{6,12}$".toRegex())) { etDocumento.error = "C.E: 6-12 caracteres"; return@setOnClickListener }
+                4 -> if (!documento.matches("^[A-Za-z0-9]{5,15}$".toRegex())) { etDocumento.error = "Pasaporte: 5-15 caracteres"; return@setOnClickListener }
+                5 -> if (!documento.matches("^[A-Za-z0-9]{15,17}$".toRegex())) { etDocumento.error = "PEP: 15-17 caracteres"; return@setOnClickListener }
+            }
 
-            // Nombre: Mínimo 2 palabras, solo letras
+            // --- VALIDACIONES DE NOMBRE COMPLETO ---
+            if (nombre.isEmpty()) { etNombre.error = "Requerido"; return@setOnClickListener }
+            if (!nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\\s\\-']+$".toRegex())) {
+                etNombre.error = "Solo letras, espacios y guiones"
+                return@setOnClickListener
+            }
             val palabrasNombre = nombre.split("\\s+".toRegex()).filter { it.length >= 2 }
             if (palabrasNombre.size < 2) {
                 etNombre.error = "Ingresa mínimo 1 nombre y 1 apellido"
                 return@setOnClickListener
             }
-            if (!nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\\s\\-']+$".toRegex())) {
-                etNombre.error = "Solo letras permitidas"
+            if (palabrasNombre.size > 5) {
+                etNombre.error = "Demasiados nombres/apellidos"
                 return@setOnClickListener
             }
 
-            // Fecha de Nacimiento
+            // --- VALIDACIONES DE FECHA DE NACIMIENTO ---
             if (fechaNacimiento.isEmpty()) {
                 etFechaNacimiento.error = "Requerido"
                 return@setOnClickListener
             }
+            try {
+                // Asumiendo formato YYYY-MM-DD
+                val parts = fechaNacimiento.split("-")
+                if (parts.size == 3) {
+                    val cal = java.util.Calendar.getInstance()
+                    val yearAct = cal.get(java.util.Calendar.YEAR)
+                    val monthAct = cal.get(java.util.Calendar.MONTH) + 1
+                    val dayAct = cal.get(java.util.Calendar.DAY_OF_MONTH)
+                    
+                    val yearNac = parts[0].toInt()
+                    val monthNac = parts[1].toInt()
+                    val dayNac = parts[2].toInt()
+                    
+                    var edad = yearAct - yearNac
+                    if (monthAct < monthNac || (monthAct == monthNac && dayAct < dayNac)) { edad-- }
+                    
+                    if (edad < 18) { etFechaNacimiento.error = "Debes ser mayor de 18 años"; return@setOnClickListener }
+                    if (edad > 80) { etFechaNacimiento.error = "Edad máxima 80 años"; return@setOnClickListener }
+                }
+            } catch (e: Exception) {
+                etFechaNacimiento.error = "Formato inválido (YYYY-MM-DD)"
+                return@setOnClickListener
+            }
 
-            // Dirección (Opcional, pero si hay debe tener min 8 chars y letras/numeros)
+            // --- VALIDACIONES DE DIRECCIÓN (Opcional) ---
             if (direccion.isNotEmpty()) {
                 if (direccion.length < 8) { etDireccion.error = "Mínimo 8 caracteres"; return@setOnClickListener }
                 if (!direccion.matches(".*[A-Za-zÁÉÍÓÚáéíóúÑñ].*".toRegex())) { etDireccion.error = "Debe contener texto"; return@setOnClickListener }
                 if (!direccion.matches(".*\\d.*".toRegex())) { etDireccion.error = "Debe contener al menos un número"; return@setOnClickListener }
             }
 
-            // Teléfono (Opcional, pero si hay: 10 dígitos (empieza en 3) o 7 dígitos)
-            if (telefono.isNotEmpty()) {
-                if (!telefono.matches("^\\d+$".toRegex())) { etTelefono.error = "Solo números"; return@setOnClickListener }
-                if (telefono.length != 7 && telefono.length != 10) { etTelefono.error = "Debe tener 7 o 10 dígitos"; return@setOnClickListener }
-                if (telefono.length == 10 && !telefono.startsWith("3")) { etTelefono.error = "Celulares deben iniciar con 3"; return@setOnClickListener }
+            // --- VALIDACIONES DE TELÉFONO ---
+            if (telefono.isEmpty()) { etTelefono.error = "Requerido"; return@setOnClickListener }
+            if (!telefono.matches("^3\\d{9}$".toRegex())) {
+                etTelefono.error = "Celular inválido (10 dígitos, empieza en 3)"
+                return@setOnClickListener
             }
 
-            // Correo
+            // --- VALIDACIONES DE CORREO ---
+            if (correo.isEmpty()) { etCorreo.error = "Requerido"; return@setOnClickListener }
+            if (correo.count { it == '@' } != 1) { etCorreo.error = "Debe contener exactamente un @"; return@setOnClickListener }
             if (!correo.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$".toRegex())) {
                 etCorreo.error = "Correo inválido"
                 return@setOnClickListener
             }
 
-            // Contraseña (Seguridad: Mínimo 6, Máximo 15, y confirmación idéntica)
-            if (clave.length < 6 || clave.length > 15) { 
-                etClave.error = "Debe tener entre 6 y 15 caracteres"
+            // --- VALIDACIONES DE CONTRASEÑA ---
+            if (clave.length < 6 || clave.length > 64) { 
+                etClave.error = "Debe tener entre 6 y 64 caracteres"
                 return@setOnClickListener 
             }
             if (clave != confirmClave) { 
                 etConfirmClave.error = "Las contraseñas no coinciden"
                 return@setOnClickListener 
             }
-
-            val codigoDocumento = tiposDocumento.getOrNull(tipoIdx)?.codigoDocumento ?: 1
 
             mostrarMensaje("Creando cuenta...", Color.BLUE)
 
