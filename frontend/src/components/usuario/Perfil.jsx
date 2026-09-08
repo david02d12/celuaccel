@@ -105,7 +105,7 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
         <div className="col-12">
           <label className="small fw-bold text-muted mb-1">Dirección <span className="text-muted fw-normal">(opcional)</span></label>
           <div className="row g-2 mb-2">
-            <div className="col-4">
+            <div className="col-12 col-sm-4">
               <select className="form-select" style={iStyle('Direccion')} value={dirPasos.tipo_via} onChange={e => actualizarDir('tipo_via', e.target.value)}>
                 <option value="">Vía...</option>
                 <option value="Calle">Calle</option>
@@ -115,21 +115,21 @@ const FormEdicion = ({ form, setForm, errores, setErrores, guardarCambios, setMo
                 <option value="Diagonal">Diagonal</option>
               </select>
             </div>
-            <div className="col-4">
+            <div className="col-12 col-sm-4">
               <input className="form-control" style={iStyle('Direccion')} placeholder="Nº Principal" value={dirPasos.numero_principal} onChange={e => actualizarDir('numero_principal', e.target.value)} />
             </div>
-            <div className="col-4">
+            <div className="col-12 col-sm-4">
               <input className="form-control" style={iStyle('Direccion')} placeholder="# Secundario" value={dirPasos.numero_secundario} onChange={e => actualizarDir('numero_secundario', e.target.value)} />
             </div>
           </div>
           <div className="row g-2 mb-2">
-            <div className="col-4">
+            <div className="col-12 col-sm-4">
               <input className="form-control" style={iStyle('Direccion')} placeholder="Apto/Int" value={dirPasos.complemento} onChange={e => actualizarDir('complemento', e.target.value)} />
             </div>
-            <div className="col-4">
+            <div className="col-12 col-sm-4">
               <input className="form-control" style={iStyle('Direccion')} placeholder="Barrio" value={dirPasos.barrio} onChange={e => actualizarDir('barrio', e.target.value)} />
             </div>
-            <div className="col-4">
+            <div className="col-12 col-sm-4">
               <input className="form-control" style={iStyle('Direccion')} placeholder="Ciudad" value={dirPasos.ciudad} onChange={e => actualizarDir('ciudad', e.target.value)} />
             </div>
           </div>
