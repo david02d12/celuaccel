@@ -1,5 +1,6 @@
 const AppError = require('../config/AppError');
 const historialDao = require('../dao/historial.dao');
+const servicioDao = require('../dao/servicio.dao');
 
 const listar = () => historialDao.getAll();
 
@@ -11,6 +12,12 @@ const agregar = async (data) => {
     }
     if (data.Estado && !ESTADOS_VALIDOS.includes(data.Estado)) {
         throw new AppError(`Estado inválido. Valores permitidos: ${ESTADOS_VALIDOS.join(', ')}.`, 400);
+    }
+    
+    // Validar que el servicio exista
+    const servicio = await servicioDao.findById(data.ID_Servicio);
+    if (!servicio || servicio.length === 0) {
+        throw new AppError(`El servicio #${data.ID_Servicio} no existe. No se puede crear el evento en la bitácora.`, 404);
     }
     // Fecha siempre generada por el servidor (NOW() en la query SQL)
     const { Fecha_Evento: _ignorado, ...dataLimpia } = data;
