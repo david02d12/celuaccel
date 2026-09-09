@@ -71,8 +71,8 @@ const Chats = ({ cerrarSesion, setVista }) => {
       {detalleItem && (
         <ModalOverlay titulo={`Canal #${detalleItem.Codigo_Chat}`} onClose={() => setDetalleItem(null)}>
           <div className="text-center mb-3">
-            <span className={`badge px-3 py-2 fs-6 ${detalleItem.ID_Servicio ? 'bg-primary' : 'bg-warning text-dark'}`}>
-              {detalleItem.ID_Servicio ? `📡 Servicio #${detalleItem.ID_Servicio}` : '📋 Consulta Catálogo'}
+            <span className="badge px-3 py-2 fs-6 bg-primary">
+              📡 Servicio #{detalleItem.ID_Servicio}
             </span>
           </div>
           {[['Código Chat', detalleItem.Codigo_Chat], ['ID Usuario', detalleItem.ID_Usuario], ['ID Servicio', detalleItem.ID_Servicio || 'N/A'], ['Estado', detalleItem.Estado_Chat || 'Activo']].map(([l,v]) => (
@@ -159,9 +159,8 @@ const Chats = ({ cerrarSesion, setVista }) => {
                   <tr key={c.Codigo_Chat} className="stagger-item">
                     <td>{c.Codigo_Chat}</td>
                     <td className="fw-bold">{c.ID_Usuario}</td>
-                    <td>{c.ID_Servicio
-                      ? <span className="badge bg-primary">Servicio #{c.ID_Servicio}</span>
-                      : <span className="badge bg-warning text-dark">Catálogo</span>}
+                    <td>
+                      <span className="badge bg-primary">Servicio #{c.ID_Servicio}</span>
                     </td>
                     <td>
                       {c.Estado_Chat === 'Oculto' 

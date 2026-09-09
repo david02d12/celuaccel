@@ -34,17 +34,21 @@ const CHAT_SELECT = `
 `;
 
 const getAll = (rol) => {
-    const whereClause = rol === 3 ? '' : " WHERE c.Estado_Chat = 'Activo'";
-    return query(`${CHAT_SELECT} ${whereClause} ORDER BY c.Codigo_Chat DESC`);
+    const baseWhere = 'WHERE c.ID_Servicio IS NOT NULL';
+    const estadoFilter = rol === 3 ? '' : " AND c.Estado_Chat = 'Activo'";
+    return query(`${CHAT_SELECT} ${baseWhere}${estadoFilter} ORDER BY c.Codigo_Chat DESC`);
 };
 
 const getMios = (idUsuario) =>
     query(
         `${CHAT_SELECT}
-         WHERE TRIM(c.ID_Usuario) = TRIM(?)
-            OR c.ID_Servicio IN (
-                SELECT ID_Servicio FROM servicio WHERE TRIM(ID_Usuario) = TRIM(?)
-            )
+         WHERE c.ID_Servicio IS NOT NULL
+           AND (
+               TRIM(c.ID_Usuario) = TRIM(?)
+               OR c.ID_Servicio IN (
+                   SELECT ID_Servicio FROM servicio WHERE TRIM(ID_Usuario) = TRIM(?)
+               )
+           )
          ORDER BY c.Codigo_Chat DESC`,
         [idUsuario, idUsuario]
     );
