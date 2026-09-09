@@ -225,16 +225,18 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   };
 
   // ── Lógica de desbloqueo progresivo de botones ─────────────────────
-  // Chat: disponible solo cuando etapa >= 1 (En proceso) Y hay precio/cotización
+  // Chat: disponible solo cuando etapa == 1 (En proceso) Y hay precio/cotización
   const chatDisponible = (s) => {
-    const etapa = Number(s.Etapa);
-    const tienePrecio = Number(s.Precio || 0) > 0;
-    return etapa >= 1 && etapa !== -1 && tienePrecio;
+    return Number(s.Etapa) === 1 && Number(s.Precio || 0) > 0;
   };
-  // Notificar: disponible solo cuando etapa >= 1 (En proceso)
+  // Notificar: disponible solo cuando etapa == 1 (En proceso)
   const notifDisponible = (s) => {
+    return Number(s.Etapa) === 1;
+  };
+  // Editar: disponible solo en etapa 0 (Pendiente) o 1 (En proceso)
+  const editarDisponible = (s) => {
     const etapa = Number(s.Etapa);
-    return etapa >= 1 && etapa !== -1;
+    return etapa === 0 || etapa === 1;
   };
   // Bloquear cambio de etapa 0->1 si no hay precio
   const puedeAvanzarEtapa = (s, nuevaEtapa) => {
@@ -353,16 +355,21 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             <div className="d-flex flex-wrap gap-2 mt-2">
               <button className="btn btn-secondary" style={{ flex:1, minWidth:80 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
 
-              {/* 1️⃣ Editar — siempre disponible: aquí se registra el precio/cotización */}
+              {/* 1️⃣ Editar — disponible en Pendiente y En proceso */}
               <button
                 id="btn-editar-servicio"
                 className="btn btn-outline-secondary d-flex align-items-center gap-1 justify-content-center"
-                style={{ flex:1, minWidth:80, fontSize:'0.85rem' }}
-                title="Edita el servicio y registra el precio de cotización"
-                onClick={() => abrirEdicion(detalleItem)}
+                style={{ 
+                  flex:1, minWidth:80, fontSize:'0.85rem',
+                  opacity: editarDisponible(detalleItem) ? 1 : 0.4,
+                  cursor: editarDisponible(detalleItem) ? 'pointer' : 'not-allowed'
+                }}
+                disabled={!editarDisponible(detalleItem)}
+                title={!editarDisponible(detalleItem) ? 'No disponible en servicios finalizados o cancelados' : 'Edita el servicio y registra el precio de cotización'}
+                onClick={() => editarDisponible(detalleItem) && abrirEdicion(detalleItem)}
               ><IconWrench /> Editar</button>
 
-              {/* 2️⃣ Chat — se desbloquea cuando hay precio Y etapa = En proceso o Terminado */}
+              {/* 2️⃣ Chat — disponible solo en proceso y con precio */}
               <button
                 className="btn btn-outline-info d-flex align-items-center gap-1 justify-content-center"
                 style={{
@@ -373,6 +380,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 disabled={!chatDisponible(detalleItem)}
                 title={
                   cancelado ? 'No disponible en servicios cancelados' :
+                  Number(detalleItem.Etapa) === 2 ? 'El servicio está terminado, chat cerrado' :
                   Number(detalleItem.Precio||0) === 0 ? 'Registra el precio de cotización primero (Editar)' :
                   Number(detalleItem.Etapa) === 0 ? 'Avanza el servicio a En proceso para habilitar el chat' :
                   'Ir al chat de este servicio'
@@ -380,7 +388,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 onClick={() => chatDisponible(detalleItem) && irAlChat(detalleItem)}
               ><IconChat /> Chat</button>
 
-              {/* 3️⃣ Notificar — se desbloquea cuando etapa = En proceso o Terminado */}
+              {/* 3️⃣ Notificar — disponible solo en proceso */}
               <button
                 className="btn btn-outline-success d-flex align-items-center gap-1 justify-content-center"
                 style={{
@@ -391,6 +399,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 disabled={!notifDisponible(detalleItem)}
                 title={
                   cancelado ? 'No disponible en servicios cancelados' :
+                  Number(detalleItem.Etapa) === 2 ? 'El servicio está terminado, no requiere notificaciones' :
                   Number(detalleItem.Etapa) === 0 ? 'Avanza el servicio a En proceso para notificar al cliente' :
                   'Enviar notificación al cliente'
                 }
