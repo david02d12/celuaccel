@@ -224,6 +224,26 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     setVista('chatVista');
   };
 
+  // ── Lógica de desbloqueo progresivo de botones ─────────────────────
+  // Chat: disponible solo cuando etapa >= 1 (En proceso) Y hay precio/cotización
+  const chatDisponible = (s) => {
+    const etapa = Number(s.Etapa);
+    const tienePrecio = Number(s.Precio || 0) > 0;
+    return etapa >= 1 && etapa !== -1 && tienePrecio;
+  };
+  // Notificar: disponible solo cuando etapa >= 1 (En proceso)
+  const notifDisponible = (s) => {
+    const etapa = Number(s.Etapa);
+    return etapa >= 1 && etapa !== -1;
+  };
+  // Bloquear cambio de etapa 0->1 si no hay precio
+  const puedeAvanzarEtapa = (s, nuevaEtapa) => {
+    if (Number(s.Etapa) === 0 && Number(nuevaEtapa) === 1) {
+      return Number(s.Precio || 0) > 0;
+    }
+    return true;
+  };
+
   const generarPDF = () => {
     if (filtrados.length === 0) return mostrarToast('No hay servicios para exportar.', false);
     const doc = new jsPDF();
@@ -293,45 +313,94 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             {detalleItem.Precio_Mano_Obra && <Fila label="→ Mano de obra">${Number(detalleItem.Precio_Mano_Obra).toLocaleString('es-CO')}</Fila>}
             <Fila label="Fecha ingreso">{detalleItem.Fecha ? String(detalleItem.Fecha).split('T')[0] : '—'}</Fila>
 
-            {/* Cambio de etapa rápido */}
+            {/* Cambio de etapa rápido con validación */}
             {!cancelado && (
               <div className="mt-3 mb-1">
-                <label className="small fw-bold mb-1" style={{ color:'var(--color-primary)' }}>Cambiar etapa:</label>
+                <label className="small fw-bold mb-2" style={{ color:'var(--color-primary)' }}>Cambiar etapa:</label>
+                {/* Aviso si intenta pasar a En proceso sin precio */}
+                {Number(detalleItem.Etapa) === 0 && Number(detalleItem.Precio || 0) === 0 && (
+                  <div className="d-flex align-items-center gap-2 mb-2 p-2 rounded"
+                    style={{ background:'#f59e0b22', border:'1px solid #f59e0b66', fontSize:'0.78rem', color:'#f59e0b' }}>
+                    ⚠️ Para avanzar a <strong>En proceso</strong> primero registra el precio de la cotización.
+                  </div>
+                )}
                 <select className="form-select" style={inputStyle} value={String(detalleItem.Etapa)}
-                  onChange={async e => { await actualizarEtapa(detalleItem, e.target.value); setDetalleItem(null); }}>
+                  onChange={async e => {
+                    const nuevaEtapa = e.target.value;
+                    if (!puedeAvanzarEtapa(detalleItem, nuevaEtapa)) {
+                      mostrarToast('⚠️ Debes registrar el precio/cotización antes de pasar a En proceso.', false);
+                      return;
+                    }
+                    await actualizarEtapa(detalleItem, nuevaEtapa);
+                    setDetalleItem(null);
+                  }}>
                   {ETAPAS.map(e => <option key={e.valor} value={e.valor}>{e.label}</option>)}
                 </select>
               </div>
             )}
 
-            {/* Botones de acción — flujo de izquierda a derecha */}
-            <div className="d-flex flex-wrap gap-2 mt-4">
+            {/* ─ Indicador de progreso de botones ─ */}
+            <div className="mt-3 mb-1" style={{ fontSize:'0.72rem', color:'#888' }}>
+              Flujo de acciones:
+              <span style={{ color: '#fff', fontWeight:600 }}> Editar</span>
+              <span style={{ color: '#888' }}> → </span>
+              <span style={{ color: chatDisponible(detalleItem) ? '#0dcaf0' : '#555', fontWeight: chatDisponible(detalleItem) ? 600 : 400 }}>Chat</span>
+              <span style={{ color: '#888' }}> → </span>
+              <span style={{ color: notifDisponible(detalleItem) ? '#198754' : '#555', fontWeight: notifDisponible(detalleItem) ? 600 : 400 }}>Notificar</span>
+            </div>
+
+            {/* Botones de acción — flujo progresivo de izquierda a derecha */}
+            <div className="d-flex flex-wrap gap-2 mt-2">
               <button className="btn btn-secondary" style={{ flex:1, minWidth:80 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
 
-              {/* Editar — siempre disponible para técnico/admin */}
+              {/* 1️⃣ Editar — siempre disponible: aquí se registra el precio/cotización */}
               <button
                 id="btn-editar-servicio"
                 className="btn btn-outline-secondary d-flex align-items-center gap-1 justify-content-center"
                 style={{ flex:1, minWidth:80, fontSize:'0.85rem' }}
+                title="Edita el servicio y registra el precio de cotización"
                 onClick={() => abrirEdicion(detalleItem)}
               ><IconWrench /> Editar</button>
 
-              {/* Chat — disponible solo si NO está cancelado */}
+              {/* 2️⃣ Chat — se desbloquea cuando hay precio Y etapa = En proceso o Terminado */}
               <button
                 className="btn btn-outline-info d-flex align-items-center gap-1 justify-content-center"
-                style={{ flex:1, minWidth:80, fontSize:'0.85rem', opacity: cancelado ? 0.45 : 1, cursor: cancelado ? 'not-allowed' : 'pointer' }}
-                disabled={cancelado}
-                title={cancelado ? 'No disponible en servicios cancelados' : 'Ir al chat de este servicio'}
-                onClick={() => !cancelado && irAlChat(detalleItem)}
+                style={{
+                  flex:1, minWidth:80, fontSize:'0.85rem',
+                  opacity: chatDisponible(detalleItem) ? 1 : 0.4,
+                  cursor: chatDisponible(detalleItem) ? 'pointer' : 'not-allowed'
+                }}
+                disabled={!chatDisponible(detalleItem)}
+                title={
+                  cancelado ? 'No disponible en servicios cancelados' :
+                  Number(detalleItem.Precio||0) === 0 ? 'Registra el precio de cotización primero (Editar)' :
+                  Number(detalleItem.Etapa) === 0 ? 'Avanza el servicio a En proceso para habilitar el chat' :
+                  'Ir al chat de este servicio'
+                }
+                onClick={() => chatDisponible(detalleItem) && irAlChat(detalleItem)}
               ><IconChat /> Chat</button>
 
-              {/* Notificar — disponible solo si NO está cancelado */}
+              {/* 3️⃣ Notificar — se desbloquea cuando etapa = En proceso o Terminado */}
               <button
                 className="btn btn-outline-success d-flex align-items-center gap-1 justify-content-center"
-                style={{ flex:1, minWidth:80, fontSize:'0.85rem', opacity: cancelado ? 0.45 : 1, cursor: cancelado ? 'not-allowed' : 'pointer' }}
-                disabled={cancelado}
-                title={cancelado ? 'No disponible en servicios cancelados' : 'Enviar notificación al cliente'}
-                onClick={() => { if (!cancelado) { setDetalleItem(null); setModalNotif({ ID_Usuario: detalleItem.ID_Usuario, ID_Servicio: detalleItem.ID_Servicio }); setMensajeNotif(''); }}}
+                style={{
+                  flex:1, minWidth:80, fontSize:'0.85rem',
+                  opacity: notifDisponible(detalleItem) ? 1 : 0.4,
+                  cursor: notifDisponible(detalleItem) ? 'pointer' : 'not-allowed'
+                }}
+                disabled={!notifDisponible(detalleItem)}
+                title={
+                  cancelado ? 'No disponible en servicios cancelados' :
+                  Number(detalleItem.Etapa) === 0 ? 'Avanza el servicio a En proceso para notificar al cliente' :
+                  'Enviar notificación al cliente'
+                }
+                onClick={() => {
+                  if (notifDisponible(detalleItem)) {
+                    setDetalleItem(null);
+                    setModalNotif({ ID_Usuario: detalleItem.ID_Usuario, ID_Servicio: detalleItem.ID_Servicio });
+                    setMensajeNotif('');
+                  }
+                }}
               ><IconBell /> Notificar</button>
 
               {/* Eliminar — siempre disponible */}
