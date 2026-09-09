@@ -17,12 +17,17 @@ export const useChatView = (role, usuario) => {
   const mensajesEndRef = useRef(null);
 
   const procesarEnlaceAutomatico = async (chatInfo, chatsCargados, url) => {
-    let chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(chatInfo.idServicio));
+    // Normalizar: soportar tanto { idServicio } (camelCase) como { ID_Servicio } (PascalCase)
+    const idServicio = chatInfo.idServicio || chatInfo.ID_Servicio;
+    const idUsuario = chatInfo.idUsuario || chatInfo.ID_Usuario || usuario;
+    if (!idServicio) { sessionStorage.removeItem('chatInfo'); return chatsCargados; }
+
+    let chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(idServicio));
     if (!chatExistente) {
-      await api.post('/chats/agregar', { ID_Usuario: usuario, ID_Servicio: chatInfo.idServicio });
+      await api.post('/chats/agregar', { ID_Usuario: idUsuario, ID_Servicio: idServicio });
       const res = await api.get(url);
       chatsCargados = res.data;
-      chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(chatInfo.idServicio));
+      chatExistente = chatsCargados.find(c => String(c.ID_Servicio) === String(idServicio));
     }
     if (chatExistente) {
       setChatSel(chatExistente);

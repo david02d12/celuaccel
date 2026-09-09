@@ -278,9 +278,10 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                   className="form-control mb-3" 
                   placeholder="ID Usuario" 
                   value={form.ID_Usuario} 
-                  disabled={enEdicion || miRol === 2}
-                  onChange={e => setForm({...form, ID_Usuario: e.target.value})} 
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
+                  disabled
+                  readOnly
+                  title="El comentario se publica con tu usuario autenticado"
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)', opacity: 0.75, cursor: 'not-allowed' }}
                 />
                 <textarea 
                   id="comentario-input"
@@ -294,17 +295,7 @@ const Comentarios = ({ cerrarSesion, setVista }) => {
                 
                 {EstrellasInput()}
 
-                {miRol !== 2 && (
-                  <input 
-                    className="form-control mb-3" 
-                    type="date" 
-                    title="Fecha Comentario"
-                    min={minDate} max={maxDate}
-                    value={form.Fecha_Comentario} 
-                    onChange={e => setForm({...form, Fecha_Comentario: e.target.value})} 
-                    style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }}
-                  />
-                )}
+                {/* Fecha siempre automática desde el backend — no se muestra campo */}
                 
                 <button id="btn-enviar-comentario" className="btn btn-primary w-100 py-2 shadow-sm" onClick={guardar}>
                   {enEdicion ? "Actualizar Reseña" : "Publicar Experiencia"}

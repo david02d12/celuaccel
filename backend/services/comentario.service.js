@@ -23,9 +23,11 @@ const promedio = async () => {
     };
 };
 
-const agregar = async ({ ID_Usuario, Comentario, Fecha_Comentario, Estrellas }, userId) => {
+const agregar = async ({ Comentario, Estrellas }, userId) => {
+    // Siempre usar el usuario autenticado — ignorar ID_Usuario del body para prevenir suplantación
+    const ID_Usuario = userId;
     if (!ID_Usuario || !Comentario) {
-        throw new AppError('Los campos ID_Usuario y Comentario son obligatorios.', 400);
+        throw new AppError('El campo Comentario es obligatorio.', 400);
     }
 
     // Filtro de malas palabras
@@ -39,11 +41,8 @@ const agregar = async ({ ID_Usuario, Comentario, Fecha_Comentario, Estrellas }, 
 
     const rolRes = await usuarioDao.getRol(userId);
     const miRol = rolRes.length > 0 ? Number(rolRes[0].Codigo_Rol) : 2;
-    if (String(ID_Usuario).trim() !== String(userId).trim() && miRol === 2) {
-        throw new AppError('Acceso denegado: no puedes publicar comentarios en nombre de otro usuario.', 403);
-    }
 
-    // Clientes (rol 2) deben tener al menos un servicio activo (no cancelado) para comentar
+    // Clientes (rol 2) deben tener al menos un servicio finalizado/cancelado para comentar
     if (miRol === 2) {
         const serviciosActivos = await servicioDao.getActivosByUsuario(String(ID_Usuario).trim());
         if (serviciosActivos.length === 0) {
@@ -54,7 +53,8 @@ const agregar = async ({ ID_Usuario, Comentario, Fecha_Comentario, Estrellas }, 
         }
     }
 
-    const fecha = Fecha_Comentario || new Date().toISOString().split('T')[0];
+    // Fecha siempre generada por el servidor
+    const fecha = new Date().toISOString().split('T')[0];
     const estrellas = (Estrellas >= 1 && Estrellas <= 5) ? Number(Estrellas) : 5;
     const result = await comentarioDao.create({ ID_Usuario, Comentario, Fecha_Comentario: fecha, Estrellas: estrellas });
     return { message: 'Comentario publicado correctamente.', id: result.insertId };
@@ -72,7 +72,7 @@ const _verificarPropiedad = async (codigoComentario, userId) => {
     }
 };
 
-const actualizar = async ({ Comentario, Fecha_Comentario, Estrellas, Codigo_Comentario }, userId) => {
+const actualizar = async ({ Comentario, Estrellas, Codigo_Comentario }, userId) => {
     if (!Codigo_Comentario) throw new AppError('El campo Codigo_Comentario es obligatorio.', 400);
 
     // Filtro de malas palabras
@@ -87,9 +87,9 @@ const actualizar = async ({ Comentario, Fecha_Comentario, Estrellas, Codigo_Come
     }
 
     await _verificarPropiedad(Codigo_Comentario, userId);
-    const fecha = Fecha_Comentario || new Date().toISOString().split('T')[0];
+    // Fecha no se actualiza — conserva la original del comentario
     const estrellas = (Estrellas >= 1 && Estrellas <= 5) ? Number(Estrellas) : 5;
-    await comentarioDao.update({ Comentario, Fecha_Comentario: fecha, Estrellas: estrellas, Codigo_Comentario });
+    await comentarioDao.update({ Comentario, Estrellas: estrellas, Codigo_Comentario });
 };
 
 const eliminar = async (id, userId) => {

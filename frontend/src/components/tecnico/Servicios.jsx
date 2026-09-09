@@ -17,6 +17,13 @@ const ETAPAS = [
 ];
 const etapaInfo = (val) => ETAPAS.find(e => e.valor === String(val)) || ETAPAS[0];
 
+// Pasos del flujo (solo los activos, sin Cancelado)
+const PASOS_FLUJO = [
+  { valor: '0', label: 'Pendiente',  icon: '📥' },
+  { valor: '1', label: 'En proceso', icon: '🔧' },
+  { valor: '2', label: 'Terminado',  icon: '✅' },
+];
+
 const MENSAJES_RAPIDOS = [
   'Tu dispositivo ha sido recibido y registrado en el sistema.',
   'Hemos iniciado el diagnóstico de tu equipo.',
@@ -46,6 +53,51 @@ const IconTrash = () => (
     <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4h8v2"/>
   </svg>
 );
+
+/* ── Barra de flujo de pasos ─────────────────────────────── */
+const FlujoPasos = ({ etapaActual }) => {
+  const cancelado = String(etapaActual) === '-1';
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, marginBottom: '1rem', padding: '8px 0' }}>
+      {PASOS_FLUJO.map((paso, idx) => {
+        const activo = !cancelado && Number(paso.valor) <= Number(etapaActual);
+        const esCurrent = String(paso.valor) === String(etapaActual) && !cancelado;
+        return (
+          <React.Fragment key={paso.valor}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: activo ? (esCurrent ? 'var(--color-primary)' : '#198754') : 'var(--color-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '1rem', transition: 'all 0.3s ease',
+                boxShadow: esCurrent ? '0 0 0 3px rgba(219,0,0,0.25)' : 'none',
+                border: activo ? 'none' : '2px solid var(--color-border)'
+              }}>
+                {activo ? <span style={{ fontSize: '0.9rem' }}>{paso.icon}</span>
+                  : <span style={{ color: '#666', fontSize: '0.75rem' }}>{idx + 1}</span>}
+              </div>
+              <span style={{ fontSize: '0.68rem', fontWeight: esCurrent ? 700 : 400, color: activo ? 'var(--color-text)' : '#888', whiteSpace: 'nowrap' }}>
+                {paso.label}
+              </span>
+            </div>
+            {idx < PASOS_FLUJO.length - 1 && (
+              <div style={{
+                height: 3, width: 48, flexShrink: 0, marginBottom: 20,
+                background: !cancelado && Number(etapaActual) > Number(paso.valor) ? '#198754' : 'var(--color-border)',
+                transition: 'background 0.3s ease'
+              }} />
+            )}
+          </React.Fragment>
+        );
+      })}
+      {cancelado && (
+        <div style={{ marginLeft: 16, padding: '4px 10px', background: '#dc354522', border: '1px solid #dc3545', borderRadius: 6, fontSize: '0.78rem', color: '#dc3545', fontWeight: 700 }}>
+          ❌ Cancelado
+        </div>
+      )}
+    </div>
+  );
+};
 
 /* ── Modal genérico ─────────────────────────────────────────── */
 const ModalOverlay = ({ titulo, onClose, children, maxWidth = 520 }) => (
@@ -109,10 +161,16 @@ const Servicios = ({ cerrarSesion, setVista }) => {
       const rep = Number(data.Precio_Repuestos) || 0;
       const mano = Number(data.Precio_Mano_Obra) || 0;
       if (data.Precio_Repuestos || data.Precio_Mano_Obra) data.Precio = rep + mano;
-      await api[metodo](`/servicios/${url}`, data);
-      mostrarToast(enEdicion ? 'Servicio actualizado.' : 'Nuevo servicio registrado.');
-      listar(); limpiarServicio();
-    } catch { mostrarToast('Error al procesar la solicitud.', false); }
+      const res = await api[metodo](`/servicios/${url}`, data);
+      // Capturar el ID del nuevo servicio para mostrarlo en el toast
+      const nuevoId = res?.data?.id;
+      mostrarToast(enEdicion ? 'Servicio actualizado.' : `✅ Servicio #${nuevoId || ''} registrado correctamente.`);
+      await listar();
+      limpiarServicio();
+    } catch (err) {
+      const msg = err?.response?.data?.error || 'Error al procesar la solicitud.';
+      mostrarToast(msg, false);
+    }
   };
 
   const eliminarServicio = async (id) => {
@@ -131,7 +189,10 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     try {
       await api.put('/servicios/actualizar', { ...servicio, Etapa: nuevaEtapa, Fecha: servicio.Fecha ? servicio.Fecha.split('T')[0] : '' });
       mostrarToast('Etapa actualizada.'); listar();
-    } catch { mostrarToast('Error al actualizar la etapa.', false); }
+    } catch (err) {
+      const msg = err?.response?.data?.error || 'Error al actualizar la etapa.';
+      mostrarToast(msg, false);
+    }
   };
 
   const enviarNotificacion = async () => {
@@ -152,6 +213,16 @@ const Servicios = ({ cerrarSesion, setVista }) => {
     setDetalleItem(null); setModalForm(true);
   };
   const abrirDetalle = (s) => setDetalleItem(s);
+
+  // Redirigir al chat con el servicio correcto (fix: pasar idServicio e idUsuario en camelCase)
+  const irAlChat = (servicio) => {
+    setDetalleItem(null);
+    sessionStorage.setItem('chatInfo', JSON.stringify({
+      idServicio: servicio.ID_Servicio,
+      idUsuario: servicio.ID_Usuario
+    }));
+    setVista('chatVista');
+  };
 
   const generarPDF = () => {
     if (filtrados.length === 0) return mostrarToast('No hay servicios para exportar.', false);
@@ -206,19 +277,11 @@ const Servicios = ({ cerrarSesion, setVista }) => {
       {/* ── MODAL DETALLE ── */}
       {detalleItem && (() => {
         const info = etapaInfo(String(detalleItem.Etapa));
+        const cancelado = String(detalleItem.Etapa) === '-1';
         return (
           <ModalOverlay titulo={`Servicio #${detalleItem.ID_Servicio}`} onClose={() => setDetalleItem(null)} maxWidth={560}>
-            {/* Estado prominente */}
-            <div className="text-center mb-4">
-              <span className="badge px-4 py-2 fs-6 fw-bold" style={{ backgroundColor: info.color, fontSize:'1rem' }}>
-                {info.label}
-              </span>
-              {String(detalleItem.Etapa) !== '-1' && (
-                <div className="mt-2" style={{ height:6, borderRadius:99, backgroundColor:'var(--color-border)', overflow:'hidden' }}>
-                  <div style={{ width:`${info.pct}%`, height:'100%', backgroundColor:info.color, borderRadius:99, transition:'width 0.5s ease' }} />
-                </div>
-              )}
-            </div>
+            {/* Flujo de pasos visual */}
+            <FlujoPasos etapaActual={detalleItem.Etapa} />
 
             <Fila label="ID Servicio">{detalleItem.ID_Servicio}</Fila>
             <Fila label="Cliente (Doc.)">{detalleItem.ID_Usuario}</Fila>
@@ -230,34 +293,53 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             {detalleItem.Precio_Mano_Obra && <Fila label="→ Mano de obra">${Number(detalleItem.Precio_Mano_Obra).toLocaleString('es-CO')}</Fila>}
             <Fila label="Fecha ingreso">{detalleItem.Fecha ? String(detalleItem.Fecha).split('T')[0] : '—'}</Fila>
 
-            {/* Cambio de etapa rápido dentro del detalle */}
-            <div className="mt-3 mb-1">
-              <label className="small fw-bold mb-1" style={{ color:'var(--color-primary)' }}>Cambiar etapa:</label>
-              <select className="form-select" style={inputStyle} value={String(detalleItem.Etapa)}
-                onChange={async e => { await actualizarEtapa(detalleItem, e.target.value); setDetalleItem(null); }}>
-                {ETAPAS.map(e => <option key={e.valor} value={e.valor}>{e.label}</option>)}
-              </select>
-            </div>
+            {/* Cambio de etapa rápido */}
+            {!cancelado && (
+              <div className="mt-3 mb-1">
+                <label className="small fw-bold mb-1" style={{ color:'var(--color-primary)' }}>Cambiar etapa:</label>
+                <select className="form-select" style={inputStyle} value={String(detalleItem.Etapa)}
+                  onChange={async e => { await actualizarEtapa(detalleItem, e.target.value); setDetalleItem(null); }}>
+                  {ETAPAS.map(e => <option key={e.valor} value={e.valor}>{e.label}</option>)}
+                </select>
+              </div>
+            )}
 
-            {/* Botones de acción */}
+            {/* Botones de acción — flujo de izquierda a derecha */}
             <div className="d-flex flex-wrap gap-2 mt-4">
               <button className="btn btn-secondary" style={{ flex:1, minWidth:80 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
-              <button className="btn btn-outline-secondary d-flex align-items-center gap-1 justify-content-center" style={{ flex:1, minWidth:80, fontSize:'0.85rem' }}
-                onClick={() => abrirEdicion(detalleItem)}><IconWrench /> Editar</button>
-              {String(detalleItem.Etapa) !== '-1' ? (
-                <button className="btn btn-outline-info d-flex align-items-center gap-1 justify-content-center" style={{ flex:1, minWidth:80, fontSize:'0.85rem' }}
-                  onClick={() => { setDetalleItem(null); sessionStorage.setItem('chatInfo', JSON.stringify({ ID_Servicio: detalleItem.ID_Servicio })); setVista('chatVista'); }}>
-                  <IconChat /> Chat
-                </button>
-              ) : null}
-              <button className="btn btn-outline-success d-flex align-items-center gap-1 justify-content-center" style={{ flex:1, minWidth:80, fontSize:'0.85rem' }}
-                onClick={() => { setDetalleItem(null); setModalNotif({ ID_Usuario: detalleItem.ID_Usuario, ID_Servicio: detalleItem.ID_Servicio }); setMensajeNotif(''); }}>
-                <IconBell /> Notificar
-              </button>
-              <button className="btn d-flex align-items-center gap-1 justify-content-center" style={{ flex:1, minWidth:80, fontSize:'0.85rem', background:'#dc3545', color:'#fff', border:'none' }}
-                onClick={async () => { setDetalleItem(null); await eliminarServicio(detalleItem.ID_Servicio); }}>
-                <IconTrash /> Eliminar
-              </button>
+
+              {/* Editar — siempre disponible para técnico/admin */}
+              <button
+                id="btn-editar-servicio"
+                className="btn btn-outline-secondary d-flex align-items-center gap-1 justify-content-center"
+                style={{ flex:1, minWidth:80, fontSize:'0.85rem' }}
+                onClick={() => abrirEdicion(detalleItem)}
+              ><IconWrench /> Editar</button>
+
+              {/* Chat — disponible solo si NO está cancelado */}
+              <button
+                className="btn btn-outline-info d-flex align-items-center gap-1 justify-content-center"
+                style={{ flex:1, minWidth:80, fontSize:'0.85rem', opacity: cancelado ? 0.45 : 1, cursor: cancelado ? 'not-allowed' : 'pointer' }}
+                disabled={cancelado}
+                title={cancelado ? 'No disponible en servicios cancelados' : 'Ir al chat de este servicio'}
+                onClick={() => !cancelado && irAlChat(detalleItem)}
+              ><IconChat /> Chat</button>
+
+              {/* Notificar — disponible solo si NO está cancelado */}
+              <button
+                className="btn btn-outline-success d-flex align-items-center gap-1 justify-content-center"
+                style={{ flex:1, minWidth:80, fontSize:'0.85rem', opacity: cancelado ? 0.45 : 1, cursor: cancelado ? 'not-allowed' : 'pointer' }}
+                disabled={cancelado}
+                title={cancelado ? 'No disponible en servicios cancelados' : 'Enviar notificación al cliente'}
+                onClick={() => { if (!cancelado) { setDetalleItem(null); setModalNotif({ ID_Usuario: detalleItem.ID_Usuario, ID_Servicio: detalleItem.ID_Servicio }); setMensajeNotif(''); }}}
+              ><IconBell /> Notificar</button>
+
+              {/* Eliminar — siempre disponible */}
+              <button
+                className="btn d-flex align-items-center gap-1 justify-content-center"
+                style={{ flex:1, minWidth:80, fontSize:'0.85rem', background:'#dc3545', color:'#fff', border:'none' }}
+                onClick={async () => { setDetalleItem(null); await eliminarServicio(detalleItem.ID_Servicio); }}
+              ><IconTrash /> Eliminar</button>
             </div>
           </ModalOverlay>
         );

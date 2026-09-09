@@ -266,12 +266,20 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                   <th>Producto</th>
                   <th>Pregunta (resumen)</th>
                   <th>Estado</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {datosPagina.map(p => (
-                  <tr key={p.ID_Consulta} className="stagger-item">
+                  <tr
+                    key={p.ID_Consulta}
+                    className="stagger-item"
+                    role="button"
+                    tabIndex={0}
+                    title="Clic para ver detalle"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => abrirDetalle(p)}
+                    onKeyDown={e => { if (e.key === 'Enter') abrirDetalle(p); }}
+                  >
                     <td>{p.ID_Consulta}</td>
                     <td className="text-muted small">{p.ID_Usuario}</td>
                     <td className="fw-bold">{nombreUsuario(p.ID_Usuario)}</td>
@@ -282,15 +290,11 @@ const Preguntas = ({ cerrarSesion, setVista }) => {
                     <td style={{ maxWidth: '180px' }}>
                       <div style={{ fontSize:'0.85rem', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:170 }} title={p.Pregunta}>{p.Pregunta}</div>
                     </td>
-                     <td>
-                       <span className={`badge ${p.Respuesta ? 'bg-success' : 'bg-warning text-dark'}`} style={{ fontSize: '0.7rem' }}>
-                         {p.Respuesta ? '✔ Respondida' : '⏳ Pendiente'}
-                       </span>
-                     </td>
-                     <td>
-                       <button className="btn btn-sm fw-bold" style={{ background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6, fontSize:'0.77rem' }}
-                         onClick={() => abrirDetalle(p)}>Ver más</button>
-                     </td>
+                    <td>
+                      <span className={`badge ${p.Respuesta ? 'bg-success' : 'bg-warning text-dark'}`} style={{ fontSize: '0.7rem' }}>
+                        {p.Respuesta ? '✔ Respondida' : '⏳ Pendiente'}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

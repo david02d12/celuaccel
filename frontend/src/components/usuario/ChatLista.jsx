@@ -135,7 +135,7 @@ const ChatLista = ({
                       )}
                     </div>
                     <div className="small text-muted text-truncate">
-                      Chat #{c.Codigo_Chat} • {c.ID_Servicio ? `Servicio #${c.ID_Servicio}` : 'Catálogo'}
+                      Chat #{c.Codigo_Chat} • {c.ID_Servicio ? `Servicio #${c.ID_Servicio}` : ''}
                     </div>
                   </div>
                 </div>

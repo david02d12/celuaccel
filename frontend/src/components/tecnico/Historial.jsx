@@ -5,24 +5,32 @@ import api from '../../services/api';
 import { confirmar } from '../../utils/alerts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { getLimitesGeneralesFecha } from '../../utils/validaciones';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import Paginacion from '../Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-const IconCalendar = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-  </svg>
-);
-const IconClipboard = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-  </svg>
-);
+/* ── Tipos de acción de la bitácora ─────────────────────────── */
+const TIPOS_ACCION = [
+  { valor: 'Ingresado',           label: 'Ingresado',              desc: 'Dispositivo recibido en tienda',    color: '#0d6efd', icon: '📥' },
+  { valor: 'En diagnóstico',      label: 'En diagnóstico',         desc: 'Revisando el equipo',               color: '#f59e0b', icon: '🔍' },
+  { valor: 'En reparación',       label: 'En reparación',          desc: 'Ejecutando la reparación',          color: '#f97316', icon: '🔧' },
+  { valor: 'Control de calidad',  label: 'Control de calidad',     desc: 'Verificando resultado',             color: '#8b5cf6', icon: '🔬' },
+  { valor: 'Terminado',           label: 'Terminado',              desc: 'Reparación finalizada',             color: '#198754', icon: '✅' },
+  { valor: 'Cancelado',           label: 'Cancelado',              desc: 'Servicio cancelado',                color: '#6c757d', icon: '❌' },
+];
 
-/* ── Modal genérico ──────────────────────────────────────────── */
+const tipoInfo = (estado) => TIPOS_ACCION.find(t => t.valor === estado) || TIPOS_ACCION[0];
+
+/* ── Formateo de fecha ─────────────────────────────────────── */
+const formatFechaHora = (f) => {
+  if (!f) return '—';
+  const d = new Date(f);
+  if (isNaN(d)) return String(f).split('T')[0];
+  return d.toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+};
+
+/* ── Modal genérico ─────────────────────────────────────────── */
 const ModalOverlay = ({ titulo, onClose, children }) => (
   <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
     <div style={{ background:'var(--color-surface,#1e1e1e)',borderRadius:12,width:'100%',maxWidth:500,maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 40px rgba(0,0,0,0.5)' }}>
@@ -42,17 +50,103 @@ const Fila = ({ label, children }) => (
   </div>
 );
 
+/* ── Nodo del timeline ────────────────────────────────────────── */
+const NodoTimeline = ({ d, onClick, isLast }) => {
+  const tipo = tipoInfo(d.Estado);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div style={{ display: 'flex', gap: 0, position: 'relative' }}>
+      {/* Línea + nodo */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 48 }}>
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%',
+          background: tipo.color,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '1.1rem', boxShadow: `0 0 0 4px ${tipo.color}22`,
+          zIndex: 1, flexShrink: 0
+        }}>
+          {tipo.icon}
+        </div>
+        {!isLast && (
+          <div style={{ width: 2, flex: 1, minHeight: 24, background: 'var(--color-border)', margin: '4px 0' }} />
+        )}
+      </div>
+
+      {/* Contenido del evento */}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onClick}
+        onKeyDown={e => { if (e.key === 'Enter') onClick(); }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          flex: 1, marginLeft: 12, marginBottom: isLast ? 0 : 20,
+          background: hovered ? 'var(--color-surfaceAlt, #2a2a2a)' : 'var(--color-surface, #1e1e1e)',
+          border: `1px solid ${hovered ? tipo.color + '66' : 'var(--color-border)'}`,
+          borderLeft: `4px solid ${tipo.color}`,
+          borderRadius: 10, padding: '12px 14px',
+          cursor: 'pointer', transition: 'all 0.2s ease',
+          boxShadow: hovered ? `0 4px 16px ${tipo.color}22` : '0 2px 8px rgba(0,0,0,0.15)'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            {/* Badge de tipo */}
+            <span style={{
+              display: 'inline-block', padding: '2px 10px', borderRadius: 20,
+              background: tipo.color + '22', color: tipo.color,
+              fontSize: '0.72rem', fontWeight: 700, marginBottom: 6
+            }}>
+              {tipo.label}
+            </span>
+
+            {/* Servicio */}
+            <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--color-text)', marginBottom: 3 }}>
+              🔧 Servicio #{d.ID_Servicio}
+              {d.Movil_Nombre && (
+                <span style={{ fontWeight: 400, fontSize: '0.82rem', color: 'var(--color-text-muted)', marginLeft: 6 }}>
+                  — {d.Movil_Nombre}
+                </span>
+              )}
+            </div>
+
+            {/* Descripción */}
+            <div style={{
+              fontSize: '0.83rem', color: 'var(--color-text)',
+              overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical'
+            }} title={d.Descripcion_Evento}>
+              📝 {d.Descripcion_Evento || '—'}
+            </div>
+          </div>
+
+          {/* Fecha */}
+          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
+              🕒 {formatFechaHora(d.Fecha_Evento)}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#888', marginTop: 4 }}>
+              Evento #{d.ID_Registro}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Historial = ({ cerrarSesion, setVista }) => {
   const [datos, setDatos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [toast, setToast] = useState({ visible: false, msg: '', ok: true });
-  const { minDate, maxDate } = getLimitesGeneralesFecha();
   const [enEdicion, setEnEdicion] = useState(false);
   const [modalForm, setModalForm] = useState(false);
   const [detalleItem, setDetalleItem] = useState(null);
   const [form, setForm] = useState({
-    ID_Registro: '', ID_Servicio: '', Fecha_Evento: '', Descripcion_Evento: '', Estado: 'Ingresado'
+    ID_Registro: '', ID_Servicio: '', Descripcion_Evento: '', Estado: 'Ingresado', notaAdicional: ''
   });
 
   const mostrarToast = (msg, ok = true) => {
@@ -69,30 +163,49 @@ const Historial = ({ cerrarSesion, setVista }) => {
 
   const guardar = async () => {
     try {
+      // Construir descripción: "Tipo: nota adicional" o solo "Tipo"
+      const tipoLabel = TIPOS_ACCION.find(t => t.valor === form.Estado)?.label || form.Estado;
+      const nota = form.notaAdicional?.trim();
+      const descripcionFinal = nota ? `${tipoLabel}: ${nota}` : tipoLabel;
+
+      const payload = {
+        ID_Servicio: form.ID_Servicio,
+        Descripcion_Evento: descripcionFinal,
+        Estado: form.Estado,
+        ...(enEdicion ? { ID_Registro: form.ID_Registro } : {})
+      };
+
       const url = enEdicion ? 'actualizar' : 'agregar';
       const metodo = enEdicion ? 'put' : 'post';
-      await api[metodo](`/historial/${url}`, form);
-      mostrarToast(enEdicion ? 'Evento actualizado.' : 'Evento registrado en el historial.');
+      await api[metodo](`/historial/${url}`, payload);
+      mostrarToast(enEdicion ? 'Evento actualizado.' : 'Evento registrado en la bitácora.');
       listar(); limpiar();
-    } catch { mostrarToast('Error al procesar la solicitud.', false); }
+    } catch (err) {
+      const msg = err?.response?.data?.error || 'Error al procesar la solicitud.';
+      mostrarToast(msg, false);
+    }
   };
 
   const eliminar = async (id) => {
-    if (await confirmar('¿Eliminar este registro del historial?')) {
+    if (await confirmar('¿Eliminar este registro de la bitácora?')) {
       try { await api.delete(`/historial/eliminar/${id}`); mostrarToast('Evento eliminado.'); listar(); }
       catch { mostrarToast('Error al eliminar.', false); }
     }
   };
 
   const limpiar = () => {
-    setForm({ ID_Registro: '', ID_Servicio: '', Fecha_Evento: '', Descripcion_Evento: '', Estado: 'Ingresado' });
+    setForm({ ID_Registro: '', ID_Servicio: '', Descripcion_Evento: '', Estado: 'Ingresado', notaAdicional: '' });
     setEnEdicion(false); setModalForm(false);
   };
 
   const abrirNuevo = () => { limpiar(); setModalForm(true); };
   const abrirEdicion = (d) => {
     setEnEdicion(true);
-    setForm({ ...d, Fecha_Evento: d.Fecha_Evento ? String(d.Fecha_Evento).split('T')[0] : '', Estado: String(d.Estado) });
+    // Separar tipo y nota si la descripción sigue el formato "Tipo: nota"
+    const partes = (d.Descripcion_Evento || '').split(': ');
+    const estadoDetectado = TIPOS_ACCION.find(t => t.label === partes[0])?.valor || d.Estado;
+    const notaDetectada = partes.length > 1 ? partes.slice(1).join(': ') : '';
+    setForm({ ...d, Estado: estadoDetectado || d.Estado, notaAdicional: notaDetectada });
     setDetalleItem(null); setModalForm(true);
   };
   const abrirDetalle = (d) => setDetalleItem(d);
@@ -101,34 +214,28 @@ const Historial = ({ cerrarSesion, setVista }) => {
     if (filtrados.length === 0) return mostrarToast('No hay eventos para exportar.', false);
     const doc = new jsPDF();
     const usuario = sessionStorage.getItem('user') || 'Usuario';
-    const userRole = sessionStorage.getItem('role') || 'N/A';
     doc.setFillColor(219, 0, 0); doc.rect(0, 0, 210, 30, 'F');
     doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont('helvetica','bold');
     doc.text('CELUACCEL', 14, 15);
     doc.setFontSize(10); doc.setFont('helvetica','normal');
-    doc.text('Reporte de Auditoría y Trazabilidad', 14, 23);
-    doc.setFontSize(9);
+    doc.text('Bitácora de Servicios Técnicos', 14, 23);
     doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 195, 15, { align:'right' });
-    doc.text(`Generado por: ${usuario} (Rol: ${userRole})`, 195, 22, { align:'right' });
-    doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','bold');
-    doc.text('Resumen de la vista actual:', 14, 42);
-    doc.setFont('helvetica','normal');
-    doc.text(`Total de eventos registrados: ${filtrados.length}`, 14, 48);
+    doc.text(`Generado por: ${usuario}`, 195, 22, { align:'right' });
+    doc.setTextColor(0,0,0);
     autoTable(doc, {
-      startY: 55,
-      head: [['ID Registro','ID Servicio','Fecha del Evento','Descripción de la Acción','Estado']],
+      startY: 38,
+      head: [['ID','Servicio','Dispositivo','Tipo de Evento','Descripción','Fecha y Hora']],
       body: filtrados.map(d => [
-        d.ID_Registro, d.ID_Servicio,
-        d.Fecha_Evento ? String(d.Fecha_Evento).replace('T',' ').substring(0,19) : '',
-        d.Descripcion_Evento,
-        d.Estado || '—'
+        d.ID_Registro, `#${d.ID_Servicio}`, d.Movil_Nombre || '—',
+        d.Estado || '—', d.Descripcion_Evento || '—',
+        formatFechaHora(d.Fecha_Evento)
       ]),
       headStyles:{ fillColor:[219,0,0], textColor:[255,255,255], fontStyle:'bold' },
       alternateRowStyles:{ fillColor:[248,249,250] },
-      styles:{ fontSize:8, cellPadding:4, overflow:'linebreak' },
-      columnStyles:{ 3:{ cellWidth:70 } }
+      styles:{ fontSize:7.5, cellPadding:3, overflow:'linebreak' },
+      columnStyles:{ 4:{ cellWidth:60 } }
     });
-    doc.save(`auditoria_celuaccel_${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`Bitacora_CeluAccel_${new Date().toISOString().split('T')[0]}.pdf`);
     mostrarToast('PDF exportado correctamente.');
   };
 
@@ -139,17 +246,13 @@ const Historial = ({ cerrarSesion, setVista }) => {
       String(d.ID_Registro).includes(busqueda) ||
       String(d.ID_Servicio).includes(busqueda) ||
       String(d.Fecha_Evento||'').includes(busqueda) ||
+      String(d.Movil_Nombre||'').toLowerCase().includes(busqueda.toLowerCase()) ||
       String(d.Descripcion_Evento||'').toLowerCase().includes(busqueda.toLowerCase());
-    
-    const est = String(d.Estado || '').toLowerCase();
-    const matchEstado = filtroEstado === 'todos' ? true
-      : filtroEstado === 'activo' ? (est !== 'cancelado')
-      : (est === 'cancelado');
+    const matchEstado = filtroEstado === 'todos' ? true : String(d.Estado) === filtroEstado;
     return matchBusqueda && matchEstado;
   });
 
-  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(filtrados, 12);
-  const totalActivos = datos.filter(d => String(d.Estado).toLowerCase() !== 'cancelado').length;
+  const { pagina, setPagina, totalPaginas, datosPagina } = usePaginacion(filtrados, 15);
 
   return (
     <div>
@@ -162,32 +265,30 @@ const Historial = ({ cerrarSesion, setVista }) => {
 
       {/* ── MODAL DETALLE ── */}
       {detalleItem && (() => {
-        const activo = String(detalleItem.Estado).toLowerCase() !== 'cancelado';
+        const tipo = tipoInfo(detalleItem.Estado);
         return (
-          <ModalOverlay titulo={`Evento #${detalleItem.ID_Registro}`} onClose={() => setDetalleItem(null)}>
-            {/* Estado prominente */}
+          <ModalOverlay titulo={`Bitácora — Evento #${detalleItem.ID_Registro}`} onClose={() => setDetalleItem(null)}>
             <div className="text-center mb-4">
-              <span className={`badge px-4 py-2 fs-6 fw-bold ${activo ? 'bg-success' : 'bg-secondary'}`}>
-                {detalleItem.Estado || (activo ? 'Activo' : 'Cancelado')}
+              <div style={{ fontSize: '2rem', marginBottom: 8 }}>{tipo.icon}</div>
+              <span style={{
+                display: 'inline-block', padding: '6px 18px', borderRadius: 20,
+                background: tipo.color + '22', color: tipo.color,
+                fontSize: '0.92rem', fontWeight: 700, border: `1px solid ${tipo.color}44`
+              }}>
+                {tipo.label}
               </span>
             </div>
-            <Fila label="ID Registro">{detalleItem.ID_Registro}</Fila>
-            <Fila label="ID Servicio">
+
+            <Fila label="🔧 Servicio">
               <button className="btn btn-link p-0 fw-bold" style={{ color:'var(--color-primary)', fontSize:'0.86rem' }}
                 onClick={() => { setDetalleItem(null); sessionStorage.setItem('searchServicio', String(detalleItem.ID_Servicio)); setVista('servicios'); }}>
-                #{detalleItem.ID_Servicio} — Ver servicio →
+                #{detalleItem.ID_Servicio}{detalleItem.Movil_Nombre ? ` — ${detalleItem.Movil_Nombre}` : ''} → Ver servicio
               </button>
             </Fila>
-            <Fila label="Fecha del Evento">
-              <span className="d-flex align-items-center gap-1">
-                <IconCalendar />{detalleItem.Fecha_Evento ? String(detalleItem.Fecha_Evento).split('T')[0] : '—'}
-              </span>
-            </Fila>
-            <Fila label="Descripción">
-              <span className="d-flex align-items-start gap-1">
-                <IconClipboard /><em>{detalleItem.Descripcion_Evento || '—'}</em>
-              </span>
-            </Fila>
+            <Fila label="🕒 Fecha y hora">{formatFechaHora(detalleItem.Fecha_Evento)}</Fila>
+            <Fila label="📝 Descripción"><em>{detalleItem.Descripcion_Evento || '—'}</em></Fila>
+            {detalleItem.Movil_Especificacion && <Fila label="📱 Especificación">{detalleItem.Movil_Especificacion}</Fila>}
+
             <div className="d-flex gap-2 mt-4">
               <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setDetalleItem(null)}>Cerrar</button>
               <button className="btn btn-outline-secondary" style={{ flex:1 }} onClick={() => abrirEdicion(detalleItem)}>✏️ Editar</button>
@@ -200,59 +301,88 @@ const Historial = ({ cerrarSesion, setVista }) => {
 
       {/* ── MODAL FORMULARIO ── */}
       {modalForm && (
-        <ModalOverlay titulo={enEdicion ? 'Editar Evento' : 'Nuevo Evento'} onClose={limpiar}>
+        <ModalOverlay titulo={enEdicion ? 'Editar Evento' : 'Registrar en Bitácora'} onClose={limpiar}>
           {enEdicion && (
-            <div className="mb-2">
-              <label className="small text-muted fw-bold mb-1">ID Registro</label>
-              <input className="form-control" style={{ ...inputStyle, opacity:0.7 }} disabled value={form.ID_Registro} />
+            <div className="mb-3 p-2 rounded" style={{ background: 'var(--color-surfaceAlt)', fontSize: '0.83rem', color: 'var(--color-text-muted)' }}>
+              ✏️ Editando Evento #{form.ID_Registro}
             </div>
           )}
-          <div className="mb-2">
-            <label className="small text-muted fw-bold mb-1">ID del Servicio asociado</label>
-            <input className="form-control" style={inputStyle} type="number" value={form.ID_Servicio}
-              placeholder="ID del Servicio" onChange={e => setForm({...form, ID_Servicio: e.target.value})} />
-          </div>
-          <div className="mb-2">
-            <label className="small text-muted fw-bold mb-1">Fecha del Evento</label>
-            <input className="form-control" style={inputStyle} type="date" value={form.Fecha_Evento}
-              min={minDate} max={maxDate} onChange={e => setForm({...form, Fecha_Evento: e.target.value})} />
-          </div>
-          <div className="mb-2">
-            <label className="small text-muted fw-bold mb-1">Descripción del Evento</label>
-            <textarea className="form-control" style={inputStyle} rows={3} value={form.Descripcion_Evento}
-              placeholder="Descripcion del evento tecnico" onChange={e => setForm({...form, Descripcion_Evento: e.target.value})} />
-          </div>
+
           <div className="mb-3">
-            <label className="small text-muted fw-bold mb-1">Estado</label>
-            <select className="form-select" style={inputStyle} value={form.Estado}
-              onChange={e => setForm({...form, Estado: e.target.value})}>
-              <option value="Ingresado">Ingresado</option>
-              <option value="En proceso">En proceso</option>
-              <option value="Terminado">Terminado</option>
-              <option value="Cancelado">Cancelado</option>
-            </select>
+            <label className="small text-muted fw-bold mb-1">Servicio asociado (ID)</label>
+            <input className="form-control" style={inputStyle} type="number" value={form.ID_Servicio}
+              placeholder="Número del servicio (ej: 300003)"
+              onChange={e => setForm({...form, ID_Servicio: e.target.value})} />
           </div>
+
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-2">Tipo de acción</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {TIPOS_ACCION.map(t => (
+                <button
+                  key={t.valor}
+                  type="button"
+                  onClick={() => setForm({...form, Estado: t.valor})}
+                  style={{
+                    padding: '10px 12px', borderRadius: 8, border: `2px solid ${form.Estado === t.valor ? t.color : 'var(--color-border)'}`,
+                    background: form.Estado === t.valor ? t.color + '22' : 'var(--color-bg)',
+                    color: form.Estado === t.valor ? t.color : 'var(--color-text)',
+                    cursor: 'pointer', fontSize: '0.82rem', fontWeight: form.Estado === t.valor ? 700 : 400,
+                    textAlign: 'left', transition: 'all 0.15s ease',
+                    display: 'flex', alignItems: 'center', gap: 6
+                  }}
+                >
+                  <span style={{ fontSize: '1rem' }}>{t.icon}</span>
+                  <div>
+                    <div style={{ fontWeight: 700 }}>{t.label}</div>
+                    <div style={{ fontSize: '0.72rem', opacity: 0.75 }}>{t.desc}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <label className="small text-muted fw-bold mb-1">Nota adicional (opcional)</label>
+            <textarea className="form-control" style={inputStyle} rows={3} value={form.notaAdicional}
+              placeholder={`Detalles específicos... (ej: Pantalla reemplazada y probada OK)`}
+              onChange={e => setForm({...form, notaAdicional: e.target.value})} />
+            {form.notaAdicional && (
+              <div className="mt-1 small" style={{ color: 'var(--color-text-muted)' }}>
+                📋 Descripción final: <em>"{TIPOS_ACCION.find(t=>t.valor===form.Estado)?.label || form.Estado}: {form.notaAdicional}"</em>
+              </div>
+            )}
+          </div>
+
+          {/* Fecha: info de que se auto-asigna */}
+          <div className="mb-3 p-2 rounded d-flex align-items-center gap-2"
+            style={{ background: 'var(--color-surfaceAlt)', border: '1px solid var(--color-border)', fontSize: '0.83rem' }}>
+            <span style={{ fontSize: '1.1rem' }}>🕒</span>
+            <span style={{ color: 'var(--color-text-muted)' }}>
+              La fecha y hora se registran <strong>automáticamente</strong> al guardar.
+            </span>
+          </div>
+
           <div className="d-flex gap-2">
             <button className="btn btn-secondary" style={{ flex:1 }} onClick={limpiar}>Cerrar</button>
             <button className="btn fw-bold" style={{ flex:1, background:'var(--color-primary)', color:'#fff', border:'none' }} onClick={guardar}>
-              {enEdicion ? 'Actualizar' : 'Guardar'}
+              {enEdicion ? 'Actualizar' : '📋 Registrar'}
             </button>
           </div>
         </ModalOverlay>
       )}
 
-      <Navbar titulo="CELUACCEL — Historial de Eventos" cerrarSesion={cerrarSesion} />
+      <Navbar titulo="CELUACCEL — Bitácora de Servicios" cerrarSesion={cerrarSesion} />
 
       <div className="container mt-4">
         {/* BANNER */}
         <div className="mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2 module-banner">
           <div>
-            <h4 className="fw-bold mb-1">Historial de Eventos</h4>
-            <p className="mb-0 opacity-75">Registro cronológico de cada paso técnico en los servicios</p>
+            <h4 className="fw-bold mb-1">📋 Bitácora de Servicios</h4>
+            <p className="mb-0 opacity-75">Registro cronológico de cada paso técnico — más reciente primero</p>
           </div>
           <div className="d-flex gap-2 align-items-center flex-wrap">
             <span className="badge text-danger fw-bold" style={{ backgroundColor:'#fff' }}>{datos.length} eventos</span>
-            <span className="badge fw-bold" style={{ backgroundColor:'rgba(255,255,255,0.2)' }}>{totalActivos} activos</span>
             <button className="btn btn-sm btn-outline-light fw-bold px-3" onClick={exportarPDF}>Exportar PDF</button>
             <button className="btn btn-sm fw-bold" style={{ background:'#fff', color:'var(--color-primary)', borderRadius:'8px', padding:'6px 14px' }} onClick={abrirNuevo}>
               + Nuevo evento
@@ -260,66 +390,58 @@ const Historial = ({ cerrarSesion, setVista }) => {
           </div>
         </div>
 
-        {/* BUSCADOR + FILTRO */}
-        <div className="d-flex gap-2 mb-3 flex-wrap">
+        {/* BUSCADOR + FILTRO POR TIPO */}
+        <div className="d-flex gap-2 mb-4 flex-wrap">
           <input type="text" className="form-control flex-grow-1" style={inputStyle}
-            placeholder="Buscar por ID, servicio, descripción o fecha..."
+            placeholder="Buscar por ID, servicio, dispositivo o descripción..."
             value={busqueda} onChange={e => { setBusqueda(e.target.value); setPagina(1); }} />
-          <select className="form-select" style={{ ...inputStyle, width:'auto' }}
+          <select className="form-select" style={{ ...inputStyle, width:'auto', minWidth: 180 }}
             value={filtroEstado} onChange={e => { setFiltroEstado(e.target.value); setPagina(1); }}>
-            <option value="todos">Todos</option>
-            <option value="activo">Activos</option>
-            <option value="inactivo">Inactivos</option>
+            <option value="todos">Todos los tipos</option>
+            {TIPOS_ACCION.map(t => <option key={t.valor} value={t.valor}>{t.icon} {t.label}</option>)}
           </select>
         </div>
 
-        {/* GRID DE EVENTOS */}
+        {/* LEYENDA DE TIPOS */}
+        <div className="d-flex flex-wrap gap-2 mb-4">
+          {TIPOS_ACCION.map(t => (
+            <span key={t.valor}
+              onClick={() => setFiltroEstado(prev => prev === t.valor ? 'todos' : t.valor)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                padding: '3px 10px', borderRadius: 20,
+                background: filtroEstado === t.valor ? t.color + '33' : 'var(--color-surface)',
+                border: `1px solid ${filtroEstado === t.valor ? t.color : 'var(--color-border)'}`,
+                color: filtroEstado === t.valor ? t.color : 'var(--color-text-muted)',
+                fontSize: '0.75rem', fontWeight: filtroEstado === t.valor ? 700 : 400,
+                cursor: 'pointer', transition: 'all 0.15s ease'
+              }}>
+              {t.icon} {t.label}
+              {filtroEstado === t.valor && <span style={{ marginLeft: 4 }}>✕</span>}
+            </span>
+          ))}
+        </div>
+
+        {/* TIMELINE */}
         {filtrados.length === 0 ? (
           <div className="text-center py-5">
-            <p className="text-muted fw-semibold mt-3">No se encontraron eventos con ese criterio.</p>
+            <div style={{ fontSize: '3rem', marginBottom: 12 }}>📋</div>
+            <p className="text-muted fw-semibold">No se encontraron eventos con ese criterio.</p>
           </div>
         ) : (
           <>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:'0.85rem' }}>
-              {datosPagina.map(d => {
-                const activo = String(d.Estado).toLowerCase() !== 'cancelado';
-                return (
-                  <div key={d.ID_Registro} className="card border-0 shadow-sm fade-in"
-                    style={{ borderLeft:`4px solid ${activo ? '#198754' : '#6c757d'}`, borderRadius:12, overflow:'hidden' }}>
-                    <div className="card-body p-3">
-                      {/* Header */}
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <div>
-                          <span className="fw-bold" style={{ fontSize:'0.9rem' }}>Evento #{d.ID_Registro}</span>
-                          <span className="text-muted ms-2" style={{ fontSize:'0.78rem' }}>Serv. #{d.ID_Servicio}</span>
-                        </div>
-                        <span className={`badge ${activo ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize:'0.7rem' }}>
-                          {d.Estado || (activo ? 'Activo' : 'Cancelado')}
-                        </span>
-                      </div>
-
-                      {/* Fecha + descripción resumida */}
-                      <div className="d-flex align-items-center gap-1 text-muted mb-1" style={{ fontSize:'0.8rem' }}>
-                        <IconCalendar />
-                        <span>{d.Fecha_Evento ? String(d.Fecha_Evento).split('T')[0] : '—'}</span>
-                      </div>
-                      <div className="d-flex align-items-start gap-1 mb-3" style={{ fontSize:'0.83rem' }}>
-                        <IconClipboard />
-                        <span style={{ overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }} title={d.Descripcion_Evento}>
-                          {d.Descripcion_Evento || '—'}
-                        </span>
-                      </div>
-
-                      {/* Botón Ver más */}
-                      <button className="btn btn-sm fw-bold w-100" style={{ background:'var(--color-primary)', color:'#fff', border:'none', borderRadius:6, fontSize:'0.8rem' }}
-                        onClick={() => abrirDetalle(d)}>Ver más</button>
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{ paddingLeft: 4 }}>
+              {datosPagina.map((d, idx) => (
+                <NodoTimeline
+                  key={d.ID_Registro}
+                  d={d}
+                  onClick={() => abrirDetalle(d)}
+                  isLast={idx === datosPagina.length - 1}
+                />
+              ))}
             </div>
             {totalPaginas > 1 && (
-              <div className="mt-3">
+              <div className="mt-4">
                 <Paginacion pagina={pagina} setPagina={setPagina} totalPaginas={totalPaginas} />
               </div>
             )}
