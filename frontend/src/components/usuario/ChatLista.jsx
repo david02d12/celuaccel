@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ChatLista = ({
   role,
@@ -14,6 +14,19 @@ const ChatLista = ({
   iniciarChatDesdeServicio,
   setVista
 }) => {
+  const [filtroEstado, setFiltroEstado] = useState('todos');
+  
+  // Aplicar filtro local de estado para rol técnico/admin
+  const chatsMostrar = role === 2 
+    ? chatsFiltrados 
+    : chatsFiltrados.filter(c => {
+        if (filtroEstado === 'todos') return true;
+        const esFinalizado = String(c.Etapa_Servicio) === '2' || String(c.Etapa_Servicio) === '-1';
+        if (filtroEstado === 'activos') return !esFinalizado;
+        if (filtroEstado === 'finalizados') return esFinalizado;
+        return true;
+      });
+
   return (
     <div
       className={`d-flex flex-column border-end ${panelAbierto ? 'd-flex' : 'd-none d-md-flex'}`}
@@ -31,12 +44,25 @@ const ChatLista = ({
         </p>
         <input
           type="text"
-          className="form-control form-control-sm"
+          className="form-control form-control-sm mb-2"
           placeholder="Buscar chat (ID o Servicio)..."
           value={busquedaChat}
           onChange={e => setBusquedaChat(e.target.value)}
           style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
         />
+        {role !== 2 && (
+          <select 
+            className="form-select form-select-sm" 
+            style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', fontSize: '0.8rem' }}
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+            id="filtro-estado-chat"
+          >
+            <option value="todos">Todos los chats</option>
+            <option value="activos">Solo activos</option>
+            <option value="finalizados">Finalizados</option>
+          </select>
+        )}
       </div>
       <div style={{ overflowY: 'auto', flexGrow: 1 }}>
         {cargandoChats ? (
@@ -44,7 +70,7 @@ const ChatLista = ({
             <div className="spinner-border spinner-border-sm" style={{ color: 'var(--color-primary)' }} />
             <p className="text-muted small mt-2">Cargando conversaciones...</p>
           </div>
-        ) : chatsFiltrados.length === 0 ? (
+        ) : chatsMostrar.length === 0 ? (
           <div className="text-center p-3">
             {role === 2 && servicios.length > 0 ? (
               <>
@@ -81,7 +107,7 @@ const ChatLista = ({
             )}
           </div>
         ) : (
-          chatsFiltrados.map(c => {
+          chatsMostrar.map(c => {
             const isActive = chatSel?.Codigo_Chat === c.Codigo_Chat;
             
             const nombreCliente = c.Nombre_Usuario || c.ID_Usuario;
@@ -134,8 +160,11 @@ const ChatLista = ({
                         <span className="badge bg-secondary ms-2" style={{ fontSize: '0.65rem' }}>Oculto</span>
                       )}
                     </div>
-                    <div className="small text-muted text-truncate">
-                      Chat #{c.Codigo_Chat} • {c.ID_Servicio ? `Servicio #${c.ID_Servicio}` : ''}
+                    <div className="small text-muted text-truncate d-flex align-items-center gap-1">
+                      <span>Chat #{c.Codigo_Chat} • {c.ID_Servicio ? `Servicio #${c.ID_Servicio}` : ''}</span>
+                      {(String(c.Etapa_Servicio) === '2' || String(c.Etapa_Servicio) === '-1') && (
+                        <span className="badge bg-secondary ms-auto" style={{ fontSize: '0.65rem' }}>Finalizado</span>
+                      )}
                     </div>
                   </div>
                 </div>

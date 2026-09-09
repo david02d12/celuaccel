@@ -207,38 +207,56 @@ const ChatMensajes = ({
             <div ref={mensajesEndRef} />
           </div>
 
-          {/* INPUT DE MENSAJE */}
-          <div className="p-3 border-top" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
-            <div className="d-flex gap-2">
-              <input
-                id="chat-input-mensaje"
-                type="text"
-                className="form-control"
-                placeholder={mensajeEnEdicion ? "Edita tu mensaje... (Enter para guardar)" : "Escribe un mensaje... (Enter para enviar)"}
-                value={nuevoMensaje}
-                onChange={e => setNuevoMensaje(e.target.value)}
-                onKeyDown={handleKeyDown}
-                style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-              />
-              {mensajeEnEdicion && (
-                <button
-                  className="btn btn-outline-secondary px-3"
-                  onClick={cancelarEdicion}>
-                  Cancelar
-                </button>
-              )}
-              <button
-                id="btn-enviar-mensaje"
-                className="btn btn-primary px-4"
-                onClick={enviarMensaje}
-                disabled={!nuevoMensaje.trim()}>
-                {mensajeEnEdicion ? 'Actualizar' : 'Enviar'}
-              </button>
+          {/* AREA DE INPUT O AVISO DE FINALIZADO */}
+          {(String(chatSel.Etapa_Servicio) === '2' || String(chatSel.Etapa_Servicio) === '-1') ? (
+            <div className="p-3 border-top text-center" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
+              <div className="p-3 rounded-3" style={{ backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <h6 className="fw-bold mb-2 text-muted">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="me-2 mb-1">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  Chat Finalizado
+                </h6>
+                <p className="small text-muted mb-0">
+                  {role === 2 
+                    ? 'Este servicio ya fue finalizado. Si necesita hacer un reclamo, por favor acérquese a nuestras instalaciones.'
+                    : 'Este servicio ya fue finalizado. El chat ha sido cerrado para nuevos mensajes.'}
+                </p>
+              </div>
             </div>
-            <small className="text-muted mt-1 d-block">
-              Enviando como: <strong>{nombre}</strong> · Chat #{chatSel.Codigo_Chat}
-            </small>
-          </div>
+          ) : (
+            <div className="p-3 border-top" style={{ backgroundColor: 'var(--color-surfaceAlt)', borderColor: 'var(--color-border)' }}>
+              <div className="d-flex gap-2">
+                <input
+                  id="chat-input-mensaje"
+                  type="text"
+                  className="form-control"
+                  placeholder={mensajeEnEdicion ? "Edita tu mensaje... (Enter para guardar)" : "Escribe un mensaje... (Enter para enviar)"}
+                  value={nuevoMensaje}
+                  onChange={e => setNuevoMensaje(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+                />
+                {mensajeEnEdicion && (
+                  <button
+                    className="btn btn-outline-secondary px-3"
+                    onClick={cancelarEdicion}>
+                    Cancelar
+                  </button>
+                )}
+                <button
+                  id="btn-enviar-mensaje"
+                  className="btn btn-primary px-4"
+                  onClick={enviarMensaje}
+                  disabled={!nuevoMensaje.trim()}>
+                  {mensajeEnEdicion ? 'Actualizar' : 'Enviar'}
+                </button>
+              </div>
+              <small className="text-muted mt-1 d-block">
+                Enviando como: <strong>{nombre}</strong> · Chat #{chatSel.Codigo_Chat}
+              </small>
+            </div>
+          )}
         </>
       )}
     </div>
