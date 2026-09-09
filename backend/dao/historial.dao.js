@@ -2,9 +2,9 @@ const { queryPromise: query } = require('../config/db');
 
 const getAll = () =>
     query(`
-        SELECT h.*, s.Movil_Nombre, s.Movil_Especificacion, s.ID_Usuario
+        SELECT h.*, s.Movil_Nombre, s.Movil_Especificacion, s.ID_Usuario AS ID_Usuario_Servicio
         FROM historial_servicios h
-        LEFT JOIN servicios s ON s.ID_Servicio = h.ID_Servicio
+        LEFT JOIN servicio s ON s.ID_Servicio = h.ID_Servicio
         ORDER BY h.Fecha_Evento DESC
     `);
 
