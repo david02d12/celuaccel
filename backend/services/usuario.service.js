@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const AppError = require('../config/AppError');
 const usuarioDao = require('../dao/usuario.dao');
+const servicioDao = require('../dao/servicio.dao');
 const val = require('../utils/validaciones');
 
 const SALT_ROUNDS = 10;
@@ -60,6 +61,11 @@ const eliminar = async (id) => {
     if (!id) throw new AppError('El ID del usuario es obligatorio.', 400);
     
     await validarEliminacionAdmin(id);
+
+    const tieneActivos = await servicioDao.hasServiciosEnProceso(id);
+    if (tieneActivos) {
+        throw new AppError('No puedes eliminar a este usuario porque tiene servicios activos (pendientes o en proceso).', 400);
+    }
 
     const result = await usuarioDao.remove(id);
     if (result.affectedRows === 0) throw new AppError('Usuario no encontrado.', 404);

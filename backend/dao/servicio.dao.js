@@ -16,6 +16,14 @@ const getActivosByUsuario = (idUsuario) =>
         [idUsuario]
     );
 
+const hasServiciosEnProceso = async (idUsuario) => {
+    const res = await query(
+        'SELECT ID_Servicio FROM servicio WHERE ID_Usuario = ? AND Etapa IN (0, 1) LIMIT 1',
+        [idUsuario]
+    );
+    return res.length > 0;
+};
+
 const findById = (id) =>
     query('SELECT * FROM servicio WHERE ID_Servicio = ?', [id]);
 
@@ -38,5 +46,5 @@ const cancelar = (id) =>
 const remove = (id) =>
     query('DELETE FROM servicio WHERE ID_Servicio = ?', [id]);
 
-module.exports = { getAll, getByUsuario, getActivosByUsuario, findById, create, update, cancelar, remove };
+module.exports = { getAll, getByUsuario, getActivosByUsuario, hasServiciosEnProceso, findById, create, update, cancelar, remove };
 
