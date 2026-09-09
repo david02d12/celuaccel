@@ -44,7 +44,7 @@ const ChatVista = ({ cerrarSesion, setVista }) => {
         <ChatLista role={role} setVista={setVista} {...chatProps} />
 
         {/* PANEL DERECHO: CONVERSACIÓN */}
-        <ChatMensajes role={role} usuario={usuario} nombre={nombre} {...chatProps} />
+        <ChatMensajes role={role} usuario={usuario} nombre={nombre} setVista={setVista} {...chatProps} />
       </div>
 
       {/* MENÚ LATERAL */}

@@ -18,7 +18,8 @@ const ChatMensajes = ({
   mensajesEndRef,
   mensajeEnEdicion,
   setMensajeEnEdicion,
-  cancelarEdicion
+  cancelarEdicion,
+  setVista
 }) => {
   return (
     <div className="d-flex flex-column flex-grow-1" style={{ overflow: 'hidden', backgroundColor: 'var(--color-surface)' }}>
@@ -84,11 +85,26 @@ const ChatMensajes = ({
                     {titulo}
                     {chatSel.ID_Servicio && getEstadoBadge(chatSel.Etapa_Servicio)}
                   </div>
-                  <div className="small text-muted">
-                    Chat #{chatSel.Codigo_Chat} • {chatSel.ID_Servicio
-                      ? `Servicio #${chatSel.ID_Servicio}`
-                      : `Consulta de catálogo`
-                    }
+                  <div className="small text-muted d-flex align-items-center gap-2">
+                    <span>Chat #{chatSel.Codigo_Chat} • {chatSel.ID_Servicio ? `Servicio #${chatSel.ID_Servicio}` : `Consulta de catálogo`}</span>
+                    {chatSel.ID_Servicio && (
+                      <button 
+                        className="btn btn-sm btn-link p-0 text-decoration-none fw-bold" 
+                        style={{ fontSize: '0.8rem' }}
+                        onClick={() => {
+                          // Si el usuario guardó su búsqueda de servicio, podemos restaurar, sino solo volvemos a la vista
+                          if (role === 2) {
+                            setVista('miServicio');
+                          } else {
+                            // Guardamos el ID del servicio para que el buscador lo abra automáticamente
+                            sessionStorage.setItem('searchServicio', chatSel.ID_Servicio);
+                            setVista('servicios');
+                          }
+                        }}
+                      >
+                        ← Volver a Servicios
+                      </button>
+                    )}
                   </div>
                 </div>
                 {/* BOTON OCULTAR / RESTAURAR CHAT (Solo Admin) */}
