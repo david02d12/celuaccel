@@ -133,6 +133,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
   });
   const [modalForm, setModalForm] = useState(false);
   const [detalleItem, setDetalleItem] = useState(null);
+  const [itemAnterior, setItemAnterior] = useState(null); // Guardar el servicio para volver atrás
   const [modalNotif, setModalNotif] = useState(null);
   const [mensajeNotif, setMensajeNotif] = useState('');
   const [enviandoNotif, setEnviandoNotif] = useState(false);
@@ -182,7 +183,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
 
   const limpiarServicio = () => {
     setFormServicio({ Descripcion: '', ID_Usuario: '', Precio: '', Precio_Repuestos: '', Precio_Mano_Obra: '', Movil_Nombre: '', Movil_Especificacion: '', Fecha: '', Etapa: '0' });
-    setEnEdicion(false); setIdServicioSel(null); setModalForm(false);
+    setEnEdicion(false); setIdServicioSel(null); setModalForm(false); setItemAnterior(null);
   };
 
   const actualizarEtapa = async (servicio, nuevaEtapa) => {
@@ -208,11 +209,12 @@ const Servicios = ({ cerrarSesion, setVista }) => {
 
   const abrirNuevo = () => { limpiarServicio(); setModalForm(true); };
   const abrirEdicion = (s) => {
+    setItemAnterior(s);
     setEnEdicion(true); setIdServicioSel(s.ID_Servicio);
     setFormServicio({ ...s, Fecha: s.Fecha ? s.Fecha.split('T')[0] : '', Etapa: String(s.Etapa) });
     setDetalleItem(null); setModalForm(true);
   };
-  const abrirDetalle = (s) => setDetalleItem(s);
+  const abrirDetalle = (s) => { setItemAnterior(null); setDetalleItem(s); };
 
   // Redirigir al chat con el servicio correcto (fix: pasar idServicio e idUsuario en camelCase)
   const irAlChat = (servicio) => {
@@ -405,6 +407,7 @@ const Servicios = ({ cerrarSesion, setVista }) => {
                 }
                 onClick={() => {
                   if (notifDisponible(detalleItem)) {
+                    setItemAnterior(detalleItem);
                     setDetalleItem(null);
                     setModalNotif({ ID_Usuario: detalleItem.ID_Usuario, ID_Servicio: detalleItem.ID_Servicio });
                     setMensajeNotif('');
@@ -425,7 +428,10 @@ const Servicios = ({ cerrarSesion, setVista }) => {
 
       {/* ── MODAL FORMULARIO ── */}
       {modalForm && (
-        <ModalOverlay titulo={enEdicion ? 'Editar Servicio' : 'Nuevo Servicio'} onClose={limpiarServicio}>
+        <ModalOverlay titulo={enEdicion ? 'Editar Servicio' : 'Nuevo Servicio'} onClose={() => {
+          if (itemAnterior) { setDetalleItem(itemAnterior); setItemAnterior(null); }
+          limpiarServicio();
+        }}>
           <div className="mb-2">
             <label className="small text-muted fw-bold mb-1">Descripción del problema</label>
             <input className="form-control" style={inputStyle} value={formServicio.Descripcion} placeholder="Descripcion del problema"
@@ -474,7 +480,12 @@ const Servicios = ({ cerrarSesion, setVista }) => {
             </select>
           </div>
           <div className="d-flex gap-2">
-            <button className="btn btn-secondary" style={{ flex:1 }} onClick={limpiarServicio}>Cerrar</button>
+            <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => {
+              if (itemAnterior) { setDetalleItem(itemAnterior); setItemAnterior(null); setModalForm(false); }
+              else { limpiarServicio(); }
+            }}>
+              {itemAnterior ? '← Volver al detalle' : 'Cerrar'}
+            </button>
             <button className="btn fw-bold" style={{ flex:1, background:'var(--color-primary)', color:'#fff', border:'none' }} onClick={guardarServicio}>
               {enEdicion ? 'Actualizar' : 'Guardar'}
             </button>
@@ -497,7 +508,12 @@ const Servicios = ({ cerrarSesion, setVista }) => {
           <textarea className="form-control" rows={3} placeholder="O escribe un mensaje personalizado..."
             value={mensajeNotif} onChange={e => setMensajeNotif(e.target.value)} style={inputStyle} />
           <div className="d-flex gap-2 mt-3">
-            <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => setModalNotif(null)}>Cancelar</button>
+            <button className="btn btn-secondary" style={{ flex:1 }} onClick={() => {
+              if (itemAnterior) { setDetalleItem(itemAnterior); setItemAnterior(null); }
+              setModalNotif(null);
+            }}>
+              {itemAnterior ? '← Volver al detalle' : 'Cancelar'}
+            </button>
             <button className="btn btn-success fw-bold" style={{ flex:1 }} disabled={!mensajeNotif.trim() || enviandoNotif} onClick={enviarNotificacion}>
               {enviandoNotif ? 'Enviando...' : 'Enviar Notificación'}
             </button>
